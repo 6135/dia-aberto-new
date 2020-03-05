@@ -1,7 +1,7 @@
 ### Pre-requisitos
 
-* Python 3.8.2
-* Git
+* [Python 3.8.2](https://www.python.org/downloads/)
+* [Git](https://git-scm.com/downloads)
 
 ### Instalação
 
@@ -15,7 +15,7 @@ cd ~/Documentos/Universidade/LES
 2. Clonar o projeto do github
 
 ```SH
-git clone [website]
+git clone https://github.com/tiagonuneslx/dia-aberto.git
 ```
 
 3. Entrar na pasta do projeto
