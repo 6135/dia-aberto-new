@@ -165,9 +165,15 @@ python manage.py inspectdb tabela1 tabela2 > nome_da_app/models.py
 
 ## Dependências
 
-* pip - Gestor de Pacotes (Python)
-* setuptools - Ferramentas (Python)
-* Django - Web Framework
-* sqlparse - (Django)
-* pytz - (Django)
-* asgiref - (Django)
+| Dependência    | Descrição / (Dependência Pai) |
+| -------------- | ----------------------------- |
+| pip            | Gestor de Pacotes (Python)    |
+| setuptools     | Ferramentas (Python)          |
+| Django         | Web Framework                 |
+| sqlparse       | (Django)                      |
+| pytz           | (Django)                      |
+| asgiref        | (Django)                      |
+| mysqlclient    | Conector de Python a MySQL    |
+| django-environ | Suporte de .env               |
+| autopep8       | Python Formatter              |
+| pycodestyle    | (autopep8)                    |
