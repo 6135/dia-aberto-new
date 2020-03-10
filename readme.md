@@ -63,7 +63,13 @@ source env/bin/activate
 
 Windows:
 ```SH
-env\scripts\activate
+env\Scripts\activate
+```
+
+Em Windows às vezes há problemas neste passo. Se der ErrorSecurityPolicy, ou algo do género, tentar isto na mesma shell:
+```SH
+Set-ExecutionPolicy Unrestricted -Force
+env\Scripts\activate
 ```
 
 A extensão padrão de Python do VSCode tem a opção de ativar automaticamente o ambiente em novos terminais. Para ativar a funcionalidade, há que abrir a **Palete de Comandos (F1)**,  **Python: Selecionar Interpretador** e escolher a opção cuja localização comece com `./env` ou `.\env`.
@@ -80,6 +86,20 @@ pip install --upgrade pip setuptools
 pip install -r requirements.txt
 ```
 
+8. Criar um ficheiro .env dentro da pasta dia_aberto (a mesma que tem o settings.py), com as informações sensíveis, como credenciais de acesso à base de dados
+
+O ficheiro .env deve ter o mesmo género de formato do ficheiro já criado "example.env".
+
+As informações de acesso à base de dados do servidor do Gui devem-lhe ser solicitadas.
+
+Para ligar a uma base de dados MySQL local, por exemplo, o .env pode ser:
+
+```
+DEBUG=on
+DATABASE_URL=mysql://user:password@localhost:3306/db
+SECRET_KEY=q1^j3mv#y9-n&^*j)-rd3@lqqu@jv49p_99$mefzljeuz#fra3
+```
+
 ## Comandos fundamentais
 
 #### Ativar o ambiente virtual no terminal
@@ -91,7 +111,13 @@ source env/bin/activate
 
 Windows:
 ```SH
-env\scripts\activate
+env\Scripts\activate
+```
+
+#### Desativar o ambiente virtual no terminal
+
+```SH
+deactivate
 ```
 
 #### Iniciar o servidor localmente
@@ -115,8 +141,27 @@ python manage.py migrate
 #### Instalar nova dependência
 
 ```SH
-pip install [dependência] && pip freeze > requirements.txt
+pip install nome_da_dependência && pip freeze > requirements.txt
 ```
+
+#### Instalar lista de dependências necessárias
+
+```SH
+pip install -r requirements.txt
+```
+
+#### Criar nova app (cada "componente" vai ser uma "app")
+
+```SH
+python manage.py createapp nome_da_app
+```
+
+#### Gerar automaticamente modelos através de tabelas da base de dados
+
+```SH
+python manage.py inspectdb tabela1 tabela2 > nome_da_app/models.py
+```
+
 
 ## Dependências
 
