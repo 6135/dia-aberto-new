@@ -3,6 +3,9 @@
 .idea
 .vim
 
+# Secret Environment Variables
+.env
+
 
 # Default Python/Django .gitignore created by https://www.gitignore.io
 
