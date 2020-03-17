@@ -17,5 +17,4 @@ class Coordenador(models.Model):
         db_column='Gabinete', max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'Coordenador'

@@ -36,7 +36,6 @@ class Atividade(models.Model):
     tipo = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'Atividade'
 
 
@@ -51,7 +50,6 @@ class Atividadesessao(models.Model):
         'Sessao', models.CASCADE, db_column='SessaoID')
 
     class Meta:
-        managed = False
         db_table = 'AtividadeSessao'
 
 
@@ -70,7 +68,6 @@ class Sessao(models.Model):
     vagas = models.IntegerField(db_column='Vagas')
 
     class Meta:
-        managed = False
         db_table = 'Sessao'
 
 
@@ -90,7 +87,6 @@ class Espaco(models.Model):
     descricao = models.CharField(db_column='Descricao', max_length=255)
 
     class Meta:
-        managed = False
         db_table = 'Espaco'
 
 
@@ -103,7 +99,6 @@ class Materiais(models.Model):
     nome = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'Materiais'
 
 
@@ -119,7 +114,6 @@ class Unidadeorganica(models.Model):
         'configuracao.Campus', models.CASCADE, db_column='CampusID')
 
     class Meta:
-        managed = False
         db_table = 'UnidadeOrganica'
 
 
@@ -132,7 +126,6 @@ class Anfiteatro(models.Model):
         db_column='EspacoEdificio', max_length=255)
 
     class Meta:
-        managed = False
         db_table = 'Anfiteatro'
 
 
@@ -145,5 +138,4 @@ class Arlivre(models.Model):
         db_column='EspacoEdificio', max_length=255)
 
     class Meta:
-        managed = False
         db_table = 'ArLivre'

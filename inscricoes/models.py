@@ -27,7 +27,6 @@ class Inscricao(models.Model):
         'configuracao.Diaaberto', models.CASCADE, db_column='DiaAbertoID')
 
     class Meta:
-        managed = False
         db_table = 'Inscricao'
 
 
@@ -45,7 +44,6 @@ class Inscricaocoletiva(models.Model):
     turma = models.CharField(max_length=255)
 
     class Meta:
-        managed = False
         db_table = 'InscricaoColetiva'
         unique_together = (('inscricaoid', 'escolaid'),)
 
@@ -59,7 +57,6 @@ class Inscricaoindividual(models.Model):
         db_column='nrAcompanhantes', blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'InscricaoIndividual'
 
 
@@ -74,7 +71,6 @@ class Inscricaoprato(models.Model):
     nrpessoas = models.IntegerField(db_column='NrPessoas')
 
     class Meta:
-        managed = False
         db_table = 'InscricaoPrato'
         unique_together = (('inscricaoid', 'pratoid'),)
 
@@ -90,7 +86,6 @@ class Inscricaosessao(models.Model):
     nrparticipantes = models.IntegerField(db_column='nrParticipantes')
 
     class Meta:
-        managed = False
         db_table = 'InscricaoSessao'
         unique_together = (('inscricaoid', 'sessaoid'),)
 
@@ -108,7 +103,6 @@ class Inscricaotransporte(models.Model):
     nrparticipantes = models.IntegerField(db_column='NrParticipantes')
 
     class Meta:
-        managed = False
         db_table = 'InscricaoTransporte'
 
 
@@ -125,5 +119,4 @@ class Escola(models.Model):
     email = models.CharField(db_column='Email', max_length=255)
 
     class Meta:
-        managed = False
         db_table = 'Escola'

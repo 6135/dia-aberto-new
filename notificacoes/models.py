@@ -19,7 +19,6 @@ class Notificacao(models.Model):
         db_column='CriadoEm', max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'Notificacao'
 
 
@@ -32,7 +31,6 @@ class Envionotificacao(models.Model):
         'utilizadores.Utilizador', models.DO_NOTHING, db_column='UtilizadorID')
 
     class Meta:
-        managed = False
         db_table = 'EnvioNotificacao'
         unique_together = (('notificacaoid', 'utilizadorid'),)
 # Unable to inspect table 'RececaoNotificacao'

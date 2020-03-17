@@ -28,7 +28,6 @@ class Tarefa(models.Model):
         'atividades.Atividade', models.CASCADE, db_column='AtividadeID')
 
     class Meta:
-        managed = False
         db_table = 'Tarefa'
 
 
@@ -40,7 +39,6 @@ class Colaborador(models.Model):
     curso = models.CharField(db_column='Curso', max_length=255)
 
     class Meta:
-        managed = False
         db_table = 'Colaborador'
 
 
@@ -55,7 +53,6 @@ class Colaboradorhorario(models.Model):
     horarioinicio = models.DateField(db_column='HorarioInicio')
 
     class Meta:
-        managed = False
         db_table = 'ColaboradorHorario'
         unique_together = (
             ('colaboradorutilizadorid', 'horarioid', 'horarioinicio'),)

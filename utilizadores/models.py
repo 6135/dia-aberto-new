@@ -17,7 +17,6 @@ class Administrador(models.Model):
         db_column='Gabinete', max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'Administrador'
 
 
@@ -27,7 +26,6 @@ class Participante(models.Model):
         'Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
 
     class Meta:
-        managed = False
         db_table = 'Participante'
 
 
@@ -47,7 +45,6 @@ class Utilizador(models.Model):
     username = models.CharField(db_column='UserName', max_length=255)
 
     class Meta:
-        managed = False
         db_table = 'Utilizador'
 
 
@@ -60,5 +57,4 @@ class Professoruniversitario(models.Model):
         db_column='Gabinete', max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'ProfessorUniversitario'

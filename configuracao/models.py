@@ -15,7 +15,6 @@ class Transporte(models.Model):
     identificador = models.IntegerField(db_column='Identificador')
 
     class Meta:
-        managed = False
         db_table = 'Transporte'
 
 
@@ -34,7 +33,6 @@ class Transportehorario(models.Model):
         Transporte, models.CASCADE, db_column='TransporteID')
 
     class Meta:
-        managed = False
         db_table = 'TransporteHorario'
 
 
@@ -46,7 +44,6 @@ class Transportepessoal(models.Model):
     tipo = models.CharField(db_column='Tipo', max_length=255)
 
     class Meta:
-        managed = False
         db_table = 'TransportePessoal'
 
 
@@ -58,7 +55,6 @@ class Transporteuniversitario(models.Model):
     capacidade = models.IntegerField(db_column='Capacidade')
 
     class Meta:
-        managed = False
         db_table = 'TransporteUniversitario'
 
 
@@ -94,7 +90,6 @@ class Diaaberto(models.Model):
         'utilizadores.Administrador', models.CASCADE, db_column='AdministradorUtilizadorID')
 
     class Meta:
-        managed = False
         db_table = 'DiaAberto'
 
 
@@ -122,7 +117,6 @@ class Menu(models.Model):
         db_column='HorarioInicio', blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'Menu'
 
 
@@ -137,7 +131,6 @@ class Prato(models.Model):
     menuid = models.ForeignKey(Menu, models.CASCADE, db_column='MenuID')
 
     class Meta:
-        managed = False
         db_table = 'Prato'
 
 
@@ -151,7 +144,6 @@ class Campus(models.Model):
         db_column='Nome', max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'Campus'
 
 
@@ -169,7 +161,6 @@ class Departamento(models.Model):
         db_column='Nome', max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'Departamento'
 
 
@@ -182,7 +173,6 @@ class Sala(models.Model):
         db_column='EspacoEdificio', max_length=255)
 
     class Meta:
-        managed = False
         db_table = 'Sala'
 
 
@@ -200,7 +190,6 @@ class Idioma(models.Model):
         db_column='Sigla', max_length=255, blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'Idioma'
 
 
@@ -211,5 +200,4 @@ class Horario(models.Model):
     fim = models.TimeField(db_column='Fim')  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'Horario'
