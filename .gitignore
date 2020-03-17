@@ -5,7 +5,10 @@
 
 # Secret Environment Variables
 .env
+gui.env
 
+# Migrations
+migrations
 
 # Default Python/Django .gitignore created by https://www.gitignore.io
 
