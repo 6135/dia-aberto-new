@@ -9,6 +9,7 @@ from django.db import models
 
 
 class Tarefa(models.Model):
+<<<<<<< HEAD
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
@@ -26,6 +27,15 @@ class Tarefa(models.Model):
     # Field name made lowercase.
     atividadeid = models.ForeignKey(
         'Atividade', models.CASCADE, db_column='AtividadeID')
+=======
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
+    concluida = models.IntegerField(db_column='Concluida')  # Field name made lowercase.
+    descricao = models.CharField(db_column='Descricao', max_length=255)  # Field name made lowercase.
+    coordenadorutilizadorid = models.ForeignKey('coordenadores.Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
+    colaboradorutilizadorid = models.ForeignKey('Colaborador', models.DO_NOTHING, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
+    atividadeid = models.ForeignKey('atividades.Atividade', models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
+>>>>>>> ecc8b8b4dba0f4d6053d73db362f368fd01aa434
 
     class Meta:
         managed = False
@@ -33,11 +43,16 @@ class Tarefa(models.Model):
 
 
 class Colaborador(models.Model):
+<<<<<<< HEAD
     # Field name made lowercase.
     utilizadorid = models.OneToOneField(
         'Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
     # Field name made lowercase.
     curso = models.CharField(db_column='Curso', max_length=255)
+=======
+    utilizadorid = models.OneToOneField('utilizadoes.Utilizador', models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
+    curso = models.CharField(db_column='Curso', max_length=255)  # Field name made lowercase.
+>>>>>>> ecc8b8b4dba0f4d6053d73db362f368fd01aa434
 
     class Meta:
         managed = False
@@ -45,6 +60,7 @@ class Colaborador(models.Model):
 
 
 class Colaboradorhorario(models.Model):
+<<<<<<< HEAD
     # Field name made lowercase.
     colaboradorutilizadorid = models.OneToOneField(
         Colaborador, models.CASCADE, db_column='ColaboradorUtilizadorID', primary_key=True)
@@ -53,6 +69,11 @@ class Colaboradorhorario(models.Model):
         'Horario', models.CASCADE, db_column='HorarioID')
     # Field name made lowercase.
     horarioinicio = models.DateField(db_column='HorarioInicio')
+=======
+    colaboradorutilizadorid = models.OneToOneField(Colaborador, models.DO_NOTHING, db_column='ColaboradorUtilizadorID', primary_key=True)  # Field name made lowercase.
+    horarioid = models.ForeignKey('configuracao.Horario', models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
+    horarioinicio = models.DateField(db_column='HorarioInicio')  # Field name made lowercase.
+>>>>>>> ecc8b8b4dba0f4d6053d73db362f368fd01aa434
 
     class Meta:
         managed = False
