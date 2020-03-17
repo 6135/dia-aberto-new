@@ -21,17 +21,10 @@ class Inscricao(models.Model):
         db_column='AreaCientifica', max_length=64)
     # Field name made lowercase.
     participanteutilizadorid = models.ForeignKey(
-<<<<<<< HEAD
-        'Participante', models.CASCADE, db_column='ParticipanteUtilizadorID')
+        'utilizadores.Participante', models.CASCADE, db_column='ParticipanteUtilizadorID')
     # Field name made lowercase.
     diaabertoid = models.ForeignKey(
-        'Diaaberto', models.CASCADE, db_column='DiaAbertoID')
-=======
-        'utilizadores.Participante', models.DO_NOTHING, db_column='ParticipanteUtilizadorID')
-    # Field name made lowercase.
-    diaabertoid = models.ForeignKey(
-        'configuracao.Diaaberto', models.DO_NOTHING, db_column='DiaAbertoID')
->>>>>>> ecc8b8b4dba0f4d6053d73db362f368fd01aa434
+        'configuracao.Diaaberto', models.CASCADE, db_column='DiaAbertoID')
 
     class Meta:
         managed = False
@@ -92,11 +85,7 @@ class Inscricaosessao(models.Model):
         Inscricao, models.CASCADE, db_column='InscricaoID', primary_key=True)
     # Field name made lowercase.
     sessaoid = models.ForeignKey(
-<<<<<<< HEAD
-        'Sessao', models.CASCADE, db_column='SessaoID')
-=======
-        'atividades.Sessao', models.DO_NOTHING, db_column='SessaoID')
->>>>>>> ecc8b8b4dba0f4d6053d73db362f368fd01aa434
+        'atividades.Sessao', models.CASCADE, db_column='SessaoID')
     # Field name made lowercase.
     nrparticipantes = models.IntegerField(db_column='nrParticipantes')
 
@@ -114,11 +103,7 @@ class Inscricaotransporte(models.Model):
         Inscricao, models.CASCADE, db_column='InscricaoID')
     # Field name made lowercase.
     transporteid = models.ForeignKey(
-<<<<<<< HEAD
-        'Transporte', models.CASCADE, db_column='TransporteID')
-=======
-        'configuracao.Transporte', models.DO_NOTHING, db_column='TransporteID')
->>>>>>> ecc8b8b4dba0f4d6053d73db362f368fd01aa434
+        'configuracao.Transporte', models.CASCADE, db_column='TransporteID')
     # Field name made lowercase.
     nrparticipantes = models.IntegerField(db_column='NrParticipantes')
 

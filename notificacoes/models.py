@@ -24,17 +24,12 @@ class Notificacao(models.Model):
 
 
 class Envionotificacao(models.Model):
-<<<<<<< HEAD
     # Field name made lowercase.
     notificacaoid = models.OneToOneField(
-        Notificacao, models.CASCADE, db_column='NotificacaoID', primary_key=True)
+        Notificacao, models.DO_NOTHING, db_column='NotificacaoID', primary_key=True)
     # Field name made lowercase.
     utilizadorid = models.ForeignKey(
-        'Utilizador', models.CASCADE, db_column='UtilizadorID')
-=======
-    notificacaoid = models.OneToOneField(Notificacao, models.DO_NOTHING, db_column='NotificacaoID', primary_key=True)  # Field name made lowercase.
-    utilizadorid = models.ForeignKey('utilizadores.Utilizador', models.DO_NOTHING, db_column='UtilizadorID')  # Field name made lowercase.
->>>>>>> ecc8b8b4dba0f4d6053d73db362f368fd01aa434
+        'utilizadores.Utilizador', models.DO_NOTHING, db_column='UtilizadorID')
 
     class Meta:
         managed = False

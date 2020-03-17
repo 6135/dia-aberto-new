@@ -11,7 +11,7 @@ from django.db import models
 class Coordenador(models.Model):
     # Field name made lowercase.
     utilizadorid = models.OneToOneField(
-        'Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
+        'utilizadores.Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
     # Field name made lowercase.
     gabinete = models.CharField(
         db_column='Gabinete', max_length=255, blank=True, null=True)
