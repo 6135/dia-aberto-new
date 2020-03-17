@@ -9,9 +9,14 @@ from django.db import models
 
 
 class Notificacao(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    descricao = models.CharField(db_column='Descricao', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    criadoem = models.CharField(db_column='CriadoEm', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    # Field name made lowercase.
+    id = models.AutoField(db_column='ID', primary_key=True)
+    # Field name made lowercase.
+    descricao = models.CharField(
+        db_column='Descricao', max_length=255, blank=True, null=True)
+    # Field name made lowercase.
+    criadoem = models.CharField(
+        db_column='CriadoEm', max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -19,8 +24,12 @@ class Notificacao(models.Model):
 
 
 class Envionotificacao(models.Model):
-    notificacaoid = models.OneToOneField(Notificacao, models.DO_NOTHING, db_column='NotificacaoID', primary_key=True)  # Field name made lowercase.
-    utilizadorid = models.ForeignKey('Utilizador', models.DO_NOTHING, db_column='UtilizadorID')  # Field name made lowercase.
+    # Field name made lowercase.
+    notificacaoid = models.OneToOneField(
+        Notificacao, models.CASCADE, db_column='NotificacaoID', primary_key=True)
+    # Field name made lowercase.
+    utilizadorid = models.ForeignKey(
+        'Utilizador', models.CASCADE, db_column='UtilizadorID')
 
     class Meta:
         managed = False

@@ -9,8 +9,12 @@ from django.db import models
 
 
 class Administrador(models.Model):
-    utilizadorid = models.OneToOneField('Utilizador', models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
-    gabinete = models.CharField(db_column='Gabinete', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    # Field name made lowercase.
+    utilizadorid = models.OneToOneField(
+        'Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
+    # Field name made lowercase.
+    gabinete = models.CharField(
+        db_column='Gabinete', max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -18,7 +22,9 @@ class Administrador(models.Model):
 
 
 class Participante(models.Model):
-    utilizadorid = models.OneToOneField('Utilizador', models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
+    # Field name made lowercase.
+    utilizadorid = models.OneToOneField(
+        'Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
 
     class Meta:
         managed = False
@@ -26,12 +32,19 @@ class Participante(models.Model):
 
 
 class Utilizador(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
-    email = models.CharField(db_column='Email', max_length=255)  # Field name made lowercase.
-    telefone = models.CharField(db_column='Telefone', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    password = models.CharField(db_column='Password', max_length=255)  # Field name made lowercase.
-    username = models.CharField(db_column='UserName', max_length=255)  # Field name made lowercase.
+    # Field name made lowercase.
+    id = models.AutoField(db_column='ID', primary_key=True)
+    # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255)
+    # Field name made lowercase.
+    email = models.CharField(db_column='Email', max_length=255)
+    # Field name made lowercase.
+    telefone = models.CharField(
+        db_column='Telefone', max_length=255, blank=True, null=True)
+    # Field name made lowercase.
+    password = models.CharField(db_column='Password', max_length=255)
+    # Field name made lowercase.
+    username = models.CharField(db_column='UserName', max_length=255)
 
     class Meta:
         managed = False
@@ -39,8 +52,12 @@ class Utilizador(models.Model):
 
 
 class Professoruniversitario(models.Model):
-    utilizadorid = models.OneToOneField(Utilizador, models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
-    gabinete = models.CharField(db_column='Gabinete', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    # Field name made lowercase.
+    utilizadorid = models.OneToOneField(
+        Utilizador, models.CASCADE, db_column='UtilizadorID', primary_key=True)
+    # Field name made lowercase.
+    gabinete = models.CharField(
+        db_column='Gabinete', max_length=255, blank=True, null=True)
 
     class Meta:
         managed = False

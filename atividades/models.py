@@ -9,16 +9,29 @@ from django.db import models
 
 
 class Atividade(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
-    descricao = models.TextField(db_column='Descricao')  # Field name made lowercase.
-    capacidademaxima = models.IntegerField(db_column='CapacidadeMaxima')  # Field name made lowercase.
-    duracao = models.IntegerField(db_column='Duracao')  # Field name made lowercase.
-    publicoalvo = models.CharField(db_column='Publicoalvo', max_length=255)  # Field name made lowercase.
-    coordenadorutilizadorid = models.ForeignKey('Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
-    professoruniversitarioutilizadorid = models.ForeignKey('Professoruniversitario', models.DO_NOTHING, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
-    nrcolaboradoresnecessario = models.IntegerField(db_column='nrColaboradoresNecessario')  # Field name made lowercase.
-    datasubmissao = models.DateField(db_column='dataSubmissao', blank=True, null=True)  # Field name made lowercase.
+    # Field name made lowercase.
+    id = models.AutoField(db_column='ID', primary_key=True)
+    # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255)
+    # Field name made lowercase.
+    descricao = models.TextField(db_column='Descricao')
+    # Field name made lowercase.
+    capacidademaxima = models.IntegerField(db_column='CapacidadeMaxima')
+    # Field name made lowercase.
+    duracao = models.IntegerField(db_column='Duracao')
+    # Field name made lowercase.
+    publicoalvo = models.CharField(db_column='Publicoalvo', max_length=255)
+    # Field name made lowercase.
+    coordenadorutilizadorid = models.ForeignKey(
+        'coordenadores.Coordenador', models.CASCADE, db_column='CoordenadorUtilizadorID')
+    professoruniversitarioutilizadorid = models.ForeignKey(
+        'utilizadores.Professoruniversitario', models.CASCADE, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
+    # Field name made lowercase.
+    nrcolaboradoresnecessario = models.IntegerField(
+        db_column='nrColaboradoresNecessario')
+    # Field name made lowercase.
+    datasubmissao = models.DateField(
+        db_column='dataSubmissao', blank=True, null=True)
     estado = models.CharField(max_length=255, blank=True, null=True)
     tipo = models.CharField(max_length=255, blank=True, null=True)
 
@@ -28,9 +41,14 @@ class Atividade(models.Model):
 
 
 class Atividadesessao(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
-    sessaoid = models.ForeignKey('Sessao', models.DO_NOTHING, db_column='SessaoID')  # Field name made lowercase.
+    # Field name made lowercase.
+    id = models.AutoField(db_column='ID', primary_key=True)
+    # Field name made lowercase.
+    atividadeid = models.ForeignKey(
+        Atividade, models.CASCADE, db_column='AtividadeID')
+    # Field name made lowercase.
+    sessaoid = models.ForeignKey(
+        'Sessao', models.CASCADE, db_column='SessaoID')
 
     class Meta:
         managed = False
@@ -38,11 +56,18 @@ class Atividadesessao(models.Model):
 
 
 class Sessao(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    espacoid = models.ForeignKey('Espaco', models.DO_NOTHING, db_column='EspacoID')  # Field name made lowercase.
-    horarioid = models.ForeignKey('Horario', models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
-    ninscritos = models.IntegerField(db_column='NInscritos')  # Field name made lowercase.
-    vagas = models.IntegerField(db_column='Vagas')  # Field name made lowercase.
+    # Field name made lowercase.
+    id = models.AutoField(db_column='ID', primary_key=True)
+    # Field name made lowercase.
+    espacoid = models.ForeignKey(
+        'Espaco', models.CASCADE, db_column='EspacoID')
+    # Field name made lowercase.
+    horarioid = models.ForeignKey(
+        'configuracao.Horario', models.CASCADE, db_column='HorarioID')
+    # Field name made lowercase.
+    ninscritos = models.IntegerField(db_column='NInscritos')
+    # Field name made lowercase.
+    vagas = models.IntegerField(db_column='Vagas')
 
     class Meta:
         managed = False
@@ -50,11 +75,19 @@ class Sessao(models.Model):
 
 
 class Espaco(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    edificio = models.CharField(db_column='Edificio', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    andar = models.CharField(db_column='Andar', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    descricao = models.CharField(db_column='Descricao', max_length=255)  # Field name made lowercase.
+    # Field name made lowercase.
+    id = models.AutoField(db_column='ID', primary_key=True)
+    # Field name made lowercase.
+    nome = models.CharField(
+        db_column='Nome', max_length=255, blank=True, null=True)
+    # Field name made lowercase.
+    edificio = models.CharField(
+        db_column='Edificio', max_length=255, blank=True, null=True)
+    # Field name made lowercase.
+    andar = models.CharField(
+        db_column='Andar', max_length=255, blank=True, null=True)
+    # Field name made lowercase.
+    descricao = models.CharField(db_column='Descricao', max_length=255)
 
     class Meta:
         managed = False
@@ -62,8 +95,11 @@ class Espaco(models.Model):
 
 
 class Materiais(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
+    # Field name made lowercase.
+    id = models.AutoField(db_column='ID', primary_key=True)
+    # Field name made lowercase.
+    atividadeid = models.ForeignKey(
+        Atividade, models.CASCADE, db_column='AtividadeID')
     nome = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
@@ -72,10 +108,15 @@ class Materiais(models.Model):
 
 
 class Unidadeorganica(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    sigla = models.CharField(db_column='Sigla', max_length=255)  # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
-    campusid = models.ForeignKey('Campus', models.DO_NOTHING, db_column='CampusID')  # Field name made lowercase.
+    # Field name made lowercase.
+    id = models.AutoField(db_column='ID', primary_key=True)
+    # Field name made lowercase.
+    sigla = models.CharField(db_column='Sigla', max_length=255)
+    # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255)
+    # Field name made lowercase.
+    campusid = models.ForeignKey(
+        'configuracao.Campus', models.CASCADE, db_column='CampusID')
 
     class Meta:
         managed = False
@@ -83,8 +124,12 @@ class Unidadeorganica(models.Model):
 
 
 class Anfiteatro(models.Model):
-    espacoid = models.OneToOneField(Espaco, models.DO_NOTHING, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
-    espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
+    # Field name made lowercase.
+    espacoid = models.OneToOneField(
+        Espaco, models.CASCADE, db_column='EspacoID', primary_key=True)
+    # Field name made lowercase.
+    espacoedificio = models.CharField(
+        db_column='EspacoEdificio', max_length=255)
 
     class Meta:
         managed = False
@@ -92,8 +137,12 @@ class Anfiteatro(models.Model):
 
 
 class Arlivre(models.Model):
-    espacoid = models.OneToOneField(Espaco, models.DO_NOTHING, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
-    espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
+    # Field name made lowercase.
+    espacoid = models.OneToOneField(
+        Espaco, models.CASCADE, db_column='EspacoID', primary_key=True)
+    # Field name made lowercase.
+    espacoedificio = models.CharField(
+        db_column='EspacoEdificio', max_length=255)
 
     class Meta:
         managed = False

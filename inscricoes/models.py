@@ -21,10 +21,10 @@ class Inscricao(models.Model):
         db_column='AreaCientifica', max_length=64)
     # Field name made lowercase.
     participanteutilizadorid = models.ForeignKey(
-        'Participante', models.DO_NOTHING, db_column='ParticipanteUtilizadorID')
+        'Participante', models.CASCADE, db_column='ParticipanteUtilizadorID')
     # Field name made lowercase.
     diaabertoid = models.ForeignKey(
-        'Diaaberto', models.DO_NOTHING, db_column='DiaAbertoID')
+        'Diaaberto', models.CASCADE, db_column='DiaAbertoID')
 
     class Meta:
         managed = False
@@ -34,10 +34,10 @@ class Inscricao(models.Model):
 class Inscricaocoletiva(models.Model):
     # Field name made lowercase.
     inscricaoid = models.OneToOneField(
-        Inscricao, models.DO_NOTHING, db_column='InscricaoID', primary_key=True)
+        Inscricao, models.CASCADE, db_column='InscricaoID', primary_key=True)
     # Field name made lowercase.
     escolaid = models.ForeignKey(
-        'Escola', models.DO_NOTHING, db_column='EscolaID')
+        'Escola', models.CASCADE, db_column='EscolaID')
     # Field name made lowercase.
     nralunos = models.IntegerField(db_column='nrAlunos')
     # Field name made lowercase.
@@ -53,10 +53,10 @@ class Inscricaocoletiva(models.Model):
 class Inscricaoindividual(models.Model):
     # Field name made lowercase.
     inscricaoid = models.OneToOneField(
-        Inscricao, models.DO_NOTHING, db_column='InscricaoID', primary_key=True)
+        Inscricao, models.CASCADE, db_column='InscricaoID', primary_key=True)
     # Field name made lowercase.
     nracompanhantes = models.IntegerField(
-        db_column='nrAcompanhantes', blank=True, null=True)
+        db_column='nrAcompanhantes', primary_key=True)
 
     class Meta:
         managed = False
@@ -66,10 +66,10 @@ class Inscricaoindividual(models.Model):
 class Inscricaoprato(models.Model):
     # Field name made lowercase.
     inscricaoid = models.OneToOneField(
-        Inscricao, models.DO_NOTHING, db_column='InscricaoID', primary_key=True)
+        Inscricao, models.CASCADE, db_column='InscricaoID', primary_key=True)
     # Field name made lowercase.
     pratoid = models.ForeignKey(
-        'Prato', models.DO_NOTHING, db_column='PratoID')
+        'Prato', models.CASCADE, db_column='PratoID')
     # Field name made lowercase.
     nrpessoas = models.IntegerField(db_column='NrPessoas')
 
@@ -82,10 +82,10 @@ class Inscricaoprato(models.Model):
 class Inscricaosessao(models.Model):
     # Field name made lowercase.
     inscricaoid = models.OneToOneField(
-        Inscricao, models.DO_NOTHING, db_column='InscricaoID', primary_key=True)
+        Inscricao, models.CASCADE, db_column='InscricaoID', primary_key=True)
     # Field name made lowercase.
     sessaoid = models.ForeignKey(
-        'Sessao', models.DO_NOTHING, db_column='SessaoID')
+        'Sessao', models.CASCADE, db_column='SessaoID')
     # Field name made lowercase.
     nrparticipantes = models.IntegerField(db_column='nrParticipantes')
 
@@ -100,10 +100,10 @@ class Inscricaotransporte(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
     inscricaoid = models.ForeignKey(
-        Inscricao, models.DO_NOTHING, db_column='InscricaoID')
+        Inscricao, models.CASCADE, db_column='InscricaoID')
     # Field name made lowercase.
     transporteid = models.ForeignKey(
-        'Transporte', models.DO_NOTHING, db_column='TransporteID')
+        'Transporte', models.CASCADE, db_column='TransporteID')
     # Field name made lowercase.
     nrparticipantes = models.IntegerField(db_column='NrParticipantes')
 
