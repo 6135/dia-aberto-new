@@ -20,7 +20,7 @@ class Notificacao(models.Model):
 
 class Envionotificacao(models.Model):
     notificacaoid = models.OneToOneField(Notificacao, models.DO_NOTHING, db_column='NotificacaoID', primary_key=True)  # Field name made lowercase.
-    utilizadorid = models.ForeignKey('Utilizador', models.DO_NOTHING, db_column='UtilizadorID')  # Field name made lowercase.
+    utilizadorid = models.ForeignKey('utilizadores.Utilizador', models.DO_NOTHING, db_column='UtilizadorID')  # Field name made lowercase.
 
     class Meta:
         managed = False
