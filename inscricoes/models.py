@@ -21,10 +21,10 @@ class Inscricao(models.Model):
         db_column='AreaCientifica', max_length=64)
     # Field name made lowercase.
     participanteutilizadorid = models.ForeignKey(
-        'Participante', models.DO_NOTHING, db_column='ParticipanteUtilizadorID')
+        'utilizadores.Participante', models.DO_NOTHING, db_column='ParticipanteUtilizadorID')
     # Field name made lowercase.
     diaabertoid = models.ForeignKey(
-        'Diaaberto', models.DO_NOTHING, db_column='DiaAbertoID')
+        'configuracao.Diaaberto', models.DO_NOTHING, db_column='DiaAbertoID')
 
     class Meta:
         managed = False
@@ -85,7 +85,7 @@ class Inscricaosessao(models.Model):
         Inscricao, models.DO_NOTHING, db_column='InscricaoID', primary_key=True)
     # Field name made lowercase.
     sessaoid = models.ForeignKey(
-        'Sessao', models.DO_NOTHING, db_column='SessaoID')
+        'atividades.Sessao', models.DO_NOTHING, db_column='SessaoID')
     # Field name made lowercase.
     nrparticipantes = models.IntegerField(db_column='nrParticipantes')
 
@@ -103,7 +103,7 @@ class Inscricaotransporte(models.Model):
         Inscricao, models.DO_NOTHING, db_column='InscricaoID')
     # Field name made lowercase.
     transporteid = models.ForeignKey(
-        'Transporte', models.DO_NOTHING, db_column='TransporteID')
+        'configuracao.Transporte', models.DO_NOTHING, db_column='TransporteID')
     # Field name made lowercase.
     nrparticipantes = models.IntegerField(db_column='NrParticipantes')
 
