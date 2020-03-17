@@ -153,7 +153,7 @@ pip install -r requirements.txt
 #### Criar nova app (cada "componente" vai ser uma "app")
 
 ```SH
-python manage.py createapp nome_da_app
+python manage.py startapp nome_da_app
 ```
 
 #### Gerar automaticamente modelos através de tabelas da base de dados
