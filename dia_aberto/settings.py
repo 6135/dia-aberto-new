@@ -35,6 +35,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'atividades',
+    'colaboradores',
+    'configuracao',
+    'coordenadores',
+    'inscricoes',
+    'notificacoes',
+    'utilizadores',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
