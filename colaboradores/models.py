@@ -35,7 +35,7 @@ class Tarefa(models.Model):
 class Colaborador(models.Model):
     # Field name made lowercase.
     utilizadorid = models.OneToOneField(
-        'utilizadoes.Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
+        'utilizadores.Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
     # Field name made lowercase.
     curso = models.CharField(db_column='Curso', max_length=255)
 

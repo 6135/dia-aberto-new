@@ -56,7 +56,7 @@ class Inscricaoindividual(models.Model):
         Inscricao, models.CASCADE, db_column='InscricaoID', primary_key=True)
     # Field name made lowercase.
     nracompanhantes = models.IntegerField(
-        db_column='nrAcompanhantes', primary_key=True)
+        db_column='nrAcompanhantes', blank=True, null=True)
 
     class Meta:
         managed = False
@@ -69,7 +69,7 @@ class Inscricaoprato(models.Model):
         Inscricao, models.CASCADE, db_column='InscricaoID', primary_key=True)
     # Field name made lowercase.
     pratoid = models.ForeignKey(
-        'Prato', models.CASCADE, db_column='PratoID')
+        'configuracao.Prato', models.CASCADE, db_column='PratoID')
     # Field name made lowercase.
     nrpessoas = models.IntegerField(db_column='NrPessoas')
 
