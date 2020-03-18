@@ -15,8 +15,8 @@ class Inscricao(models.Model):
     areacientifica = models.CharField(max_length=64)
     participante = models.ForeignKey(
         'utilizadores.Participante', models.CASCADE)
-    diaaberto = models.ForeignKey(
-        'configuracao.Diaaberto', models.CASCADE)
+    # TODO: Descomentar quando a configuração do Dia Aberto estiver pronta
+    # diaaberto = models.ForeignKey('configuracao.Diaaberto', models.CASCADE)
 
     class Meta:
         db_table = 'Inscricao'
