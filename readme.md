@@ -165,15 +165,18 @@ python manage.py inspectdb tabela1 tabela2 > nome_da_app/models.py
 
 ## Dependências
 
-| Dependência    | Descrição / (Dependência Pai) |
-| -------------- | ----------------------------- |
-| pip            | Gestor de Pacotes (Python)    |
-| setuptools     | Ferramentas (Python)          |
-| Django         | Web Framework                 |
-| sqlparse       | (Django)                      |
-| pytz           | (Django)                      |
-| asgiref        | (Django)                      |
-| mysqlclient    | Conector de Python a MySQL    |
-| django-environ | Suporte de .env               |
-| autopep8       | Python Formatter              |
-| pycodestyle    | (autopep8)                    |
+| Dependência              | Descrição / (Dependência Pai) |
+| ------------------------ | ----------------------------- |
+| pip                      | Gestor de Pacotes (Python)    |
+| setuptools               | Ferramentas (Python)          |
+| Django                   | Web Framework                 |
+| sqlparse                 | (Django)                      |
+| pytz                     | (Django)                      |
+| asgiref                  | (Django)                      |
+| mysqlclient              | Conector de Python a MySQL    |
+| django-environ           | Suporte de .env               |
+| autopep8                 | Python Formatter              |
+| pycodestyle              | (autopep8)                    |
+| django-phonenumber-field | PhoneNumberField              |
+| phonenumbers             | (django-phonenumber-field)    |
+| Babel                    | (django-phonenumber-field)    |
