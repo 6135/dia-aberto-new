@@ -9,29 +9,20 @@ from django.db import models
 
 
 class Notificacao(models.Model):
-    # Field name made lowercase.
-    id = models.AutoField(db_column='ID', primary_key=True)
-    # Field name made lowercase.
-    descricao = models.CharField(
-        db_column='Descricao', max_length=255, blank=True, null=True)
-    # Field name made lowercase.
-    criadoem = models.CharField(
-        db_column='CriadoEm', max_length=255, blank=True, null=True)
+    descricao = models.CharField(max_length=255)
+    criadoem = models.CharField(max_length=255)
 
     class Meta:
         db_table = 'Notificacao'
 
 
 class Envionotificacao(models.Model):
-    # Field name made lowercase.
-    notificacaoid = models.OneToOneField(
-        Notificacao, models.DO_NOTHING, db_column='NotificacaoID', primary_key=True)
-    # Field name made lowercase.
-    utilizadorid = models.ForeignKey(
-        'utilizadores.Utilizador', models.DO_NOTHING, db_column='UtilizadorID')
+    notificacao = models.ForeignKey(
+        Notificacao, models.CASCADE)
+    utilizador = models.ForeignKey(
+        'utilizadores.Utilizador', models.CASCADE)
 
     class Meta:
         db_table = 'EnvioNotificacao'
-        unique_together = (('notificacaoid', 'utilizadorid'),)
 # Unable to inspect table 'RececaoNotificacao'
 # The error was: (1146, "Table 'diaAberto.RececaoNotificacao' doesn't exist")
