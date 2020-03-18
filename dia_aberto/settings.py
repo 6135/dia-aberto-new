@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'inscricoes',
     'notificacoes',
     'utilizadores',
+    'phonenumber_field',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
