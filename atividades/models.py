@@ -7,7 +7,10 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from utilizadores.models import *
-from configuracao.models import Horario,Campus
+from coordenadores.models import *
+from configuracao.models import *
+from inscricoes.models import *
+from notificacoes.models import *
 
 
 
@@ -37,11 +40,11 @@ class Atividade(models.Model):
     tipos = (("laboral", "Atividade Laboral"),("tertulia", "Tertulia"),("palestra", "Palestra"))
     tipo = models.CharField(db_column='Tipo', max_length=128, choices=tipos )  # Field name made lowercase.
     estado = models.CharField(db_column='Estado', max_length=64, blank=True, null=True)  # Field name made lowercase.
-    coordenadorutilizadorid = models.ForeignKey('Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
-    professoruniversitarioutilizadorid = models.ForeignKey('Professoruniversitario', models.DO_NOTHING, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
+    coordenadorutilizadorid = models.ForeignKey('coordenadores.Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
+    professoruniversitarioutilizadorid = models.ForeignKey('utilizadores.Professoruniversitario', models.DO_NOTHING, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
     datasubmissao = models.DateTimeField(db_column='dataSubmissao',auto_now_add=True)  # Field name made lowercase.
     dataalteracao = models.DateTimeField(db_column='dataAlteracao',auto_now=True)  # Field name made lowercase.
-
+ 
     class Meta:
         db_table = 'Atividade'
 

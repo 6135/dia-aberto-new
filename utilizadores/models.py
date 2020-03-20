@@ -35,10 +35,3 @@ class Professoruniversitario(models.Model):
 
     class Meta:
         db_table = 'ProfessorUniversitario'
-
-class Coordenador(models.Model):
-    utilizadorid = models.OneToOneField('Utilizador', models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
-    gabinete = models.CharField(db_column='Gabinete', max_length=255, blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        db_table = 'Coordenador'
