@@ -1,5 +1,5 @@
 from django import forms  
-from .models import Atividade, Sessao, Horario  
+from .models import Atividade, Sessao, Horario, Espaco  
 
 class AtividadeForm(forms.ModelForm):  
     class Meta:  
@@ -16,3 +16,7 @@ class HorarioForm(forms.ModelForm):
         model = Horario
         exclude = ["id", "participantesmaximo"]  
 
+class EspacoForm(forms.ModelForm):  
+    class Meta:  
+        model = Espaco
+        fields = '__all__'

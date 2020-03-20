@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , SessaoForm 
-from .models import Atividade, Sessao, Coordenador, Professoruniversitario  
+from .forms import AtividadeForm , SessaoForm, EspacoForm 
+from .models import Atividade, Espaco, Sessao
+from coordenadores.models import Coordenador
+from utilizadores.models import Professoruniversitario  
 from django.http import HttpResponseRedirect
 
 #-------------Diogo---------------------
@@ -18,18 +20,14 @@ def minhasatividades(request):
 #-----------------------David--------------------
 def inseriratividade(request):  
     if request.method == "POST":
-        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
-                             professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
-                             estado = "Pendente")
-        formAtividade = AtividadeForm(request.POST, instance=new_form) 
+    	formEspaco = EspacoForm(request.POST)
+        new_formAtividade = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),estado = "Pendente")
+        formAtividade = AtividadeForm(request.POST, instance=new_formAtividade) 
         if formAtividade.is_valid():
-            new_form.save()
-            return HttpResponseRedirect('/thanks/')
-        else:
-            return render(request, 'inseriratividade.html',{'form_Atividade': formAtividade, 'log': True})
+            new_formAtividade.save()
     else:  
         formAtividade = AtividadeForm()
         #formSessao = SessaoForm()   
-    return render(request,'inseriratividade.html',{'form_Atividade': formAtividade})  
+    return render(request,'atividades/inseriratividade.html',{'form_Atividade': formAtividade, 'form_Espaco': formEspaco})  
 #---------------------End David
     
