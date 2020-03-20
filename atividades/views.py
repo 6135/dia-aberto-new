@@ -40,3 +40,18 @@ def destroy(request, id):
     Atividade = Atividade.objects.get(id=id)
     Atividade.delete()
     return redirect("/show")
+
+
+#-------------Diogo---------------------
+def homepage(request):
+	return render(request=request,
+				  template_name="inicio.html",)
+
+def proporatividade(request):
+	return render(request=request,
+				  template_name="proporatividade.html",)
+
+def minhasatividades(request):
+	return render(request=request,
+				  template_name="listaAtividades.html",)
+#-----------------EndDiogo------------------

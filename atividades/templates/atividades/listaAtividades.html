@@ -1,0 +1,78 @@
+{% extends 'app.html' %}
+{% block content %}
+<div class="columns">
+    <div class="column is-3"></div>
+    <div class="column">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="#">Início</a></li>
+              <li class="is-active"><a href="#" aria-current="page">Minhas Atividades</a></li>
+            </ul>
+          </nav>
+        <a href="/proporatividade" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
+            <span class="icon is-small">
+                <i class="mdi mdi-plus"></i>
+            </span>
+            <span>Propor nova atividade</span>
+        </a>
+        <div class="table "></div>
+            <div class="table-wrapper">
+                <table class="table has-mobile-cards is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th width="40px"></th>
+                            <th  style="width: 300px;">
+                                <div class="th-wrap">
+                                    Nome
+                                    <span class="icon is-small">
+                                        <i class="mdi mdi-menu-up"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th style="width: 200px;">
+                                Submetido a
+                                <span class="icon is-small">
+                                     <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>
+                            <th>
+                                Estado
+                                <span class="icon is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                      <tr draggable="false">
+                        <td class="chevron-cell">
+                            <a role="button">
+                                <span class="icon is-expanded">
+                                    <i class="mdi mdi-chevron-right mdi-24px"></i>
+                                </span>
+                            </a>
+                        </td>
+                        <td data-label="Nome">Introduçao a Python 
+                            <a href="/proporatividade">
+                                <span class="icon is-small">
+                                    <i class="mdi mdi-circle-edit-outline mdi-22px"></i>
+                                </span>
+                            </a>
+                        </td>
+                        <td data-label="Submetido a">2018-04-28</td>
+                        <td data-label="Estado">
+                            <span class="tag next is-warning" style="width: 7 rem;font-size: small;">Pendente</span>
+                        </td>
+                      </tr> 
+                      <tr class="detail">
+                        <td colspan="4">
+                            <div class="detail-container"></div>
+                        </td>
+                      </tr> 
+                    </tbody>
+                </table>
+            </div>
+
+    </div>
+</div>
+{% endblock content %}

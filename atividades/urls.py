@@ -7,4 +7,7 @@ urlpatterns = [
     path('edit/<int:id>', edit),
     path('update/<int:id>', update),
     path('delete/<int:id>', destroy),
+    path("",views.homepage,name="homepage"),
+    path("minhasatividades",views.minhasatividades,name="minhasAtividades"),
+    path("proporatividade",views.proporatividade,name="proporAtividade"),
 ]
