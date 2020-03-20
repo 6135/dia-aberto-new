@@ -13,6 +13,7 @@ from inscricoes.models import *
 from notificacoes.models import *
 
 
+
 class Anfiteatro(models.Model):
     espacoid = models.OneToOneField('Espaco', models.DO_NOTHING, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
     espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
