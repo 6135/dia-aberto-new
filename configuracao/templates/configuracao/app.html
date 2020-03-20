@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+  <title>
+    Dia Aberto
+  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" src="{% static 'configuracao/imgs/logo.png' %}">
+  <link rel="stylesheet" href="{% static 'configuracao/css/bulma.css' %}">
+  <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.0.45/css/materialdesignicons.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <script src="{% static 'configuracao/js/jquery-3.4.1.min.js'%}" type="text/javascript"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js" type="text/javascript"></script>
+</head>
+<style>
+  body,
+      html {
+        min-height: 100%;
+        background-size: cover;
+        background: linear-gradient(to bottom, #ffffff, #eeeeff) no-repeat fixed
+          center center;
+      }
+      * {
+        outline: none;
+      }
+</style>
+
+<body>
+<div id="app">
+  {% include 'configuracao/navbar.html' %}
+  <div class="hero is-primary is-bold" id="top-hero">
+    <div id="top-hero-body" class="hero-body" ></div>
+  </div>
+  <div id="page-content">
+    <div class="card">
+      <div class="card-content">
+      {% block content %}
+        <!-- include the content here-->
+      {% endblock content %}
+      </div>
+    </div>   
+  </div>
+</div>
+<!--<footer class="footer">
+      <div style="float: left;">
+        (c) 2020
+      </div>
+      <div style="float: right;">
+        Designed by Grupo 9
+      </div>
+      <div style="margin: auto; width: max-content">
+        Dia Aberto
+      </div>
+</footer>-->
+</div>
+<style>
+  .footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+</style>
+</body>
+</html>
+
+  
