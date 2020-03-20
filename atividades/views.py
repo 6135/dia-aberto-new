@@ -12,6 +12,9 @@ def proporatividade(request):
 def minhasatividades(request):
 	return render(request=request,
 				template_name="atividades/listaAtividades.html",)
+def alterarAtividade(request):
+    return render(request=request,
+                  )
 #-----------------EndDiogo------------------
 
 
