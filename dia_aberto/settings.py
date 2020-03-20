@@ -35,7 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'atividades',
+    'atividades.apps.AtividadesConfig',
     'colaboradores',
     'configuracao',
     'coordenadores',
