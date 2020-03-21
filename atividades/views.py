@@ -20,14 +20,19 @@ def minhasatividades(request):
 #-----------------------David--------------------
 def inseriratividade(request):  
     if request.method == "POST":
-    	formEspaco = EspacoForm(request.POST)
-        new_formAtividade = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),estado = "Pendente")
+    	#formEspaco = EspacoForm(request.POST)
+        CoorId= Coordenador.objects.get(utilizadorid=1)
+        ProfId= Professoruniversitario.objects.get(utilizadorid=2)
+        new_formAtividade = Atividade(coordenadorutilizadorid = CoorId,
+        professoruniversitarioutilizadorid = ProfId,
+        estado = "Pendente")
         formAtividade = AtividadeForm(request.POST, instance=new_formAtividade) 
-        if formAtividade.is_valid():
+        if formAtividade.is_valid() and formEspaco.is_valid():
             new_formAtividade.save()
+            formEspaco.save
     else:  
         formAtividade = AtividadeForm()
-        #formSessao = SessaoForm()   
+        formEspaco = EspacoForm() 
     return render(request,'atividades/inseriratividade.html',{'form_Atividade': formAtividade, 'form_Espaco': formEspaco})  
-#---------------------End David
+#---------------------End David-------
     
