@@ -5,7 +5,7 @@ from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario  
 from django.http import HttpResponseRedirect
 
-#-------------Diogo---------------------
+#-------------Diogo----------------------
 
 def proporatividade(request):
 	return render(request=request,
@@ -13,26 +13,39 @@ def proporatividade(request):
 
 def minhasatividades(request):
 	return render(request=request,
-				template_name="atividades/listaAtividades.html",)
+				template_name="atividades/listaAtividades.html",
+                context={"atividades": Atividade.objects.all()})
+
+def alterarAtividade(request,id):
+    change_activity= Atividade.objects.get(id=id)
+    if request.method == 'POST':
+        print(change_activity)
+       # formAtividade = AtividadeForm(request.POST, instance=change_activity)
+        Atividade.objects
+        return HttpResponseRedirect('/thanks/')
+    else:
+        return render(request=request,
+                    template_name='atividades/proporatividade.html',
+                    context={'atividade': change_activity}
+                    )
 #-----------------EndDiogo------------------
 
 
 #-----------------------David--------------------
 def inseriratividade(request):  
     if request.method == "POST":
-    	#formEspaco = EspacoForm(request.POST)
-        CoorId= Coordenador.objects.get(utilizadorid=1)
-        ProfId= Professoruniversitario.objects.get(utilizadorid=2)
-        new_formAtividade = Atividade(coordenadorutilizadorid = CoorId,
-        professoruniversitarioutilizadorid = ProfId,
-        estado = "Pendente")
-        formAtividade = AtividadeForm(request.POST, instance=new_formAtividade) 
-        if formAtividade.is_valid() and formEspaco.is_valid():
-            new_formAtividade.save()
-            formEspaco.save
+        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
+                             professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
+                             estado = "Pendente")
+        formAtividade = AtividadeForm(request.POST, instance=new_form) 
+        if formAtividade.is_valid():
+            new_form.save()
+            return HttpResponseRedirect('/thanks/')
+        else:
+            return render(request, 'atividades/inseriratividade.html',{'form_Atividade': formAtividade, 'log': True})
     else:  
         formAtividade = AtividadeForm()
-        formEspaco = EspacoForm() 
-    return render(request,'atividades/inseriratividade.html',{'form_Atividade': formAtividade, 'form_Espaco': formEspaco})  
-#---------------------End David-------
+        #formSessao = SessaoForm()   
+    return render(request,'atividades/inseriratividade.html',{'form_Atividade': formAtividade})  
+#---------------------End David
     

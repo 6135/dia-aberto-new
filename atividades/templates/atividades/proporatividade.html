@@ -2,91 +2,128 @@
 {% block content %}
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><a href="#">Início</a></li>
-    <li><a href="#">Minhas Atividades</a></li>
-    <li class="is-active"><a href="#" aria-current="page">Propor Atividade</a></li>
+    <li><a href="{% url 'inicio' %}">Início</a></li>
+    <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
+    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page">Propor Atividade</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
+  <form method="POST" action="">
   <div class="b-steps">
-    <nav class="steps is-sucess">
-      <ul class="step-items">
-        <li class="step-item is-success is-active">
-          <a class="step-link">
-            <div class="step-marker">
-              <span class="icon">
-                <i class="mdi mdi-flask mdi-24px"></i>
-              </span>
-            </div>
-            <div class="step-details">
-              <span class="step-title">Atividade</span>
-            </div>
-          </a>
-        </li>
-      </ul>
-    </nav>
     <section class="step-content">
-     <div id="content" class="step-item">
-        <div style="padding: 1rem 2vw 0px">
-          <hr />
-          <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-            Informação de atividade
-          </h2>
-          <div class="columns">
-            <div class="column">
-              <div class="field">
-                <label class="label">Nome da Atividade</label>
-                <div class="control">
-                  <input class="input" type="text" >
-                </div>
-              </div>
-            </div>
-            <div class="column">
-              <div class="field">
-                <label class="label">Tipo de Atividade</label>
-                <div class="control is-expanded">
-                  <div class="select is-fullwidth is-empty">
-                    <select>
-                      <option style="display:none"> </option>
-                      <option>Atividade Laboratorial</option>
-                      <option>Palestra</option>
-                      <option>Tertúlia</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="columns">
-            <div class="column">
-              <div class="field">
-                <label class="label">Descrição</label>
-                <div class="control">
-                  <textarea maxlength="300" class="textarea"></textarea>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="columns">
-            <div class="column is-half">
-              <div class="field">
-                <label class="label">Público Alvo</label>
-                  <div class="control">
-                    <div class="select is-fullwidth">
-                      <select>
-                        <option style="display:none"> </option>
-                        <option>Ciencias e Tecnologia</option>
-                        <option>Economia</option>
-                        <option>Linguas e Humanidades</option>
-                      </select>
+        <div class="step-item">
+            <div style="padding: 1rem 2vw 0px">
+              <hr />
+              <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+                Informação de atividade
+              </h2>
+              <div class="columns">
+                <div class="column">
+                
+                  <div class="field">
+                    <label class="label">Nome da Atividade</label>
+                    <div class="control">
+                      <input class="input" type="text" name="nome" value="{{atividade.nome}}">
                     </div>
                   </div>
+                </div>
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Tipo de Atividade</label>
+                    <div class="control is-expanded">
+                      <div class="select is-fullwidth">
+                        <select>
+                          <option style="display:none"></option>
+                          <option>Atividade Laboratorial</option>
+                          <option>Palestra</option>
+                          <option>Tertúlia</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Descrição</label>
+                    <div class="control">
+                      <textarea maxlength="300" class="textarea" name="descricao">{{atividade.descricao}}</textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column is-half">
+                  <div class="field">
+                    <label class="label">Público Alvo</label>
+                      <div class="control">
+                        <div class="select is-fullwidth">
+                          <select>
+                            <option style="display:none"></option>
+                            <option selected>Ciencias e Tecnologia</option>
+                            <option>Economia</option>
+                            <option>Linguas e Humanidades</option>
+                          </select>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+            <hr/>
+          </div>
+        </div>
+        <div class="step-item">
+          <div style="padding: 1rem 2vw 0px;">
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;"> Adicionar Sessão </h2>
+            <div class="columns">
+              <div class="column">
+                <h1 class="title is-6 has-text-centered">Informação da Sessão</h1>
+                <div class="columns">
+                  <div class="column">
+                    <div class="field">
+                      <label class="label has-text-centered">Horário de Início</label>
+                      <div class="control is-clearfix">
+                        <div class="columns">
+                          <div class="column">
+                            <input class="input" type="number" placeholder="Min" >
+                          </div> 
+                          <div class="column">
+                            <input class="input" type="number" placeholder="Sec"> 
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+                <div class="column">
+                  <div class="field">
+                    <label class="label has-text-centered">Horário de Fim</label>
+                    <div class="control is-clearfix">
+                      <div class="columns">
+                        <div class="column">
+                          <input class="input" type="number" placeholder="Min">
+                        </div> 
+                        <div class="column">
+                          <input class="input" type="number" placeholder="Sec"> 
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
+            <div class="column is-offset-1">
+              <h1 class="title is-6 has-text-centered">Requerimentos de Espaço</h1>
+              <div class="field"></div>
+                <div class="control">
+                  <input class="input" type="text">
+                </div>
+            </div>
           </div>
-        <hr/>
-      </div>
-     </div>
+        </div>  
+        <hr>
+        </div>
+      
     </section>
     <div class="column is-8 is-offset-2">
       <div class="level">
@@ -96,16 +133,18 @@
           </a>
         </div>
         <div class="level-right">
-          <a class="button is-large is-success is-outlined" type="button">
-            <span>Próximo</span>
+          <button class="button is-large is-success is-outlined is-link" type="submit">
+            <span>Submeter</span>
             <span class="icon is-medium">
               <i class="mdi mdi-forward mdi-36px"></i>
             </span>
-          </a>
+          </button>
         </div>
       </div>
     </div>
   </div>
+  {% csrf_token %}
+</form>
 </div>
 <style>
   .label {

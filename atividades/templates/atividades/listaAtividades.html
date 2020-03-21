@@ -29,7 +29,7 @@
                                     </span>
                                 </div>
                             </th>
-                            <th style="width: 200px;">
+                            <th style="width: 300px;">
                                 Submetido a
                                 <span class="icon is-small">
                                      <i class="mdi mdi-menu-up"></i>
@@ -43,7 +43,8 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody>
+                    {% for atividade in atividades %}
+                    <tbody>      
                       <tr draggable="false">
                         <td class="chevron-cell">
                             <a role="button">
@@ -52,17 +53,29 @@
                                 </span>
                             </a>
                         </td>
-                        <td data-label="Nome">Introduçao a Python 
-                            <a href="/proporatividade">
+                        <td data-label="Nome">{{atividade.nome}} 
+                            <a href="{% url 'alterarAtividade' atividade.id %}">
                                 <span class="icon is-small">
                                     <i class="mdi mdi-circle-edit-outline mdi-22px"></i>
                                 </span>
                             </a>
                         </td>
-                        <td data-label="Submetido a">2018-04-28</td>
+                        <td data-label="Submetido a">{{atividade.datasubmissao}}</td>
+                        {% if atividade.estado == "Pendente"%}
                         <td data-label="Estado">
-                            <span class="tag next is-warning" style="width: 7 rem;font-size: small;">Pendente</span>
+                            <span class="tag next is-warning" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
                         </td>
+                        {% endif %}
+                        {% if atividade.estado == "Recusada"%}
+                        <td data-label="Estado">
+                            <span class="tag next is-danger" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
+                        </td>
+                        {% endif %}
+                        {% if atividade.estado == "Aceite"%}
+                        <td data-label="Estado">
+                            <span class="tag next is-success" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
+                        </td>
+                        {% endif %}
                       </tr> 
                       <tr class="detail">
                         <td colspan="4">
@@ -70,6 +83,7 @@
                         </td>
                       </tr> 
                     </tbody>
+                    {% endfor %}
                 </table>
             </div>
 
