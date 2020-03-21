@@ -3,7 +3,7 @@ from .forms import AtividadeForm , SessaoForm
 from .models import Atividade, Sessao, Coordenador, Professoruniversitario  
 from django.http import HttpResponseRedirect
 
-#-------------Diogo---------------------
+#-------------Diogo----------------------
 
 def proporatividade(request):
 	return render(request=request,
@@ -11,10 +11,21 @@ def proporatividade(request):
 
 def minhasatividades(request):
 	return render(request=request,
-				template_name="atividades/listaAtividades.html",)
-def alterarAtividade(request):
-    return render(request=request,
-                  )
+				template_name="atividades/listaAtividades.html",
+                context={"atividades": Atividade.objects.all()})
+
+def alterarAtividade(request,id):
+    change_activity= Atividade.objects.get(id=id)
+    if request.method == 'POST':
+        print(change_activity)
+       # formAtividade = AtividadeForm(request.POST, instance=change_activity)
+        Atividade.objects
+        return HttpResponseRedirect('/thanks/')
+    else:
+        return render(request=request,
+                    template_name='atividades/proporatividade.html',
+                    context={'atividade': change_activity}
+                    )
 #-----------------EndDiogo------------------
 
 
@@ -29,10 +40,10 @@ def inseriratividade(request):
             new_form.save()
             return HttpResponseRedirect('/thanks/')
         else:
-            return render(request, 'inseriratividade.html',{'form_Atividade': formAtividade, 'log': True})
+            return render(request, 'atividades/inseriratividade.html',{'form_Atividade': formAtividade, 'log': True})
     else:  
         formAtividade = AtividadeForm()
         #formSessao = SessaoForm()   
-    return render(request,'inseriratividade.html',{'form_Atividade': formAtividade})  
+    return render(request,'atividades/inseriratividade.html',{'form_Atividade': formAtividade})  
 #---------------------End David
     
