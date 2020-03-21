@@ -3,35 +3,43 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Utilizador(models.Model):
-    nome = models.CharField(max_length=128)
-    email = models.EmailField()
-    telefone = PhoneNumberField()
-    password = models.CharField(max_length=255)
-    username = models.CharField(max_length=255)
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
+    email = models.CharField(db_column='Email', max_length=255)  # Field name made lowercase.
+    telefone = models.CharField(db_column='Telefone', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    password = models.CharField(db_column='Password', max_length=255)  # Field name made lowercase.
+    username = models.CharField(db_column='UserName', max_length=255)  # Field name made lowercase.
 
     class Meta:
+        managed = False
         db_table = 'Utilizador'
 
 
-class Administrador(Utilizador):
-    gabinete = models.CharField(max_length=255, blank=True, null=True)
+
+class Administrador(models.Model):
+    utilizadorid = models.OneToOneField('Utilizador', models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
+    gabinete = models.CharField(db_column='Gabinete', max_length=255, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
+        managed = False
         db_table = 'Administrador'
 
 
-class Participante(Utilizador):
+
+
+class Participante(models.Model):
+    utilizadorid = models.OneToOneField('Utilizador', models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
+
     class Meta:
+        managed = False
         db_table = 'Participante'
 
 
 class Professoruniversitario(models.Model):
-    # Field name made lowercase.
-    utilizadorid = models.OneToOneField(
-        Utilizador, models.CASCADE, db_column='UtilizadorID', primary_key=True)
-    # Field name made lowercase.
-    gabinete = models.CharField(
-        db_column='Gabinete', max_length=255, blank=True, null=True)
+    utilizadorid = models.OneToOneField('Utilizador', models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
+    gabinete = models.CharField(db_column='Gabinete', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    departamento = models.ForeignKey(Departamento, models.DO_NOTHING, db_column='departamento')
 
     class Meta:
+        managed = False
         db_table = 'ProfessorUniversitario'

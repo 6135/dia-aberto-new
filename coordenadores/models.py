@@ -8,12 +8,10 @@
 from django.db import models
 
 class Coordenador(models.Model):
-    # Field name made lowercase.
-    utilizadorid = models.OneToOneField(
-        'utilizadores.Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
-    # Field name made lowercase.
-    gabinete = models.CharField(
-        db_column='Gabinete', max_length=255, blank=True, null=True)
+    utilizadorid = models.OneToOneField('Utilizador', models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
+    gabinete = models.CharField(db_column='Gabinete', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    unidadeorganicaid = models.ForeignKey('Unidadeorganica', models.DO_NOTHING, db_column='unidadeOrganicaID')  # Field name made lowercase.
 
     class Meta:
+        managed = False
         db_table = 'Coordenador'
