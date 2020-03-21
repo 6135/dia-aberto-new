@@ -16,6 +16,8 @@ def minhasatividades(request):
 
 def alterarAtividade(request,id):
     change_activity= Atividade.objects.get(id=id)
+    tipos=Atividade.objects.values('tipo')
+    print(tipos)
     if request.method == 'POST':
         print(change_activity)
        # formAtividade = AtividadeForm(request.POST, instance=change_activity)

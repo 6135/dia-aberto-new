@@ -65,13 +65,11 @@
                         <td data-label="Estado">
                             <span class="tag next is-warning" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
                         </td>
-                        {% endif %}
-                        {% if atividade.estado == "Recusada"%}
+                        {% elif atividade.estado == "Recusada" %}
                         <td data-label="Estado">
                             <span class="tag next is-danger" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
                         </td>
-                        {% endif %}
-                        {% if atividade.estado == "Aceite"%}
+                        {% elif atividade.estado == "Aceite"%}
                         <td data-label="Estado">
                             <span class="tag next is-success" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
                         </td>
