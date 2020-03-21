@@ -1,5 +1,6 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
+from configuracao.models import Departamento
 
 
 class Utilizador(models.Model):
