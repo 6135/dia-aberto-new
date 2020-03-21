@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , SessaoForm 
-from .models import Atividade, Sessao, Coordenador, Professoruniversitario  
+from .forms import AtividadeForm , SessaoForm, EspacoForm 
+from .models import Atividade, Espaco, Sessao
+from coordenadores.models import Coordenador
+from utilizadores.models import Professoruniversitario  
 from django.http import HttpResponseRedirect
 
 #-------------Diogo----------------------
@@ -42,10 +44,10 @@ def inseriratividade(request):
             new_form.save()
             return HttpResponseRedirect('/thanks/')
         else:
-            return render(request, 'atividades/inseriratividade.html',{'form_Atividade': formAtividade, 'log': True})
+            return render(request, 'atividades/proporatividade.html',{'atividade': formAtividade})
     else:  
         formAtividade = AtividadeForm()
         #formSessao = SessaoForm()   
-    return render(request,'atividades/inseriratividade.html',{'form_Atividade': formAtividade})  
+    return render(request,'atividades/proporatividade.html',{'atividade': formAtividade})  
 #---------------------End David
     

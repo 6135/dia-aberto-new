@@ -9,50 +9,37 @@ from django.db import models
 
 
 class Tarefa(models.Model):
-    # Field name made lowercase.
-    id = models.AutoField(db_column='ID', primary_key=True)
-    # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255)
-    # Field name made lowercase.
-    concluida = models.IntegerField(db_column='Concluida')
-    # Field name made lowercase.
-    descricao = models.CharField(db_column='Descricao', max_length=255)
-    # Field name made lowercase.
-    coordenadorutilizadorid = models.ForeignKey(
-        'coordenadores.Coordenador', models.CASCADE, db_column='CoordenadorUtilizadorID')
-    # Field name made lowercase.
-    colaboradorutilizadorid = models.ForeignKey(
-        'Colaborador', models.CASCADE, db_column='ColaboradorUtilizadorID')
-    # Field name made lowercase.
-    atividadeid = models.ForeignKey(
-        'atividades.Atividade', models.CASCADE, db_column='AtividadeID')
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
+    concluida = models.IntegerField(db_column='Concluida')  # Field name made lowercase.
+    descricao = models.CharField(db_column='Descricao', max_length=255)  # Field name made lowercase.
+    coordenadorutilizadorid = models.ForeignKey(Coordenador, models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
+    colaboradorutilizadorid = models.ForeignKey(Colaborador, models.DO_NOTHING, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
+    atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
 
     class Meta:
+        managed = False
         db_table = 'Tarefa'
 
 
 class Colaborador(models.Model):
-    # Field name made lowercase.
-    utilizadorid = models.OneToOneField(
-        'utilizadores.Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
-    # Field name made lowercase.
-    curso = models.CharField(db_column='Curso', max_length=255)
+    utilizadorid = models.OneToOneField('Utilizador', models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
+    curso = models.CharField(db_column='Curso', max_length=255)  # Field name made lowercase.
 
     class Meta:
+        managed = False
         db_table = 'Colaborador'
 
 
+
+
 class Colaboradorhorario(models.Model):
-    # Field name made lowercase.
-    colaboradorutilizadorid = models.OneToOneField(
-        Colaborador, models.CASCADE, db_column='ColaboradorUtilizadorID', primary_key=True)
-    # Field name made lowercase.
-    horarioid = models.ForeignKey(
-        'configuracao.Horario', models.CASCADE, db_column='HorarioID')
-    # Field name made lowercase.
-    horarioinicio = models.DateField(db_column='HorarioInicio')
+    colaboradorutilizadorid = models.OneToOneField(Colaborador, models.DO_NOTHING, db_column='ColaboradorUtilizadorID', primary_key=True)  # Field name made lowercase.
+    horarioid = models.ForeignKey('Horario', models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
+    horarioinicio = models.DateField(db_column='HorarioInicio')  # Field name made lowercase.
 
     class Meta:
+        managed = False
         db_table = 'ColaboradorHorario'
-        unique_together = (
-            ('colaboradorutilizadorid', 'horarioid', 'horarioinicio'),)
+        unique_together = (('colaboradorutilizadorid', 'horarioid', 'horarioinicio'),)
+
