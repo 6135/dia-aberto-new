@@ -9,6 +9,7 @@
 </nav>
 <div style="padding: 3rem 2vw 1rem">
   <form method="POST" action="">
+    {% csrf_token %}
   <div class="b-steps">
     <section class="step-content">
         <div class="step-item">
@@ -73,7 +74,7 @@
                   <div class="field">
                     <label class="label">Colaboradores Necessarios:</label>
                       <div class="control">
-                      <input class="input" type="Number" name="nome" value="{{atividade.nrcolaboradoresnecessario}}">
+                      <input class="input" type="Number" name="nrcolaboradoresnecessario" value="{{atividade.nrcolaboradoresnecessario}}">
                     </div>
                   </div>
                 </div>
@@ -151,7 +152,6 @@
       </div>
     </div>
   </div>
-  {% csrf_token %}
 </form>
 </div>
 <style>

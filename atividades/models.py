@@ -22,7 +22,7 @@ class Anfiteatro(models.Model):
         managed = False
         db_table = 'Anfiteatro'
 
-
+   
 class Arlivre(models.Model):
     espacoid = models.OneToOneField('Espaco', models.DO_NOTHING, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
     espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
@@ -49,6 +49,9 @@ class Atividade(models.Model):
     class Meta:
         managed = False
         db_table = 'Atividade'
+
+    def get_fields(self):
+        return [(field.name, field.value_to_string(self)) for field in Atividade._meta.fields]
 
 
 class Atividadesessao(models.Model):

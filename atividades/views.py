@@ -17,13 +17,16 @@ def minhasatividades(request):
                 context={"atividades": Atividade.objects.all()})
 
 def alterarAtividade(request,id):
-    change_activity= Atividade.objects.get(id=id)
-    tipos=Atividade.objects.values('tipo')
-    print(tipos)
+    change_activity= Atividade.objects.get(id=id)   
+    
     if request.method == 'POST':
-        print(change_activity)
-       # formAtividade = AtividadeForm(request.POST, instance=change_activity)
-        return HttpResponseRedirect('/thanks/')
+        change_activity.estado='Pendente'
+        changed_form=AtividadeForm(request.POST,instance=change_activity)
+        if changed_form.is_valid():
+            changed_form.save() 
+            return HttpResponseRedirect('/thanks/')
+        else:
+            return HttpResponseRedirect('/didntwork/')
     else:
         return render(request=request,
                     template_name='atividades/proporatividade.html',
