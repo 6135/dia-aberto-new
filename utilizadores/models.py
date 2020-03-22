@@ -32,6 +32,6 @@ class Professoruniversitario(models.Model):
     # Field name made lowercase.
     gabinete = models.CharField(
         db_column='Gabinete', max_length=255, blank=True, null=True)
-
+    departamento = models.ForeignKey('configuracao.Departamento', models.DO_NOTHING, db_column='departamento')
     class Meta:
         db_table = 'ProfessorUniversitario'

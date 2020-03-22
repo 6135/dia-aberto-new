@@ -155,7 +155,7 @@ class Departamento(models.Model):
         'atividades.Atividade', models.CASCADE, db_column='AtividadeID')
     # Field name made lowercase.
     unidadeorganicaid = models.ForeignKey(
-        'atividades.Unidadeorganica', models.CASCADE, db_column='UnidadeOrganicaID')
+        'Unidadeorganica', models.CASCADE, db_column='UnidadeOrganicaID')
     # Field name made lowercase.
     nome = models.CharField(
         db_column='Nome', max_length=255, blank=True, null=True)
@@ -201,3 +201,14 @@ class Horario(models.Model):
 
     class Meta:
         db_table = 'Horario'
+
+        
+class Unidadeorganica(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    sigla = models.CharField(db_column='Sigla', max_length=255)  # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
+    campusid = models.ForeignKey(Campus, models.DO_NOTHING, db_column='CampusID')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'UnidadeOrganica'
