@@ -7,11 +7,11 @@ from django.http import HttpResponseRedirect
 
 def proporatividade(request):
 	return render(request=request,
-				  template_name="atividades/proporatividade.html",)
+				  template_name="proporatividade.html",)
 
 def minhasatividades(request):
 	return render(request=request,
-				template_name="atividades/listaAtividades.html",)
+				  template_name="listaAtividades.html",)
 #-----------------EndDiogo------------------
 
 
