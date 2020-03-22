@@ -2,8 +2,7 @@ from django.forms import ModelForm, DateTimeInput, DateInput
 from .models import *
 
 class DateTimeWidget(DateTimeInput):
-    class Media:
-        js = ('static/configuracao/js/jquery-ui-timepicker-addon.js',)
+    input_type = 'datetime-local'
     def __init__(self, attrs=None, format=None):
         if attrs is not None:
             self.attrs = attrs.copy()
