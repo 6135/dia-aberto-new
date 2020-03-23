@@ -6,14 +6,14 @@
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
               <li><a href="#">Início</a></li>
-              <li class="is-active"><a href="#" aria-current="page">Minhas Atividades</a></li>
+              <li class="is-active"><a href="#" aria-current="page">Dias Abertos</a></li>
             </ul>
           </nav>
-        <a href="/proporatividade" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
+        <a href="{% url 'novoDia'%}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
-            <span>Propor nova atividade</span>
+            <span>Criar novo Dia Aberto</span>
         </a>
         <div class="table "></div>
             <div class="table-wrapper">
@@ -23,27 +23,27 @@
                             <th width="40px"></th>
                             <th  style="width: 300px;">
                                 <div class="th-wrap">
-                                    Nome
+                                    Ano
                                     <span class="icon is-small">
                                         <i class="mdi mdi-menu-up"></i>
                                     </span>
                                 </div>
                             </th>
                             <th style="width: 300px;">
-                                Submetido a
+                                Dia Inicio
                                 <span class="icon is-small">
                                      <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
                             <th>
-                                Estado
+                                Dia Fim
                                 <span class="icon is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
                         </tr>
                     </thead>
-                    {% for atividade in atividades %}
+                    {% for diaAberto in diaabertos %}
                     <tbody>      
                       <tr draggable="false">
                         <td class="chevron-cell">
@@ -53,27 +53,16 @@
                                 </span>
                             </a>
                         </td>
-                        <td data-label="Nome">{{atividade.nome}} 
-                            <a href="{% url 'alterarAtividade' atividade.id %}">
+                        <td data-label="Ano">{{diaAberto.ano}} 
+                            <a href="{% url 'editarDia' diaAberto.id %}">
                                 <span class="icon is-small">
                                     <i class="mdi mdi-circle-edit-outline mdi-22px"></i>
                                 </span>
                             </a>
                         </td>
-                        <td data-label="Submetido a">{{atividade.dataalteracao}}</td>
-                        {% if atividade.estado == "Pendente"%}
-                        <td data-label="Estado">
-                            <span class="tag next is-warning" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
+                        <td data-label="Dia Fim">{{diaAberto.datadiaabertoinicio}}</td>
+                        <td data-label="Estado">{{diaAberto.datadiaabertofim}}</td>
                         </td>
-                        {% elif atividade.estado == "Recusada" %}
-                        <td data-label="Estado">
-                            <span class="tag next is-danger" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
-                        </td>
-                        {% elif atividade.estado == "Aceite"%}
-                        <td data-label="Estado">
-                            <span class="tag next is-success" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
-                        </td>
-                        {% endif %}
                       </tr> 
                       <tr class="detail">
                         <td colspan="4">

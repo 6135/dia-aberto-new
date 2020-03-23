@@ -1,6 +1,6 @@
 from django.db import models
 from phonenumber_field.modelfields import PhoneNumberField
-
+from datetime import datetime
 
 class Utilizador(models.Model):
     nome = models.CharField(max_length=128)
@@ -15,7 +15,9 @@ class Utilizador(models.Model):
 
 class Administrador(Utilizador):
     gabinete = models.CharField(max_length=255, blank=True, null=True)
-
+        # Field name made lowercase.
+    utilizadorid = models.OneToOneField(
+        Utilizador, models.CASCADE, db_column='UtilizadorID', primary_key=True)
     class Meta:
         db_table = 'Administrador'
 

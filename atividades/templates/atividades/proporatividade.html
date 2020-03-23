@@ -24,7 +24,7 @@
                   <div class="field">
                     <label class="label">Nome da Atividade</label>
                     <div class="control">
-                      <input class="input" type="text" name="nome" value="{{atividade.nome}}">
+                      {{form.nome}}
                     </div>
                   </div>
                 </div>
@@ -33,12 +33,7 @@
                     <label class="label">Tipo de Atividade</label>
                     <div class="control is-expanded">
                       <div class="select is-fullwidth">
-                        <select>
-                          <option style="display:none"></option>
-                          <option>Atividade Laboratorial</option>
-                          <option>Palestra</option>
-                          <option>Tertúlia</option>
-                        </select>
+                        {{form.tipo}}
                       </div>
                     </div>
                   </div>
@@ -49,7 +44,7 @@
                   <div class="field">
                     <label class="label">Descrição</label>
                     <div class="control">
-                      <textarea maxlength="300" class="textarea" name="descricao">{{atividade.descricao}}</textarea>
+                      {{form.descricao}}
                     </div>
                   </div>
                 </div>
@@ -60,12 +55,7 @@
                     <label class="label">Público Alvo</label>
                       <div class="control">
                         <div class="select is-fullwidth">
-                          <select>
-                            <option style="display:none"></option>
-                            <option selected>Ciencias e Tecnologia</option>
-                            <option>Economia</option>
-                            <option>Linguas e Humanidades</option>
-                          </select>
+                            {{form.publicoalvo}}
                         </div>
                       </div>
                   </div>
@@ -74,8 +64,8 @@
                   <div class="field">
                     <label class="label">Colaboradores Necessarios:</label>
                       <div class="control">
-                      <input class="input" type="Number" name="nrcolaboradoresnecessario" value="{{atividade.nrcolaboradoresnecessario}}">
-                    </div>
+                        {{form.nrcolaboradoresnecessario}}
+                       </div>
                   </div>
                 </div>
               </div>
@@ -84,55 +74,64 @@
         </div>
         <div class="step-item">
           <div style="padding: 1rem 2vw 0px;">
-            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;"> Adicionar Sessão </h2>
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Adicionar Sessão</h2>
             <div class="columns">
               <div class="column">
                 <h1 class="title is-6 has-text-centered">Informação da Sessão</h1>
-                <div class="columns">
-                  <div class="column">
-                    <div class="field">
-                      <label class="label has-text-centered">Horário de Início</label>
-                      <div class="control is-clearfix">
-                        <div class="columns">
-                          <div class="column">
-                            <input class="input" type="number" placeholder="Min" >
-                          </div> 
-                          <div class="column">
-                            <input class="input" type="number" placeholder="Sec"> 
+                {% for session in activity_sessions %}
+                <div class="columns">         
+                    <div class="column">
+                      <div class="field" >
+                        <label class="label has-text-centered">Horário</label>
+                        <div class="control">
+                          <div class="select is-fullwidth" >
+                            <select name="horarioid{{sessionid}}">
+                              <option value="{{session.sessaoid.horarioid.id}}">{{session.sessaoid.horarioid.inicio}} até {{session.sessaoid.horarioid.fim}}</option>
+                              {% for schedule in schedules %}
+                              <option value="{{schedule.id}}">{{schedule.inicio}} até {{schedule.fim}}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="column">
+                      <div class="field">
+                        <label class="label">Maximo de Participantes:</label>
+                          <div class="control">
+                            <input class="input" type="Number" name="participantesmaximo" value="{{session.sessaoid.participantesmaximo}}">
+                           </div>
+                      </div>
+                    </div>
+                    <div class="column">
+                      <div class="field" >
+                        <label class="label has-text-centered">Espaço</label>
+                        <div class="control">
+                          <div class="select is-fullwidth" >
+                            <select name="espaco{{sessionid}}">
+                              <option value="{{session.sessaoid.espacoid}}">{{session.sessaoid.espacoid.nome}}</option>
+                              {% for espaco in espacos %}
+                              <option value="{{espaco.id}}">{{espaco.nome}}</option>
+                              {% endfor %}
+                            </select>
                           </div>
                         </div>
                       </div>
                     </div>
                 </div>
-                <div class="column">
-                  <div class="field">
-                    <label class="label has-text-centered">Horário de Fim</label>
-                    <div class="control is-clearfix">
-                      <div class="columns">
-                        <div class="column">
-                          <input class="input" type="number" placeholder="Min">
-                        </div> 
-                        <div class="column">
-                          <input class="input" type="number" placeholder="Sec"> 
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                {% endfor %}
             </div>
             <div class="column is-offset-1">
               <h1 class="title is-6 has-text-centered">Requerimentos de Espaço</h1>
               <div class="field"></div>
                 <div class="control">
-                  <input class="input" type="text">
+                  <input class="input" type="text" name="material">
                 </div>
             </div>
           </div>
         </div>  
         <hr>
-        </div>
-      
+        </div>     
     </section>
     <div class="column is-8 is-offset-2">
       <div class="level">

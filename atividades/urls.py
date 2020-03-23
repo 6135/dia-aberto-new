@@ -5,6 +5,7 @@ urlpatterns = [
     path("minhasatividades",views.minhasatividades,name="minhasAtividades"),
     path("proporatividade",views.proporatividade,name="proporAtividade"),
     path('inseriratividade', views.inseriratividade, name= "inserirAtividade"),
+    path('alteraratividade/<int:id>',views.alterarAtividade,name='alterarAtividade'),
     path('inserirsessao/<id>',views.novasessao,name='inserirSessao'),
     path('alteraratividade/<id>',views.alterarAtividade,name='alterarAtividade'),
 
