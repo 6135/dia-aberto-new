@@ -65,7 +65,7 @@ class Diaaberto(models.Model):
     enderecopaginaweb = models.CharField(
         db_column='EnderecoPaginaWeb', max_length=255)
     # Field name made lowercase.
-    descricao = models.CharField(db_column='Descricao', max_length=255)
+    descricao = models.TextField(db_column='Descricao')
     # Field name made lowercase.
     emaildiaaberto = models.CharField(
         db_column='EmailDiaAberto', max_length=255)

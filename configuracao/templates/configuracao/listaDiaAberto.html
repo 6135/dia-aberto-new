@@ -1,0 +1,79 @@
+{% extends 'configuracao/app.html' %}
+{% block content %}
+<div class="columns">
+    <div class="column is-3"></div>
+    <div class="column">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="#">Início</a></li>
+              <li class="is-active"><a href="#" aria-current="page">Dias Abertos</a></li>
+            </ul>
+          </nav>
+        <a href="{% url 'novoDia'%}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
+            <span class="icon is-small">
+                <i class="mdi mdi-plus"></i>
+            </span>
+            <span>Criar novo Dia Aberto</span>
+        </a>
+        <div class="table "></div>
+            <div class="table-wrapper">
+                <table class="table has-mobile-cards is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th width="40px"></th>
+                            <th  style="width: 300px;">
+                                <div class="th-wrap">
+                                    Ano
+                                    <span class="icon is-small">
+                                        <i class="mdi mdi-menu-up"></i>
+                                    </span>
+                                </div>
+                            </th>
+                            <th style="width: 300px;">
+                                Dia Inicio
+                                <span class="icon is-small">
+                                     <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>
+                            <th>
+                                Dia Fim
+                                <span class="icon is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>
+                        </tr>
+                    </thead>
+                    {% for diaAberto in diaabertos %}
+                    <tbody>      
+                      <tr draggable="false">
+                        <td class="chevron-cell">
+                            <a role="button">
+                                <span class="icon is-expanded">
+                                    <i class="mdi mdi-chevron-right mdi-24px"></i>
+                                </span>
+                            </a>
+                        </td>
+                        <td data-label="Ano">{{diaAberto.ano}} 
+                            <a href="{% url 'editarDia' diaAberto.id %}">
+                                <span class="icon is-small">
+                                    <i class="mdi mdi-circle-edit-outline mdi-22px"></i>
+                                </span>
+                            </a>
+                        </td>
+                        <td data-label="Dia Fim">{{diaAberto.datadiaabertoinicio}}</td>
+                        <td data-label="Estado">{{diaAberto.datadiaabertofim}}</td>
+                        </td>
+                      </tr> 
+                      <tr class="detail">
+                        <td colspan="4">
+                            <div class="detail-container"></div>
+                        </td>
+                      </tr> 
+                    </tbody>
+                    {% endfor %}
+                </table>
+            </div>
+
+    </div>
+</div>
+{% endblock content %}

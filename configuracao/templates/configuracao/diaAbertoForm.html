@@ -6,7 +6,7 @@
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
     <li><a href="{% url 'adminpage' %}">Administrador</a></li>
-    <li class="is-active"><a href="{% url 'editardatas' %}" aria-current="page">Configuracao do Dia Aberto</a></li>
+    <li class="is-active"><a href="" aria-current="page">Configuracao do Dia Aberto</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
@@ -27,7 +27,7 @@
                   <div class="field">
                     <label class="label">Endereço</label>
                     <div class="control">
-                      <input class="input" type="text" name="enderecopaginaweb" value='{{form.enderecopaginaweb.value}}'>
+                      {{form.enderecopaginaweb}}
                     </div>
                   </div>
                 </div>
@@ -36,7 +36,7 @@
                   <div class="field">
                     <label class="label">Email do Dia Aberto</label>
                     <div class="control">
-                      <input class="input" type="text" name="emaildiaaberto" value='{{form.emaildiaaberto.value}}'>
+                    {{form.emaildiaaberto}}
                     </div>
                   </div>
                 </div>
@@ -67,7 +67,7 @@
                   <div class="field">
                     <label class="label">Ano</label>
                     <div class="control">
-                      <input class="input" type="text" name="ano" value='{{form.ano.value}}'>
+                      {{form.ano}}
                     </div>
                   </div>
                 </div>

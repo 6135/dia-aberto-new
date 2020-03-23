@@ -6,4 +6,5 @@ urlpatterns = [
     path("proporatividade",views.proporatividade,name="proporAtividade"),
     path('inseriratividade', views.inseriratividade, name= "inserirAtividade"),
     path('alteraratividade/<int:id>',views.alterarAtividade,name='alterarAtividade'),
+
 ]
