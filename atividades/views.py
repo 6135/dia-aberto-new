@@ -48,7 +48,6 @@ def inseriratividade(request):
         formAtividade = AtividadeForm(request.POST, instance=new_form) 
         if formAtividade.is_valid() and form_Sessao.is_valid() and form_horario.is_valid():
             new_form.save()
-            
             sessao = form_Sessao.save(commit= False)
             sessao.vagas= sessao.participantesmaximo
             sessao.ninscritos= 0
@@ -57,11 +56,11 @@ def inseriratividade(request):
             sessao.save()
             return HttpResponseRedirect('/thanks/')
         else:
-            return render(request, 'atividades/inseriratividade.html',{'atividade': formAtividade , 'sessao': form_Sessao, 'horario':Horario.objects.all(), 'horat': form_horario})
+            return render(request, 'atividades/inseriratividade.html',{'atividade': formAtividade , 'sessao': form_Sessao,'horario': form_horario})
     else:  
         formAtividade = AtividadeForm()
         form_Sessao= SessaoForm()
         form_horario= HorarioForm()  
-    return render(request,'atividades/inseriratividade.html',{'atividade': formAtividade,'sessao': form_Sessao,'horario':Horario.objects.all(), 'horat': form_horario})  
+    return render(request,'atividades/inseriratividade.html',{'atividade': formAtividade,'sessao': form_Sessao,'horario': form_horario})  
 #---------------------End David
     

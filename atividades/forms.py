@@ -20,7 +20,7 @@ class SessaoForm(ModelForm):
 class HorarioForm(ModelForm):  
     class Meta:  
         model = Horario
-        fields = '__all__'
+        exclude= ["id"]
 
 class EspacoForm(ModelForm):  
     class Meta:  
