@@ -1,22 +1,19 @@
-from django import forms  
-from .models import Atividade, Sessao, Horario, Espaco  
+from django.forms import * 
+from .models import Atividade, Sessao
 
-class AtividadeForm(forms.ModelForm):  
+class AtividadeForm(ModelForm):  
     class Meta:  
         model = Atividade  
         exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid']
+        widgets = {
+            'nome': TextInput(attrs={'class': 'input'}),
+            'tipo': Select(),
+            'descricao': Textarea(attrs={'class':'textarea'}),
+            'publicoalvo': Select(),
+            'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input'}),
+        }
 
-class SessaoForm(forms.ModelForm):  
+class SessaoForm(ModelForm):  
     class Meta:  
         model = Sessao  
-        exclude = ["espacoid", "horarioid","vagas","ninscritos"]
-
-class HorarioForm(forms.ModelForm):  
-    class Meta:  
-        model = Horario
-        exclude = ["id", "participantesmaximo"]  
-
-class EspacoForm(forms.ModelForm):  
-    class Meta:  
-        model = Espaco
-        fields = '__all__'
+        exclude = ["espacoid", "horarioid","vagas","ninscritos"] 

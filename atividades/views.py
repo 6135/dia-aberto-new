@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , SessaoForm, EspacoForm 
-from .models import Atividade, Espaco, Sessao
+from .forms import AtividadeForm , SessaoForm
+from .models import *
+from configuracao.models import Horario
 from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario  
 from django.http import HttpResponseRedirect
@@ -18,7 +19,11 @@ def minhasatividades(request):
                 context={"atividades": Atividade.objects.all()})
 
 def alterarAtividade(request,id):
-    change_activity= Atividade.objects.get(id=id)   
+    change_activity= Atividade.objects.get(id=id)
+    schedules=Horario.objects.all()
+    activity_sessions=Atividadesessao.objects.filter(atividadeid=id)
+    espacos=Espaco.objects.all()
+    #print(activity_sessions.sessaoid.espacoid.nome)
     changed_form=AtividadeForm(instance=change_activity)
     if request.method == 'POST':
         change_activity.estado='Pendente'
@@ -27,11 +32,10 @@ def alterarAtividade(request,id):
             changed_form.save()
             change_activity.dataalteracao = datetime.now()
             change_activity.save()
-            return HttpResponseRedirect('/thanks/')
-            
+            return HttpResponseRedirect('/minhasatividades')          
     return render(request=request,
                     template_name='atividades/proporatividade.html',
-                    context={'atividade': change_activity,'form': changed_form}
+                    context={'atividade': change_activity,'form': changed_form,'schedules':schedules,'activity_sessions':activity_sessions,'espacos':espacos}
                     )
 #-----------------EndDiogo------------------
 

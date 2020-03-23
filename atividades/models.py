@@ -36,10 +36,11 @@ class Atividade(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
     descricao = models.TextField(db_column='Descricao')  # Field name made lowercase.
-    publicoalvo = models.CharField(db_column='Publicoalvo', max_length=255)  # Field name made lowercase.
+    publicosalvo = (("Ciencias e Tecnologia", "Ciências e Tecnologia"),("Linguas e Humanidades", "Linguas e Humanidades"),("Economia", "Economia"))
+    publicoalvo = models.CharField(db_column='Publicoalvo', max_length=255, choices=publicosalvo,blank=False,default='Economia')  # Field name made lowercase.
     nrcolaboradoresnecessario = models.IntegerField(db_column='nrColaboradoresNecessario')  # Field name made lowercase.
     tipos = (("Atividade Laboratorial", "Atividade Laboratorial"),("Tertulia", "Tertulia"),("Palestra", "Palestra"))
-    tipo = models.CharField(db_column='Tipo', max_length=128, choices=tipos )  # Field name made lowercase.
+    tipo = models.CharField(db_column='Tipo', max_length=128, choices=tipos,blank=False,default='Palestra')  # Field name made lowercase.
     estado = models.CharField(db_column='Estado', max_length=64, blank=True, null=True)  # Field name made lowercase.
     coordenadorutilizadorid = models.ForeignKey('coordenadores.Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
     professoruniversitarioutilizadorid = models.ForeignKey('utilizadores.Professoruniversitario', models.DO_NOTHING, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
