@@ -41,6 +41,7 @@ def alterarAtividade(request,id):
 #-----------------------David--------------------
 def inseriratividade(request):  
     if request.method == "POST":
+
         form_Sessao= SessaoForm(request.POST)
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
@@ -59,6 +60,8 @@ def inseriratividade(request):
             sessao.espacoid= Espaco.objects.get(id=request.POST.__getitem__('idespaco'))
             sessao.horarioid = Horario.objects.get(id=request.POST.__getitem__('idhorario'))
             sessao.save()
+            new_as= Atividadesessao(atividadeid= Atividade.objects.all().order_by('-id').first(), sessaoid= Sessao.objects.all().order_by('-id').first())
+            new_as.save()
             return HttpResponseRedirect('/thanks/')
         else:
             return render(request, 'atividades/inseriratividade.html',{'atividade': formAtividade , 'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all(),'materiais': form_Materiais})
@@ -67,5 +70,36 @@ def inseriratividade(request):
         form_Sessao= SessaoForm()
         form_Materiais= MateriaisForm() 
     return render(request,'atividades/inseriratividade.html',{'atividade': formAtividade,'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all, 'materiais': form_Materiais})  
+
+
+
+def novasessao(request,id):  
+    if request.method == "POST":
+
+        form_Sessao= SessaoForm(request.POST)
+        if  form_Sessao.is_valid(): 
+            sessao = form_Sessao.save(commit= False)
+            sessao.vagas= sessao.participantesmaximo
+            sessao.ninscritos= 0
+            sessao.espacoid= Espaco.objects.get(id=request.POST.__getitem__('idespaco'))
+            sessao.horarioid = Horario.objects.get(id=request.POST.__getitem__('idhorario'))
+            sessao.save()
+            new_as= Atividadesessao(atividadeid= id, sessaoid= Sessao.objects.all().order_by('-id').first())
+            new_as.save()
+            return HttpResponseRedirect('/')
+        else:
+            return render(request, 'atividades/sessao.html',{'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all()})
+    else:  
+        form_Sessao= SessaoForm()
+    return render(request,'atividades/sessao.html',{'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all})  
+
+
+
+
+
+
+
+
+
 #---------------------End David
     
