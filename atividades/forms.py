@@ -1,5 +1,9 @@
-from django.forms import ModelForm,CheckboxInput
+from django.forms import ModelForm,CheckboxInput, Form
 from .models import Atividade, Sessao, Horario, Espaco  
+from django.forms.fields import DateField, TypedChoiceField
+
+
+
 
 class CheckBoxInputCustom(CheckboxInput):
     input_type = 'checkbox'
@@ -17,10 +21,9 @@ class SessaoForm(ModelForm):
         model = Sessao  
         exclude = ["espacoid", "horarioid", "ninscritos", "vagas"]
 
-class HorarioForm(ModelForm):  
-    class Meta:  
-        model = Horario
-        exclude= ["id"]
+class HorarioSessaoForm(Form):
+    inicio= ChoiceField(choices=Horario.objects.only("inicio"), required=True)  
+    fim= Field(choices=Horario.objects.only("fim"), required=True)
 
 class EspacoForm(ModelForm):  
     class Meta:  

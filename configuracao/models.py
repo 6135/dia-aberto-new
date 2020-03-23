@@ -196,10 +196,8 @@ class Idioma(models.Model):
 class Horario(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
-    iniciotipos = (("09:00:00", "09:00:00"),("09:30:00", "09:30:00"),("10:00:00", "10:00:00"),("10:30:00", "10:30:00"),("11:00:00", "11:00:00"),("11:30:00", "11:30:00"),("12:00:00", "12:00:00"))
-    inicio = models.TimeField(db_column='Inicio', choices=iniciotipos)  # Field name made lowercase.
-    fimtipos = (("09:30:00", "09:30:00"),("10:00:00", "10:00:00"),("10:30:00", "10:30:00"),("11:00:00", "11:00:00"),("11:30:00", "11:30:00"),("12:00:00", "12:00:00"),("12:30:00", "12:30:00"),)
-    fim = models.TimeField(db_column='Fim', choices=fimtipos)  # Field name made lowercase.
+    inicio = models.TimeField(db_column='Inicio')  # Field name made lowercase.
+    fim = models.TimeField(db_column='Fim')  # Field name made lowercase.
 
     class Meta:
         db_table = 'Horario'
