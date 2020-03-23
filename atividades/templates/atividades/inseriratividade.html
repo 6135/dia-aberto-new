@@ -84,10 +84,27 @@ Sessao
 <br>
 <br>
 
-horario
-{{horario.as_p}}
+
+ <label for="hor">Horario:</label>
+  <select id="hor" name="idhorario">
+    {% for hor in horario  %}
+    <option value="{{hor.id}}">{{hor.inicio}} {{hor.fim}}</option>
+    {% endfor %}
+  </select>
 <br>
 <br>
+<label for="espaco">Espaço:</label>
+  <select id="espaco" name="idespaco">
+    {% for esp in espaco  %}
+    <option value="{{esp.id}}">{{esp.edificio}} {{esp.andar}} {{esp.nome}}</option>
+    {% endfor %}
+  </select>
+
+<br>
+<br>
+<label for="materias">Materiais Extra Necessarios:</label>
+{{materiais.nome}}
+
 <br>
 <br>
 <br>

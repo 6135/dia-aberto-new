@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , SessaoForm, EspacoForm 
-from .models import Atividade, Espaco, Sessao, Horario, Atividadesessao
+from .forms import AtividadeForm , SessaoForm
+from .models import Atividade, Espaco, Sessao, Atividadesessao
 from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario  
-from atividades.forms import HorarioForm
-from configuracao.models import Diaaberto
+from configuracao.models import Diaaberto, Horario
 from django.http import HttpResponseRedirect
+from atividades.forms import MateriaisForm
+
 
 #-------------Diogo----------------------
 
@@ -41,27 +42,30 @@ def alterarAtividade(request,id):
 def inseriratividade(request):  
     if request.method == "POST":
         form_Sessao= SessaoForm(request.POST)
-        form_horario= HorarioForm(request.POST)
+        form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
                              estado = "Pendente", diaabertoid = Diaaberto.objects.all().order_by('-id').first())
-        formAtividade = AtividadeForm(request.POST, instance=new_form) 
-        if formAtividade.is_valid() and form_Sessao.is_valid() and form_horario.is_valid():
-            new_form.save()
-            test= Horario.objects.get(inicio=form_horario.inicio,fim=form_horario.fim)  
+        formAtividade = AtividadeForm(request.POST, instance=new_form)
+
+        if formAtividade.is_valid() and form_Sessao.is_valid() and form_Materiais.is_valid():
+            new_form.save()  
             sessao = form_Sessao.save(commit= False)
+            materiais = form_Materiais.save(commit= False)
+            materiais.atividadeid = Atividade.objects.all().order_by('-id').first()
+            materiais.save()
             sessao.vagas= sessao.participantesmaximo
             sessao.ninscritos= 0
-            sessao.espacoid= Espaco.objects.get(id=1)
-            sessao.horarioid= test.id
+            sessao.espacoid= Espaco.objects.get(id=request.POST.__getitem__('idespaco'))
+            sessao.horarioid = Horario.objects.get(id=request.POST.__getitem__('idhorario'))
             sessao.save()
             return HttpResponseRedirect('/thanks/')
         else:
-            return render(request, 'atividades/inseriratividade.html',{'atividade': formAtividade , 'sessao': form_Sessao,'horario': form_horario})
+            return render(request, 'atividades/inseriratividade.html',{'atividade': formAtividade , 'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all(),'materiais': form_Materiais})
     else:  
         formAtividade = AtividadeForm()
         form_Sessao= SessaoForm()
-        form_horario= HorarioForm()  
-    return render(request,'atividades/inseriratividade.html',{'atividade': formAtividade,'sessao': form_Sessao,'horario': form_horario})  
+        form_Materiais= MateriaisForm() 
+    return render(request,'atividades/inseriratividade.html',{'atividade': formAtividade,'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all, 'materiais': form_Materiais})  
 #---------------------End David
     
