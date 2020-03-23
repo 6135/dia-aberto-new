@@ -4,5 +4,7 @@ from . import views
 urlpatterns = [
     path("",views.homepage,name="inicio"),
     path('admin', views.homepage, name='adminpage'),
-    path("editardatas", views.editdates, name='editardatas'),
+    path('diasabertos', views.viewDays, name='diasAbertos'),
+    path("editardia/<int:id>", views.newDay, name='editarDia'),
+    path('inserirdiaaberto', views.newDay,name='novoDia' )
 ]
