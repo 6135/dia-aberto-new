@@ -3,4 +3,6 @@ from django.urls import path
 from . import views
 urlpatterns = [
     path("",views.homepage,name="inicio"),
+    path('admin', views.homepage, name='adminpage'),
+    path("editardatas", views.editdates, name='editardatas'),
 ]
