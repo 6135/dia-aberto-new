@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect  
 from .forms import AtividadeForm , SessaoForm, EspacoForm 
-from .models import Atividade, Espaco, Sessao, Horario
+from .models import Atividade, Espaco, Sessao, Horario, Atividadesessao
 from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario  
 from atividades.forms import HorarioForm
@@ -48,11 +48,12 @@ def inseriratividade(request):
         formAtividade = AtividadeForm(request.POST, instance=new_form) 
         if formAtividade.is_valid() and form_Sessao.is_valid() and form_horario.is_valid():
             new_form.save()
+            test= Horario.objects.get(inicio=form_horario.inicio,fim=form_horario.fim)  
             sessao = form_Sessao.save(commit= False)
             sessao.vagas= sessao.participantesmaximo
             sessao.ninscritos= 0
             sessao.espacoid= Espaco.objects.get(id=1)
-            sessao.horarioid= Horario.objects.get(id=1)
+            sessao.horarioid= test.id
             sessao.save()
             return HttpResponseRedirect('/thanks/')
         else:
