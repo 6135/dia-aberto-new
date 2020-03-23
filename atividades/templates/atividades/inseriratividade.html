@@ -73,30 +73,26 @@
     {% endfor %}
 {% endif %}
 {% csrf_token %}
-<label for="atividade">Nome: </label>
-    {{form_Atividade.nome}}
-    <br>
-<label for="descricao">Descricao: </label>
-    {{form_Atividade.descricao}}
-    <br>
-<label for="publico">Publico Alvo: </label>
-    {{form_Atividade.publicoalvo}}
-    <br>
-<label for="nrcolaboradoresnecessario">nrcolaboradoresnecessario: </label>
-    {{form_Atividade.nrcolaboradoresnecessario}}
-    <br>
-<label for="unidadeoriganica">Unidade Organica: </label>
-    {{form_Atividade.unidadeorganica}}
-    <br>
-<label for="tipo">Tipo: </label>
-    {{form_Atividade.tipo}}
+atividade
+<br>
+{{atividade.as_p}}
     <br>
     <br>
-    <br>
-    <br>
-    <label for="espaco">Local: </label>
-    {{form_Espaco.as_p}}
+Sessao
+<br>
+{{sessao.as_p}}
+<br>
+<br>
 
+horario
+{% for horar in horario %}
+{{horat.as_p}} {{horar.inicio}} {{horar.fim}}
+{% endfor %}
+<br>
+<br>
+<br>
+<br>
+<br>
             <button style="float: bottom" type="save" class="btn btn-success">Register</button>
 
         </div>
