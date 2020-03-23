@@ -10,6 +10,20 @@
 <div style="padding: 3rem 2vw 1rem">
   <form method="POST" action="">
     {% csrf_token %}
+    {% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+              {{field|escape}}<strong>{{ error|escape }}</strong>   
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
   <div class="b-steps">
     <section class="step-content">
         <div class="step-item">
@@ -33,11 +47,11 @@
                     <label class="label">Tipo de Atividade</label>
                     <div class="control is-expanded">
                       <div class="select is-fullwidth">
-                        <select>
-                          <option style="display:none"></option>
-                          <option>Atividade Laboratorial</option>
-                          <option>Palestra</option>
-                          <option>Tertúlia</option>
+                        <select name="tipo">
+                          <option selected  value="{{atividade.tipo}}">{{atividade.tipo}}</option>
+                          <option value="Laboratorial">Atividade Laboratorial</option>
+                          <option value="Palestra">Palestra</option>
+                          <option value="Tertulia">Tertúlia</option>
                         </select>
                       </div>
                     </div>
@@ -60,11 +74,11 @@
                     <label class="label">Público Alvo</label>
                       <div class="control">
                         <div class="select is-fullwidth">
-                          <select>
-                            <option style="display:none"></option>
-                            <option selected>Ciencias e Tecnologia</option>
-                            <option>Economia</option>
-                            <option>Linguas e Humanidades</option>
+                          <select name="publicoalvo">
+                            <option selected value="{{atividade.publicoalvo}}" >{{atividade.publicoalvo}}</option>
+                            <option value="Ciencias e Tecnologia">Ciencias e Tecnologia</option>
+                            <option value="Economia">Economia</option>
+                            <option value="Linguas e Humanidades">Linguas e Humanidades</option>
                           </select>
                         </div>
                       </div>
@@ -84,7 +98,7 @@
         </div>
         <div class="step-item">
           <div style="padding: 1rem 2vw 0px;">
-            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;"> Adicionar Sessão </h2>
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Adicionar Sessão</h2>
             <div class="columns">
               <div class="column">
                 <h1 class="title is-6 has-text-centered">Informação da Sessão</h1>
@@ -131,8 +145,7 @@
           </div>
         </div>  
         <hr>
-        </div>
-      
+        </div>     
     </section>
     <div class="column is-8 is-offset-2">
       <div class="level">
@@ -153,6 +166,7 @@
     </div>
   </div>
 </form>
+{{form|escape}}
 </div>
 <style>
   .label {
