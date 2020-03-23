@@ -45,6 +45,7 @@ class Atividade(models.Model):
     professoruniversitarioutilizadorid = models.ForeignKey('utilizadores.Professoruniversitario', models.DO_NOTHING, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
     datasubmissao = models.DateTimeField(db_column='dataSubmissao')  # Field name made lowercase.
     dataalteracao = models.DateTimeField(db_column='dataAlteracao')  # Field name made lowercase.
+    diaabertoid = models.ForeignKey('configuracao.DiaAberto', models.CASCADE, db_column='diaAbertoID') # Field name made lowercase.
 
     class Meta:
         managed = False

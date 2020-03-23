@@ -4,7 +4,7 @@ from .models import Atividade, Sessao, Horario, Espaco
 class AtividadeForm(forms.ModelForm):  
     class Meta:  
         model = Atividade  
-        exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id']
+        exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diabertoid']
 
 class SessaoForm(forms.ModelForm):  
     class Meta:  
