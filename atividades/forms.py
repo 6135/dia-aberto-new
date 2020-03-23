@@ -1,5 +1,5 @@
 from django.forms import ModelForm,CheckboxInput
-from .models import Atividade, Sessao, Horario, Espaco, Materiais  
+from .models import Atividade, Sessao, Horario, Materiais  
 
 class CheckBoxInputCustom(CheckboxInput):
     input_type = 'checkbox'
@@ -14,7 +14,7 @@ class AtividadeForm(ModelForm):
 
 class SessaoForm(ModelForm):  
     class Meta:  
-        model = Sessao  
+        model = Sessao
         exclude = ["espacoid", "horarioid", "ninscritos", "vagas"]
 
 class MateriaisForm(ModelForm):  
