@@ -18,7 +18,7 @@ class SessaoForm(ModelForm):
     espacoid = ChoiceField(choices=[(espaco.id, espaco.nome+' '+espaco.edificio) for espaco in Espaco.objects.all()])
     class Meta:  
         model = Sessao  
-        exclude = ["vagas","ninscritos"]
+        exclude = ['id',"vagas","ninscritos",'vagas']
         widgets = {
             'participantesmaximo': NumberInput(attrs={'class': 'input'}),
             'espacoid':Select(), 

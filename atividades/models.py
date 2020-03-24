@@ -93,7 +93,8 @@ class Sessao(models.Model):
     vagas = models.IntegerField(db_column='Vagas')  # Field name made lowercase.
     duracaomedia = models.IntegerField(db_column='duracaoMedia', blank=True, null=True)  # Field name made lowercase.
     participantesmaximo = models.IntegerField(db_column='participantesMaximo', blank=True, null=True)  # Field name made lowercase.
-
+    def __str__(self):
+        return '%s %s %s %s %s %s' % (self.espacoid,self.horarioid,self.ninscritos,self.vagas,self.duracaomedia,self.participantesmaximo)
     class Meta:
         db_table = 'Sessao'
 
