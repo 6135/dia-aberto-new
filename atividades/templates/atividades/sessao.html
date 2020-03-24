@@ -56,7 +56,7 @@
     </div>
 </nav>
 
-<form  method="POST">
+<form  method="POST" action=''>
 {{ form.non_field_errors }}
 {% if form.errors %}
     {% for field in form %}
@@ -98,17 +98,13 @@ Sessao
 
 <br>
 <br>
-<label for="materias">Materiais Extra Necessarios:</label>
-{{materiais.nome}}
-
-<br>
-<br>
 
 <br>
 <br><br>
 <br>
 <br>
-            <button style="float: bottom" type="save" class="btn btn-success">Register</button>
+          <input type="submit" class="btn btn-success" name="new" value="New">
+            <input type="submit" class="btn btn-success" name="save" value="Save">
 
         </div>
         <div class="col-sm-2 sidenav">

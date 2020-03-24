@@ -78,16 +78,14 @@
             <div class="columns">
               <div class="column">
                 <h1 class="title is-6 has-text-centered">Informação da Sessão</h1>
-                {% for session in activity_sessions %}
                 <div class="columns">         
                     <div class="column">
                       <div class="field" >
                         <label class="label has-text-centered">Horário</label>
                         <div class="control">
                           <div class="select is-fullwidth" >
-                            <select name="horarioid{{sessionid}}">
-                              <option value="{{session.sessaoid.horarioid.id}}">{{session.sessaoid.horarioid.inicio}} até {{session.sessaoid.horarioid.fim}}</option>
-                              {% for schedule in schedules %}
+                            <select name="idhorario">
+                              {% for schedule in horario %}
                               <option value="{{schedule.id}}">{{schedule.inicio}} até {{schedule.fim}}</option>
                               {% endfor %}
                             </select>
@@ -108,10 +106,9 @@
                         <label class="label has-text-centered">Espaço</label>
                         <div class="control">
                           <div class="select is-fullwidth" >
-                            <select name="espaco{{sessionid}}">
-                              <option value="{{session.sessaoid.espacoid}}">{{session.sessaoid.espacoid.nome}}</option>
-                              {% for espaco in espacos %}
-                              <option value="{{espaco.id}}">{{espaco.nome}}</option>
+                            <select name="idespaco">
+                              {% for esp in espaco %}
+                              <option value="{{esp.id}}">{{esp.nome}}</option>
                               {% endfor %}
                             </select>
                           </div>
@@ -119,7 +116,6 @@
                       </div>
                     </div>
                 </div>
-                {% endfor %}
             </div>
             <div class="column is-offset-1">
               <h1 class="title is-6 has-text-centered">Requerimentos de Espaço</h1>

@@ -47,6 +47,7 @@ class Atividade(models.Model):
     professoruniversitarioutilizadorid = models.ForeignKey('Professoruniversitario', models.DO_NOTHING, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
     datasubmissao = models.DateTimeField(db_column='dataSubmissao')  # Field name made lowercase.
     dataalteracao = models.DateTimeField(db_column='dataAlteracao')  # Field name made lowercase.
+    diaabertoid = models.ForeignKey('Diaaberto', models.DO_NOTHING, db_column='diaAbertoID')  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -116,7 +117,7 @@ class Departamento(models.Model):
 class Diaaberto(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     enderecopaginaweb = models.CharField(db_column='EnderecoPaginaWeb', max_length=255)  # Field name made lowercase.
-    descricao = models.CharField(db_column='Descricao', max_length=255)  # Field name made lowercase.
+    descricao = models.TextField(db_column='Descricao')  # Field name made lowercase.
     emaildiaaberto = models.CharField(db_column='EmailDiaAberto', max_length=255)  # Field name made lowercase.
     ano = models.IntegerField(db_column='Ano')  # Field name made lowercase.
     datadiaabertoinicio = models.DateTimeField(db_column='DataDiaAbertoInicio')  # Field name made lowercase.

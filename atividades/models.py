@@ -44,8 +44,8 @@ class Atividade(models.Model):
     estado = models.CharField(db_column='Estado', max_length=64, blank=True, null=True)  # Field name made lowercase.
     coordenadorutilizadorid = models.ForeignKey('coordenadores.Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
     professoruniversitarioutilizadorid = models.ForeignKey('utilizadores.Professoruniversitario', models.DO_NOTHING, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
-    datasubmissao = models.DateTimeField(db_column='dataSubmissao')  # Field name made lowercase.
-    dataalteracao = models.DateTimeField(db_column='dataAlteracao')  # Field name made lowercase.
+    datasubmissao = models.DateTimeField(db_column='dataSubmissao', auto_now_add=True)  # Field name made lowercase.
+    dataalteracao = models.DateTimeField(db_column='dataAlteracao',auto_now=True)  # Field name made lowercase.
     diaabertoid = models.ForeignKey('configuracao.DiaAberto', models.CASCADE, db_column='diaAbertoID') # Field name made lowercase.
 
     class Meta:
@@ -65,8 +65,6 @@ class Atividadesessao(models.Model):
         managed = False
         db_table = 'AtividadeSessao'
 
-
-
 class Espaco(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -80,10 +78,11 @@ class Espaco(models.Model):
 class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
-    nome = models.CharField(max_length=255, blank=True, null=True)
+    nomematerial = models.CharField(db_column='nome',max_length=255, blank=True, null=True)
 
     class Meta:
         db_table = 'Materiais'
+
 
 class Sessao(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.

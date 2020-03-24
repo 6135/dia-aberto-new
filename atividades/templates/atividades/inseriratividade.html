@@ -56,7 +56,7 @@
     </div>
 </nav>
 
-<form  method="POST"  >
+<form  method="POST">
 {{ form.non_field_errors }}
 {% if form.errors %}
     {% for field in form %}
@@ -75,45 +75,10 @@
 {% csrf_token %}
 atividade
 <br>
-{{atividade.as_p}}
+{{form.as_p}}
     <br>
     <br>
-Sessao
-<br>
-{{sessao.as_p}}
-<br>
-<br>
-
-
- <label for="hor">Horario:</label>
-  <select id="hor" name="idhorario">
-    {% for hor in horario  %}
-    <option value="{{hor.id}}">{{hor.inicio}} {{hor.fim}}</option>
-    {% endfor %}
-  </select>
-<br>
-<br>
-<label for="espaco">Espaço:</label>
-  <select id="espaco" name="idespaco">
-    {% for esp in espaco  %}
-    <option value="{{esp.id}}">{{esp.edificio}} {{esp.andar}} {{esp.nome}}</option>
-    {% endfor %}
-  </select>
-
-<br>
-<br>
-<label for="materias">Materiais Extra Necessarios:</label>
-{{materiais.nome}}
-
-<br>
-<br>
-
-<br>
-<br><br>
-<br>
-<br>
-
-            <button style="float: bottom" type="save" class="btn btn-success">Salvar</button>
+            <button style="float: bottom" type="save" class="btn btn-success">InserirSessao</button>
 
         </div>
         <div class="col-sm-2 sidenav">
@@ -122,5 +87,6 @@ Sessao
 
 </div>
 </form>
+
 </body>
 </html>

@@ -108,11 +108,10 @@
                         <label class="label has-text-centered">Espaço</label>
                         <div class="control">
                           <div class="select is-fullwidth" >
-                            <select name="espaco{{sessionid}}">
-                              <option value="{{session.sessaoid.espacoid}}">{{session.sessaoid.espacoid.nome}}</option>
-                              {% for espaco in espacos %}
-                              <option value="{{espaco.id}}">{{espaco.nome}}</option>
-                              {% endfor %}
+                            <select id="espaco" name="idespaco">
+                            {% for esp in espaco  %}
+                                <option value="{{esp.id}}">{{esp.edificio}} {{esp.andar}} {{esp.nome}}</option>
+                            {% endfor %}
                             </select>
                           </div>
                         </div>

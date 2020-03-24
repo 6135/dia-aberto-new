@@ -4,9 +4,8 @@ from . import views
 urlpatterns = [
     path("minhasatividades",views.minhasatividades,name="minhasAtividades"),
     path("proporatividade",views.proporatividade,name="proporAtividade"),
-    path('proporatividade', views.inseriratividade, name= "inserirAtividade"),
-    path('alteraratividade/<int:id>',views.alterarAtividade,name='alterarAtividade'),
-    path('inserirsessao/<id>',views.novasessao,name='inserirSessao'),
+    path('inseriratividade', views.inseriratividade, name= "inserirAtividade"),
+    path('sessao/<id>',views.novasessao,name='inserirSessao'),
     path('alteraratividade/<id>',views.alterarAtividade,name='alterarAtividade'),
 
 ]
