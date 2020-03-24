@@ -35,11 +35,11 @@ def alterarAtividade(request,id):
         activity.estado='Pendente'#apos alteraçao a atividade volta a estado pendente
         changed_activity=AtividadeForm(request.POST,instance=activity)
         changed_session=SessaoForm(request.POST,instance=session)
-        if changed_form.is_valid() and changed_session.is_valid():
-            changed_form.save()#guardar alteraçoes a sessoes da atividade
-            change_session.save()#guardar alteraçoes a atividade
-            change_activity.dataalteracao = datetime.now()#data de alteraçao da atividade
-            change_activity.save()#guardar a data de alteraçao da atividade           
+        if changed_activity.is_valid() and changed_session.is_valid():
+            changed_activity.save()#guardar alteraçoes a sessoes da atividade
+            changed_session.save()#guardar alteraçoes a atividade
+            changed_activity.dataalteracao = datetime.now()#data de alteraçao da atividade
+            changed_activity.save()#guardar a data de alteraçao da atividade           
             return HttpResponseRedirect('/minhasatividades')          
     return render(request=request,
                     template_name='atividades/proporatividade.html',
