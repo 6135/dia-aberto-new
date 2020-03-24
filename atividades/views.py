@@ -70,12 +70,12 @@ def inseriratividade(request):
             new_as.save()
             return HttpResponseRedirect('/thanks/')
         else:
-            return render(request, 'atividades/inseriratividade.html',{'atividade': formAtividade , 'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all(),'materiais': form_Materiais})
+            return render(request, 'atividades/proporatividade2.html',{'form': formAtividade , 'sessao': form_Sessao,'schedules':  Horario.objects.all(), 'espacos': Espaco.objects.all(),'materiais': form_Materiais})
     else:  
         formAtividade = AtividadeForm()
         form_Sessao= SessaoForm()
         form_Materiais= MateriaisForm() 
-    return render(request,'atividades/inseriratividade.html',{'atividade': formAtividade,'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all, 'materiais': form_Materiais})  
+    return render(request,'atividades/proporatividade2.html',{'form': formAtividade,'sessao': form_Sessao,'schedules':  Horario.objects.all(), 'espacos': Espaco.objects.all, 'materiais': form_Materiais})  
 
 
 
