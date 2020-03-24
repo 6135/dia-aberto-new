@@ -84,22 +84,17 @@
                         <label class="label has-text-centered">Horário</label>
                         <div class="control">
                           <div class="select is-fullwidth" >
-                            <select name="horarioid{{sessionid}}">
-                              <option value="{{session.sessaoid.horarioid.id}}">{{session.sessaoid.horarioid.inicio}} até {{session.sessaoid.horarioid.fim}}</option>
-                              {% for schedule in schedules %}
-                              <option value="{{schedule.id}}">{{schedule.inicio}} até {{schedule.fim}}</option>
-                              {% endfor %}
-                            </select>
+                            {{activity_sessions.horarioid}}
                           </div>
                         </div>
                       </div>
                     </div>
                     <div class="column">
                       <div class="field">
-                        <label class="label">Maximo de Participantes:</label>
+                        <label class="label has-text-centered">Maximo de Participantes</label>
                           <div class="control">
-                            <input class="input" type="Number" name="participantesmaximo" value="{{session.sessaoid.participantesmaximo}}">
-                           </div>
+                            {{activity_sessions.participantesmaximo}}
+                          </div>
                       </div>
                     </div>
                     <div class="column">
@@ -107,12 +102,7 @@
                         <label class="label has-text-centered">Espaço</label>
                         <div class="control">
                           <div class="select is-fullwidth" >
-                            <select name="espaco{{sessionid}}">
-                              <option value="{{session.sessaoid.espacoid}}">{{session.sessaoid.espacoid.nome}}</option>
-                              {% for espaco in espacos %}
-                              <option value="{{espaco.id}}">{{espaco.nome}}</option>
-                              {% endfor %}
-                            </select>
+                              {{activity_sessions.espacoid}}
                           </div>
                         </div>
                       </div>

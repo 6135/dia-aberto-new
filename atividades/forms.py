@@ -1,5 +1,5 @@
 from django.forms import * 
-from .models import Atividade, Sessao
+from .models import Atividade, Sessao,Materiais
 
 class AtividadeForm(ModelForm):  
     class Meta:  
@@ -16,10 +16,12 @@ class AtividadeForm(ModelForm):
 class SessaoForm(ModelForm):  
     class Meta:  
         model = Sessao  
-        exclude = ["espacoid", "horarioid","vagas","ninscritos"]
+        exclude = ["vagas","ninscritos"]
         widgets = {
-            'inicio'
-        } 
+            'participantesmaximo': NumberInput(attrs={'class': 'input'}),
+            'espacoid':Select(), 
+            'horarioid':Select(),
+        }
 
 class MateriaisForm(ModelForm):  
     class Meta:  

@@ -12,52 +12,44 @@ from atividades.forms import MateriaisForm
 
 
 #-------------Diogo----------------------
-
-def proporatividade(request):
-	if request.method == "POST":
-        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
-                             professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
-                             estado = "Pendente")
-        formAtividade = AtividadeForm(request.POST, instance=new_form) 
-        if formAtividade.is_valid():
-            new_form.save()
-            return HttpResponseRedirect('/thanks/')
-        else:
-            return render(request, 'atividades/proporatividade.html',{'atividade': formAtividade})
-    else:  
-        formAtividade = AtividadeForm()
-        #formSessao = SessaoForm()   
-    return render(request,'atividades/proporatividade.html',{'atividade': formAtividade})  
-
 def minhasatividades(request):
 	return render(request=request,
 				template_name="atividades/listaAtividades.html",
                 context={"atividades": Atividade.objects.all()})
 
 def alterarAtividade(request,id):
-    change_activity= Atividade.objects.get(id=id)
+    #------atividade a alterar----
+    activity= Atividade.objects.get(id=id)
+    changed_form=AtividadeForm(instance=activity)
+    #-----------------------------
+    #------sessao da atividade----
+    activity_sessions=Atividadesessao.objects.get(atividadeid=id)  
+    session=activity_sessions.sessaoid
+    changed_session=SessaoForm(instance=session)
+    #-----------------------------
+    #------horarios&espaços-------
     schedules=Horario.objects.all()
-    activity_sessions=Atividadesessao.objects.filter(atividadeid=id)
     espacos=Espaco.objects.all()
-    #print(activity_sessions.sessaoid.espacoid.nome)
-    changed_form=AtividadeForm(instance=change_activity)
+    #-----------------------------
     if request.method == 'POST':
-        change_activity.estado='Pendente'
-        changed_form=AtividadeForm(request.POST,instance=change_activity)
-        if changed_form.is_valid():
-            changed_form.save()
-            change_activity.dataalteracao = datetime.now()
-            change_activity.save()
+        activity.estado='Pendente'#apos alteraçao a atividade volta a estado pendente
+        changed_activity=AtividadeForm(request.POST,instance=activity)
+        changed_session=SessaoForm(request.POST,instance=session)
+        if changed_form.is_valid() and changed_session.is_valid():
+            changed_form.save()#guardar alteraçoes a sessoes da atividade
+            change_session.save()#guardar alteraçoes a atividade
+            change_activity.dataalteracao = datetime.now()#data de alteraçao da atividade
+            change_activity.save()#guardar a data de alteraçao da atividade           
             return HttpResponseRedirect('/minhasatividades')          
     return render(request=request,
                     template_name='atividades/proporatividade.html',
-                    context={'form': changed_form,'schedules':schedules,'activity_sessions':activity_sessions,'espacos':espacos}
+                    context={'form': changed_form,'schedules':schedules,'activity_sessions':changed_session,'espacos':espacos}
                     )
 #-----------------EndDiogo------------------
 
 
 #-----------------------David--------------------
-def inseriratividade(request):  
+def proporatividade(request):  
     if request.method == "POST":
 
         form_Sessao= SessaoForm(request.POST)
@@ -75,8 +67,10 @@ def inseriratividade(request):
             materiais.save()
             sessao.vagas= sessao.participantesmaximo
             sessao.ninscritos= 0
-            sessao.espacoid= Espaco.objects.get(id=request.POST.__getitem__('idespaco'))
-            sessao.horarioid = Horario.objects.get(id=request.POST.__getitem__('idhorario'))
+            espacoid=request.POST.__getitem__('idespaco')
+            sessao.espacoid= Espaco.objects.get(id=espacoid)
+            horarioid=request.POST.__getitem__('idhorario')
+            sessao.horarioid = Horario.objects.get(id=horarioid)
             sessao.save()
             new_as= Atividadesessao(atividadeid= Atividade.objects.all().order_by('-id').first(), sessaoid= Sessao.objects.all().order_by('-id').first())
             new_as.save()
