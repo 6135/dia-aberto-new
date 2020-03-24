@@ -10,8 +10,20 @@ from datetime import datetime
 #-------------Diogo----------------------
 
 def proporatividade(request):
-	return render(request=request,
-				  template_name="atividades/proporatividade.html",)
+	if request.method == "POST":
+        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
+                             professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
+                             estado = "Pendente")
+        formAtividade = AtividadeForm(request.POST, instance=new_form) 
+        if formAtividade.is_valid():
+            new_form.save()
+            return HttpResponseRedirect('/thanks/')
+        else:
+            return render(request, 'atividades/proporatividade.html',{'atividade': formAtividade})
+    else:  
+        formAtividade = AtividadeForm()
+        #formSessao = SessaoForm()   
+    return render(request,'atividades/proporatividade.html',{'atividade': formAtividade})  
 
 def minhasatividades(request):
 	return render(request=request,
@@ -35,7 +47,7 @@ def alterarAtividade(request,id):
             return HttpResponseRedirect('/minhasatividades')          
     return render(request=request,
                     template_name='atividades/proporatividade.html',
-                    context={'atividade': change_activity,'form': changed_form,'schedules':schedules,'activity_sessions':activity_sessions,'espacos':espacos}
+                    context={'form': changed_form,'schedules':schedules,'activity_sessions':activity_sessions,'espacos':espacos}
                     )
 #-----------------EndDiogo------------------
 

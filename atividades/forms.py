@@ -16,4 +16,7 @@ class AtividadeForm(ModelForm):
 class SessaoForm(ModelForm):  
     class Meta:  
         model = Sessao  
-        exclude = ["espacoid", "horarioid","vagas","ninscritos"] 
+        exclude = ["espacoid", "horarioid","vagas","ninscritos"]
+        widgets = {
+            'inicio'
+        } 
