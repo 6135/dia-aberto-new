@@ -20,3 +20,8 @@ class SessaoForm(ModelForm):
         widgets = {
             'inicio'
         } 
+
+class MateriaisForm(ModelForm):  
+    class Meta:  
+        model = Materiais  
+        exclude = ["atividadeid"]
