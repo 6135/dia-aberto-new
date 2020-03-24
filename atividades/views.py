@@ -23,7 +23,7 @@ def alterarAtividade(request,id):
     changed_form=AtividadeForm(instance=activity)
     #-----------------------------
     #------sessao da atividade----
-    activity_sessions=Atividadesessao.objects.get(atividadeid=id)  
+    activity_sessions=Atividadesessao.objects.get(atividadeid=id) 
     session=activity_sessions.sessaoid
     changed_session=SessaoForm(instance=session)
     #-----------------------------
