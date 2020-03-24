@@ -17,7 +17,10 @@ class AtividadeForm(ModelForm):
             'tipo': Select(),
             'descricao': Textarea(attrs={'class':'textarea'}),
             'publicoalvo': Select(),
-            'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input'}),}
+            'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input'}),
+            'duracaoesperada': NumberInput(attrs={'class': 'input'}),
+            'participantesmaximo': NumberInput(attrs={'class': 'input'}),
+            }
 
 class SessaoForm(ModelForm):  
     class Meta:  

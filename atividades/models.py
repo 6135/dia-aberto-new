@@ -47,6 +47,8 @@ class Atividade(models.Model):
     datasubmissao = models.DateTimeField(db_column='dataSubmissao', auto_now_add=True)  # Field name made lowercase.
     dataalteracao = models.DateTimeField(db_column='dataAlteracao',auto_now=True)  # Field name made lowercase.
     diaabertoid = models.ForeignKey('configuracao.DiaAberto', models.CASCADE, db_column='diaAbertoID') # Field name made lowercase.
+    duracaoesperada = models.IntegerField(db_column='duracaoEsperada', blank=True, null=True)  # Field name made lowercase.
+    participantesmaximo = models.IntegerField(db_column='participantesMaximo', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
