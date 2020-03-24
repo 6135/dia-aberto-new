@@ -93,7 +93,7 @@ def novasessao(request,id):
                 return redirect('inserirSessao', id)
     else:  
         form_Sessao= SessaoForm()
-    return render(request,'atividades/sessao.html',{'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all})  
+    return render(request,'atividades/inserirsessao.html',{'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all})  
 
 
 
