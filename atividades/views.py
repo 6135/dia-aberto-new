@@ -8,8 +8,7 @@ from utilizadores.models import Professoruniversitario
 from configuracao.models import Diaaberto, Horario
 from django.http import HttpResponseRedirect
 from datetime import datetime
-from django.urls import reverse
-from django.template.defaultfilters import urlencode
+
 
 
 #-------------Diogo----------------------
