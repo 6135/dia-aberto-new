@@ -10,7 +10,7 @@ class AtividadeForm(ModelForm):
             'tipo': Select(),
             'descricao': Textarea(attrs={'class':'textarea'}),
             'publicoalvo': Select(),
-            'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input'}),
+            'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input','min':0}),
         }
 
 class SessaoForm(ModelForm):  
@@ -20,7 +20,7 @@ class SessaoForm(ModelForm):
         model = Sessao  
         exclude = ['id',"vagas","ninscritos",'vagas']
         widgets = {
-            'participantesmaximo': NumberInput(attrs={'class': 'input'}),
+            'participantesmaximo': NumberInput(attrs={'class': 'input','min':1}),
             'espacoid':Select(), 
             'horarioid':Select(),
         }
