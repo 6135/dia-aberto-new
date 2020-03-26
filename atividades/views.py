@@ -71,11 +71,7 @@ def inseriratividade(request):
 
 
 
-def novasessao(request,id):        
-    ativsessao= Atividadesessao.objects.filter(atividadeid= id)
-    print(ativsessao)
-    sessaohorario= Sessao.objects.get(id= ativsessao).horario
-    horarios= Horario.objects.filter(id!=sessaohorario)
+def inserirsessao(request,id):       
     if request.method == "POST":
         form_Sessao= SessaoForm(request.POST)
 
@@ -92,10 +88,38 @@ def novasessao(request,id):
             if 'save' in request.POST:
                 return HttpResponseRedirect('/thanks/')
             elif 'new' in request.POST:
-                return redirect('inserirSessao', id)
+                return redirect('novaSessao', id)
+    else:  
+        form_Sessao= SessaoForm()
+    return render(request,'atividades/inserirsessao.html',{'sessao': form_Sessao,'horario':  Horario.objects.all()})  
+
+
+def novasessao(request,id):        
+    ativsessao= Atividadesessao.objects.get(atividadeid= id).sessaoid
+    sessaohorario= Sessao.objects.get(id= t).horario
+    horarios= Horario.objects.get(id!=sessaohorario)
+    
+    if request.method == "POST":
+        form_Sessao= SessaoForm(request.POST)
+
+        if form_Sessao.is_valid():
+            sessao = form_Sessao.save(commit=False)
+            sessao.vagas= Atividade.objects.get(id= id).participantesmaximo
+            sessao.ninscritos= 0
+            sessao.horarioid = Horario.objects.get(id=request.POST.__getitem__('idhorario'))
+            sessao.save()
+
+            new_as = Atividadesessao(atividadeid = Atividade.objects.get(id=id), sessaoid= Sessao.objects.all().order_by('-id').first())
+            new_as.save()
+            
+            if 'save' in request.POST:
+                return HttpResponseRedirect('/thanks/')
+            elif 'new' in request.POST:
+                return redirect('novaSessao', id)
     else:  
         form_Sessao= SessaoForm()
     return render(request,'atividades/inserirsessao.html',{'sessao': form_Sessao,'horario':  horarios})  
+
 
 
 
