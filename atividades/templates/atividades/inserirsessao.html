@@ -18,44 +18,14 @@
             <div class="columns">
               <div class="column">
                 <div class="columns">         
-                    <div class="column">
+                    <div class="column is-half">
                       <div class="field" >
-                        <label class="label has-text-centered">Horário</label>
+                        <label class="label">Horário</label>
                         <div class="control">
                           <div class="select is-fullwidth" >
                             <select name="idhorario">
                               {% for schedule in horario %}
                               <option value="{{schedule.id}}">{{schedule.inicio}} até {{schedule.fim}}</option>
-                              {% endfor %}
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="column">
-                      <div class="field">
-                        <label class="label">Maximo de Participantes:</label>
-                          <div class="control">
-                            {{sessao.participantesmaximo}}
-                           </div>
-                      </div>
-                    </div>
-                    <div class="column">
-                      <div class="field">
-                        <label class="label">Duração Media:</label>
-                          <div class="control">
-                            {{sessao.duracaomedia}}
-                           </div>
-                      </div>
-                    </div>
-                    <div class="column">
-                      <div class="field" >
-                        <label class="label has-text-centered">Espaço</label>
-                        <div class="control">
-                          <div class="select is-fullwidth" >
-                            <select name="idespaco">
-                              {% for esp in espaco %}
-                              <option value="{{esp.id}}">{{esp.nome}}</option>
                               {% endfor %}
                             </select>
                           </div>

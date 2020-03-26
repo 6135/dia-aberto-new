@@ -14,8 +14,9 @@ from datetime import datetime
 #-------------Diogo----------------------
 
 def proporatividade(request):
-	return render(request=request,
+    	return render(request=request,
 				  template_name="atividades/proporatividade.html",)
+
 
 def minhasatividades(request):
 	return render(request=request,
@@ -50,9 +51,9 @@ def inseriratividade(request):
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
-                             estado = "Pendente", diaabertoid = Diaaberto.objects.all().order_by('-id').first())
+                             estado = "Pendente", diaabertoid = Diaaberto.objects.all().order_by('-id').first(),espacoid= Espaco.objects.get(id=request.POST['idespaco']))
         formAtividade = AtividadeForm(request.POST, instance=new_form)
-
+        
         if formAtividade.is_valid() and form_Materiais.is_valid():
             new_form.save()  
 
@@ -62,24 +63,26 @@ def inseriratividade(request):
             idAtividade= Atividade.objects.all().order_by('-id').first()
             return redirect('inserirSessao', idAtividade.id)
         else:
-            return render(request, 'atividades/proporatividade.html',{'form': formAtividade , 'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all(), 'mat': form_Materiais})
+            return render(request, 'atividades/proporatividade.html',{'form': formAtividade ,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all(), 'mat': form_Materiais})
     else:  
         formAtividade = AtividadeForm()
-        form_Sessao= SessaoForm()
         form_Materiais= MateriaisForm() 
-    return render(request,'atividades/proporatividade.html',{'form': formAtividade,'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all,'mat': form_Materiais})  
+    return render(request,'atividades/proporatividade.html',{'form': formAtividade,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all,'mat': form_Materiais})  
 
 
 
-def novasessao(request,id):  
+def novasessao(request,id):        
+    ativsessao= Atividadesessao.objects.filter(atividadeid= id)
+    print(ativsessao)
+    sessaohorario= Sessao.objects.get(id= ativsessao).horario
+    horarios= Horario.objects.filter(id!=sessaohorario)
     if request.method == "POST":
         form_Sessao= SessaoForm(request.POST)
 
         if form_Sessao.is_valid():
             sessao = form_Sessao.save(commit=False)
-            sessao.vagas= sessao.participantesmaximo
+            sessao.vagas= Atividade.objects.get(id= id).participantesmaximo
             sessao.ninscritos= 0
-            sessao.espacoid= Espaco.objects.get(id=request.POST.__getitem__('idespaco'))
             sessao.horarioid = Horario.objects.get(id=request.POST.__getitem__('idhorario'))
             sessao.save()
 
@@ -92,7 +95,7 @@ def novasessao(request,id):
                 return redirect('inserirSessao', id)
     else:  
         form_Sessao= SessaoForm()
-    return render(request,'atividades/inserirsessao.html',{'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all})  
+    return render(request,'atividades/inserirsessao.html',{'sessao': form_Sessao,'horario':  horarios})  
 
 
 

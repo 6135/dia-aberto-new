@@ -11,7 +11,7 @@ class CheckBoxInputCustom(CheckboxInput):
 class AtividadeForm(ModelForm):  
     class Meta:  
         model = Atividade  
-        exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid']
+        exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid', "espacoid"]
         widgets = {
             'nome': TextInput(attrs={'class': 'input'}),
             'tipo': Select(),

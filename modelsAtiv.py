@@ -14,16 +14,28 @@ class Atividade(models.Model):
     descricao = models.TextField(db_column='Descricao')  # Field name made lowercase.
     publicoalvo = models.CharField(db_column='Publicoalvo', max_length=255)  # Field name made lowercase.
     nrcolaboradoresnecessario = models.IntegerField(db_column='nrColaboradoresNecessario')  # Field name made lowercase.
-    tipo = models.CharField(db_column='Tipo', max_length=128)  # Field name made lowercase.
-    estado = models.CharField(db_column='Estado', max_length=64, blank=True, null=True)  # Field name made lowercase.
+    tipo = models.CharField(db_column='Tipo', max_length=64)  # Field name made lowercase.
+    estado = models.CharField(db_column='Estado', max_length=64)  # Field name made lowercase.
     coordenadorutilizadorid = models.ForeignKey('Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
     professoruniversitarioutilizadorid = models.ForeignKey('Professoruniversitario', models.DO_NOTHING, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
     datasubmissao = models.DateTimeField(db_column='dataSubmissao')  # Field name made lowercase.
     dataalteracao = models.DateTimeField(db_column='dataAlteracao')  # Field name made lowercase.
+    duracaoesperada = models.IntegerField(db_column='duracaoEsperada')  # Field name made lowercase.
+    participantesmaximo = models.IntegerField(db_column='participantesMaximo')  # Field name made lowercase.
     diaabertoid = models.ForeignKey('Diaaberto', models.DO_NOTHING, db_column='diaAbertoID')  # Field name made lowercase.
-    duracaoesperada = models.IntegerField(db_column='duracaoEsperada', blank=True, null=True)  # Field name made lowercase.
-    participantesmaximo = models.IntegerField(db_column='participantesMaximo', blank=True, null=True)  # Field name made lowercase.
+    espacoid = models.ForeignKey('Espaco', models.DO_NOTHING, db_column='EspacoID')  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'Atividade'
+
+
+class Sessao(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    horarioid = models.ForeignKey('Horario', models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
+    ninscritos = models.IntegerField(db_column='NInscritos')  # Field name made lowercase.
+    vagas = models.IntegerField(db_column='Vagas')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Sessao'

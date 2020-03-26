@@ -49,6 +49,7 @@ class Atividade(models.Model):
     diaabertoid = models.ForeignKey('configuracao.DiaAberto', models.CASCADE, db_column='diaAbertoID') # Field name made lowercase.
     duracaoesperada = models.IntegerField(db_column='duracaoEsperada', blank=True, null=True)  # Field name made lowercase.
     participantesmaximo = models.IntegerField(db_column='participantesMaximo', blank=True, null=True)  # Field name made lowercase.
+    espacoid = models.ForeignKey('Espaco', models.DO_NOTHING, db_column='EspacoID', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -88,12 +89,9 @@ class Materiais(models.Model):
 
 class Sessao(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    espacoid = models.ForeignKey(Espaco, models.DO_NOTHING, db_column='EspacoID')  # Field name made lowercase.
     horarioid = models.ForeignKey(Horario, models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
-    ninscritos = models.IntegerField(db_column='NInscritos')  # Field name made lowercase.
-    vagas = models.IntegerField(db_column='Vagas')  # Field name made lowercase.
-    duracaomedia = models.IntegerField(db_column='duracaoMedia', blank=True, null=True)  # Field name made lowercase.
-    participantesmaximo = models.IntegerField(db_column='participantesMaximo', blank=True, null=True)  # Field name made lowercase.
+    ninscritos = models.IntegerField(db_column='NInscritos', blank=True, null=True)  # Field name made lowercase.
+    vagas = models.IntegerField(db_column='Vagas', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         db_table = 'Sessao'
