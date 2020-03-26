@@ -95,7 +95,7 @@ def inserirsessao(request,id):
 
 
 def novasessao(request,id):        
-    ativsessao= Atividadesessao.objects.get(atividadeid= id).first().sessaoid
+    ativsessao= Atividadesessao.objects.all(atividadeid= id)
     print(ativsessao)
     horarios= Horario.objects.get.all()
     
