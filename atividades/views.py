@@ -96,8 +96,8 @@ def inserirsessao(request,id):
 
 def novasessao(request,id):        
     ativsessao= Atividadesessao.objects.get(atividadeid= id).sessaoid
-    sessaohorario= Sessao.objects.get(id= t).horario
-    horarios= Horario.objects.get(id!=sessaohorario)
+    print(ativsessao)
+    horarios= Horario.objects.get.all()
     
     if request.method == "POST":
         form_Sessao= SessaoForm(request.POST)
