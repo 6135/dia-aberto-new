@@ -4,7 +4,7 @@
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
     <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page">Propor Atividade</a></li>
+    <li class="is-active"><a href="{% url 'inserirAtividade' %}" aria-current="page">Propor Atividade</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
@@ -42,7 +42,7 @@
               <div class="columns">
                 <div class="column">
                   <div class="field">
-                    <label class="label">Duração Esperada</label>
+                    <label class="label">Duração Esperada da Atividade</label>
                     <div class="control">
                       {{form.duracaoesperada}}
                     </div>
