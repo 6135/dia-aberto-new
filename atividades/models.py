@@ -32,7 +32,6 @@ class Arlivre(models.Model):
         db_table = 'ArLivre'
  
 class Atividade(models.Model):
-   class Atividade(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
     descricao = models.TextField(db_column='Descricao')  # Field name made lowercase.
