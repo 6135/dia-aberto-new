@@ -4,7 +4,7 @@ from .models import *
 from configuracao.models import Horario
 from .models import Atividade, Espaco, Sessao, Atividadesessao
 from coordenadores.models import Coordenador
-from utilizadores.models import Professoruniversitario  
+from utilizadores.models import Professoruniversitario
 from configuracao.models import Diaaberto, Horario
 from django.http import HttpResponseRedirect
 from datetime import datetime
@@ -47,7 +47,7 @@ def alterarAtividade(request,id):
 
                 return HttpResponseRedirect('/minhasatividades')          
     return render(request=request,
-                    template_name='atividades/proporatividade.html',
+                    template_name='atividades/proporAtividade.html',
                     context={'form': activity_object_form,'sessao_form':session_object_form}
                     )
 #-----------------EndDiogo------------------

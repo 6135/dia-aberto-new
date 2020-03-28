@@ -7,7 +7,6 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-
 class Transporte(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
