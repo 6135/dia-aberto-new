@@ -95,10 +95,6 @@ def inserirsessao(request,id):
 
 
 def novasessao(request,id):        
-    ativsessao= Atividadesessao.objects.all(atividadeid= id)
-    print(ativsessao)
-    horarios= Horario.objects.get.all()
-    
     if request.method == "POST":
         form_Sessao= SessaoForm(request.POST)
 
@@ -118,7 +114,7 @@ def novasessao(request,id):
                 return redirect('novaSessao', id)
     else:  
         form_Sessao= SessaoForm()
-    return render(request,'atividades/inserirsessao.html',{'sessao': form_Sessao,'horario':  horarios})  
+    return render(request,'atividades/inserirsessao.html',{'sessao': form_Sessao,'horario':  Horario.objects.all().exclude(id=Atividadesessao.objects.filter(atividadeid=id).horarioid)})  
 
 
 
