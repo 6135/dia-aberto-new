@@ -114,7 +114,7 @@ def novasessao(request,id):
                 return redirect('novaSessao', id)
     else:  
         form_Sessao= SessaoForm()
-    return render(request,'atividades/inserirsessao.html',{'sessao': form_Sessao,'horario':  Horario.objects.all().exclude(id=Atividadesessao.objects.filter(atividadeid=id).horarioid)})  
+    return render(request,'atividades/inserirsessao.html',{'sessao': form_Sessao,'horario':  Atividadesessao.objects.all().exclude(atividadeid=id).horarioid})  
 
 
 
