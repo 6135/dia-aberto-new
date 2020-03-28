@@ -12,6 +12,7 @@ class AtividadeForm(ModelForm):
             'publicoalvo': Select(),
             'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input','min':0}),
         }
+
 class SessaoForm(ModelForm):  
     horarioid = ChoiceField(choices=[(horario.id, str(horario.inicio.strftime('%H:%M')) + '  até  ' + str(horario.fim.strftime('%H:%M'))) for horario in Horario.objects.all()])
     espacoid = ChoiceField(choices=[(espaco.id, espaco.nome+' '+espaco.edificio) for espaco in Espaco.objects.all()])
