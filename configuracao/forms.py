@@ -5,6 +5,7 @@ from datetime import datetime
 class DateTimeWidget(DateTimeInput):
 
     def __init__(self, attrs=None, format=None, input_type=None):
+        #input_type = 'datetime-local'
         now = datetime.now()
         if input_type is not None:
             self.input_type=input_type
