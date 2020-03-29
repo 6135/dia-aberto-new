@@ -72,14 +72,26 @@ def inseriratividade(request):
 
 def inserirsessao(request,id):
     disp= []
+    dispesp= []
     hor_indis= Atividadesessao.objects.all().filter(atividadeid=id)
-    indis= []
+    horindis= []
+    esp_ativ= Atividade.objects.get(id=id).espacoid
+    espindis= []
+    espAtiv_indis= Atividade.objects.all().filter(espacoid=esp_ativ)
+    print(espAtiv_indis)
+    
+
+
+
+    
+
+
     for sessao in hor_indis:
-        indis.append(sessao.sessaoid.horarioid)
+        horindis.append(sessao.sessaoid.horarioid)
     for t in Horario.objects.all():
-        if  t not in indis:
+        if  t not in horindis:
             disp.append(t) 
-    print(disp)             
+    #print(disp)             
     if request.method == "POST":
             new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['idhorario']))
             new_Sessao.save()
