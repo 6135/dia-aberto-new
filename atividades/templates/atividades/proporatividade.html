@@ -8,7 +8,7 @@
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
-  <form method="POST" action="">
+  <form method="POST">
     {% csrf_token %}
   <div class="b-steps">
     <section class="step-content">
@@ -18,8 +18,9 @@
               <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
                 Informação de atividade
               </h2>
+              
               <div class="columns">
-                <div class="column">
+                <div class="column is-one-third">
                 
                   <div class="field">
                     <label class="label">Nome da Atividade</label>
@@ -28,7 +29,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="column">
+                <div class="column is-one-third">
                   <div class="field">
                     <label class="label">Tipo de Atividade</label>
                     <div class="control is-expanded">
@@ -38,13 +39,29 @@
                     </div>
                   </div>
                 </div>
+              <div class="column is-one-third">
+                  <div class="field" >
+                    <label class="label">Tema da Atividade:</label>
+                    <div class="control">
+                      <div class="select is-fullwidth" >
+                        <select name="idtema">
+                          {% for t in theme %}
+                            <option value="{{t.id}}">{{t.tema}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+              </div>
               </div>
               <div class="columns">
                 <div class="column">
                   <div class="field">
                     <label class="label">Duração Esperada da Atividade</label>
                     <div class="control">
-                      {{form.duracaoesperada}}
+                      <div class="select is-fullwidth">
+                        {{form.duracaoesperada}}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -57,6 +74,7 @@
                     </div>
                   </div>
                 </div>
+              </div>
               </div>
               <div class="columns">
                 <div class="column">

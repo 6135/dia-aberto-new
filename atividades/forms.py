@@ -1,6 +1,7 @@
 from django.forms import ModelForm,CheckboxInput
-from .models import Atividade, Sessao, Horario, Espaco, Materiais  
+from .models import Atividade, Sessao, Horario, Espaco, Materiais
 from django.forms.widgets import NumberInput, Select, TextInput, Textarea
+from django.forms.fields import ChoiceField
 
 class CheckBoxInputCustom(CheckboxInput):
     input_type = 'checkbox'
@@ -8,10 +9,16 @@ class CheckBoxInputCustom(CheckboxInput):
         if attrs is not None:
             self.attrs = attrs.copy()
 
-class AtividadeForm(ModelForm):  
+
+def get_choices_time():
+    return [(str(t),t) for t in range(5, 61, 5)]
+
+
+class AtividadeForm(ModelForm):
+    duracaoesperada= ChoiceField(choices=get_choices_time())  
     class Meta:  
         model = Atividade  
-        exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid', "espacoid"]
+        exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid', "espacoid","tema"]
         widgets = {
             'nome': TextInput(attrs={'class': 'input'}),
             'tipo': Select(),
@@ -20,16 +27,9 @@ class AtividadeForm(ModelForm):
             'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input'}),
             'duracaoesperada': NumberInput(attrs={'class': 'input'}),
             'participantesmaximo': NumberInput(attrs={'class': 'input'}),
+            'duracaoesperada': Select(),
             }
 
-class SessaoForm(ModelForm):  
-    class Meta:  
-        model = Sessao  
-        exclude = ["espacoid", "horarioid", "ninscritos", "vagas"]
-        widgets = {
-            'participantesmaximo': NumberInput(attrs={'class': 'input'}),
-            'duracaomedia': NumberInput(attrs={'class': 'input'}),
-            }
 
 class MateriaisForm(ModelForm):
     class Meta:  
@@ -38,4 +38,3 @@ class MateriaisForm(ModelForm):
         widgets = {
             'nomematerial': TextInput(attrs={'class': 'input'}),
             }
-

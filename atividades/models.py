@@ -50,6 +50,7 @@ class Atividade(models.Model):
     duracaoesperada = models.IntegerField(db_column='duracaoEsperada', blank=True, null=True)  # Field name made lowercase.
     participantesmaximo = models.IntegerField(db_column='participantesMaximo', blank=True, null=True)  # Field name made lowercase.
     espacoid = models.ForeignKey('Espaco', models.DO_NOTHING, db_column='EspacoID', blank=True, null=True)  # Field name made lowercase.
+    tema = models.ForeignKey('Tema', models.DO_NOTHING, db_column='Tema', blank=False, null=False)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -96,3 +97,10 @@ class Sessao(models.Model):
     class Meta:
         db_table = 'Sessao'
 
+class Tema(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    tema = models.CharField(db_column='Tema', max_length=64)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Tema'
