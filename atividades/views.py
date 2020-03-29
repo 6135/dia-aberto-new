@@ -24,32 +24,30 @@ def alterarAtividade(request,id):
     session_object = activity_session_object.sessaoid #Sessao na dupla
     activity_object = activity_session_object.atividadeid #Objecto da atividade que temos de mudar, ativdade da dupla
     activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
+    print(session_object.horarioid.inicio)
     #-----------------------------
     session_object_form = SessaoForm(instance=session_object)
 
     if request.method == 'POST':    #Se estivermos a receber um request com formulario
-
+        activity_object.espacoid = Espaco.objects.get(id=int(request.POST['espacoid']))
+        activity_object.tema = Tema.objects.get(id=int(request.POST['tema']))      
         activity_object_form = AtividadeForm(request.POST, instance=activity_object)
         session_object.horarioid = Horario.objects.get(id=int(request.POST['horarioid']))
-        session_object.espacoid = Espaco.objects.get(id=int(request.POST['espacoid']))
-        session_object.participantesmaximo = int(request.POST['participantesmaximo'])
-
         if activity_object_form.is_valid():
                 #-------Guardar as mudancas a atividade em si------
-                activity_object_formed = activity_object_form.save(commit=False)
-                
+                activity_object_formed = activity_object_form.save(commit=False)  
                 activity_object_formed.estado = "Pendente"
                 activity_object_formed.dataalteracao = datetime.now()
                 activity_object_formed.save()
                 #--------Guardas as mudancas da sessao em si-------
                 session_object.save()
                 #---------------------------------------------------
-
                 return HttpResponseRedirect('/minhasatividades')          
     return render(request=request,
                     template_name='atividades/proporAtividade.html',
                     context={'form': activity_object_form,'sessao_form':session_object_form}
                     )
+
 #-----------------EndDiogo------------------
 
 

@@ -1,151 +1,61 @@
-{% extends 'configuracao/app.html' %}
-{% block content %}
-<nav class="breadcrumb" aria-label="breadcrumbs">
-  <ul>
-    <li><a href="{% url 'inicio' %}">Início</a></li>
-    <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page">Propor Atividade</a></li>
-  </ul>
-</nav>
-<div style="padding: 3rem 2vw 1rem">
-  <form method="POST" action="">
-  <div class="b-steps">
-    <section class="step-content">
-        <div class="step-item">
-            <div style="padding: 1rem 2vw 0px">
-              <hr />
-              <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                Informação de atividade
-              </h2>
-              <div class="columns">
-                <div class="column">
-                
-                  <div class="field">
-                    <label class="label">Nome da Atividade</label>
-                    <div class="control">
-                      {{form.nome}}
-                    </div>
-                  </div>
-                </div>
-                <div class="column">
-                  <div class="field">
-                    <label class="label">Tipo de Atividade</label>
-                    <div class="control is-expanded">
-                      <div class="select is-fullwidth">
-                        {{form.tipo}}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="columns">
-                <div class="column">
-                  <div class="field">
-                    <label class="label">Descrição</label>
-                    <div class="control">
-                      {{form.descricao}}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="columns">
-                <div class="column is-half">
-                  <div class="field">
-                    <label class="label">Público Alvo</label>
-                      <div class="control">
-                        <div class="select is-fullwidth">
-                            {{form.publicoalvo}}
-                        </div>
-                      </div>
-                  </div>
-                </div>
-                <div class="column is-half">
-                  <div class="field">
-                    <label class="label">Colaboradores Necessarios:</label>
-                      <div class="control">
-                        {{form.nrcolaboradoresnecessario}}
-                       </div>
-                  </div>
-                </div>
-              </div>
-            <hr/>
-          </div>
+{% extends 'atividades/proporAtividade.html' %}
+{% block 'atividade' %}
+<div style="padding: 1rem 2vw 0px">
+  <hr>
+  <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+    Informação de atividade
+  </h2>
+  <div class="columns">
+    <div class="column">
+    
+      <div class="field">
+        <label class="label">Nome da Atividade</label>
+        <div class="control">
+          {{form.nome}}
         </div>
-        <div class="step-item">
-          <div style="padding: 1rem 2vw 0px;">
-            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Adicionar Sessão</h2>
-            <div class="columns">
-              <div class="column">
-                <h1 class="title is-6 has-text-centered">Informação da Sessão</h1>
-                <div class="columns">         
-                    <div class="column">
-                      <div class="field" >
-                        <label class="label has-text-centered">Horário</label>
-                        <div class="control">
-                          <div class="select is-fullwidth" >
-                            {{sessao_form.horarioid}}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="column">
-                      <div class="field">
-                        <label class="label has-text-centered">Maximo de Participantes</label>
-                          <div class="control">
-                            {{sessao_form.participantesmaximo}}
-                          </div>
-                      </div>
-                    </div>
-                    <div class="column">
-                      <div class="field" >
-                        <label class="label has-text-centered">Espaço</label>
-                        <div class="control">
-                          <div class="select is-fullwidth" >
-                              {{sessao_form.espacoid}}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                </div>
-            </div>
-            <div class="column is-offset-1">
-              <h1 class="title is-6 has-text-centered">Requerimentos de Espaço</h1>
-              <div class="field"></div>
-                <div class="control">
-                  <input class="input" type="text" name="material">
-                </div>
-            </div>
+      </div>
+    </div>
+    <div class="column">
+      <div class="field">
+        <label class="label">Tipo de Atividade</label>
+        <div class="control is-expanded">
+          <div class="select is-fullwidth">
+            {{form.tipo}}
           </div>
-        </div>  
-        <hr>
-        </div>     
-    </section>
-    <div class="column is-8 is-offset-2">
-      <div class="level">
-        <div class="level-left">
-          <a class="button is-outlined" type="button">
-            <span>Cancelar</span>
-          </a>
-        </div>
-        <div class="level-right">
-          <button class="button is-large is-success is-outlined is-link" type="submit">
-            <span>Submeter</span>
-            <span class="icon is-medium">
-              <i class="mdi mdi-forward mdi-36px"></i>
-            </span>
-          </button>
         </div>
       </div>
     </div>
   </div>
-</form>
+  <div class="columns">
+    <div class="column">
+      <div class="field">
+        <label class="label">Descrição</label>
+        <div class="control">
+          {{form.descricao}}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="columns">
+    <div class="column is-half">
+      <div class="field">
+        <label class="label">Público Alvo</label>
+          <div class="control">
+            <div class="select is-fullwidth">
+                {{form.publicoalvo}}
+            </div>
+          </div>
+      </div>
+    </div>
+    <div class="column is-half">
+      <div class="field">
+        <label class="label">Colaboradores Necessarios:</label>
+          <div class="control">
+            {{form.nrcolaboradoresnecessario}}
+           </div>
+      </div>
+    </div>
+  </div>
+<hr>
 </div>
-<style>
-  .label {
-  font-weight: normal;
-}
-.b-steps .steps .step-items .step-item .step-details .step-title {
-  font-size: 1rem;
-}
-</style>
-{% endblock content %}
+{% endblock %}

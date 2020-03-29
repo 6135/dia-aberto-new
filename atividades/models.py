@@ -31,16 +31,16 @@ class Arlivre(models.Model):
         managed = False
         db_table = 'ArLivre'
  
+
 class Atividade(models.Model):
-   class Atividade(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
     descricao = models.TextField(db_column='Descricao')  # Field name made lowercase.
     publicosalvo = (("Ciencias e Tecnologia", "Ciências e Tecnologia"),("Linguas e Humanidades", "Linguas e Humanidades"),("Economia", "Economia"))
-    publicoalvo = models.CharField(db_column='Publicoalvo', max_length=255)  # Field name made lowercase.
+    publicoalvo = models.CharField(db_column='Publicoalvo', max_length=255, choices=publicosalvo, default='')  # Field name made lowercase.
     nrcolaboradoresnecessario = models.IntegerField(db_column='nrColaboradoresNecessario')  # Field name made lowercase.
     tipos = (("Atividade Laboratorial", "Atividade Laboratorial"),("Tertulia", "Tertulia"),("Palestra", "Palestra"))
-    tipo = models.CharField(db_column='Tipo', max_length=64)  # Field name made lowercase.
+    tipo = models.CharField(db_column='Tipo', max_length=64, choices=tipos, default='Palestra')  # Field name made lowercase.
     estado = models.CharField(db_column='Estado', max_length=64)  # Field name made lowercase.
     coordenadorutilizadorid = models.ForeignKey(Coordenador, models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
     professoruniversitarioutilizadorid = models.ForeignKey(Professoruniversitario, models.DO_NOTHING, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
@@ -50,6 +50,7 @@ class Atividade(models.Model):
     participantesmaximo = models.IntegerField(db_column='participantesMaximo')  # Field name made lowercase.
     diaabertoid = models.ForeignKey(Diaaberto, models.DO_NOTHING, db_column='diaAbertoID')  # Field name made lowercase.
     espacoid = models.ForeignKey('Espaco', models.DO_NOTHING, db_column='EspacoID')  # Field name made lowercase.
+    tema = models.ForeignKey('Tema', models.DO_NOTHING, db_column='Tema', blank=False, null=False)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -98,3 +99,10 @@ class Sessao(models.Model):
     class Meta:
         db_table = 'Sessao'
 
+class Tema(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    tema = models.CharField(db_column='Tema', max_length=64)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Tema'
