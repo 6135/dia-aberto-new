@@ -5,6 +5,7 @@ urlpatterns = [
     path("",views.homepage,name="inicio"),
     path('admin', views.homepage, name='adminpage'),
     path('diasabertos', views.viewDays, name='diasAbertos'),
-    path("editardia/<int:id>", views.newDay, name='editarDia'),
-    path('inserirdiaaberto', views.newDay,name='novoDia' )
+    path('editardia/<int:id>', views.newDay, name='editarDia'),
+    path('inserirdiaaberto', views.newDay,name='novoDia' ),
+    path('deldia/<int:id>', views.delDay, name='eliminarDia'),
 ]

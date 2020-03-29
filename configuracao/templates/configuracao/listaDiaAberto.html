@@ -1,7 +1,71 @@
 {% extends 'configuracao/app.html' %}
 {% block content %}
 <div class="columns">
-    <div class="column is-3"></div>
+    <div class="column is-3">
+        <form method="POST" action="" id='filter'>
+            {% csrf_token %}
+            <div>
+            <div class="menu">
+                <p class="menu-label">Filtros Dia Aberto</p>
+                <ul class="menu-list">
+                <div class="field">
+                    <!---->
+                    <div class="control has-icons-left is-clearfix">
+                        <input type="number" name="searchAno" placeholder="Ano" class="input" min='{{earliest}}' max='{{latest}}' value="{{current.specific_year}}"> 
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                    </div>
+                    <!---->
+                </div>
+                <div class="field">
+                    <!---->
+                    <div class="control is-expanded">
+                        <span class="select is-fullwidth is-empty">
+                            <select name="orderBy">
+                                <option selected value="">
+                                    Nao ordenar
+                                </option>
+                                <option value="ano">Ordernar por: Ano</option>
+                                <option value="-ano">Ordernar por: Ano (Descrescente)</option>
+                                <option value="datadiaabertoinicio">Ordernar por: Inicio</option>
+                                <option value="-datadiaabertoinicio">Ordernar por: Inicio (Descrescente)</option>
+                                <option value="datadiaabertofim">Ordernar por: Fim </option>
+                                <option value="-datadiaabertofim">Ordernar por: Fim (Descrescente)</option>
+                            </select>
+                        </span>
+                        <!---->
+                    </div>
+                    <!---->
+                </div>
+                <div class="field">
+                    <!---->
+                    <label class="checkbox">
+                        <input type="checkbox" name='activeDays'>
+                        Mostrar apenas os Dias Abertos ativos
+                    </label>
+                    <!---->
+                </div>
+                <div class="field">
+                    <button type="submit" onClick="this.form.elements['searchAno'].value = '';" class="button is-danger is-outlined">
+                        <span class="icon is-left">
+                            <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                        </span>
+                        <span>Limpar pesquisa</span>
+                    </button>
+                    <button type="Submit" class="button is-success is-outlined">
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                        <span>Pesquisar</span>
+                    </button>
+                </div>
+                </ul>
+            </div>
+            </div>
+            
+        </form>
+    </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
@@ -9,7 +73,8 @@
               <li class="is-active"><a href="#" aria-current="page">Dias Abertos</a></li>
             </ul>
           </nav>
-        <a href="{% url 'novoDia'%}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
+        <input type="hidden" id="newday-id" name="{% url 'novoDia'%}" value="{{is_open}}">  
+        <a onclick="newDay()" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
@@ -24,23 +89,18 @@
                             <th  style="width: 300px;">
                                 <div class="th-wrap">
                                     Ano
-                                    <span class="icon is-small">
-                                        <i class="mdi mdi-menu-up"></i>
-                                    </span>
+ 
                                 </div>
                             </th>
                             <th style="width: 300px;">
                                 Dia Inicio
-                                <span class="icon is-small">
-                                     <i class="mdi mdi-menu-up"></i>
-                                </span>
                             </th>
                             <th>
                                 Dia Fim
-                                <span class="icon is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
                             </th>
+                            <th>
+                                Operações
+                            </th>                            
                         </tr>
                     </thead>
                     {% for diaAberto in diaabertos %}
@@ -53,21 +113,39 @@
                                 </span>
                             </a>
                         </td>
-                        <td data-label="Ano">{{diaAberto.ano}} 
-                            <a href="{% url 'editarDia' diaAberto.id %}">
-                                <span class="icon is-small">
-                                    <i class="mdi mdi-circle-edit-outline mdi-22px"></i>
-                                </span>
-                            </a>
-                        </td>
+                        <td data-label="Ano">{{diaAberto.ano}} </td>
                         <td data-label="Dia Fim">{{diaAberto.datadiaabertoinicio}}</td>
                         <td data-label="Estado">{{diaAberto.datadiaabertofim}}</td>
-                        </td>
+                        <td data-label="Operações">
+                            <div class="columns">
+                                
+                                <div class="column">  
+                                    <a id='edit' href="{% url 'editarDia' diaAberto.id %}">
+                                        <span class="icon is-small">
+                                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                                        </span>
+                                    </a>
+                                </div>
+                                <div class="column">    
+                                    <input type="hidden" id="del" name="variable" value="{% url 'eliminarDia' diaAberto.id %}">                 
+                                    <a onclick='cnfDel()'>
+                                        <span class="icon is-small">
+                                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                                        </span>
+                                    </a> 
+                                </div>
+                                <div class="column"></div>
+                                <div class="column"></div> 
+                            </div> 
+                        </td>                     
                       </tr> 
+                      
                       <tr class="detail">
+                      <!--
                         <td colspan="4">
                             <div class="detail-container"></div>
                         </td>
+                        -->
                       </tr> 
                     </tbody>
                     {% endfor %}
@@ -77,3 +155,23 @@
     </div>
 </div>
 {% endblock content %}
+{% block scripts %}
+<script>
+
+function cnfDel() {
+  if(confirm("Tem a certeza que quer elimnar o Dia Aberto?\nNote, esta ação é permanente!")) {
+      var href = document.getElementById("del").value;
+      window.location.href = href;
+    }
+}
+
+function newDay() {
+    var el = document.getElementById('newday-id');
+    var is_open = el.value;
+    if(is_open == "True")
+        if(confirm("Ainda existe um dia aberto em vigor.\nTem a certeza que deseja criar um novo?")) {
+            window.location.href = el.name;
+        }
+}
+</script>
+{% endblock scripts %}
