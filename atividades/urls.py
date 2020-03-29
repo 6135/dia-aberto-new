@@ -7,5 +7,5 @@ urlpatterns = [
     path('alteraratividade/<int:id>',views.alterarAtividade,name='alterarAtividade'),
     path('inserirsessao/<id>',views.novasessao,name='inserirSessao'),
     path('alteraratividade/<id>',views.alterarAtividade,name='alterarAtividade'),
-
+    path('eliminaratividade/<id>',views.eliminarAtividade,name='eliminarAtividade'),
 ]

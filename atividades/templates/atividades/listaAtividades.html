@@ -41,45 +41,58 @@
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
+                            <th >
+                            </th>
+                            <th style="width:300px">
+                            </th>
                         </tr>
                     </thead>
                     {% for atividade in atividades %}
                     <tbody>      
-                      <tr draggable="false">
-                        <td class="chevron-cell">
-                            <a role="button">
-                                <span class="icon is-expanded">
-                                    <i class="mdi mdi-chevron-right mdi-24px"></i>
-                                </span>
-                            </a>
-                        </td>
-                        <td data-label="Nome">{{atividade.nome}} 
-                            <a href="{% url 'alterarAtividade' atividade.id %}">
-                                <span class="icon is-small">
-                                    <i class="mdi mdi-circle-edit-outline mdi-22px"></i>
-                                </span>
-                            </a>
-                        </td>
-                        <td data-label="Submetido a">{{atividade.dataalteracao}}</td>
-                        {% if atividade.estado == "Pendente"%}
-                        <td data-label="Estado">
-                            <span class="tag next is-warning" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
-                        </td>
-                        {% elif atividade.estado == "Recusada" %}
-                        <td data-label="Estado">
-                            <span class="tag next is-danger" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
-                        </td>
-                        {% elif atividade.estado == "Aceite"%}
-                        <td data-label="Estado">
-                            <span class="tag next is-success" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
-                        </td>
-                        {% endif %}
-                      </tr> 
-                      <tr class="detail">
-                        <td colspan="4">
-                            <div class="detail-container"></div>
-                        </td>
-                      </tr> 
+                        <tr draggable="false">
+                            <td class="chevron-cell">
+                                <a role="button">
+                                    <span class="icon is-expanded">
+                                        <i class="mdi mdi-chevron-right mdi-24px"></i>
+                                    </span>
+                                </a>
+                            </td>
+                            <td data-label="Nome">{{atividade.nome}} </td>
+                            <td data-label="Submetido a">{{atividade.dataalteracao}}</td>
+                            {% if atividade.estado == "Pendente"%}
+                            <td data-label="Estado">
+                                <span class="tag next is-warning" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
+                            </td>
+                            {% elif atividade.estado == "Recusada" %}
+                            <td data-label="Estado">
+                                <span class="tag next is-danger" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
+                            </td>
+                            {% elif atividade.estado == "Aceite"%}
+                            <td data-label="Estado">
+                                <span class="tag next is-success" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
+                            </td>
+                            {% endif %}
+                            <td >
+                                <a href="{% url 'alterarAtividade' atividade.id %}">
+                                    <span class="icon has-text-link">
+                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                                    </span>
+                                </a>
+                                
+                            </td>
+                            <td>
+                                <a href="{% url 'eliminarAtividade' atividade.id %}">
+                                    <span class="icon has-text-danger">
+                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr> 
+                        <tr class="detail">
+                            <td colspan="4">
+                                <div class="detail-container"></div>
+                            </td>
+                        </tr> 
                     </tbody>
                     {% endfor %}
                 </table>

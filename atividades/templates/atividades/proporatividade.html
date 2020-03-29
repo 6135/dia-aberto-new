@@ -113,7 +113,8 @@
                     <div style="padding: 1rem 2vw 0px">
                         <hr>
                         <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Adicionar Sessão</h2>
-                        <div id="sessao" class="columns">
+                        <div id="sessoes">
+                        <div  id="sessao" class="columns">
                             <div class="column">
                                 <div class="field">
                                     <label class="label">Horário</label>
@@ -125,12 +126,13 @@
                                 </div>
                             </div>
                         </div>
+                         </div>
                         <div class="columns">
                             <div class="column is-1">
                                 <div class="has-text-centered">
                                     <button onclick="removeSession()" type="button" class="button" style="margin-right: 1rem;">
                                         <span class="icon is-small">
-                                            <i class="mdi mdi-plus"></i>
+                                            <i class="mdi mdi-close"></i>
                                         </span>
                                         <span>Remover</span>
                                     </button>
@@ -155,7 +157,7 @@
     <div class="column is-8 is-offset-2">
       <div class="level">
         <div class="level-left">
-          <a onclick="backward()" class="button is-outlined" type="button">
+          <a id="backwardB" onclick="backward()" class="button is-outlined" type="button">
             <span>Cancelar</span>
           </a>
         </div>
@@ -197,12 +199,13 @@
 </style>
 <script>
 function forward() {
-    var stepItem = document.getElementsByClassName("step-item")
-    var button = document.getElementById("forwardB")
+    var stepItem = document.getElementsByClassName("step-item");
+    var button = document.getElementById("forwardB");
     for(var i=0; i < stepItem.length; i++){
-        if(!stepItem[1].style.display)
+        if(!stepItem[1].style.display){
             button.type='submit'
-        if(stepItem[i].style.display)
+        }
+        else if(stepItem[i].style.display)
             stepItem[i].removeAttribute("style")
         else
             stepItem[i].style.display= 'none'
@@ -211,7 +214,11 @@ function forward() {
 
 function backward(){
     var stepItem = document.getElementsByClassName("step-item")
+    var button = document.getElementById("backwardB");
     for(var i=0; i < stepItem.length; i++){
+        if(!stepItem[0].style.display){
+            button.href='submit'
+        }
         if(stepItem[i].style.display)
             stepItem[i].removeAttribute("style")
         else
@@ -219,18 +226,18 @@ function backward(){
     }
 }
 
-var i=0;
+/*var i=0;
 var original = document.getElementById('sessao');
 function duplicate(){
     var clone = original.cloneNode(true);
     clone.id = "sessao"+ ++i;
-    original.parentNode.appendChild(clone);
+    document.getElementById('sessoes').appendChild(clone);
 }
 
 function removeSession(){
     var session = document.getElementById('sessao'+i);
     session.parentNode.removeChild(session);
     i--;
-}
+}*/
 </script>
 {% endblock content %}

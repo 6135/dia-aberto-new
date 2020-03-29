@@ -24,14 +24,13 @@ def alterarAtividade(request,id):
     session_object = activity_session_object.sessaoid #Sessao na dupla
     activity_object = activity_session_object.atividadeid #Objecto da atividade que temos de mudar, ativdade da dupla
     activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
-    print(session_object.horarioid.inicio)
     #-----------------------------
     session_object_form = SessaoForm(instance=session_object)
 
-    if request.method == 'POST':    #Se estivermos a receber um request com formulario
-        activity_object.espacoid = Espaco.objects.get(id=int(request.POST['espacoid']))
-        activity_object.tema = Tema.objects.get(id=int(request.POST['tema']))      
-        activity_object_form = AtividadeForm(request.POST, instance=activity_object)
+    if request.method == 'POST':    #Se estivermos a receber um request com formulario 
+        activity_object.tema = Tema.objects.get(id=int(request.POST['tema'])) 
+        submitted_data = request.POST.copy()
+        activity_object_form = AtividadeForm(submitted_data, instance=activity_object)
         session_object.horarioid = Horario.objects.get(id=int(request.POST['horarioid']))
         if activity_object_form.is_valid():
                 #-------Guardar as mudancas a atividade em si------
@@ -48,6 +47,11 @@ def alterarAtividade(request,id):
                     context={'form': activity_object_form,'sessao_form':session_object_form}
                     )
 
+def eliminarAtividade(request,id):
+    activity_session_object = Atividadesessao.objects.get(atividadeid=id) #Dupla (sessao,atividade)
+    Sessao.objects.get(id=activity_session_object.sessaoid.id).delete()
+    Atividade.objects.get(id=id).delete()
+    return HttpResponseRedirect('/minhasatividades')
 #-----------------EndDiogo------------------
 
 
