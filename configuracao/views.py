@@ -11,7 +11,7 @@ def homepage(request):
 	return render(request=request,
 				  template_name="configuracao/inicio.html",)
 
-def filter(request, list_diaaberto):
+def orderBy(request, list_diaaberto):
 	if request.method == 'POST':
 		search_specific = request.POST['searchAno']
 		if search_specific != "" and int(search_specific) > 0:
@@ -21,19 +21,31 @@ def filter(request, list_diaaberto):
 			sort_by = 'ano'
 		list_diaaberto = list_diaaberto.order_by(sort_by)
 
-		if 'activeDays' in request.POST:
-			print('here2')
-			today = datetime.now(timezone.utc)
-			list_diaaberto.filter(datadiaabertofim__gt=today)
-			print(list_diaaberto )
 	else:
-		list_diaaberto = list_diaaberto.order_by('ano')
+		list_diaaberto = list_diaaberto.order_by('-ano')
 		search_specific = ""
 	
-	
-	return {'list_diaaberto': list_diaaberto, 'current': {'specific_year': search_specific}}
+	return {'list_diaaberto': list_diaaberto, 
+			'current': {'specific_year': search_specific,}
+			}
+
+def showBy(request, list_diaaberto):
+	if request.method == 'POST':
+		today = datetime.now(timezone.utc)
+		if request.POST['showBy'] == '1':
+			list_diaaberto = list_diaaberto.filter(datadiaabertofim__gte=today)
+		elif request.POST['showBy'] == '2':
+			list_diaaberto = list_diaaberto.filter(dataporpostaatividadesfim__gte=today)
+		elif request.POST['showBy'] == '3':
+			list_diaaberto = list_diaaberto.filter(datainscricaoatividadesfim__gte=today)
+	return list_diaaberto
 
 def viewDays(request):
+
+	if request.method == 'POST':
+		formFilter = diaAbertoFilterForm(request.POST)
+	else:
+		formFilter = diaAbertoFilterForm()
 
 	list_diaaberto = Diaaberto.objects.all()	#Obtain all days
 
@@ -41,14 +53,22 @@ def viewDays(request):
 	latest = list_diaaberto.last()
 	is_open =(latest.datadiaabertofim > datetime.now(timezone.utc))
 
-	filterRes = filter(request, list_diaaberto)		#Filter/order
+	filterRes = orderBy(request, list_diaaberto)		#Filter/order
 	list_diaaberto = filterRes['list_diaaberto']
-
 	current = filterRes['current']
+
+	list_diaaberto = showBy(request,list_diaaberto)
 
 	return render(request=request,
 				  template_name='configuracao/listaDiaAberto.html', 
-				  context = {'diaabertos': list_diaaberto, 'earliest': (earliest.ano), 'latest': (latest.ano), 'is_open': is_open, 'current': current})
+				  context = {'form':formFilter, 
+				  			'diaabertos': list_diaaberto, 
+							'earliest': (earliest.ano), 
+							'latest': (latest.ano), 
+							'is_open': is_open, 
+							'current': current
+							}
+					)
 
 def newDay(request, id=None):
 
@@ -74,6 +94,6 @@ def newDay(request, id=None):
 def delDay(request, id=None):
 
 	if id is not None:
-		dia_aberto = Diaaberto.objects.get(id=id,administradorutilizadorid=1)
+		dia_aberto = Diaaberto.objects.filter(id=id,administradorutilizadorid=1)
 		dia_aberto.delete()
 	return redirect('diasAbertos')

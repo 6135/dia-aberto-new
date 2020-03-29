@@ -22,7 +22,17 @@
                     <!---->
                     <div class="control is-expanded">
                         <span class="select is-fullwidth is-empty">
-                            {{form.orderBy}}
+                            <select name="orderBy">
+                                <option selected value="">
+                                    Nao ordenar
+                                </option>
+                                <option value="ano">Ordernar por: Ano</option>
+                                <option value="-ano">Ordernar por: Ano (Descrescente)</option>
+                                <option value="datadiaabertoinicio">Ordernar por: Inicio</option>
+                                <option value="-datadiaabertoinicio">Ordernar por: Inicio (Descrescente)</option>
+                                <option value="datadiaabertofim">Ordernar por: Fim </option>
+                                <option value="-datadiaabertofim">Ordernar por: Fim (Descrescente)</option>
+                            </select>
                         </span>
                         <!---->
                     </div>
@@ -32,14 +42,29 @@
                     <!---->
                     <div class="control is-expanded">
                         <span class="select is-fullwidth is-empty">
-                            {{form.showBy}}
+                            <select name="showBy" id='{{}}'>
+                                <option selected value="">
+                                    Mostrar todos
+                                </option>
+                                <option value="1">Mostrar: Dias Abertos Ativos</option>
+                                <option value="2">Mostrar: Submissao de Atividades Ativas</option>
+                                <option value="3">Mostrar: Submissao de Inscricoes Ativas</option>
+                            </select>
                         </span>
                         <!---->
                     </div>
                     <!---->
                 </div>
                 <div class="field">
-                    <button type="submit" onClick="resetForm()" class="button is-danger is-outlined">
+                    <!---->
+                    <label class="checkbox">
+                        <input type="checkbox" name='activeDays'>
+                        Mostrar apenas os Dias Abertos ativos
+                    </label>
+                    <!---->
+                </div>
+                <div class="field">
+                    <button type="submit" onClick="this.form.elements['searchAno'].value = '';" class="button is-danger is-outlined">
                         <span class="icon is-left">
                             <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                         </span>
@@ -164,13 +189,6 @@ function newDay() {
         if(confirm("Ainda existe um dia aberto em vigor.\nTem a certeza que deseja criar um novo?")) {
             window.location.href = el.name;
         }
-}
-
-function resetForm(){
-    oFormObject = document.forms['filter'];
-    oFormObject.elements["searchAno"].value = '';
-    oFormObject.elements["orderBy"].value = '';
-    oFormObject.elements["showBy"].value = '';
 }
 </script>
 {% endblock scripts %}
