@@ -52,7 +52,9 @@ def inseriratividade(request):
            Sessoes= len(Sessao.objects.all().filter(atividadeid= espAtv))
            total+=Sessoes
         if total!= len(Horario.objects.all()):
-            espacodisponivel.append(Espaco.objects.get(id=esp.id)) 
+            espacodisponivel.append(Espaco.objects.get(id=esp.id))
+            
+             
     if request.method == "POST":
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
@@ -62,6 +64,7 @@ def inseriratividade(request):
         formAtividade = AtividadeForm(request.POST, instance=new_form)
         
         if formAtividade.is_valid() and  form_Materiais.is_valid():
+            
             new_form.save()  
             materiais = form_Materiais.save(commit= False)
             materiais.atividadeid = Atividade.objects.all().order_by('-id').first()
