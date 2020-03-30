@@ -20,7 +20,7 @@
               </h2>
               
               <div class="columns">
-                <div class="column is-one-third">
+                <div class="column">
                 
                   <div class="field">
                     <label class="label">Nome da Atividade</label>
@@ -29,59 +29,13 @@
                     </div>
                   </div>
                 </div>
-                <div class="column is-one-third">
+                <div class="column ">
                   <div class="field">
                     <label class="label">Tipo de Atividade</label>
                     <div class="control is-expanded">
                       <div class="select is-fullwidth">
                         {{form.tipo}}
                       </div>
-                    </div>
-                  </div>
-                </div>
-              <div class="column is-one-third">
-                  <div class="field" >
-                    <label class="label">Tema da Atividade:</label>
-                    <div class="control">
-                      <div class="select is-fullwidth" >
-                        <select name="idtema">
-                          {% for t in theme %}
-                            <option value="{{t.id}}">{{t.tema}}</option>
-                          {% endfor %}
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-              </div>
-              </div>
-              <div class="columns">
-                <div class="column">
-                  <div class="field">
-                    <label class="label">Duração Esperada da Atividade</label>
-                    <div class="control">
-                      <div class="select is-fullwidth">
-                        {{form.duracaoesperada}}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class="column">
-                  <div class="field">
-                    <label class="label">Numero Maximo de Participantes</label>
-                       <div class="control">
-                        {{form.participantesmaximo}}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              </div>
-              <div class="columns">
-                <div class="column">
-                  <div class="field">
-                    <label class="label">Descrição</label>
-                    <div class="control">
-                      {{form.descricao}}
                     </div>
                   </div>
                 </div>
@@ -97,6 +51,43 @@
                       </div>
                   </div>
                 </div>
+                <div class="column">
+                  <div class="field" >
+                    <label class="label">Tema da Atividade:</label>
+                    <div class="control">
+                      <div class="select is-fullwidth" >
+                        <select name="idtema">
+                          {% for t in theme %}
+                            <option value="{{t.id}}">{{t.tema}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div> 
+                </div>               
+              </div>
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Descrição</label>
+                    <div class="control">
+                      {{form.descricao}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Duração Esperada da Atividade</label>
+                    <div class="control">
+                      <div class="select is-fullwidth">
+                        {{form.duracaoesperada}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="column is-half">
                   <div class="field">
                     <label class="label">Colaboradores Necessarios:</label>
@@ -107,7 +98,15 @@
                 </div>
               </div>
               <div class="columns">
-                <div class="column is-half">
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Numero Maximo de Participantes</label>
+                       <div class="control">
+                        {{form.participantesmaximo}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column">
                   <div class="field" >
                     <label class="label">Espaço:</label>
                     <div class="control">
@@ -121,6 +120,8 @@
                     </div>
                   </div>
                 </div>
+              </div>              
+              <div class="columns">
                 <div class="column is-half">
                   <div class="field">
                     <label class="label">Material Extra Necessario</label>
@@ -128,9 +129,8 @@
                       {{mat.nomematerial}}
                     </div>
                   </div>
-                </div>  
+                </div>
               </div>
-            
             <hr/>
           </div>
         </div>

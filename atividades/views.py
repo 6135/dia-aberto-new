@@ -59,7 +59,7 @@ def inseriratividade(request):
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
-                             estado = "Pendente", diaabertoid = Diaaberto.objects.all().order_by('-id').first(),espacoid= Espaco.objects.get(id=request.POST['idespaco']),
+                             estado = "Pendente", diaabertoid = Diaaberto.objects.get(id=3),espacoid= Espaco.objects.get(id=request.POST['idespaco']),
                              tema=Tema.objects.get(id=request.POST['idtema']))
         formAtividade = AtividadeForm(request.POST, instance=new_form)
         
@@ -115,27 +115,31 @@ def inserirsessao(request,id):
         if  t not in horariosindisponiveis:
             disp.append(t)
     if len(disp)==0:
-        Atividade.objects.get(id=id).delete()
-        return redirect('inserirAtividade') 
+        return HttpResponseRedirect('/thanks/') 
         
     if request.method == "POST":
+            a= Sessao.objects.all().filter(atividadeid=id)
+            if 'save' in request.POST and len(a)!=0 :
+                return HttpResponseRedirect('/thanks/')
+            elif 'save' in request.POST and len(a)==0:
+                return redirect('inserirSessao', id)
             new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['idhorario']), atividadeid=Atividade.objects.get(id=id))
             new_Sessao.save()
             if 'cancelar' in request.POST :
                 Atividade.objects.get(id=id).delete()
                 return HttpResponseRedirect('/cancelada/')
-            if 'save' in request.POST :
-                return HttpResponseRedirect('/thanks/')
             elif 'new' in request.POST:
                 return redirect('inserirSessao', id)
-    return render(request,'atividades/inserirsessao.html',{'horario': disp })  
+    return render(request,'atividades/inserirsessao.html',{'horario': disp , 'sessoes': Sessao.objects.all().filter(atividadeid= id)})  
 
 
 
     
 
-
-
+def deletesessao(resquest,idSessao):
+    idatividade=Sessao.objects.get(id=idSessao).atividadeid.id
+    Sessao.objects.get(id=idSessao).delete()
+    return redirect('inserirSessao', idatividade)
 
 
 
