@@ -42,7 +42,17 @@ def minhasatividades(request):
 
 
 #-----------------------David--------------------
-def inseriratividade(request):  
+def inseriratividade(request): 
+    espacodisponivel= []
+    
+    for esp in Espaco.objects.all():
+        Atividadeespaco= Atividade.objects.all().filter(espacoid=esp.id)
+        total=0
+        for espAtv in Atividadeespaco:
+           Sessoes= len(Sessao.objects.all().filter(atividadeid= espAtv))
+           total+=Sessoes
+        if total!= len(Horario.objects.all()):
+            espacodisponivel.append(Espaco.objects.get(id=esp.id)) 
     if request.method == "POST":
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
@@ -59,11 +69,11 @@ def inseriratividade(request):
             idAtividade= Atividade.objects.all().order_by('-id').first()
             return redirect('inserirSessao', idAtividade.id)
         else:
-            return render(request, 'atividades/proporatividade.html',{'form': formAtividade ,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all(), 'mat': form_Materiais, 'theme':Tema.objects.all()})
+            return render(request, 'atividades/proporatividade.html',{'form': formAtividade ,'horario':  Horario.objects.all(), 'espaco': espacodisponivel, 'mat': form_Materiais, 'theme':Tema.objects.all()})
     else:  
         formAtividade = AtividadeForm()
         form_Materiais= MateriaisForm() 
-    return render(request,'atividades/proporatividade.html',{'form': formAtividade,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all,'mat': form_Materiais,'theme':Tema.objects.all()})  
+    return render(request,'atividades/proporatividade.html',{'form': formAtividade,'horario':  Horario.objects.all(), 'espaco': espacodisponivel,'mat': form_Materiais,'theme':Tema.objects.all()})  
 
 
 
@@ -116,6 +126,10 @@ def inserirsessao(request,id):
             elif 'new' in request.POST:
                 return redirect('inserirSessao', id)
     return render(request,'atividades/inserirsessao.html',{'horario': disp })  
+
+
+
+    
 
 
 
