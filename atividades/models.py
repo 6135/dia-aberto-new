@@ -59,16 +59,6 @@ class Atividade(models.Model):
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Atividade._meta.fields]
 
-
-class Atividadesessao(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
-    sessaoid = models.ForeignKey('Sessao', models.DO_NOTHING, db_column='SessaoID')  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'AtividadeSessao'
-
 class Espaco(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -91,8 +81,9 @@ class Materiais(models.Model):
 class Sessao(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     horarioid = models.ForeignKey(Horario, models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
-    ninscritos = models.IntegerField(db_column='NInscritos', blank=True, null=True)  # Field name made lowercase.
-    vagas = models.IntegerField(db_column='Vagas', blank=True, null=True)  # Field name made lowercase.
+    ninscritos = models.IntegerField(db_column='NInscritos')  # Field name made lowercase.
+    vagas = models.IntegerField(db_column='Vagas')  # Field name made lowercase.
+    atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
 
     class Meta:
         db_table = 'Sessao'

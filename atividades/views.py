@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import AtividadeForm , MateriaisForm
 from .models import *
 from configuracao.models import Horario
-from .models import Atividade, Espaco, Sessao, Atividadesessao, Tema
+from .models import Atividade, Espaco, Sessao, Tema
 from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario  
 from configuracao.models import Diaaberto, Horario
@@ -19,29 +19,25 @@ def proporatividade(request):
 
 
 def minhasatividades(request):
-	return render(request=request,
+    	return render(request=request,
 				template_name="atividades/listaAtividades.html",
                 context={"atividades": Atividade.objects.all()})
 
-def alterarAtividade(request,id):
-    change_activity= Atividade.objects.get(id=id)
-    schedules=Horario.objects.all()
-    activity_sessions=Atividadesessao.objects.filter(atividadeid=id)
-    espacos=Espaco.objects.all()
-    #print(activity_sessions.sessaoid.espacoid.nome)
-    changed_form=AtividadeForm(instance=change_activity)
-    if request.method == 'POST':
-        change_activity.estado='Pendente'
-        changed_form=AtividadeForm(request.POST,instance=change_activity)
-        if changed_form.is_valid():
-            changed_form.save()
-            change_activity.dataalteracao = datetime.now()
-            change_activity.save()
-            return HttpResponseRedirect('/minhasatividades')          
-    return render(request=request,
-                    template_name='atividades/proporatividade.html',
-                    context={'atividade': change_activity,'form': changed_form,'schedules':schedules,'activity_sessions':activity_sessions,'espacos':espacos}
-                    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #-----------------EndDiogo------------------
 
 
@@ -51,7 +47,8 @@ def inseriratividade(request):
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
-                             estado = "Pendente", diaabertoid = Diaaberto.objects.all().order_by('-id').first(),espacoid= Espaco.objects.get(id=request.POST['idespaco']),tema=Tema.objects.get(id=request.POST['idtema']))
+                             estado = "Pendente", diaabertoid = Diaaberto.objects.all().order_by('-id').first(),espacoid= Espaco.objects.get(id=request.POST['idespaco']),
+                             tema=Tema.objects.get(id=request.POST['idtema']))
         formAtividade = AtividadeForm(request.POST, instance=new_form)
         
         if formAtividade.is_valid() and  form_Materiais.is_valid():
@@ -72,32 +69,43 @@ def inseriratividade(request):
 
 def inserirsessao(request,id):
     disp= []
-    dispesp= []
-    hor_indis= Atividadesessao.objects.all().filter(atividadeid=id)
-    horindis= []
-    esp_ativ= Atividade.objects.get(id=id).espacoid
-    espindis= []
-    espAtiv_indis= Atividade.objects.all().filter(espacoid=esp_ativ)
-    print(espAtiv_indis)
-    
+    horariosindisponiveis= []
+    espaco_id= Atividade.objects.get(id=id).espacoid # Busca o espaco da atividade
+    espacoidtest= espaco_id.id #  Busca o id do espaco
+    #print(espacoidtest)
+    atividadescomespaco_id=Atividade.objects.all().filter(espacoid=espacoidtest).exclude(id=id) # Busca as atividades com o espaco da atividade
+    #print(atividadescomespaco_id)
 
 
+    idAtividades= []
+    for atv_id in atividadescomespaco_id: 
+        idAtividades.append(atv_id.id) # Busca o id das atividades
+    print(idAtividades)
 
-    
+    sessao_espaco= []
+    for sessao in idAtividades:
+        print(sessao)
+        sessao_espaco.append(Sessao.objects.all().filter(atividadeid=sessao)) # Busca as sessoes das atividades
+    print(sessao_espaco)
+    for sessao in sessao_espaco:
+        for sessao2 in sessao:
+            horariosindisponiveis.append(sessao2.horarioid)
+    print(horariosindisponiveis)
 
+    sessao_indis= Sessao.objects.all().filter(atividadeid=id)
+    for sessao in sessao_indis:
+        horariosindisponiveis.append(sessao.horarioid)
+    #print(horariosindisponiveis)
+    horariosindisponiveis= list(dict.fromkeys(horariosindisponiveis))
 
-    for sessao in hor_indis:
-        horindis.append(sessao.sessaoid.horarioid)
     for t in Horario.objects.all():
-        if  t not in horindis:
+        if  t not in horariosindisponiveis:
             disp.append(t) 
-    #print(disp)             
+    #print(disp)
+    
     if request.method == "POST":
-            new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['idhorario']))
+            new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['idhorario']), atividadeid=Atividade.objects.get(id=id))
             new_Sessao.save()
-            new_as = Atividadesessao(atividadeid = Atividade.objects.get(id=id), sessaoid= Sessao.objects.all().order_by('-id').first())
-            new_as.save()
-            
             if 'save' in request.POST:
                 return HttpResponseRedirect('/thanks/')
             elif 'new' in request.POST:

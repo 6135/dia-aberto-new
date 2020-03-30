@@ -194,12 +194,12 @@ class Idioma(models.Model):
 
 
 class Horario(models.Model):
-    # Field name made lowercase.
-    id = models.AutoField(db_column='ID', primary_key=True)
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     inicio = models.TimeField(db_column='Inicio')  # Field name made lowercase.
     fim = models.TimeField(db_column='Fim')  # Field name made lowercase.
 
     class Meta:
+        managed = False
         db_table = 'Horario'
 
         
