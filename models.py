@@ -58,16 +58,6 @@ class Atividade(models.Model):
         db_table = 'Atividade'
 
 
-class Atividadesessao(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
-    sessaoid = models.ForeignKey('Sessao', models.DO_NOTHING, db_column='SessaoID')  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'AtividadeSessao'
-
-
 class Campus(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     menuid = models.ForeignKey('Menu', models.DO_NOTHING, db_column='MenuID')  # Field name made lowercase.
@@ -346,6 +336,7 @@ class Sessao(models.Model):
     horarioid = models.ForeignKey(Horario, models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
     ninscritos = models.IntegerField(db_column='NInscritos')  # Field name made lowercase.
     vagas = models.IntegerField(db_column='Vagas')  # Field name made lowercase.
+    atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
 
     class Meta:
         managed = False

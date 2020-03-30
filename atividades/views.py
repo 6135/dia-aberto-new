@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import AtividadeForm , SessaoForm
 from .models import *
 from configuracao.models import Horario
-from .models import Atividade, Espaco, Sessao, Atividadesessao
+from .models import Atividade, Espaco, Sessao
 from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario
 from configuracao.models import Diaaberto, Horario
@@ -20,9 +20,8 @@ def minhasatividades(request):
 def alterarAtividade(request,id):
 
     #------atividade a alterar----
-    activity_session_object = Atividadesessao.objects.all().filter(atividadeid=id).first() #Dupla (sessao,atividade)
-    session_object = activity_session_object.sessaoid #Sessao na dupla
-    activity_object = activity_session_object.atividadeid #Objecto da atividade que temos de mudar, ativdade da dupla
+    session_object = Sessao.objects.get(atividadeid=id) #Sessao na dupla
+    activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
     #-----------------------------
     session_object_form = SessaoForm(instance=session_object)
@@ -44,13 +43,11 @@ def alterarAtividade(request,id):
                 return HttpResponseRedirect('/minhasatividades')          
     return render(request=request,
                     template_name='atividades/proporAtividade.html',
-                    context={'form': activity_object_form,'sessao_form':session_object_form}
+                    context={'form': activity_object_form,'sessao_form':session_object_form,'sessoes':session_object}
                     )
 
 def eliminarAtividade(request,id):
-    activity_session_object = Atividadesessao.objects.get(atividadeid=id) #Dupla (sessao,atividade)
-    Sessao.objects.get(id=activity_session_object.sessaoid.id).delete()
-    Atividade.objects.get(id=id).delete()
+    Atividade.objects.get(id=id).delete() #Dupla (sessao,atividade)
     return HttpResponseRedirect('/minhasatividades')
 #-----------------EndDiogo------------------
 

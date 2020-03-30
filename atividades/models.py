@@ -15,7 +15,7 @@ from notificacoes.models import *
 
 
 class Anfiteatro(models.Model):
-    espacoid = models.OneToOneField('Espaco', models.DO_NOTHING, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
+    espacoid = models.OneToOneField('Espaco', models.CASCADE, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
     espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
 
     class Meta:
@@ -24,7 +24,7 @@ class Anfiteatro(models.Model):
 
    
 class Arlivre(models.Model):
-    espacoid = models.OneToOneField('Espaco', models.DO_NOTHING, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
+    espacoid = models.OneToOneField('Espaco', models.CASCADE, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
     espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
 
     class Meta:
@@ -42,15 +42,15 @@ class Atividade(models.Model):
     tipos = (("Atividade Laboratorial", "Atividade Laboratorial"),("Tertulia", "Tertulia"),("Palestra", "Palestra"))
     tipo = models.CharField(db_column='Tipo', max_length=64, choices=tipos, default='Palestra')  # Field name made lowercase.
     estado = models.CharField(db_column='Estado', max_length=64)  # Field name made lowercase.
-    coordenadorutilizadorid = models.ForeignKey(Coordenador, models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
-    professoruniversitarioutilizadorid = models.ForeignKey(Professoruniversitario, models.DO_NOTHING, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
+    coordenadorutilizadorid = models.ForeignKey(Coordenador, models.CASCADE, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
+    professoruniversitarioutilizadorid = models.ForeignKey(Professoruniversitario, models.CASCADE, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
     datasubmissao = models.DateTimeField(db_column='dataSubmissao')  # Field name made lowercase.
     dataalteracao = models.DateTimeField(db_column='dataAlteracao')  # Field name made lowercase.
     duracaoesperada = models.IntegerField(db_column='duracaoEsperada')  # Field name made lowercase.
     participantesmaximo = models.IntegerField(db_column='participantesMaximo')  # Field name made lowercase.
-    diaabertoid = models.ForeignKey(Diaaberto, models.DO_NOTHING, db_column='diaAbertoID')  # Field name made lowercase.
-    espacoid = models.ForeignKey('Espaco', models.DO_NOTHING, db_column='EspacoID')  # Field name made lowercase.
-    tema = models.ForeignKey('Tema', models.DO_NOTHING, db_column='Tema', blank=False, null=False)  # Field name made lowercase.
+    diaabertoid = models.ForeignKey(Diaaberto, models.CASCADE, db_column='diaAbertoID')  # Field name made lowercase.
+    espacoid = models.ForeignKey('Espaco', models.CASCADE, db_column='EspacoID')  # Field name made lowercase.
+    tema = models.ForeignKey('Tema', models.CASCADE, db_column='Tema', blank=False, null=False)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -58,16 +58,6 @@ class Atividade(models.Model):
 
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Atividade._meta.fields]
-
-
-class Atividadesessao(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
-    sessaoid = models.ForeignKey('Sessao', models.DO_NOTHING, db_column='SessaoID')  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'AtividadeSessao'
 
 
 
@@ -83,7 +73,7 @@ class Espaco(models.Model):
 
 class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
+    atividadeid = models.ForeignKey(Atividade, models.CASCADE, db_column='AtividadeID')  # Field name made lowercase.
     nome = models.CharField(max_length=255, blank=True, null=True)
 
     class Meta:
@@ -94,8 +84,9 @@ class Sessao(models.Model):
     horarioid = models.ForeignKey(Horario, models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
     ninscritos = models.IntegerField(db_column='NInscritos')  # Field name made lowercase.
     vagas = models.IntegerField(db_column='Vagas')  # Field name made lowercase.
-    def __str__(self):
-        return '%s %s %s %s %s %s' % (self.espacoid,self.horarioid,self.ninscritos,self.vagas,self.duracaomedia,self.participantesmaximo)
+    atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
+    #def __str__(self):
+        #return '%s %s %s %s %s %s' % (self.espacoid,self.horarioid,self.ninscritos,self.vagas,self.duracaomedia,self.participantesmaximo)
     class Meta:
         db_table = 'Sessao'
 

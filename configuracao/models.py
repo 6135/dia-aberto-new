@@ -150,8 +150,6 @@ class Departamento(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
-    atividadeid = models.ForeignKey(
-        'atividades.Atividade', models.CASCADE, db_column='AtividadeID')
     # Field name made lowercase.
     unidadeorganicaid = models.ForeignKey(
         'Unidadeorganica', models.CASCADE, db_column='UnidadeOrganicaID')
