@@ -1,6 +1,5 @@
 {% extends 'configuracao/app.html' %}
 {% block content %}
-
 <div class="columns">
     <div class="column is-3">
         <form method="POST" action="" id='filter'>
@@ -23,7 +22,17 @@
                     <!---->
                     <div class="control is-expanded">
                         <span class="select is-fullwidth is-empty">
-                            {{form.orderBy}}
+                            <select name="orderBy">
+                                <option selected value="">
+                                    Nao ordenar
+                                </option>
+                                <option value="ano">Ordernar por: Ano</option>
+                                <option value="-ano">Ordernar por: Ano (Descrescente)</option>
+                                <option value="datadiaabertoinicio">Ordernar por: Inicio</option>
+                                <option value="-datadiaabertoinicio">Ordernar por: Inicio (Descrescente)</option>
+                                <option value="datadiaabertofim">Ordernar por: Fim </option>
+                                <option value="-datadiaabertofim">Ordernar por: Fim (Descrescente)</option>
+                            </select>
                         </span>
                         <!---->
                     </div>
@@ -33,14 +42,29 @@
                     <!---->
                     <div class="control is-expanded">
                         <span class="select is-fullwidth is-empty">
-                            {{form.showBy}}
+                            <select name="showBy" id='{{}}'>
+                                <option selected value="">
+                                    Mostrar todos
+                                </option>
+                                <option value="1">Mostrar: Dias Abertos Ativos</option>
+                                <option value="2">Mostrar: Submissao de Atividades Ativas</option>
+                                <option value="3">Mostrar: Submissao de Inscricoes Ativas</option>
+                            </select>
                         </span>
                         <!---->
                     </div>
                     <!---->
                 </div>
                 <div class="field">
-                    <button type="submit" onClick="resetForm()" class="button is-danger is-outlined">
+                    <!---->
+                    <label class="checkbox">
+                        <input type="checkbox" name='activeDays'>
+                        Mostrar apenas os Dias Abertos ativos
+                    </label>
+                    <!---->
+                </div>
+                <div class="field">
+                    <button type="submit" onClick="this.form.elements['searchAno'].value = '';" class="button is-danger is-outlined">
                         <span class="icon is-left">
                             <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                         </span>
@@ -100,7 +124,7 @@
                     <tbody>      
                       <tr draggable="false">
                         <td class="chevron-cell">
-                            <a role="button" onclick="displayDetails({{diaAberto.id}})">
+                            <a role="button">
                                 <span class="icon is-expanded">
                                     <i class="mdi mdi-chevron-right mdi-24px"></i>
                                 </span>
@@ -132,50 +156,13 @@
                             </div> 
                         </td>                     
                       </tr> 
-                      <tr class="detail" style="display: none" id='Details{{diaAberto.id}}'>
-
-                        <td colspan="5">
-                            <div class="detail-container">
-                                <div class="table"> 
-                                    <div class="table-wrapper">
-                                        <table class="table has-mobile-cards">
-                                            <thead>
-                                                <tr style="border-bottom: 1px solid #ddd">
-                                                    <th class="th-wrap">Inicio submissao Atividades:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
-                                                        <span>{{diaAberto.datapropostasatividadesincio}}</span>
-                                                    </th>
-                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
-                                                    <th class="th-wrap">Fim submissao Atividades:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
-                                                        <span> {{diaAberto.dataporpostaatividadesfim}} </span>
-                                                    </th>
-                                                </tr>
-                                                <tr style="border-bottom: 1px solid #ddd">
-                                                    <th class="th-wrap">Inicio Inscrições:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
-                                                        <span>{{diaAberto.datainscricaoatividadesinicio}}</span>
-                                                    </th>
-                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
-                                                    <th class="th-wrap">Fim Inscrições:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
-                                                        <span> {{diaAberto.datainscricaoatividadesfim}} </span>
-                                                    </th>
-                                                </tr>
-                                                <tr>
-                                                    <th class="th-wrap">Descrição:</th>
-                                                    <td colspan="4">
-                                                        <textarea class="textarea" disabled style="resize: none;">{{diaAberto.descricao}}</textarea>
-                                                    </td>
-                                                </tr>
-
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                            <hr>
+                      
+                      <tr class="detail">
+                      <!--
+                        <td colspan="4">
+                            <div class="detail-container"></div>
                         </td>
-                        
+                        -->
                       </tr> 
                     </tbody>
                     {% endfor %}
@@ -202,20 +189,6 @@ function newDay() {
         if(confirm("Ainda existe um dia aberto em vigor.\nTem a certeza que deseja criar um novo?")) {
             window.location.href = el.name;
         }
-}
-
-function resetForm(){
-    oFormObject = document.forms['filter'];
-    oFormObject.elements["searchAno"].value = '';
-    oFormObject.elements["orderBy"].value = '';
-    oFormObject.elements["showBy"].value = '';
-}
-
-function displayDetails(idForDetails){
-    var objectDetails = document.getElementById("Details"+idForDetails);
-    if(objectDetails.style.display == 'none') {
-        objectDetails.style.display = "contents";
-    } else objectDetails.style.display = "none";
 }
 </script>
 {% endblock scripts %}

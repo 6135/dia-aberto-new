@@ -4,7 +4,7 @@ from datetime import datetime
     
 class DateTimeWidget(DateTimeInput):
 
-    def __init__(self, attrs=None, format=None, input_type=None, hours='09', minutes='00'):
+    def __init__(self, attrs=None, format=None, input_type=None, hours='09', minutes='00', default=None):
         #input_type = 'datetime-local'
         now = datetime.now()
         if input_type is not None:
@@ -12,6 +12,8 @@ class DateTimeWidget(DateTimeInput):
         if attrs is not None:
             self.attrs = attrs.copy()
         else:
+            if default is not None:
+                self.attrs = {'class': 'input', 'value': default}
             if hours and minutes is not None:
                 self.attrs = {'class': 'input', 'value': str(now.date()) + ' ' + hours + ':' + minutes}
             else:
@@ -40,3 +42,21 @@ class diaAbertoSettingsForm(ModelForm):
             'datainscricaoatividadesfim': DateTimeWidget(hours=None, minutes=None),
         }
     
+class diaAbertoFilterForm(Form):
+    searchAno = CharField(widget=NumberInput, required=False)
+    orderByChoices = [('', 'Nao ordenar'),
+        ('ano', 'Ordernar por: Ano'),
+        ('-ano', 'Ordernar por: Ano (Decrescente)'),
+        ('datadiaabertoinicio', 'Ordernar por: Inicio'),
+        ('-datadiaabertoinicio', 'Ordernar por: Inicio (Descrescente)'),
+        ('datadiaabertofim', 'Ordernar por: Fim'),
+        ('-datadiaabertofim', 'Ordernar por: Fim (Descrescente)'),
+    ]
+    orderBy = ChoiceField(choices=orderByChoices, widget=Select(), required=False)
+
+    showByChoices = [('','Mostrar todos'),
+        ('1','Mostrar: Dias Abertos Ativos'),
+        ('2','Mostrar: Submissao de Atividades Ativas'),
+        ('3','Mostrar: Submissao de Inscricoes Ativas'),
+    ]
+    showBy = ChoiceField(choices=showByChoices, widget=Select(), required=False)
