@@ -108,6 +108,9 @@ def inserirsessao(request,id):
     if request.method == "POST":
             new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['idhorario']), atividadeid=Atividade.objects.get(id=id))
             new_Sessao.save()
+            if 'cancelar' in request.POST :
+                Atividade.objects.get(id=id).delete()
+                return HttpResponseRedirect('/cancelada/')
             if 'save' in request.POST :
                 return HttpResponseRedirect('/thanks/')
             elif 'new' in request.POST:
