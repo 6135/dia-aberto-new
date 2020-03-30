@@ -81,10 +81,10 @@ class Inscricaoprato(models.Model):
 
 class Inscricaosessao(models.Model):
     inscricao = models.ForeignKey(
-        Inscricao, models.CASCADE)
+        Inscricao, models.CASCADE, db_column='InscricaoID')
     sessao = models.ForeignKey(
-        'atividades.Sessao', models.CASCADE)
-    nparticipantes = models.IntegerField(
+        'atividades.Sessao', models.CASCADE, db_column='SessaoID')
+    nparticipantes = models.IntegerField(db_column='nrParticipantes',
         validators=[
             validators.MinValueValidator(1),
             validators.MaxValueValidator(300),
@@ -94,7 +94,6 @@ class Inscricaosessao(models.Model):
 
     class Meta:
         db_table = 'InscricaoSessao'
-        unique_together = (('inscricao', 'sessao'),)
 
 
 class Inscricaotransporte(models.Model):

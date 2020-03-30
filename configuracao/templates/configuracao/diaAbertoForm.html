@@ -2,6 +2,8 @@
 {% extends 'configuracao/app.html' %}
 {% load static %}
 {% block content %}
+  <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/5/tinymce.min.js" referrerpolicy="origin"></script>
+  <script>tinymce.init({selector:'textarea'});</script>
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
@@ -48,7 +50,10 @@
                   <div class="field">
                     <label class="label">Descrição</label>
                     <div class="control">
-                      <textarea maxlength="300" class="textarea" name="descricao">{{form.descricao.value}}</textarea>
+                      {{form.descricao}}
+                      <!--
+                        <textarea maxlength="300" class="textarea" name="descricao"></textarea>
+                      -->
                     </div>
                   </div>
                 </div>
