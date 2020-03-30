@@ -100,13 +100,15 @@ def inserirsessao(request,id):
 
     for t in Horario.objects.all():
         if  t not in horariosindisponiveis:
-            disp.append(t) 
-    #print(disp)
-    
+            disp.append(t)
+    if len(disp)==0:
+        Atividade.objects.get(id=id).delete()
+        return redirect('inserirAtividade') 
+        
     if request.method == "POST":
             new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['idhorario']), atividadeid=Atividade.objects.get(id=id))
             new_Sessao.save()
-            if 'save' in request.POST:
+            if 'save' in request.POST :
                 return HttpResponseRedirect('/thanks/')
             elif 'new' in request.POST:
                 return redirect('inserirSessao', id)
