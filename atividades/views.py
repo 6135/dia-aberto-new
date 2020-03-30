@@ -20,6 +20,7 @@ def minhasatividades(request):
 def alterarAtividade(request,id):
 
     #------atividade a alterar----
+    sessoes=Sessao.objects.filter(atividadeid=id)
     session_object = Sessao.objects.get(atividadeid=id) #Sessao na dupla
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
@@ -43,12 +44,16 @@ def alterarAtividade(request,id):
                 return HttpResponseRedirect('/minhasatividades')          
     return render(request=request,
                     template_name='atividades/proporAtividade.html',
-                    context={'form': activity_object_form,'sessao_form':session_object_form,'sessoes':session_object}
+                    context={'form': activity_object_form,'sessao_form':session_object_form,'sessoes':sessoes}
                     )
 
 def eliminarAtividade(request,id):
     Atividade.objects.get(id=id).delete() #Dupla (sessao,atividade)
     return HttpResponseRedirect('/minhasatividades')
+
+def eliminarSessao(request,id):
+    Sessao.objects.get(id=id).delete()
+    return HttpResponseRedirect('')
 #-----------------EndDiogo------------------
 
 

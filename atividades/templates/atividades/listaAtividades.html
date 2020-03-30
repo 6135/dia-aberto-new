@@ -61,15 +61,15 @@
                             <td data-label="Submetido a">{{atividade.dataalteracao}}</td>
                             {% if atividade.estado == "Pendente"%}
                             <td data-label="Estado">
-                                <span class="tag next is-warning" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
+                                <span class="tag text is-warning" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
                             </td>
                             {% elif atividade.estado == "Recusada" %}
                             <td data-label="Estado">
-                                <span class="tag next is-danger" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
+                                <span class="tag text is-danger" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
                             </td>
                             {% elif atividade.estado == "Aceite"%}
                             <td data-label="Estado">
-                                <span class="tag next is-success" style="width: 7 rem;font-size: small;">{{atividade.estado}}</span>
+                                <span class="tag text is-success" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
                             </td>
                             {% endif %}
                             <td >
