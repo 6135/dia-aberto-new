@@ -4,6 +4,7 @@ from .forms import *
 from .models import *
 from utilizadores.models import *
 from datetime import datetime, timezone,date, time
+from atividades.models import Espaco
 
 # Create your views here.
 
@@ -18,7 +19,7 @@ def orderBy(request, list_diaaberto):
 			list_diaaberto = list_diaaberto.filter(ano=search_specific)
 		sort_by = request.POST['orderBy']
 		if sort_by == "":
-			sort_by = 'ano'
+			sort_by = '-ano'
 		list_diaaberto = list_diaaberto.order_by(sort_by)
 
 	else:
@@ -49,8 +50,8 @@ def viewDays(request):
 
 	list_diaaberto = Diaaberto.objects.all()	#Obtain all days
 
-	earliest = list_diaaberto.first()	#Obtain some constants
-	latest = list_diaaberto.last()
+	earliest = Diaaberto.objects.all().order_by('ano').first()	#Obtain some constants
+	latest = Diaaberto.objects.all().order_by('ano').last()
 	is_open =(latest.datadiaabertofim > datetime.now(timezone.utc))
 
 	filterRes = orderBy(request, list_diaaberto)		#Filter/order

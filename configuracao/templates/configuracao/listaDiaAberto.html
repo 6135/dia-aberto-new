@@ -1,5 +1,6 @@
 {% extends 'configuracao/app.html' %}
 {% block content %}
+
 <div class="columns">
     <div class="column is-3">
         <form method="POST" action="" id='filter'>
@@ -99,7 +100,7 @@
                     <tbody>      
                       <tr draggable="false">
                         <td class="chevron-cell">
-                            <a role="button">
+                            <a role="button" onclick="displayDetails({{diaAberto.id}})">
                                 <span class="icon is-expanded">
                                     <i class="mdi mdi-chevron-right mdi-24px"></i>
                                 </span>
@@ -131,13 +132,50 @@
                             </div> 
                         </td>                     
                       </tr> 
-                      
-                      <tr class="detail">
-                      <!--
-                        <td colspan="4">
-                            <div class="detail-container"></div>
+                      <tr class="detail" style="display: none" id='Details{{diaAberto.id}}'>
+
+                        <td colspan="5">
+                            <div class="detail-container">
+                                <div class="table"> 
+                                    <div class="table-wrapper">
+                                        <table class="table has-mobile-cards">
+                                            <thead>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <th class="th-wrap">Inicio submissao Atividades:</th>
+                                                    <th class="th-wrap" style="font-weight: normal;">
+                                                        <span>{{diaAberto.datapropostasatividadesincio}}</span>
+                                                    </th>
+                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
+                                                    <th class="th-wrap">Fim submissao Atividades:</th>
+                                                    <th class="th-wrap" style="font-weight: normal;">
+                                                        <span> {{diaAberto.dataporpostaatividadesfim}} </span>
+                                                    </th>
+                                                </tr>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <th class="th-wrap">Inicio Inscrições:</th>
+                                                    <th class="th-wrap" style="font-weight: normal;">
+                                                        <span>{{diaAberto.datainscricaoatividadesinicio}}</span>
+                                                    </th>
+                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
+                                                    <th class="th-wrap">Fim Inscrições:</th>
+                                                    <th class="th-wrap" style="font-weight: normal;">
+                                                        <span> {{diaAberto.datainscricaoatividadesfim}} </span>
+                                                    </th>
+                                                </tr>
+                                                <tr>
+                                                    <th class="th-wrap">Descrição:</th>
+                                                    <td colspan="4">
+                                                        <textarea class="textarea" disabled style="resize: none;">{{diaAberto.descricao}}</textarea>
+                                                    </td>
+                                                </tr>
+
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
                         </td>
-                        -->
+                        
                       </tr> 
                     </tbody>
                     {% endfor %}
@@ -171,6 +209,13 @@ function resetForm(){
     oFormObject.elements["searchAno"].value = '';
     oFormObject.elements["orderBy"].value = '';
     oFormObject.elements["showBy"].value = '';
+}
+
+function displayDetails(idForDetails){
+    var objectDetails = document.getElementById("Details"+idForDetails);
+    if(objectDetails.style.display == 'none') {
+        objectDetails.style.display = "contents";
+    } else objectDetails.style.display = "none";
 }
 </script>
 {% endblock scripts %}
