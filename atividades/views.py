@@ -1,19 +1,19 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , SessaoForm
+from .forms import AtividadeForm , MateriaisForm
 from .models import *
 from configuracao.models import Horario
-from .models import Atividade, Espaco, Sessao
+from .models import Atividade, Espaco, Sessao, Tema
 from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario
 from configuracao.models import Diaaberto, Horario
 from django.http import HttpResponseRedirect
 from datetime import datetime
-from atividades.forms import MateriaisForm
+
 
 
 #-------------Diogo----------------------
 def minhasatividades(request):
-	return render(request=request,
+    	return render(request=request,
 				template_name="atividades/listaAtividades.html",
                 context={"atividades": Atividade.objects.all()})
 
@@ -68,67 +68,104 @@ def eliminarSessao(request,id,atividadeid):
 
 
 #-----------------------David--------------------
-def proporatividade(request):  
+def inseriratividade(request): 
+    espacodisponivel= []
+    
+    for esp in Espaco.objects.all():
+        Atividadeespaco= Atividade.objects.all().filter(espacoid=esp.id)
+        total=0
+        for espAtv in Atividadeespaco:
+           Sessoes= len(Sessao.objects.all().filter(atividadeid= espAtv))
+           total+=Sessoes
+        if total!= len(Horario.objects.all()):
+            espacodisponivel.append(Espaco.objects.get(id=esp.id))
+            
+             
     if request.method == "POST":
-
-        form_Sessao= SessaoForm(request.POST)
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
-                             estado = "Pendente", diaabertoid = Diaaberto.objects.all().order_by('-id').first())
+                             estado = "Pendente", diaabertoid = Diaaberto.objects.get(id=3),espacoid= Espaco.objects.get(id=request.POST['idespaco']),
+                             tema=Tema.objects.get(id=request.POST['idtema']))
         formAtividade = AtividadeForm(request.POST, instance=new_form)
-
-        if formAtividade.is_valid() and form_Sessao.is_valid() and form_Materiais.is_valid():
+        
+        if formAtividade.is_valid() and  form_Materiais.is_valid():
+            
             new_form.save()  
-            sessao = form_Sessao.save(commit= False)
             materiais = form_Materiais.save(commit= False)
             materiais.atividadeid = Atividade.objects.all().order_by('-id').first()
             materiais.save()
-            sessao.vagas= sessao.participantesmaximo
-            sessao.ninscritos= 0
-            espacoid=request.POST.__getitem__('idespaco')
-            sessao.espacoid= Espaco.objects.get(id=espacoid)
-            horarioid=request.POST.__getitem__('idhorario')
-            sessao.horarioid = Horario.objects.get(id=horarioid)
-            sessao.save()
-            new_as= Atividadesessao(atividadeid= Atividade.objects.all().order_by('-id').first(), sessaoid= Sessao.objects.all().order_by('-id').first())
-            new_as.save()
-            return HttpResponseRedirect('/thanks/')
+            idAtividade= Atividade.objects.all().order_by('-id').first()
+            return redirect('inserirSessao', idAtividade.id)
         else:
-            return render(request, 'atividades/inseriratividade.html',{'atividade': formAtividade , 'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all(),'materiais': form_Materiais})
+            return render(request, 'atividades/proporatividade.html',{'form': formAtividade ,'horario':  Horario.objects.all(), 'espaco': espacodisponivel, 'mat': form_Materiais, 'theme':Tema.objects.all()})
     else:  
         formAtividade = AtividadeForm()
-        form_Sessao= SessaoForm()
         form_Materiais= MateriaisForm() 
-    return render(request,'atividades/inseriratividade.html',{'atividade': formAtividade,'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all, 'materiais': form_Materiais})  
+    return render(request,'atividades/proporatividade.html',{'form': formAtividade,'horario':  Horario.objects.all(), 'espaco': espacodisponivel,'mat': form_Materiais,'theme':Tema.objects.all()})  
 
 
 
-def novasessao(request,id):  
+def inserirsessao(request,id):
+    disp= []
+    horariosindisponiveis= []
+    espaco_id= Atividade.objects.get(id=id).espacoid # Busca o espaco da atividade
+    espacoidtest= espaco_id.id #  Busca o id do espaco
+    #print(espacoidtest)
+    atividadescomespaco_id=Atividade.objects.all().filter(espacoid=espacoidtest).exclude(id=id) # Busca as atividades com o espaco da atividade
+    #print(atividadescomespaco_id)
+
+
+    idAtividades= []
+    for atv_id in atividadescomespaco_id: 
+        idAtividades.append(atv_id.id) # Busca o id das atividades
+    print(idAtividades)
+
+    sessao_espaco= []
+    for sessao in idAtividades:
+        print(sessao)
+        sessao_espaco.append(Sessao.objects.all().filter(atividadeid=sessao)) # Busca as sessoes das atividades
+    print(sessao_espaco)
+    for sessao in sessao_espaco:
+        for sessao2 in sessao:
+            horariosindisponiveis.append(sessao2.horarioid)
+    print(horariosindisponiveis)
+
+    sessao_indis= Sessao.objects.all().filter(atividadeid=id)
+    for sessao in sessao_indis:
+        horariosindisponiveis.append(sessao.horarioid)
+    #print(horariosindisponiveis)
+    horariosindisponiveis= list(dict.fromkeys(horariosindisponiveis))
+
+    for t in Horario.objects.all():
+        if  t not in horariosindisponiveis:
+            disp.append(t)
+    if len(disp)==0:
+        return HttpResponseRedirect('/thanks/') 
+        
     if request.method == "POST":
-
-        form_Sessao= SessaoForm(request.POST)
-        if  form_Sessao.is_valid(): 
-            sessao = form_Sessao.save(commit= False)
-            sessao.vagas= sessao.participantesmaximo
-            sessao.ninscritos= 0
-            sessao.espacoid= Espaco.objects.get(id=request.POST.__getitem__('idespaco'))
-            sessao.horarioid = Horario.objects.get(id=request.POST.__getitem__('idhorario'))
-            sessao.save()
-            new_as= Atividadesessao(atividadeid= id, sessaoid= Sessao.objects.all().order_by('-id').first())
-            new_as.save()
-            return HttpResponseRedirect('/')
-        else:
-            return render(request, 'atividades/sessao.html',{'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all()})
-    else:  
-        form_Sessao= SessaoForm()
-    return render(request,'atividades/sessao.html',{'sessao': form_Sessao,'horario':  Horario.objects.all(), 'espaco': Espaco.objects.all})  
+            a= Sessao.objects.all().filter(atividadeid=id)
+            if 'save' in request.POST and len(a)!=0 :
+                return HttpResponseRedirect('/thanks/')
+            elif 'save' in request.POST and len(a)==0:
+                return redirect('inserirSessao', id)
+            new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['idhorario']), atividadeid=Atividade.objects.get(id=id))
+            new_Sessao.save()
+            if 'cancelar' in request.POST :
+                Atividade.objects.get(id=id).delete()
+                return HttpResponseRedirect('/cancelada/')
+            elif 'new' in request.POST:
+                return redirect('inserirSessao', id)
+    return render(request,'atividades/inserirsessao.html',{'horario': disp , 'sessoes': Sessao.objects.all().filter(atividadeid= id)})  
 
 
 
+    
 
-
-
+def deletesessao(resquest,idSessao):
+    idatividade=Sessao.objects.get(id=idSessao).atividadeid.id
+    Sessao.objects.get(id=idSessao).delete()
+    return redirect('inserirSessao', idatividade)
 
 
 

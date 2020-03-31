@@ -94,8 +94,7 @@ class Inscricaosessao(models.Model):
 
     class Meta:
         db_table = 'InscricaoSessao'
-
-
+        
 class Inscricaotransporte(models.Model):
     inscricao = models.ForeignKey(
         Inscricao, models.CASCADE)

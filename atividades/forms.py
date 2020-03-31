@@ -15,19 +15,17 @@ class AtividadeForm(ModelForm):
             'tipo': Select(),
             'descricao': Textarea(attrs={'class':'textarea'}),
             'publicoalvo': Select(),
-            'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input','min':0}),
-            'participantesmaximo': NumberInput(attrs={'class': 'input','min':0}),
+            'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input'}),
+            'duracaoesperada': NumberInput(attrs={'class': 'input'}),
+            'participantesmaximo': NumberInput(attrs={'class': 'input'}),
             'duracaoesperada': Select(),
-            'tema':Select(),
-        }
+            }
 
-class SessaoForm(ModelForm):  
-    horarioid = ChoiceField(choices=[(horario.id, str(horario.inicio.strftime('%H:%M')) + '  até  ' + str(horario.fim.strftime('%H:%M'))) for horario in Horario.objects.all()])
-    class Meta:  
-        model = Sessao  
-        exclude = ['id',"vagas","ninscritos"]
 
-class MateriaisForm(ModelForm):  
-    class Meta:  
+class MateriaisForm(ModelForm):
+    class Meta:
         model = Materiais  
         exclude = ["atividadeid"]
+        widgets = {
+            'nomematerial': TextInput(attrs={'class': 'input'}),
+            }
