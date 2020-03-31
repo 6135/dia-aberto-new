@@ -21,10 +21,14 @@ def alterarAtividade(request,id):
     #------atividade a alterar----
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
+    espaco= Espaco.objects.get(id=activity_object.espacoid.id)
+    print(espaco)
+    espacos = Espaco.objects.all()
+    print(espacos)
     #-----------------------------
-    if request.method == 'POST':    #Se estivermos a receber um request com formulario 
-        activity_object.tema = Tema.objects.get(id=int(request.POST['tema'])) 
+    if request.method == 'POST':    #Se estivermos a receber um request com formulario  
         submitted_data = request.POST.copy()
+        activity_object.tema = Tema.objects.get(id=int(request.POST['tema']))
         activity_object_form = AtividadeForm(submitted_data, instance=activity_object)
         if activity_object_form.is_valid():
                 #-------Guardar as mudancas a atividade em si------
@@ -35,7 +39,7 @@ def alterarAtividade(request,id):
                 return redirect('alterarSessao',id)          
     return render(request=request,
                     template_name='atividades/proporAtividadeAtividade.html',
-                    context={'form': activity_object_form}
+                    context={'form': activity_object_form, 'espaco':espaco,'espacos':espacos}
                     )
 
 def eliminarAtividade(request,id):

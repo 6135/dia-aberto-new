@@ -22,13 +22,16 @@
                                 <table class="table has-mobile-cards is-hoverable">
                                     <thead>
                                         <tr>
-                                            <th  style="width: 300px;">
+                                            <th  style="width: 250px;">
                                                 <div class="th-wrap">
                                                      Horário
                                                 </div>
                                             </th>
-                                            <th style="width: 300px;">
+                                            <th style="width: 200px;">
                                                 Inscritos
+                                            </th>
+                                            <th style="width: 200px;">
+                                              Vagas
                                             </th>
                                             <th></th>
                                         </tr>
@@ -37,9 +40,11 @@
                                     {% for sessao in sessions_activity %}     
                                         <tr draggable="false">
                                             <td data-label="horario">{{sessao.horarioid.inicio}} até  {{sessao.horarioid.fim}}</td>
-                                            <td data-label="inscritos">{{sessao.ninscritos}}</td>  
+                                            <td data-label="inscritos">{{sessao.ninscritos}}</td>
+                                            <td data-label="vagas">{{sessao.vagas}}</td>  
                                             <td>
-                                                <a href="{% url 'eliminarSessao' sessao.id atividadeid%}">
+                                                <input type="hidden" id="del" name="variable" value="{% url 'eliminarSessao' sessao.id atividadeid%}">
+                                                <a onclick="Alert.render()">
                                                     <span class="icon has-text-danger">
                                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                                     </span>
@@ -100,14 +105,31 @@
           </a>
         </div>
         <div class="level-right">
-          <a  onclick="functionAlert()" href="{% url 'minhasAtividades' %}"  type="button" class="button is-large is-success  is-link">
-            <span>Submeter</span>
+          <a  onclick="" href="{% url 'minhasAtividades' %}"  type="button" class="button is-large is-success  is-link">
+            <span>Concluir</span>
           </a>
         </div>
       </div>
     </div>
   </div>
 </div>
+<div id="msg" class="dialog modal">
+  <div class="modal-background"></div>
+  <div class="modal-card animation-content">
+      <section class="modal-card-body is-titleless">
+          <div class="media">
+              <div class="media-content">
+                  <p>Tem a certeza que pretende eliminar esta sessão?</p>
+              </div>
+          </div>
+      </section>
+      <footer class="modal-card-foot">
+          <button onclick="Alert.cancelar()" class="button">Cancelar</button>
+          <button onclick="Alert.confirmar()" class="button is-success">Confirmar</button>
+      </footer>
+  </div>
+</div>
+
 <style>
   .label {
   font-weight: normal;
@@ -116,43 +138,27 @@
   font-size: 1rem;
 }
 </style>
- <style>
-         #confirm {
-            display: none;
-            background-color: #F3F5F6;
-            color: #000000;
-            border: 1px solid #aaa;
-            position: fixed;
-            width: 300px;
-            height: 100px;
-            left: 40%;
-            top: 40%;
-            box-sizing: border-box;
-            text-align: center;
-         }
-         #confirm button {
-            background-color: #FFFFFF;
-            display: inline-block;
-            border-radius: 12px;
-            border: 4px solid #aaa;
-            padding: 5px;
-            text-align: center;
-            width: 60px;
-            cursor: pointer;
-         }
-         #confirm .message {
-            text-align: left;
-         }
+<style>
+    .dialog .modal-card .modal-card-body.is-titleless {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
 </style>
 <script>
-         function functionAlert() {
-            var confirmBox = $("#confirm");
-            confirmBox.find("Deseja submeter?");
-            confirmBox.find(".yes").unbind().click(function() {
-               confirmBox.hide();
-            });
-            confirmBox.find(".yes").click("yes");
-            confirmBox.show();
-         }
-      </script>
+var Alert= new eliminar();
+function eliminar() {
+    this.render=function(){
+        var msg = document.getElementById("msg")
+        msg.classList.add("is-active");
+    }
+    this.confirmar=function(){
+        var href = document.getElementById("del").value;
+        window.location.href = href;
+    }
+    this.cancelar=function(){
+        var msg = document.getElementById("msg")
+        msg.classList.remove("is-active");
+    }   
+}
+</script>
 {% endblock content %}

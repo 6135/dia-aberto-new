@@ -4,7 +4,7 @@
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
     <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page">Propor Atividade</a></li>
+    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page">Alterar Atividade</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
@@ -100,8 +100,15 @@
                             <div class="column">
                                 <div class="field">
                                 <label class="label">Espaço</label>
-                                    <div class="select is-fullwidth">
-                                        {{form.espacoid}}
+                                    <div class="control is-expanded">
+                                        <div class="select is-fullwidth">
+                                            <select name="espacoid">
+                                                <option selected value="{{espaco.id}}">{{espaco.nome}} {{espaco.edificio}}</option>
+                                                {% for esp in espacos %}
+                                                    <option value="{{esp.id}}" >{{esp.nome}} {{esp.edificio}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
