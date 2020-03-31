@@ -87,20 +87,6 @@
                          </div>
                         <hr>
                     </div>
-                    {% if form.errors %}
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <div class="alert alert-danger">
-                                <strong>{{field.label|escape}}{{ error|escape }}</strong>
-                            </div>
-                        {% endfor %}
-                    {% endfor %}
-                    {% for error in form.non_field_errors %}
-                        <div class="alert alert-danger">
-                            <strong>{{ error|escape }}</strong>
-                        </div>
-                    {% endfor %}
-                {% endif %}
                   </form>
                 </div>
             </section>
@@ -114,9 +100,9 @@
           </a>
         </div>
         <div class="level-right">
-          <button  type="button" class="button is-large is-success is-outlined is-link">
+          <a  onclick="functionAlert()" href="{% url 'minhasAtividades' %}"  type="button" class="button is-large is-success  is-link">
             <span>Submeter</span>
-          </button>
+          </a>
         </div>
       </div>
     </div>
@@ -130,4 +116,43 @@
   font-size: 1rem;
 }
 </style>
+ <style>
+         #confirm {
+            display: none;
+            background-color: #F3F5F6;
+            color: #000000;
+            border: 1px solid #aaa;
+            position: fixed;
+            width: 300px;
+            height: 100px;
+            left: 40%;
+            top: 40%;
+            box-sizing: border-box;
+            text-align: center;
+         }
+         #confirm button {
+            background-color: #FFFFFF;
+            display: inline-block;
+            border-radius: 12px;
+            border: 4px solid #aaa;
+            padding: 5px;
+            text-align: center;
+            width: 60px;
+            cursor: pointer;
+         }
+         #confirm .message {
+            text-align: left;
+         }
+</style>
+<script>
+         function functionAlert() {
+            var confirmBox = $("#confirm");
+            confirmBox.find("Deseja submeter?");
+            confirmBox.find(".yes").unbind().click(function() {
+               confirmBox.hide();
+            });
+            confirmBox.find(".yes").click("yes");
+            confirmBox.show();
+         }
+      </script>
 {% endblock content %}

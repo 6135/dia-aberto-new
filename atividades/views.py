@@ -48,9 +48,10 @@ def alterarSessao(request,id):
     if request.method == 'POST':
         submitted_data = request.POST.copy()
         submitted_data['horarioid']=Horario.objects.get(id=request.POST['horarioid'])
-        new_session=SessaoForm(submitted_data)
-        if new_session.is_valid():
-            new_session.save()
+        new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,
+            ninscritos=0 ,horarioid=submitted_data['horarioid'], atividadeid=Atividade.objects.get(id=id))
+        new_Sessao.save()
+        return redirect('alterarSessao',id)
     return render(request=request,
                     template_name='atividades/proporAtividadeSessao.html',
                     context={'sessions_activity': sessions_activity,'horarios':horarios,'atividadeid':id}
