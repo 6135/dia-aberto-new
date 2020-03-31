@@ -1,20 +1,164 @@
-{% extends 'atividades/proporAtividade.html' %}
-{% block 'sessao' %}
-<div style="padding: 1rem 2vw 0px">
-  <hr>
-  <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-    Adicionar Sessão
-  </h2>
-  <div class="columns">
-    <div class="column">
-      <div class="field">
-        <label class="label">Horário</label>
-        <div class="control is-expanded">
-          <div class="select is-fullwidth">
-          </div>
+{% extends 'configuracao/app.html' %}
+{% block content %}
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'inicio' %}">Início</a></li>
+    <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
+    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page">Propor Atividade</a></li>
+  </ul>
+</nav>
+<div style="padding: 3rem 2vw 1rem">
+        <div class="b-steps">
+            <section class="step-content">
+              <form method="POST" action="">
+                {% csrf_token %}
+                <div class="step-item">
+                    <div style="padding: 1rem 2vw 0px">
+                    <hr>
+                    <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Sessões da Atividade</h2>
+                    <div>
+                        <div class="table ">
+                            <div class="table-wrapper">
+                                <table class="table has-mobile-cards is-hoverable">
+                                    <thead>
+                                        <tr>
+                                            <th  style="width: 250px;">
+                                                <div class="th-wrap">
+                                                     Horário
+                                                </div>
+                                            </th>
+                                            <th style="width: 200px;">
+                                                Inscritos
+                                            </th>
+                                            <th style="width: 200px;">
+                                              Vagas
+                                            </th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody> 
+                                    {% for sessao in sessions_activity %}     
+                                        <tr draggable="false">
+                                            <td data-label="horario">{{sessao.horarioid.inicio}} até  {{sessao.horarioid.fim}}</td>
+                                            <td data-label="inscritos">{{sessao.ninscritos}}</td>
+                                            <td data-label="vagas">{{sessao.vagas}}</td>  
+                                            <td>
+                                                <input type="hidden" id="del" name="variable" value="{% url 'eliminarSessao' sessao.id atividadeid%}">
+                                                <a onclick="Alert.render()">
+                                                    <span class="icon has-text-danger">
+                                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                                                    </span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                        <hr>
+                        <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Adicionar Sessão</h2>
+                        <div id="sessoes">
+                            <div  id="sessao" class="columns">
+                                <div class="column">
+                                    <div class="field">
+                                        <label class="label">Horário</label>
+                                        <div class="control is-expanded">
+                                            <div class="select">
+                                                <select name="horarioid">
+                                                  {% for horario in horarios %}
+                                                    <option value="{{horario.id}}" >{{horario.inicio}} até {{horario.fim}}</option>
+                                                  {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="columns">
+                                <div class="column is-1">
+                                    <div class="has-text-centered">
+                                        <button type="submit" class="button is-success">
+                                            <span class="icon is-small">
+                                                <i class="mdi mdi-plus"></i>
+                                            </span>
+                                            <span>Adicionar Sessão</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                         </div>
+                        <hr>
+                    </div>
+                  </form>
+                </div>
+            </section>
+        </div>
+    <div class="column is-8 is-offset-2">
+      <div class="level">
+        <div class="level-left">
+          <a href="javascript:history.back()" class="button is-outlined" type="button">
+            <span class="icon is-small"><i class="mdi mdi-chevron-left"></i></span>
+            <span>Anterior</span>
+          </a>
+        </div>
+        <div class="level-right">
+          <a  onclick="" href="{% url 'minhasAtividades' %}"  type="button" class="button is-large is-success  is-link">
+            <span>Concluir</span>
+          </a>
         </div>
       </div>
     </div>
   </div>
-<hr>
-{% endblock %}
+</div>
+<div id="msg" class="dialog modal">
+  <div class="modal-background"></div>
+  <div class="modal-card animation-content">
+      <section class="modal-card-body is-titleless">
+          <div class="media">
+              <div class="media-content">
+                  <p>Tem a certeza que pretende eliminar esta sessão?</p>
+              </div>
+          </div>
+      </section>
+      <footer class="modal-card-foot">
+          <button onclick="Alert.cancelar()" class="button">Cancelar</button>
+          <button onclick="Alert.confirmar()" class="button is-success">Confirmar</button>
+      </footer>
+  </div>
+</div>
+
+<style>
+  .label {
+  font-weight: normal;
+  }
+.b-steps .steps .step-items .step-item .step-details .step-title {
+  font-size: 1rem;
+}
+</style>
+<style>
+    .dialog .modal-card .modal-card-body.is-titleless {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+</style>
+<script>
+var Alert= new eliminar();
+function eliminar() {
+    this.render=function(){
+        var msg = document.getElementById("msg")
+        msg.classList.add("is-active");
+    }
+    this.confirmar=function(){
+        var href = document.getElementById("del").value;
+        window.location.href = href;
+    }
+    this.cancelar=function(){
+        var msg = document.getElementById("msg")
+        msg.classList.remove("is-active");
+    }   
+}
+</script>
+{% endblock content %}

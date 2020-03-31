@@ -51,7 +51,7 @@
                     <tbody>      
                         <tr draggable="false">
                             <td class="chevron-cell">
-                                <a role="button">
+                                <a role="button" onclick="displayDetails({{atividade.id}})">
                                     <span class="icon is-expanded">
                                         <i class="mdi mdi-chevron-right mdi-24px"></i>
                                     </span>
@@ -81,22 +81,147 @@
                                 
                             </td>
                             <td>
-                                <a href="{% url 'eliminarAtividade' atividade.id %}">
+                                <input type="hidden" id="del" name="variable" value="{% url 'eliminarAtividade' atividade.id %}"> 
+                                <a onclick="Alert.render()">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                     </span>
                                 </a>
                             </td>
                         </tr> 
-                        <tr class="detail">
-                            <td colspan="4">
-                                <div class="detail-container"></div>
-                            </td>
-                        </tr> 
+                        <tr class="detail" style="display:none;" id='Details{{atividade.id}}'>
+                        <td colspan="7">
+                            <div class="detail-container">
+                                <div class="content"> 
+                                    <div style="font-size: 15px">
+                                        <p>
+                                            <strong>Nome:</strong>
+                                            {{atividade.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Professor:</strong>
+
+                                        </p>
+                                        <p>
+                                            <strong>Data de submissão:</strong>
+                                            {{atividade.dataalteracao}}
+                                        </p>
+                                        <p>
+                                            <strong>Estado de submissão:</strong>
+                                            {{atividade.estado}}
+                                        </p>
+                                        <p>
+                                            <strong>Tipo de Atividade:</strong>
+                                            {{atividade.tipo}}
+                                        </p>
+                                        <p>
+                                            <strong>Descrição:</strong>
+                                            {{atividade.descricao}}
+                                        </p>
+                                        <p>
+                                            <strong>Campus:</strong>
+                                        </p>
+                                        <p>
+                                            <strong>Entidade Organizacional:</strong>
+                                        </p>
+                                        <p>
+                                            <strong>Departamento:</strong>
+                                        </p>
+                                        <p>
+                                            <strong>Sessões:</strong>
+                                        </p>
+                                        <div class="table-wrapper">
+                                            <table class="table has-mobile-cards">
+                                                <thead> 
+                                                    <tr>
+                                                        <th>
+                                                            <div class="th-wrap" >Dia</div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th-wrap">Hora</div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th-wrap">Duração</div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th-wrap" >Máximo de participantes</div>
+                                                        </th>
+                                                        <th>
+                                                            <div class="th-wrap">Espaço</div>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr >
+                                                        <td data-label="Dia"></td>
+                                                        <td data-label="Hora"></td>
+                                                        <td data-label="Duração">{{atividade.duracao}}</td>
+                                                        <td data-label="Máximo de participantes">{{atividade.participantesmaximo}}</td>
+                                                        <td data-label="Espaço">{{atividade.espacoid.nome}}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr>
+                        </td>                 
+                      </tr> 
                     </tbody>
                     {% endfor %}
                 </table>
             </div>
     </div>
 </div>
+<div id="msg" class="dialog modal">
+    <div class="modal-background"></div>
+    <div class="modal-card animation-content">
+        <section class="modal-card-body is-titleless">
+            <div class="media">
+                <div class="media-content">
+                    <p>Tem a certeza que pretende eliminar esta atividade?</p>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button onclick="Alert.cancelar()" class="button">Cancelar</button>
+            <button onclick="Alert.confirmar()" class="button is-success">Confirmar</button>
+        </footer>
+    </div>
+</div>
+<style>
+    .dialog .modal-card .modal-card-body.is-titleless {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+.b-table .table tr.detail {
+    box-shadow: 0 1px 3px #dbdbdb!important;
+    background: #fafafa!important;
+}
+</style>
+<script>
+var Alert= new eliminar();
+function eliminar() {
+    this.render=function(){
+        var msg = document.getElementById("msg")
+        msg.classList.add("is-active");
+    }
+    this.confirmar=function(){
+        var href = document.getElementById("del").value;
+        window.location.href = href;
+    }
+    this.cancelar=function(){
+        var msg = document.getElementById("msg")
+        msg.classList.remove("is-active");
+    }   
+}
+
+function displayDetails(idForDetails){
+    var objectDetails = document.getElementById("Details"+idForDetails);
+    if(objectDetails.style.display == 'none') {
+        objectDetails.style.display = "contents";
+    } else objectDetails.style.display = "none";
+}
+</script>
 {% endblock content %}

@@ -33,7 +33,6 @@ class diaAbertoSettingsForm(ModelForm):
             'enderecopaginaweb': TextInput(attrs={'class': 'input'}),
             'emaildiaaberto': EmailInput(attrs={'class': 'input'}),
             'ano': NumberInput(attrs={'class': 'input', 'value': now.year}),
-            'descricao': Textarea(attrs={'class':'textarea','row':5,'cols':80}),
             'datadiaabertoinicio': DateTimeWidget(),
             'datadiaabertofim': DateTimeWidget(hours='17', minutes='00'),
             'datapropostasatividadesincio': DateTimeWidget(hours='23', minutes='55'),
