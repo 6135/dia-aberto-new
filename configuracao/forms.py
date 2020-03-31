@@ -1,7 +1,6 @@
 from django.forms import *
 from .models import *
 from datetime import datetime
-from tinymce.widgets import TinyMCE
     
 class DateTimeWidget(DateTimeInput):
 
@@ -25,7 +24,7 @@ class DateTimeWidget(DateTimeInput):
             self.format = '%Y-%m-%d %H:%M'
 
 class diaAbertoSettingsForm(ModelForm):  
-
+    #descricao = CharField(widget=TinyMCE())
     class Meta:
         now = datetime.now()
         model = Diaaberto
@@ -34,7 +33,7 @@ class diaAbertoSettingsForm(ModelForm):
             'enderecopaginaweb': TextInput(attrs={'class': 'input'}),
             'emaildiaaberto': EmailInput(attrs={'class': 'input'}),
             'ano': NumberInput(attrs={'class': 'input', 'value': now.year}),
-            'descricao': TinyMCE(attrs={'class': 'textarea','rows': '5'}),
+            'descricao': Textarea(attrs={'class':'textarea','row':5,'cols':80}),
             'datadiaabertoinicio': DateTimeWidget(),
             'datadiaabertofim': DateTimeWidget(hours='17', minutes='00'),
             'datapropostasatividadesincio': DateTimeWidget(hours=None, minutes=None),

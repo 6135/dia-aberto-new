@@ -8,4 +8,5 @@ urlpatterns = [
     path('editardia/<int:id>', views.newDay, name='editarDia'),
     path('inserirdiaaberto', views.newDay,name='novoDia' ),
     path('deldia/<int:id>', views.delDay, name='eliminarDia'),
+
 ]
