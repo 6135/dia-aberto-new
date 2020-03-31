@@ -62,12 +62,8 @@ def viewDays(request):
 
 	return render(request=request,
 				  template_name='configuracao/listaDiaAberto.html', 
-				  context = {'form':formFilter, 
-				  			'diaabertos': list_diaaberto, 
-							'earliest': (earliest.ano), 
-							'latest': (latest.ano), 
-							'is_open': is_open, 
-							'current': current
+				  context = {'form':formFilter, 'diaabertos': list_diaaberto, 'earliest': (earliest.ano), 
+							'latest': (latest.ano), 'is_open': is_open, 'current': current,
 							}
 					)
 

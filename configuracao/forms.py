@@ -36,10 +36,10 @@ class diaAbertoSettingsForm(ModelForm):
             'descricao': Textarea(attrs={'class':'textarea','row':5,'cols':80}),
             'datadiaabertoinicio': DateTimeWidget(),
             'datadiaabertofim': DateTimeWidget(hours='17', minutes='00'),
-            'datapropostasatividadesincio': DateTimeWidget(hours=None, minutes=None),
-            'dataporpostaatividadesfim': DateTimeWidget(hours=None, minutes=None),
-            'datainscricaoatividadesinicio': DateTimeWidget(hours=None, minutes=None),
-            'datainscricaoatividadesfim': DateTimeWidget(hours=None, minutes=None),
+            'datapropostasatividadesincio': DateTimeWidget(hours='23', minutes='55'),
+            'dataporpostaatividadesfim': DateTimeWidget(hours='23', minutes='55'),
+            'datainscricaoatividadesinicio': DateTimeWidget(hours='23', minutes='55'),
+            'datainscricaoatividadesfim': DateTimeWidget(hours='23', minutes='55'),
         }
     
 class diaAbertoFilterForm(Form):
