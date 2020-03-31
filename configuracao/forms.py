@@ -24,7 +24,7 @@ class DateTimeWidget(DateTimeInput):
             self.format = '%Y-%m-%d %H:%M'
 
 class diaAbertoSettingsForm(ModelForm):  
-
+    #descricao = CharField(widget=TinyMCE())
     class Meta:
         now = datetime.now()
         model = Diaaberto
