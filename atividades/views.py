@@ -18,42 +18,47 @@ def minhasatividades(request):
                 context={"atividades": Atividade.objects.all()})
 
 def alterarAtividade(request,id):
-
     #------atividade a alterar----
-    sessoes=Sessao.objects.filter(atividadeid=id)
-    session_object = Sessao.objects.get(atividadeid=id) #Sessao na dupla
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
     #-----------------------------
-    session_object_form = SessaoForm(instance=session_object)
-
     if request.method == 'POST':    #Se estivermos a receber um request com formulario 
         activity_object.tema = Tema.objects.get(id=int(request.POST['tema'])) 
         submitted_data = request.POST.copy()
         activity_object_form = AtividadeForm(submitted_data, instance=activity_object)
-        session_object.horarioid = Horario.objects.get(id=int(request.POST['horarioid']))
         if activity_object_form.is_valid():
                 #-------Guardar as mudancas a atividade em si------
                 activity_object_formed = activity_object_form.save(commit=False)  
                 activity_object_formed.estado = "Pendente"
                 activity_object_formed.dataalteracao = datetime.now()
                 activity_object_formed.save()
-                #--------Guardas as mudancas da sessao em si-------
-                session_object.save()
-                #---------------------------------------------------
-                return HttpResponseRedirect('/minhasatividades')          
+                return redirect('alterarSessao',id)          
     return render(request=request,
-                    template_name='atividades/proporAtividade.html',
-                    context={'form': activity_object_form,'sessao_form':session_object_form,'sessoes':sessoes}
+                    template_name='atividades/proporAtividadeAtividade.html',
+                    context={'form': activity_object_form}
                     )
 
 def eliminarAtividade(request,id):
     Atividade.objects.get(id=id).delete() #Dupla (sessao,atividade)
     return HttpResponseRedirect('/minhasatividades')
 
-def eliminarSessao(request,id):
+def alterarSessao(request,id):
+    sessions_activity = Sessao.objects.filter(atividadeid=id)
+    horarios = Horario.objects.all()
+    if request.method == 'POST':
+        submitted_data = request.POST.copy()
+        submitted_data['horarioid']=Horario.objects.get(id=request.POST['horarioid'])
+        new_session=SessaoForm(submitted_data)
+        if new_session.is_valid():
+            new_session.save()
+    return render(request=request,
+                    template_name='atividades/proporAtividadeSessao.html',
+                    context={'sessions_activity': sessions_activity,'horarios':horarios,'atividadeid':id}
+                    )
+
+def eliminarSessao(request,id,atividadeid):
     Sessao.objects.get(id=id).delete()
-    return HttpResponseRedirect('')
+    return redirect('alterarSessao',atividadeid)
 #-----------------EndDiogo------------------
 
 

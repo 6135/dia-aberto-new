@@ -26,9 +26,6 @@ class SessaoForm(ModelForm):
     class Meta:  
         model = Sessao  
         exclude = ['id',"vagas","ninscritos"]
-        widgets = {
-            'horarioid':Select(),
-        }
 
 class MateriaisForm(ModelForm):  
     class Meta:  

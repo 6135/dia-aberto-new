@@ -1,7 +1,6 @@
 from django.forms import *
 from .models import *
 from datetime import datetime
-from tinymce.widgets import TinyMCE
     
 class DateTimeWidget(DateTimeInput):
 
@@ -34,7 +33,6 @@ class diaAbertoSettingsForm(ModelForm):
             'enderecopaginaweb': TextInput(attrs={'class': 'input'}),
             'emaildiaaberto': EmailInput(attrs={'class': 'input'}),
             'ano': NumberInput(attrs={'class': 'input', 'value': now.year}),
-            'descricao': TinyMCE(attrs={'class': 'textarea','rows': '5'}),
             'datadiaabertoinicio': DateTimeWidget(),
             'datadiaabertofim': DateTimeWidget(hours='17', minutes='00'),
             'datapropostasatividadesincio': DateTimeWidget(hours=None, minutes=None),
