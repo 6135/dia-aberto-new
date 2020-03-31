@@ -7,7 +7,7 @@ urlpatterns = [
     path('alteraratividade/<id>',views.alterarAtividade,name='alterarAtividade'),
     path('alterarsessao/<id>',views.alterarSessao,name='alterarSessao'),
     path('eliminaratividade/<id>',views.eliminarAtividade,name='eliminarAtividade'),
-    path('eliminarsessao/<id>/<atividadeid>',views.eliminarSessao,name='eliminarSessao'),
+    path('eliminarsessao/<id>',views.eliminarSessao,name='eliminarSessao'),
     path('inseriratividade', views.inseriratividade, name= "inserirAtividade"),
     path('sessao/<id>',views.inserirsessao,name='inserirSessao2'),
 ]

@@ -4,7 +4,7 @@
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
     <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page"> Inserir Sessão</a></li>
+    <li class="is-active"><a href="" aria-current="page"> Inserir Sessão</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
@@ -44,7 +44,7 @@
                                             <td data-label="Nome">{{sessao.horarioid.inicio}} até  {{sessao.horarioid.fim}}</td>
                                             <td data-label="Submetido a">{{sessao.ninscritos}}</td>  
                                             <td>
-                                                <a href={%url 'deleteSessao' sessao.id %}>
+                                                <a href={%url 'eliminarSessao' sessao.id %}>
                                                     <span class="icon has-text-danger">
                                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                                     </span>

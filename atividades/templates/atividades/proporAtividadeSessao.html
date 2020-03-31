@@ -4,7 +4,7 @@
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
     <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page">Propor Atividade</a></li>
+    <li class="is-active"><a href="" aria-current="page">Propor Atividade</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
@@ -43,7 +43,7 @@
                                             <td data-label="inscritos">{{sessao.ninscritos}}</td>
                                             <td data-label="vagas">{{sessao.vagas}}</td>  
                                             <td>
-                                                <input type="hidden" id="del" name="variable" value="{% url 'eliminarSessao' sessao.id atividadeid%}">
+                                                <input type="hidden" id="del" name="variable" value="{% url 'eliminarSessao' sessao.id%}">
                                                 <a onclick="Alert.render()">
                                                     <span class="icon has-text-danger">
                                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
