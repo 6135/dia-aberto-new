@@ -44,8 +44,8 @@ class Atividade(models.Model):
     estado = models.CharField(db_column='Estado', max_length=64)  # Field name made lowercase.
     coordenadorutilizadorid = models.ForeignKey(Coordenador, models.CASCADE, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
     professoruniversitarioutilizadorid = models.ForeignKey(Professoruniversitario, models.CASCADE, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
-    datasubmissao = models.DateTimeField(db_column='dataSubmissao')  # Field name made lowercase.
-    dataalteracao = models.DateTimeField(db_column='dataAlteracao')  # Field name made lowercase.
+    datasubmissao = models.DateTimeField(db_column='dataSubmissao',auto_now_add=True)  # Field name made lowercase.
+    dataalteracao = models.DateTimeField(db_column='dataAlteracao',auto_now=True)  # Field name made lowercase.
     duracaoesperada = models.IntegerField(db_column='duracaoEsperada')  # Field name made lowercase.
     participantesmaximo = models.IntegerField(db_column='participantesMaximo')  # Field name made lowercase.
     diaabertoid = models.ForeignKey(Diaaberto, models.CASCADE, db_column='diaAbertoID')  # Field name made lowercase.

@@ -102,7 +102,7 @@
                                 <label class="label">Espaço</label>
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
-                                            <select name="espacoid">
+                                            <select name="espacoid" required>
                                                 <option selected value="{{espaco.id}}">{{espaco.nome}} {{espaco.edificio}}</option>
                                                 {% for esp in espacos %}
                                                     <option value="{{esp.id}}" >{{esp.nome}} {{esp.edificio}}</option>

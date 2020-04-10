@@ -4,115 +4,119 @@
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
     <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page">Propor Atividade</a></li>
+    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page"> Inserir Sessão</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
-        <div class="b-steps">
-            <section class="step-content">
-              <form method="POST" action="">
-                {% csrf_token %}
-                <div class="step-item">
-                    <div style="padding: 1rem 2vw 0px">
-                    <hr>
-                    <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Sessões da Atividade</h2>
-                    <div>
-                        <div class="table ">
+  <form method="POST">
+    {% csrf_token %}
+  <div class="b-steps">
+    <section class="step-content">
+        <div class="step-item">
+          <div style="padding: 1rem 2vw 0px;">
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Minhas Sessoes</h2>
+
+            <div class="table ">
                             <div class="table-wrapper">
                                 <table class="table has-mobile-cards is-hoverable">
                                     <thead>
                                         <tr>
-                                            <th  style="width: 250px;">
+                                            <th  style="width: 300px;">
                                                 <div class="th-wrap">
                                                      Horário
+                                                    <span class="icon is-small">
+                                                        <i class="mdi mdi-menu-up"></i>
+                                                    </span>
                                                 </div>
                                             </th>
-                                            <th style="width: 200px;">
-                                                Inscritos
+                                            <th style="width: 300px;">
+                                                Vagas
+                                                <span class="icon is-small">
+                                                    <i class="mdi mdi-menu-up"></i>
+                                                </span>
                                             </th>
-                                            <th style="width: 200px;">
-                                              Vagas
-                                            </th>
-                                            <th></th>
+                                            <th style=""></th>
                                         </tr>
                                     </thead>
-                                    <tbody> 
-                                    {% for sessao in sessions_activity %}     
+                                    <tbody>    
+                                        {% for sessao in sessions_activity %} 
                                         <tr draggable="false">
-                                            <td data-label="horario">{{sessao.horarioid.inicio}} até  {{sessao.horarioid.fim}}</td>
-                                            <td data-label="inscritos">{{sessao.ninscritos}}</td>
-                                            <td data-label="vagas">{{sessao.vagas}}</td>  
+                                            <td data-label="Nome">{{sessao.horarioid.inicio}} até  {{sessao.horarioid.fim}}</td>
+                                            <td data-label="Submetido a">{{sessao.vagas}}</td>  
                                             <td>
-                                                <input type="hidden" id="del" name="variable" value="{% url 'eliminarSessao' sessao.id atividadeid%}">
-                                                <a onclick="Alert.render()">
+                                                <input type="hidden" id="del" name="variable" value="{% url 'eliminarSessao' sessao.id%}">
+                                               <a onclick="Alert.render()">
                                                     <span class="icon has-text-danger">
                                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                                     </span>
                                                 </a>
                                             </td>
                                         </tr>
-                                    {% endfor %}
+                                        {% endfor %} 
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    </div>
-                        <hr>
-                        <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Adicionar Sessão</h2>
-                        <div id="sessoes">
-                            <div  id="sessao" class="columns">
-                                <div class="column">
-                                    <div class="field">
-                                        <label class="label">Horário</label>
-                                        <div class="control is-expanded">
-                                            <div class="select">
-                                                <select name="horarioid">
-                                                  {% for horario in horarios %}
-                                                    <option value="{{horario.id}}" >{{horario.inicio}} até {{horario.fim}}</option>
-                                                  {% endfor %}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="columns">
-                                <div class="column is-1">
-                                    <div class="has-text-centered">
-                                        <button type="submit" class="button is-success">
-                                            <span class="icon is-small">
-                                                <i class="mdi mdi-plus"></i>
-                                            </span>
-                                            <span>Adicionar Sessão</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
+                        <hr/>
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Adicionar Sessao</h2>
+            <div class="columns">        
+                    <div class="column is-2">
+                      <div class="field" >
+                        <label class="label">Horário</label>
+                        <div class="control">
+                          <div class="select is-fullwidth" >
+                            <select name="horarioid">
+                              {% for schedule in horarios %}
+                              <option value="{{schedule.id}}">{{schedule.inicio}} até {{schedule.fim}}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
                         </div>
-                         </div>
-                        <hr>
+                      </div>
                     </div>
-                  </form>
-                </div>
-            </section>
-        </div>
+                    <div class="column is-1">
+                      <div class="field" >
+                        <label class="label"></label>
+                        <br>
+                        <div class="control">
+                            <div class="has-text-centered">
+                                <button class="button is-success" name="new" value="New">
+                                    <span class="icon is-small">
+                                        <i class="mdi mdi-plus"></i>
+                                    </span>
+                                    <span>Adicionar Sessão</span>
+                                </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+              </div>
+ 
+        <hr>
+        </div>     
+    </section>
     <div class="column is-8 is-offset-2">
       <div class="level">
-        <div class="level-left">
-          <a href="javascript:history.back()" class="button is-outlined" type="button">
-            <span class="icon is-small"><i class="mdi mdi-chevron-left"></i></span>
-            <span>Anterior</span>
-          </a>
-        </div>
-        <div class="level-right">
-          <a  onclick="" href="{% url 'minhasAtividades' %}"  type="button" class="button is-large is-success  is-link">
-            <span>Concluir</span>
-          </a>
+      <div class="level-left">
+         <button class="button is-outlined" name="cancelar" value="Cancelar">
+            <span>Cancelar</span>
+         </button>
+      </div>
+      <div class="level-right">
+            <button id="concluir" onclick="Alert.checkEmptySession()" class="button is-large is-success is-outlined is-link" name="save" value="Save">
+            <span>Finalizar Proposta</span>
+            <span class="icon is-medium">
+              <i class="mdi mdi-forward mdi-36px"></i>
+            </span>
+          </button>
         </div>
       </div>
     </div>
   </div>
+</form>
 </div>
+
 <div id="msg" class="dialog modal">
   <div class="modal-background"></div>
   <div class="modal-card animation-content">
@@ -126,6 +130,22 @@
       <footer class="modal-card-foot">
           <button onclick="Alert.cancelar()" class="button">Cancelar</button>
           <button onclick="Alert.confirmar()" class="button is-success">Confirmar</button>
+      </footer>
+  </div>
+</div>
+
+<div id="empty" class="dialog modal">
+  <div class="modal-background"></div>
+  <div class="modal-card animation-content">
+      <section class="modal-card-body is-titleless">
+          <div class="media">
+              <div class="media-content">
+                  <p>Não adicinou nenhuma sessão à atividade.</p>
+              </div>
+          </div>
+      </section>
+      <footer class="modal-card-foot">
+          <button onclick="Alert.cancelar()" class="button">Ok</button>
       </footer>
   </div>
 </div>
@@ -151,6 +171,17 @@ function eliminar() {
         var msg = document.getElementById("msg")
         msg.classList.add("is-active");
     }
+    /*this.checkEmptySession=function(){
+        var a = "{{sessions_activity}}";
+        console.log(a);
+        if(isEmpty(a)){
+            var msg = document.getElementById("empty")
+            msg.classList.add("is-active");     
+        }else{
+            var x=document.getElementById("concluir");
+            x.Type="submit";
+        }
+    }*/
     this.confirmar=function(){
         var href = document.getElementById("del").value;
         window.location.href = href;
@@ -158,7 +189,9 @@ function eliminar() {
     this.cancelar=function(){
         var msg = document.getElementById("msg")
         msg.classList.remove("is-active");
-    }   
+    }  
 }
+
 </script>
 {% endblock content %}
+
