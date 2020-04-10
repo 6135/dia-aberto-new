@@ -152,8 +152,7 @@ def inserirsessao(request,id):
         new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id))
         new_Sessao.save()
         if 'cancelar' in request.POST :
-            Atividade.objects.get(id=id).delete()
-            return render(request,'atividades/cancelada.html')
+            return redirect('proporAtividade')
         elif 'new' in request.POST:
             return redirect('inserirSessao', id)
     return render(request,'atividades/proporAtividadeSessao.html',{'horarios': disp , 'sessions_activity': Sessao.objects.all().filter(atividadeid= id)}) 

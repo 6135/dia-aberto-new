@@ -40,7 +40,7 @@
                                     </thead>
                                     <tbody>    
                                         {% for sessao in sessions_activity %} 
-                                        <tr draggable="false">
+                                        <tr id="sessao.id" draggable="false">
                                             <td data-label="Nome">{{sessao.horarioid.inicio}} até  {{sessao.horarioid.fim}}</td>
                                             <td data-label="Submetido a">{{sessao.vagas}}</td>  
                                             <td>
@@ -99,12 +99,12 @@
     <div class="column is-8 is-offset-2">
       <div class="level">
       <div class="level-left">
-         <button class="button is-outlined" name="cancelar" value="Cancelar">
-            <span>Cancelar</span>
+         <button  class="button is-outlined" name="cancelar" value="Cancelar">
+            <span>Anterior</span>
          </button>
       </div>
       <div class="level-right">
-            <button id="concluir" onclick="Alert.checkEmptySession()" class="button is-large is-success is-outlined is-link" name="save" value="Save">
+            <button id="concluir" onclick="Alert.checkEmptySession()" type="button" class="button is-large is-success is-outlined is-link" name="save" value="Save">
             <span>Finalizar Proposta</span>
             <span class="icon is-medium">
               <i class="mdi mdi-forward mdi-36px"></i>
@@ -140,12 +140,12 @@
       <section class="modal-card-body is-titleless">
           <div class="media">
               <div class="media-content">
-                  <p>Não adicinou nenhuma sessão à atividade.</p>
+                  <p>Não adicionou nenhuma sessão à atividade.</p>
               </div>
           </div>
       </section>
       <footer class="modal-card-foot">
-          <button onclick="Alert.cancelar()" class="button">Ok</button>
+          <button onclick="Alert.ok()" class="button">Ok</button>
       </footer>
   </div>
 </div>
@@ -171,23 +171,28 @@ function eliminar() {
         var msg = document.getElementById("msg")
         msg.classList.add("is-active");
     }
-    /*this.checkEmptySession=function(){
-        var a = "{{sessions_activity}}";
+    this.checkEmptySession=function(){
+        var a = document.getElementById("sessao.id");
         console.log(a);
-        if(isEmpty(a)){
-            var msg = document.getElementById("empty")
-            msg.classList.add("is-active");     
-        }else{
+        if(a){
             var x=document.getElementById("concluir");
-            x.Type="submit";
+            x.type="submit";
+                
+        }else{
+            var msg = document.getElementById("empty")
+            msg.classList.add("is-active"); 
         }
-    }*/
+    }
     this.confirmar=function(){
         var href = document.getElementById("del").value;
         window.location.href = href;
     }
     this.cancelar=function(){
         var msg = document.getElementById("msg")
+        msg.classList.remove("is-active");
+    }  
+    this.ok=function(){
+        var msg = document.getElementById("empty")
         msg.classList.remove("is-active");
     }  
 }
