@@ -4,7 +4,13 @@
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
     <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
+    {% if  espaco != -1 %}
     <li class="is-active"><a href="" aria-current="page">Alterar Atividade</a></li>
+    {% else %}
+    <li class="is-active"><a href="" aria-current="page">Propor Atividade</a></li>
+    {% endif %}
+    
+    
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">

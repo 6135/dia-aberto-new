@@ -22,9 +22,9 @@ def alterarAtividade(request,id):
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
     espaco= Espaco.objects.get(id=activity_object.espacoid.id)
-    print(espaco)
+    #print(espaco)
     espacos = Espaco.objects.all()
-    print(espacos)
+    #print(espacos)
     #-----------------------------
     if request.method == 'POST':    #Se estivermos a receber um request com formulario  
         submitted_data = request.POST.copy()
@@ -99,11 +99,11 @@ def proporatividade(request):
             idAtividade= Atividade.objects.all().order_by('-id').first()
             return redirect('inserirSessao', idAtividade.id)
         else:
-            return render(request, 'atividades/proporAtividadeAtividade.html',{'form': formAtividade, 'espacos': espacos, 'mat': form_Materiais})
+            return render(request, 'atividades/proporAtividadeAtividade.html',{'form': formAtividade,'espaco': -1, 'espacos': espacos, 'mat': form_Materiais})
     else:  
         formAtividade = AtividadeForm()
         form_Materiais= MateriaisForm() 
-    return render(request,'atividades/proporAtividadeAtividade.html',{'form': formAtividade, 'espacos': espacos, 'mat': form_Materiais})  
+    return render(request,'atividades/proporAtividadeAtividade.html',{'form': formAtividade,'espaco': -1, 'espacos': espacos, 'mat': form_Materiais})  
 
 
 
@@ -120,17 +120,17 @@ def inserirsessao(request,id):
     idAtividades= []
     for atv_id in atividadescomespaco_id: 
         idAtividades.append(atv_id.id) # Busca o id das atividades
-    print(idAtividades)
+    #print(idAtividades)
 
     sessao_espaco= []
     for sessao in idAtividades:
         print(sessao)
         sessao_espaco.append(Sessao.objects.all().filter(atividadeid=sessao)) # Busca as sessoes das atividades
-    print(sessao_espaco)
+    #print(sessao_espaco)
     for sessao in sessao_espaco:
         for sessao2 in sessao:
             horariosindisponiveis.append(sessao2.horarioid)
-    print(horariosindisponiveis)
+    #print(horariosindisponiveis)
 
     sessao_indis= Sessao.objects.all().filter(atividadeid=id)
     for sessao in sessao_indis:
