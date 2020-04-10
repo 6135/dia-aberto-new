@@ -1,19 +1,19 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , SessaoForm
+from .forms import AtividadeForm , MateriaisForm
 from .models import *
 from configuracao.models import Horario
-from .models import Atividade, Espaco, Sessao
+from .models import Atividade, Espaco, Sessao, Tema
 from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario
 from configuracao.models import Diaaberto, Horario
 from django.http import HttpResponseRedirect
 from datetime import datetime
-from atividades.forms import MateriaisForm
+
 
 
 #-------------Diogo----------------------
 def minhasatividades(request):
-	return render(request=request,
+    	return render(request=request,
 				template_name="atividades/listaAtividades.html",
                 context={"atividades": Atividade.objects.all()})
 

@@ -59,8 +59,6 @@ class Atividade(models.Model):
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Atividade._meta.fields]
 
-
-
 class Espaco(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=True)  # Field name made lowercase.
@@ -73,8 +71,8 @@ class Espaco(models.Model):
 
 class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    atividadeid = models.ForeignKey(Atividade, models.CASCADE, db_column='AtividadeID')  # Field name made lowercase.
-    nome = models.CharField(max_length=255, blank=True, null=True)
+    atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
+    nomematerial = models.CharField(db_column='nome',max_length=255, blank=True, null=True)
 
     class Meta:
         db_table = 'Materiais'
@@ -85,8 +83,6 @@ class Sessao(models.Model):
     ninscritos = models.IntegerField(db_column='NInscritos')  # Field name made lowercase.
     vagas = models.IntegerField(db_column='Vagas')  # Field name made lowercase.
     atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
-    #def __str__(self):
-        #return '%s %s %s %s %s %s' % (self.espacoid,self.horarioid,self.ninscritos,self.vagas,self.duracaomedia,self.participantesmaximo)
     class Meta:
         db_table = 'Sessao'
 
