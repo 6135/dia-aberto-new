@@ -4,7 +4,7 @@
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
     <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-    {% if  espaco != -1 %}
+    {% if  campu != -1 %}
     <li class="is-active"><a href="" aria-current="page">Alterar Atividade</a></li>
     {% else %}
     <li class="is-active"><a href="" aria-current="page">Propor Atividade</a></li>
@@ -67,14 +67,6 @@
                             </div>
                             <div class="column">
                                 <div class="field">
-                                <label class="label">Colaboradores Necessarios</label>
-                                    <div class="control">
-                                    {{form.nrcolaboradoresnecessario}}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="column">
-                                <div class="field">
                                 <label class="label">Tema</label>
                                     <div class="control">
                                     <div class="select is-fullwidth">
@@ -84,6 +76,10 @@
                                 </div>
                             </div>
                         </div>
+                        <hr>
+                        <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+                            Requisitos de Atividade
+                        </h2>
                         <div class="columns">
                             <div class="column ">
                                 <div class="field">
@@ -97,21 +93,68 @@
                             </div>
                             <div class="column">
                                 <div class="field">
+                                <label class="label">Colaboradores Necessarios</label>
+                                    <div class="control">
+                                    {{form.nrcolaboradoresnecessario}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
                                 <label class="label">Número de Participantes</label>
                                     <div class="control">
                                     {{form.participantesmaximo}}
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="columns">
                             <div class="column">
                                 <div class="field">
-                                <label class="label">Espaço</label>
+                                <label class="label">Campus</label>
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
-                                            <select name="espacoid" required>
-                                                <option selected value="{{espaco.id}}">{{espaco.nome}} {{espaco.edificio}}</option>
+                                            <select name="campusid" required>
+                                                {% if  campu != -1 %}
+                                                <option selected value="{{campus.id}}">{{campus.nome}}</option>
+                                                {% endif %}
+                                                {% for c in campus %}
+                                                    <option value="{{c.id}}" >{{c.nome}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                <label class="label">Edificio</label>
+                                    <div class="control is-expanded">
+                                        <div class="select is-fullwidth">
+                                                <select name="edicioid" required>
+                                                {% if  campu != -1 %}
+                                                <option selected value="{{edificio.id}}">{{edificio.nome}}</option>
+                                                {% endif %}
+                                                {% for edi in edificios %}
+                                                    <option value="{{edi.id}}" >{{edi.nome}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                </button>
+                            </div>
+                            <div class="column">
+                                <div class="field">
+                                <label class="label">Sala</label>
+                                    <div class="control is-expanded">
+                                        <div class="select is-fullwidth">
+                                            <select name="edicioid" required>
+                                                {% if  campu != -1 %}
+                                                <option selected value="{{espaco.id}}">{{espaco.nome}}</option>
+                                                {% endif %}
                                                 {% for esp in espacos %}
-                                                    <option value="{{esp.id}}" >{{esp.nome}} {{esp.edificio}}</option>
+                                                    <option value="{{esp.id}}" >{{esp.nome}}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>

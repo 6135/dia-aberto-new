@@ -133,16 +133,35 @@ class Prato(models.Model):
         db_table = 'Prato'
 
 
-class Campus(models.Model):
-    # Field name made lowercase.
-    id = models.AutoField(db_column='ID', primary_key=True)
-    # Field name made lowercase.
-    menuid = models.ForeignKey(Menu, models.CASCADE, db_column='MenuID')
-    # Field name made lowercase.
-    nome = models.CharField(
-        db_column='Nome', max_length=255, blank=True, null=True)
+class Espaco(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    edificio = models.ForeignKey('Edificio', models.DO_NOTHING, db_column='Edificio', blank=True, null=True)  # Field name made lowercase.
+    andar = models.CharField(db_column='Andar', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    descricao = models.CharField(db_column='Descricao', max_length=255)  # Field name made lowercase.
 
     class Meta:
+        managed = False
+        db_table = 'Espaco'
+
+
+class Edificio(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=32)  # Field name made lowercase.
+    campus = models.ForeignKey('Campus', models.DO_NOTHING, db_column='Campus')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Edificio'
+
+
+class Campus(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    menuid = models.ForeignKey('Menu', models.DO_NOTHING, db_column='MenuID')  # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=True)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
         db_table = 'Campus'
 
 
@@ -164,7 +183,7 @@ class Departamento(models.Model):
 class Sala(models.Model):
     # Field name made lowercase.
     espacoid = models.ForeignKey(
-        'atividades.Espaco', models.CASCADE, db_column='EspacoID')
+        'Espaco', models.CASCADE, db_column='EspacoID')
     # Field name made lowercase.
     espacoedificio = models.CharField(
         db_column='EspacoEdificio', max_length=255)

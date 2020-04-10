@@ -7,7 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from utilizadores.models import *
-from coordenadores.models import Coordenador
+from coordenadores.models import *
 from configuracao.models import *
 from inscricoes.models import *
 from notificacoes.models import *
@@ -15,7 +15,7 @@ from notificacoes.models import *
 
 
 class Anfiteatro(models.Model):
-    espacoid = models.OneToOneField('Espaco', models.CASCADE, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
+    espacoid = models.OneToOneField(Espaco, models.CASCADE, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
     espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
 
     class Meta:
@@ -24,7 +24,7 @@ class Anfiteatro(models.Model):
 
    
 class Arlivre(models.Model):
-    espacoid = models.OneToOneField('Espaco', models.CASCADE, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
+    espacoid = models.OneToOneField(Espaco, models.CASCADE, db_column='EspacoID', primary_key=True)  # Field name made lowercase.
     espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
 
     class Meta:
@@ -49,7 +49,7 @@ class Atividade(models.Model):
     duracaoesperada = models.IntegerField(db_column='duracaoEsperada')  # Field name made lowercase.
     participantesmaximo = models.IntegerField(db_column='participantesMaximo')  # Field name made lowercase.
     diaabertoid = models.ForeignKey(Diaaberto, models.CASCADE, db_column='diaAbertoID')  # Field name made lowercase.
-    espacoid = models.ForeignKey('Espaco', models.CASCADE, db_column='EspacoID')  # Field name made lowercase.
+    espacoid = models.ForeignKey(Espaco, models.CASCADE, db_column='EspacoID')  # Field name made lowercase.
     tema = models.ForeignKey('Tema', models.CASCADE, db_column='Tema', blank=False, null=False)  # Field name made lowercase.
 
     class Meta:
@@ -58,16 +58,6 @@ class Atividade(models.Model):
 
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Atividade._meta.fields]
-
-class Espaco(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    edificio = models.CharField(db_column='Edificio', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    andar = models.CharField(db_column='Andar', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    descricao = models.CharField(db_column='Descricao', max_length=255)  # Field name made lowercase.
-
-    class Meta:
-        db_table = 'Espaco'
 
 class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
@@ -93,3 +83,4 @@ class Tema(models.Model):
     class Meta:
         managed = False
         db_table = 'Tema'
+

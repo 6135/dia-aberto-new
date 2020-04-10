@@ -2,10 +2,10 @@ from django.shortcuts import render, redirect
 from .forms import AtividadeForm , MateriaisForm
 from .models import *
 from configuracao.models import Horario
-from .models import Atividade, Espaco, Sessao, Tema
+from .models import Atividade, Sessao, Tema
 from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario
-from configuracao.models import Diaaberto, Horario
+from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
 from django.http import HttpResponseRedirect
 from datetime import datetime
 
@@ -83,6 +83,7 @@ def proporatividade(request):
     espacos = Espaco.objects.all()  
              
     if request.method == "POST":
+        print(request.POST['espaco'])
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
@@ -99,11 +100,11 @@ def proporatividade(request):
             idAtividade= Atividade.objects.all().order_by('-id').first()
             return redirect('inserirSessao', idAtividade.id)
         else:
-            return render(request, 'atividades/proporAtividadeAtividade.html',{'form': formAtividade,'espaco': -1, 'espacos': espacos, 'mat': form_Materiais})
+            return render(request, 'atividades/proporAtividadeAtividade.html',{'form': formAtividade, 'campus':-1, 'campus': Campus.objects.all(),'edificios': Edificio.objects.all(), 'espacos': Espaco.objects.all(), 'mat': form_Materiais})
     else:  
         formAtividade = AtividadeForm()
         form_Materiais= MateriaisForm() 
-    return render(request,'atividades/proporAtividadeAtividade.html',{'form': formAtividade,'espaco': -1, 'espacos': espacos, 'mat': form_Materiais})  
+    return render(request,'atividades/proporAtividadeAtividade.html',{'form': formAtividade,'campu':-1,  'campus': Campus.objects.all(), 'edificios': Edificio.objects.all(),'espacos': Espaco.objects.all(),'mat': form_Materiais})  
 
 
 
