@@ -80,10 +80,10 @@ def proporatividade(request):
     #       total+=Sessoes
     #    if total!= len(Horario.objects.all()):
     #        espacodisponivel.append(Espaco.objects.get(id=esp.id))
-    espacos = Espaco.objects.all()  
+    #espacos = Espaco.objects.all()  
              
     if request.method == "POST":
-        print(request.POST['espaco'])
+        #print(request.POST['espaco'])
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
@@ -100,7 +100,7 @@ def proporatividade(request):
             idAtividade= Atividade.objects.all().order_by('-id').first()
             return redirect('inserirSessao', idAtividade.id)
         else:
-            return render(request, 'atividades/proporAtividadeAtividade.html',{'form': formAtividade, 'campus':-1, 'campus': Campus.objects.all(),'edificios': Edificio.objects.all(), 'espacos': Espaco.objects.all(), 'mat': form_Materiais})
+            return render(request, 'atividades/proporAtividadeAtividade.html',{'form': formAtividade, 'campu':-1, 'campus': Campus.objects.all(),'edificios': Edificio.objects.all(), 'espacos': Espaco.objects.all(), 'mat': form_Materiais})
     else:  
         formAtividade = AtividadeForm()
         form_Materiais= MateriaisForm() 
