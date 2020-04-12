@@ -15,7 +15,7 @@
             </span>
             <span>Propor nova atividade</span>
         </a>
-        <div class="table ">
+        <div class="table">
             <div class="table-wrapper">
                 <table class="table has-mobile-cards is-hoverable is-fullwidth">
                     <thead>
@@ -23,23 +23,29 @@
                             <th width="40px"></th>
                             <th  style="width: 300px;">
                                 <div class="th-wrap">
-                                    Nome
-                                    <span class="icon is-small">
-                                        <i class="mdi mdi-menu-up"></i>
-                                    </span>
+                                    <a onclick>
+                                        Nome
+                                        <span class="icon is-small">
+                                            <i class="mdi mdi-menu-up"></i>
+                                        </span>
+                                    </a>
                                 </div>
                             </th>
                             <th style="width: 300px;">
-                                Submetido a
-                                <span class="icon is-small">
-                                     <i class="mdi mdi-menu-up"></i>
-                                </span>
+                                <a class="orderbutton" order="dataalteracao">
+                                    Submetido a
+                                    <span class="icon is-small">
+                                        <i class="mdi mdi-menu-up"></i>
+                                    </span>
+                                </a>
                             </th>
                             <th>
-                                Estado
-                                <span class="icon is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
+                                <a class="orderbutton" order="estado">
+                                    Estado
+                                    <span class="icon is-small">
+                                        <i class="mdi mdi-menu-up"></i>
+                                    </span>
+                                </a>
                             </th>
                             <th >
                             </th>
@@ -48,10 +54,10 @@
                         </tr>
                     </thead>
                     {% for atividade in atividades %}
-                    <tbody>      
+                    <tbody id="{{atividade}}">      
                         <tr draggable="false">
                             <td class="chevron-cell">
-                                <a role="button" onclick="displayDetails({{atividade.id}})">
+                                <a class="detailbutton" role="button" onclick="displayDetails({{atividade.id}})" atividade="{{atividade.id}}">
                                     <span class="icon is-expanded">
                                         <i class="mdi mdi-chevron-right mdi-24px"></i>
                                     </span>
@@ -100,7 +106,7 @@
                                         </p>
                                         <p>
                                             <strong>Professor:</strong>
-
+                                            {{atividade.professoruniversitarioutilizadorid.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Data de submissão:</strong>
@@ -120,12 +126,15 @@
                                         </p>
                                         <p>
                                             <strong>Campus:</strong>
+                                            {{atividade.espacoid.edificio.campus.nome}}
                                         </p>
                                         <p>
                                             <strong>Entidade Organizacional:</strong>
+                                            
                                         </p>
                                         <p>
                                             <strong>Departamento:</strong>
+                                            {{atividade.professoruniversitarioutilizadorid.departamento.nome}}
                                         </p>
                                         <p>
                                             <strong>Sessões:</strong>
@@ -214,6 +223,21 @@ function displayDetails(idForDetails){
     if(objectDetails.style.display == 'none') {
         objectDetails.style.display = "contents";
     } else objectDetails.style.display = "none";
+}
+
+/*$('.orderbutton').click(function(){
+    var orderBy= $(this).attr("order");
+    $.ajax({
+        type:"GET",
+        url:"",
+        data:{
+            sort:orderBy
+        }
+    })
+});*/
+
+function orderBy(){
+
 }
 </script>
 {% endblock content %}

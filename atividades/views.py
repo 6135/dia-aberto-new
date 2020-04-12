@@ -13,9 +13,10 @@ from datetime import datetime
 
 #-------------Diogo----------------------
 def minhasatividades(request):
-    	return render(request=request,
-				template_name="atividades/listaAtividades.html",
-                context={"atividades": Atividade.objects.all()})
+    atividades=Atividade.objects.all()
+    return render(request=request,
+			template_name="atividades/listaAtividades.html",
+            context={"atividades": atividades})
 
 def alterarAtividade(request,id):
     #------atividade a alterar----
