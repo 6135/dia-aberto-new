@@ -81,10 +81,10 @@ def proporatividade(request):
     #       total+=Sessoes
     #    if total!= len(Horario.objects.all()):
     #        espacodisponivel.append(Espaco.objects.get(id=esp.id))
-    espacos = Espaco.objects.all()  
+    #espacos = Espaco.objects.all()  
              
     if request.method == "POST":
-        print(request.POST['espaco'])
+        #print(request.POST['espaco'])
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
@@ -101,7 +101,7 @@ def proporatividade(request):
             idAtividade= Atividade.objects.all().order_by('-id').first()
             return redirect('inserirSessao', idAtividade.id)
         else:
-            return render(request, 'atividades/proporAtividadeAtividade.html',{'form': formAtividade, 'campus':-1, 'campus': Campus.objects.all(),'edificios': Edificio.objects.all(), 'espacos': Espaco.objects.all(), 'mat': form_Materiais})
+            return render(request, 'atividades/proporAtividadeAtividade.html',{'form': formAtividade, 'campu':-1, 'campus': Campus.objects.all(),'edificios': Edificio.objects.all(), 'espacos': Espaco.objects.all(), 'mat': form_Materiais})
     else:  
         formAtividade = AtividadeForm()
         form_Materiais= MateriaisForm() 
@@ -154,10 +154,26 @@ def inserirsessao(request,id):
         new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id))
         new_Sessao.save()
         if 'cancelar' in request.POST :
+            Atividade.objects.get(id=id).delete()
             return redirect('proporAtividade')
         elif 'new' in request.POST:
             return redirect('inserirSessao', id)
     return render(request,'atividades/proporAtividadeSessao.html',{'horarios': disp , 'sessions_activity': Sessao.objects.all().filter(atividadeid= id)}) 
+
+
+
+
+
+def validaratividade(request,id, action):
+    atividade=Atividade.objects.get(id=id)
+    if action==0:
+        print("r")
+        atividade.estado='Recusada'
+    if action==1:
+        print("r1")
+        atividade.estado='Aceite'
+    atividade.save()
+    return redirect('minhasAtividades')
 
 #---------------------End David
     
