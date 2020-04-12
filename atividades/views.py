@@ -164,12 +164,13 @@ def inserirsessao(request,id):
 
 
 def validaratividade(request,id, action):
-    print(id)
-    atividade= Atividade.objects.get(id=id)
+    atividade=Atividade.objects.get(id=id)
     if action==0:
-        atividade.estado="Recusada"
+        print("r")
+        atividade.estado='Recusada'
     if action==1:
-        atividade.estado="Aceite"
+        print("r1")
+        atividade.estado='Aceite'
     atividade.save()
     return redirect('minhasAtividades')
 
