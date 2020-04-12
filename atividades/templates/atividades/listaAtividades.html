@@ -1,7 +1,63 @@
 {% extends 'configuracao/app.html' %}
 {% block content %}
 <div class="columns">
-    <div class="column is-3"></div>
+       <div class="column is-3">
+        <form method="POST" action="" id='filter'>
+            {% csrf_token %}
+            <div>
+            <div class="menu">
+                <p class="menu-label">Filtros Atividades</p>
+                <ul class="menu-list">
+                <div class="field">
+                    <!---->
+                    <div class="control has-icons-left is-clearfix">
+                        <input type="text" name="searchAno" placeholder="Atividade" class="input" value=""> 
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                    </div>
+                    <!---->
+                </div>
+                <div class="field">
+                    <!---->
+                    <div class="control is-expanded">
+                        <span class="select is-fullwidth is-empty">
+                            {{form.orderBy}}
+                        </span>
+                        <!---->
+                    </div>
+                    <!---->
+                </div>
+                <div class="field">
+                    <!---->
+                    <div class="control is-expanded">
+                        <span class="select is-fullwidth is-empty">
+                            {{form.showBy}}
+                        </span>
+                        <!---->
+                    </div>
+                    <!---->
+                </div>
+                <div class="field">
+                    <button type="submit" onClick="resetForm()" class="button is-danger is-outlined">
+                        <span class="icon is-left">
+                            <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                        </span>
+                        <span>Limpar pesquisa</span>
+                    </button>
+                    <button type="Submit" class="button is-success is-outlined">
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                        <span>Pesquisar</span>
+                    </button>
+                </div>
+                </ul>
+            </div>
+            </div>
+            
+        </form>
+    </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
@@ -23,7 +79,7 @@
                             <th width="40px"></th>
                             <th  style="width: 300px;">
                                 <div class="th-wrap">
-                                    <a onclick>
+                                    <a onclick="orderBy('nome')">
                                         Nome
                                         <span class="icon is-small">
                                             <i class="mdi mdi-menu-up"></i>
@@ -32,7 +88,7 @@
                                 </div>
                             </th>
                             <th style="width: 300px;">
-                                <a class="orderbutton" order="dataalteracao">
+                                <a>
                                     Submetido a
                                     <span class="icon is-small">
                                         <i class="mdi mdi-menu-up"></i>
@@ -40,7 +96,7 @@
                                 </a>
                             </th>
                             <th>
-                                <a class="orderbutton" order="estado">
+                                <a>
                                     Estado
                                     <span class="icon is-small">
                                         <i class="mdi mdi-menu-up"></i>
@@ -143,35 +199,34 @@
                                             <table class="table has-mobile-cards">
                                                 <thead> 
                                                     <tr>
-                                                        <th>
-                                                            <div class="th-wrap" >Dia</div>
-                                                        </th>
-                                                        <th>
-                                                            <div class="th-wrap">Hora</div>
-                                                        </th>
-                                                        <th>
-                                                            <div class="th-wrap">Vagas</div>
-                                                        </th>
+                                                        <th><div class="th-wrap">Dia</div></th>
+                                                        <th><div class="th-wrap" style="width:150px">Hora</div></th>
+                                                        <th><div class="th-wrap" style="width:150px">Vagas</div></th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
-                                                    <tr >
-                                                        <td data-label="Dia"></td>
-                                                        <td data-label="Hora"></td>
-                                                        <td data-label="Vagas"></td>
-                                                    </tr>
-                                                </tbody>
+                                                {% for  sessao in  sessoes%}
+                                                    {% if  sessao.atividadeid.id == atividade.id %}
+                                                        <tbody>
+                                                            <tr >
+                                                                <td data-label="Dia">{{atividade.diaabertoid.datadiaabertoinicio}}</td>
+                                                                <td data-label="Hora">{{sessao.horarioid.inicio}} até {{sessao.horarioid.fim}}</td>
+                                                                <td data-label="Vagas">{{sessao.vagas}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    {% endif %}
+                                                {% endfor %}
                                             </table>
                                         </div>
-                                        <a type="button" href="{% url 'validarAtividade' atividade.id 1 %}" class="button is-success" style="margin-right: 10px;" ><span class="icon is-small"><i class="mdi mdi-check"></i></span> <span>Aceitar</span></a>
-                                        <a type="button"  href="{% url 'validarAtividade' atividade.id 0 %}" class="button is-danger"><span class="icon is-small"><i class="mdi mdi-delete"></i></span> <span>Rejeitar</span></a>
+                                        {% if  atividade.estado == 'Pendente' %}
+                                            <a type="button" href="{% url 'validarAtividade' atividade.id 1 %}" class="button is-success" style="margin-right: 10px;" ><span class="icon is-small"><i class="mdi mdi-check"></i></span><span>Aceitar</span></a>
+                                            <a type="button" href="{% url 'validarAtividade' atividade.id 0 %}" class="button is-danger"><span class="icon is-small"><i class="mdi mdi-delete"></i></span> <span>Rejeitar</span></a>
+                                        {% endif %}
                                     </div>
                                 </div>
-                            </div>
-                            <hr>
-                        </td>                 
-                      </tr> 
-                    </tbody>
+                            </div>                        
+                        </td>                
+                      </tr>
+                    </tbody>         
                     {% endfor %}
                 </table>
             </div>
@@ -194,13 +249,19 @@
     </div>
 </div>
 <style>
-    .dialog .modal-card .modal-card-body.is-titleless {
+.dialog .modal-card .modal-card-body.is-titleless {
     border-top-left-radius: 6px;
     border-top-right-radius: 6px;
 }
-.b-table .table tr.detail {
-    box-shadow: 0 1px 3px #dbdbdb!important;
-    background: #fafafa!important;
+
+ .table tr.detail {
+    -webkit-box-shadow: inset 0 1px 3px #dbdbdb;
+    box-shadow: inset 0 1px 3px #dbdbdb;
+    background: #fafafa;
+}
+
+.table tr.detail .detail-container {
+    padding: 1rem;
 }
 </style>
 <script>
@@ -238,8 +299,39 @@ function displayDetails(idForDetails){
     })
 });*/
 
-function orderBy(){
-
+function orderBy(order){
+    var table, rows, switching, i, x, y, shouldSwitch;
+    table = document.getElementById("myTable");
+    switching = true;
+    /*Make a loop that will continue until
+    no switching has been done:*/
+    while (switching) {
+        //start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /*Loop through all table rows (except the
+        first, which contains table headers):*/
+        for (i = 1; i < (rows.length - 1); i++) {
+        //start by saying there should be no switching:
+        shouldSwitch = false;
+        /*Get the two elements you want to compare,
+        one from current row and one from the next:*/
+        x = rows[i].getElementsByTagName("TD")[0];
+        y = rows[i + 1].getElementsByTagName("TD")[0];
+        //check if the two rows should switch place:
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            //if so, mark as a switch and break the loop:
+            shouldSwitch = true;
+            break;
+        }
+        }
+        if (shouldSwitch) {
+        /*If a switch has been marked, make the switch
+        and mark that a switch has been done:*/
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+        }
+    }
 }
 </script>
 {% endblock content %}
