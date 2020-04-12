@@ -154,7 +154,8 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <button type="button" class="button is-success" style="margin-right: 10px;"><span class="icon is-small"><i class="mdi mdi-check"></i></span> <span>Aceitar</span></button>
+                                        <a type="button" href="{% url 'validarAtividade' atividade.id 1 %}" class="button is-success" style="margin-right: 10px;" ><span class="icon is-small"><i class="mdi mdi-check"></i></span> <span>Aceitar</span></a>
+                                        <a type="button"  href="{% url 'validarAtividade' atividade.id 0 %}" class="button is-danger"><span class="icon is-small"><i class="mdi mdi-delete"></i></span> <span>Rejeitar</span></a>
                                     </div>
                                 </div>
                             </div>

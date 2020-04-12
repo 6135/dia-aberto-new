@@ -159,5 +159,19 @@ def inserirsessao(request,id):
             return redirect('inserirSessao', id)
     return render(request,'atividades/proporAtividadeSessao.html',{'horarios': disp , 'sessions_activity': Sessao.objects.all().filter(atividadeid= id)}) 
 
+
+
+
+
+def validaratividade(request,id, action):
+    print(id)
+    atividade= Atividade.objects.get(id=id)
+    if action==0:
+        atividade.estado="Recusada"
+    if action==1:
+        atividade.estado="Aceite"
+    atividade.save()
+    return redirect('minhasAtividades')
+
 #---------------------End David
     
