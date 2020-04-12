@@ -13,9 +13,11 @@ from datetime import datetime
 
 #-------------Diogo----------------------
 def minhasatividades(request):
-    	return render(request=request,
-				template_name="atividades/listaAtividades.html",
-                context={"atividades": Atividade.objects.all()})
+    atividades=Atividade.objects.all()
+    sessoes=Sessao.objects.all()
+    return render(request=request,
+			template_name="atividades/listaAtividades.html",
+            context={"atividades": atividades,"sessoes":sessoes})
 
 def alterarAtividade(request,id):
     #------atividade a alterar----
@@ -111,27 +113,27 @@ def proporatividade(request):
 def inserirsessao(request,id):
     disp= []
     horariosindisponiveis= []
-    espaco_id= Atividade.objects.get(id=id).espacoid # Busca o espaco da atividade
-    espacoidtest= espaco_id.id #  Busca o id do espaco
-    #print(espacoidtest)
-    atividadescomespaco_id=Atividade.objects.all().filter(espacoid=espacoidtest).exclude(id=id) # Busca as atividades com o espaco da atividade
-    #print(atividadescomespaco_id)
-
-
-    idAtividades= []
-    for atv_id in atividadescomespaco_id: 
-        idAtividades.append(atv_id.id) # Busca o id das atividades
-    #print(idAtividades)
-
-    sessao_espaco= []
-    for sessao in idAtividades:
-        print(sessao)
-        sessao_espaco.append(Sessao.objects.all().filter(atividadeid=sessao)) # Busca as sessoes das atividades
-    #print(sessao_espaco)
-    for sessao in sessao_espaco:
-        for sessao2 in sessao:
-            horariosindisponiveis.append(sessao2.horarioid)
-    #print(horariosindisponiveis)
+    #espaco_id= Atividade.objects.get(id=id).espacoid # Busca o espaco da atividade
+    #espacoidtest= espaco_id.id #  Busca o id do espaco
+    ##print(espacoidtest)
+    #atividadescomespaco_id=Atividade.objects.all().filter(espacoid=espacoidtest).exclude(id=id) # Busca as atividades com o espaco da atividade
+    ##print(atividadescomespaco_id)
+#
+#
+    #idAtividades= []
+    #for atv_id in atividadescomespaco_id: 
+    #    idAtividades.append(atv_id.id) # Busca o id das atividades
+    ##print(idAtividades)
+#
+    #sessao_espaco= []
+    #for sessao in idAtividades:
+    #    print(sessao)
+    #    sessao_espaco.append(Sessao.objects.all().filter(atividadeid=sessao)) # Busca as sessoes das atividades
+    ##print(sessao_espaco)
+    #for sessao in sessao_espaco:
+    #    for sessao2 in sessao:
+    #        horariosindisponiveis.append(sessao2.horarioid)
+    ##print(horariosindisponiveis)
 
     sessao_indis= Sessao.objects.all().filter(atividadeid=id)
     for sessao in sessao_indis:
