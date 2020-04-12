@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" src="{% static 'configuracao/imgs/logo.png' %}">
   <link rel="stylesheet" href="{% static 'configuracao/css/bulma.css' %}">
+  <link rel="stylesheet" href="{% static 'configuracao/css/animated-arrows.css' %}">
   <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.0.45/css/materialdesignicons.min.css">
-  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
 {% block load%}
 {% endblock load %}
 </head>
@@ -61,8 +61,13 @@
   width: 100%;
 }
 </style>
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <script type="text/javascript" src="{% static 'configuracao/js/jquery-3.4.1.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'configuracao/js/animated-arrows.js' %}"></script>
+  <script type="text/javascript" src="{% static 'configuracao/js/js_custom.js' %}"></script>
 {% block scripts %}
 {% endblock scripts %}
+
 </body>
 </html>
 
