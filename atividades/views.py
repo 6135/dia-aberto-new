@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , MateriaisForm
+from .forms import AtividadeForm , MateriaisForm, atividadesFilterForm
 from .models import *
 from configuracao.models import Horario
 from .models import Atividade, Sessao, Tema
@@ -15,9 +15,20 @@ from datetime import datetime
 def minhasatividades(request):
     atividades=Atividade.objects.all()
     sessoes=Sessao.objects.all()
+    if request.method == 'POST':
+        filterForm=atividadesFilterForm(request.POST)
+        showBy=str(request.POST.get('showBy'))
+        if showBy != '':
+            atividades=Atividade.objects.filter(estado=showBy)
+        else:
+            atividades=Atividade.objects.all()
+        print(atividades)
+    else:
+        filterForm=atividadesFilterForm()
+
     return render(request=request,
 			template_name="atividades/listaAtividades.html",
-            context={"atividades": atividades,"sessoes":sessoes})
+            context={"atividades": atividades,"sessoes":sessoes,"filter":filterForm})
 
 def alterarAtividade(request,id):
     #------atividade a alterar----

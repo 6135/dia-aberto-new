@@ -30,21 +30,21 @@ class MateriaisForm(ModelForm):
             'nomematerial': TextInput(attrs={'class': 'input'}),
             }
 
-class diaAbertoFilterForm(Form):
-    searchAno = CharField(widget=NumberInput, required=False)
-    orderByChoices = [('', 'Nao ordenar'),
-        ('ano', 'Ordernar por: Ano'),
-        ('-ano', 'Ordernar por: Ano (Decrescente)'),
-        ('datadiaabertoinicio', 'Ordernar por: Inicio'),
-        ('-datadiaabertoinicio', 'Ordernar por: Inicio (Descrescente)'),
-        ('datadiaabertofim', 'Ordernar por: Fim'),
-        ('-datadiaabertofim', 'Ordernar por: Fim (Descrescente)'),
-    ]
-    orderBy = ChoiceField(choices=orderByChoices, widget=Select(), required=False)
+class atividadesFilterForm(Form):
+    searchAtividade = CharField(widget=TextInput, required=False)
+    #orderByChoices = [('', 'Nao ordenar'),
+    #    ('ano', 'Ordernar por: Ano'),
+    #    ('-ano', 'Ordernar por: Ano (Decrescente)'),
+    #    ('datadiaabertoinicio', 'Ordernar por: Inicio'),
+    #    ('-datadiaabertoinicio', 'Ordernar por: Inicio (Descrescente)'),
+    #    ('datadiaabertofim', 'Ordernar por: Fim'),
+    #    ('-datadiaabertofim', 'Ordernar por: Fim (Descrescente)'),
+    #]
+    #orderBy = ChoiceField(choices=orderByChoices, widget=Select(), required=False)
 
     showByChoices = [('','Mostrar todos'),
-        ('1','Mostrar: Dias Abertos Ativos'),
-        ('2','Mostrar: Submissao de Atividades Ativas'),
-        ('3','Mostrar: Submissao de Inscricoes Ativas'),
+        ('Aceite','Mostrar: Atividades Aceites'),
+        ('Recusada','Mostrar: Atividades Recusadas'),
+        ('Pendente','Mostrar: Atividades Pendentes'),
     ]
     showBy = ChoiceField(choices=showByChoices, widget=Select(), required=False)

@@ -9,37 +9,22 @@
                 <p class="menu-label">Filtros Atividades</p>
                 <ul class="menu-list">
                 <div class="field">
-                    <!---->
                     <div class="control has-icons-left is-clearfix">
-                        <input type="text" name="searchAno" placeholder="Atividade" class="input" value=""> 
+                        <input type="text" name="searchAtividade" placeholder="Atividade" class="input" value=""> 
                         <span class="icon is-left">
                             <i class="mdi mdi-magnify mdi-24px"></i>
                         </span>
                     </div>
-                    <!---->
                 </div>
                 <div class="field">
-                    <!---->
                     <div class="control is-expanded">
                         <span class="select is-fullwidth is-empty">
-                            {{form.orderBy}}
+                            {{filter.showBy}}
                         </span>
-                        <!---->
                     </div>
-                    <!---->
                 </div>
                 <div class="field">
-                    <!---->
-                    <div class="control is-expanded">
-                        <span class="select is-fullwidth is-empty">
-                            {{form.showBy}}
-                        </span>
-                        <!---->
-                    </div>
-                    <!---->
-                </div>
-                <div class="field">
-                    <button type="submit" onClick="resetForm()" class="button is-danger is-outlined">
+                    <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
                         <span class="icon is-left">
                             <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                         </span>
@@ -288,50 +273,12 @@ function displayDetails(idForDetails){
     } else objectDetails.style.display = "none";
 }
 
-/*$('.orderbutton').click(function(){
-    var orderBy= $(this).attr("order");
-    $.ajax({
-        type:"GET",
-        url:"",
-        data:{
-            sort:orderBy
-        }
-    })
-});*/
-
-function orderBy(order){
-    var table, rows, switching, i, x, y, shouldSwitch;
-    table = document.getElementById("myTable");
-    switching = true;
-    /*Make a loop that will continue until
-    no switching has been done:*/
-    while (switching) {
-        //start by saying: no switching is done:
-        switching = false;
-        rows = table.rows;
-        /*Loop through all table rows (except the
-        first, which contains table headers):*/
-        for (i = 1; i < (rows.length - 1); i++) {
-        //start by saying there should be no switching:
-        shouldSwitch = false;
-        /*Get the two elements you want to compare,
-        one from current row and one from the next:*/
-        x = rows[i].getElementsByTagName("TD")[0];
-        y = rows[i + 1].getElementsByTagName("TD")[0];
-        //check if the two rows should switch place:
-        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-            //if so, mark as a switch and break the loop:
-            shouldSwitch = true;
-            break;
-        }
-        }
-        if (shouldSwitch) {
-        /*If a switch has been marked, make the switch
-        and mark that a switch has been done:*/
-        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-        switching = true;
-        }
-    }
+function resetForm(){
+    oFormObject = document.forms['filter'];
+    oFormObject.elements["searchAtividade"].value = '';
+    oFormObject.elements["orderBy"].value = '';
+    oFormObject.elements["showBy"].value = '';
 }
+
 </script>
 {% endblock content %}
