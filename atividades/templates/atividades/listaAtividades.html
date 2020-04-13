@@ -66,7 +66,7 @@
                                 <div class="th-wrap">
                                     <a onclick="orderBy('nome')">
                                         Nome
-                                        <span class="icon is-small">
+                                        <span class="icon-expandable-180 is-small">
                                             <i class="mdi mdi-menu-up"></i>
                                         </span>
                                     </a>
@@ -75,7 +75,7 @@
                             <th style="width: 300px;">
                                 <a>
                                     Submetido a
-                                    <span class="icon is-small">
+                                    <span class="icon-expandable-180 is-small">
                                         <i class="mdi mdi-menu-up"></i>
                                     </span>
                                 </a>
@@ -83,7 +83,7 @@
                             <th>
                                 <a>
                                     Estado
-                                    <span class="icon is-small">
+                                    <span class="icon-expandable-180 is-small">
                                         <i class="mdi mdi-menu-up"></i>
                                     </span>
                                 </a>
@@ -99,7 +99,7 @@
                         <tr draggable="false">
                             <td class="chevron-cell">
                                 <a class="detailbutton" role="button" onclick="displayDetails({{atividade.id}})" atividade="{{atividade.id}}">
-                                    <span class="icon is-expanded">
+                                    <span class="icon-expandable">
                                         <i class="mdi mdi-chevron-right mdi-24px"></i>
                                     </span>
                                 </a>
@@ -129,7 +129,7 @@
                             </td>
                             <td>
                                 <input type="hidden" id="del" name="variable" value="{% url 'eliminarAtividade' atividade.id %}"> 
-                                <a onclick="Alert.render()">
+                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta atividade?')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                     </span>
@@ -225,13 +225,13 @@
         <section class="modal-card-body is-titleless">
             <div class="media">
                 <div class="media-content">
-                    <p>Tem a certeza que pretende eliminar esta atividade?</p>
+                    <p id='text-00'></p>
                 </div>
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button onclick="Alert.cancelar()" class="button">Cancelar</button>
-            <button onclick="Alert.confirmar()" class="button is-success">Confirmar</button>
+            <button onclick="alert.cancelar()" class="button">Cancelar</button>
+            <button onclick="alert.confirmar()" class="button is-success">Confirmar</button>
         </footer>
     </div>
 </div>
@@ -250,36 +250,4 @@ tr.detail{
     background:#fafafa
 }
 </style>
-<script>
-var Alert= new eliminar();
-function eliminar() {
-    this.render=function(){
-        var msg = document.getElementById("msg")
-        msg.classList.add("is-active");
-    }
-    this.confirmar=function(){
-        var href = document.getElementById("del").value;
-        window.location.href = href;
-    }
-    this.cancelar=function(){
-        var msg = document.getElementById("msg")
-        msg.classList.remove("is-active");
-    }   
-}
-
-function displayDetails(idForDetails){
-    var objectDetails = document.getElementById("Details"+idForDetails);
-    if(objectDetails.style.display == 'none') {
-        objectDetails.style.display = "contents";
-    } else objectDetails.style.display = "none";
-}
-
-function resetForm(){
-    oFormObject = document.forms['filter'];
-    oFormObject.elements["searchAtividade"].value = '';
-    oFormObject.elements["orderBy"].value = '';
-    oFormObject.elements["showBy"].value = '';
-}
-
-</script>
 {% endblock content %}
