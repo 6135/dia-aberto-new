@@ -58,23 +58,23 @@
         </a>
         <div class="table">
             <div class="table-wrapper">
-                <table class="table has-mobile-cards is-hoverable is-fullwidth">
+                <table class="table has-mobile-cards is-hoverable is-fullwidth" id="table01">
                     <thead>
                         <tr>
                             <th width="40px"></th>
-                            <th  style="width: 300px;">
+                            <th  onclick="sortTable(1,false)" style="cursor:pointer;width: 300px;" class="pre-expandable">
                                 Nome
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
-                            <th style="width: 300px;">
+                            <th onclick="sortTable(2,true)" style="cursor:pointer;width: 300px;" class="pre-expandable">
                                 Submetido a
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
-                            <th>
+                            <th onclick="sortTable(3,false)" style="cursor:pointer;" class="pre-expandable">
                                 Estado
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
@@ -97,7 +97,7 @@
                                 </a>
                             </td>
                             <td data-label="Nome">{{atividade.nome}} </td>
-                            <td data-label="Submetido a">{{atividade.dataalteracao}}</td>
+                            <td data-label="Submetido a" date-value="{{atividade.dataalteracao|date:'Y-m-d H:i'}}">{{atividade.dataalteracao}}</td>
                             {% if atividade.estado == "Pendente"%}
                             <td data-label="Estado">
                                 <span class="tag text is-warning" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
