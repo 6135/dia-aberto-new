@@ -11,6 +11,7 @@ $('.icon-expandable').on('click', function() {
 });
 
 $('.icon-expandable-180').on('click', function() {
+    console.log("arrow clicked");
     $(this).toggleClass('is-expanded');
 });
 
