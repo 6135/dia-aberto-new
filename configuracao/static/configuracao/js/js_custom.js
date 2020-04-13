@@ -5,8 +5,8 @@ function eliminar() {
         document.getElementById('text-00').innerHTML = txt;
         msg.classList.add("is-active");
     }
-    this.confirmar=function(){
-        var href = document.getElementById("del").value;
+    this.confirmar=function(elementId = 'del'){
+        var href = document.getElementById(elementId).value;
         window.location.href = href;
     }
     this.cancelar=function(){

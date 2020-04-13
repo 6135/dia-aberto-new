@@ -66,13 +66,18 @@
               <li class="is-active"><a href="#" aria-current="page">Dias Abertos</a></li>
             </ul>
           </nav>
-        <input type="hidden" id="newday-id" name="{% url 'novoDia'%}" value="{{is_open}}">  
-        <a onclick="alert.render('Ainda existe um dia aberto em vigor.\nTem a certeza que deseja criar um novo?')" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
+        {{is_open}}
+        {% if is_open == True %}
+        <input type="hidden" id="del" value="{% url 'novoDia'%}">  
+        <a onclick="alert.render('Ainda existe um dia aberto em vigor.\nTem a certeza que deseja criar um novo?')" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">     
+        {% else %}
+        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'novoDia'%}">     
+        {% endif %}
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
             <span>Criar novo Dia Aberto</span>
-        </a>
+        </a>   
 
         <div  class="table"></div>
             <div class="table-wrapper">
