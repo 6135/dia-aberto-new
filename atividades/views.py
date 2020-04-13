@@ -7,7 +7,8 @@ from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario
 from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
 from django.http import HttpResponseRedirect
-from datetime import datetime
+from datetime import datetime, date
+from _datetime import timedelta
 
 
 
@@ -135,6 +136,16 @@ def inserirsessao(request,id):
     #        horariosindisponiveis.append(sessao2.horarioid)
     ##print(horariosindisponiveis)
 
+    diainicio= Diaaberto.objects.get(id=3).datadiaabertoinicio.date()
+    diafim= Diaaberto.objects.get(id=3).datadiaabertofim.date()
+    totaldias= diafim-diainicio
+    diainicio=date(diainicio.strptime('%d-%m-%Y'))
+    print(totaldias.days)
+    dias_diaaberto= []
+    for d in range(totaldias.days):
+        dias_diaaberto.append(diainicio+timedelta(days=d))
+
+    print(dias_diaaberto)
     sessao_indis= Sessao.objects.all().filter(atividadeid=id)
     for sessao in sessao_indis:
         horariosindisponiveis.append(sessao.horarioid)
@@ -147,19 +158,21 @@ def inserirsessao(request,id):
 
         
     if request.method == "POST":
+        diasessao=datetime.strptime(request.POST['diasessao'],'%d-%m-%y')
+        
         sessoes= Sessao.objects.all().filter(atividadeid=id)
         if 'save' in request.POST and len(sessoes)!=0 :
             return redirect('minhasAtividades')
         elif 'save' in request.POST and len(sessoes)==0:
             return redirect('inserirSessao', id)
-        new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id))
+        new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
         new_Sessao.save()
         if 'cancelar' in request.POST :
             Atividade.objects.get(id=id).delete()
             return redirect('proporAtividade')
         elif 'new' in request.POST:
             return redirect('inserirSessao', id)
-    return render(request,'atividades/proporAtividadeSessao.html',{'horarios': disp , 'sessions_activity': Sessao.objects.all().filter(atividadeid= id)}) 
+    return render(request,'atividades/proporAtividadeSessao.html',{'horarios': disp , 'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 'dias':dias_diaaberto}) 
 
 
 

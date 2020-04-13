@@ -73,6 +73,8 @@ class Sessao(models.Model):
     ninscritos = models.IntegerField(db_column='NInscritos')  # Field name made lowercase.
     vagas = models.IntegerField(db_column='Vagas')  # Field name made lowercase.
     atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
+    dia = models.DateField(db_column='Dia', blank=True, null=True)  # Field name made lowercase.
+
     class Meta:
         db_table = 'Sessao'
 

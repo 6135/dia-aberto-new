@@ -23,6 +23,14 @@
                                         <tr>
                                             <th  style="width: 300px;">
                                                 <div class="th-wrap">
+                                                     Dia
+                                                    <span class="icon is-small">
+                                                        <i class="mdi mdi-menu-up"></i>
+                                                    </span>
+                                                </div>
+                                            </th>
+                                            <th  style="width: 300px;">
+                                                <div class="th-wrap">
                                                      Horário
                                                     <span class="icon is-small">
                                                         <i class="mdi mdi-menu-up"></i>
@@ -41,6 +49,7 @@
                                     <tbody>    
                                         {% for sessao in sessions_activity %} 
                                         <tr id="sessao.id" draggable="false">
+                                            <td data-label="Dia">{{sessao.dia}}</td>
                                             <td data-label="Nome">{{sessao.horarioid.inicio}} até  {{sessao.horarioid.fim}}</td>
                                             <td data-label="Submetido a">{{sessao.vagas}}</td>  
                                             <td>
@@ -59,7 +68,21 @@
                         </div>
                         <hr/>
             <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Adicionar Sessao</h2>
-            <div class="columns">        
+            <div class="columns">
+                    <div class="column is-2">
+                      <div class="field" >
+                        <label class="label">Dia</label>
+                        <div class="control">
+                          <div class="select is-fullwidth" >
+                            <select name="diasessao">
+                              {% for dia in dias %}
+                              <option value="{{dia}}">{{dia}}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>        
                     <div class="column is-2">
                       <div class="field" >
                         <label class="label">Horário</label>
