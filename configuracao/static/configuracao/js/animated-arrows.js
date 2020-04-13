@@ -5,3 +5,7 @@ $('.pre-arrow').on('click', function() {
 $('.icon-expandable').on('click', function() {
     $(this).toggleClass('is-expanded');
 });
+
+$('.icon-expandable-180').on('click', function() {
+    $(this).toggleClass('is-expanded');
+});
