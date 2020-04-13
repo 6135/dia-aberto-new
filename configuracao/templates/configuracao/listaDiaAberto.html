@@ -1,6 +1,6 @@
 {% extends 'configuracao/app.html' %}
 {% block content %}
-
+{% load l10n %}
 <div class="columns">
     <div class="column is-3">
         <form method="POST" action="" id='filter'>
@@ -21,7 +21,7 @@
                 </div>
                 <div class="field">
                     <!---->
-                    <div class="control is-expanded">
+                    <div class="control">
                         <span class="select is-fullwidth is-empty">
                             {{form.orderBy}}
                         </span>
@@ -31,7 +31,7 @@
                 </div>
                 <div class="field">
                     <!---->
-                    <div class="control is-expanded">
+                    <div class="control">
                         <span class="select is-fullwidth is-empty">
                             {{form.showBy}}
                         </span>
@@ -73,42 +73,41 @@
             </span>
             <span>Criar novo Dia Aberto</span>
         </a>
-        <div class="table "></div>
+
+        <div  class="table"></div>
             <div class="table-wrapper">
-                <table class="table has-mobile-cards is-hoverable is-fullwidth">
+                <table id="table01" class="table has-mobile-cards is-hoverable is-fullwidth">
                     <thead>
                         <tr>
-                            <th width="40px"></th>
-                            <th  style="width: 300px;">
-                                <div class="th-wrap">
-                                    Ano
- 
-                                </div>
+                            <th style="width: 30px;" ></th>
+                            <th onclick="sortTable(1,false)" style="cursor: pointer;width: 120px" class="pre-arrow">
+                                Ano<span class="arrow active"><span></span><span></span></span>
+                                
                             </th>
-                            <th style="width: 300px;">
-                                Dia Inicio
+                            <th onclick="sortTable(2,true)" style=" cursor: pointer;" class="pre-arrow">
+                                Dia Inicio<span class="arrow active"><span></span><span></span></span>
                             </th>
-                            <th>
-                                Dia Fim
+                            <th onclick="sortTable(3,true)" style=" cursor: pointer;" class="pre-arrow">
+                                Dia Fim<span class="arrow active"><span></span><span></span></span>
                             </th>
                             <th>
                                 Operações
                             </th>                            
                         </tr>
                     </thead>
-                    {% for diaAberto in diaabertos %}
-                    <tbody>      
-                      <tr draggable="false">
+                    <tbody> 
+                    {% for diaAberto in diaabertos %}     
+                    <tr draggable="false">
                         <td class="chevron-cell">
                             <a role="button" onclick="displayDetails({{diaAberto.id}})">
-                                <span class="icon is-expanded">
+                                <span class="icon-expandable">
                                     <i class="mdi mdi-chevron-right mdi-24px"></i>
                                 </span>
                             </a>
                         </td>
-                        <td data-label="Ano">{{diaAberto.ano}} </td>
-                        <td data-label="Dia Fim">{{diaAberto.datadiaabertoinicio}}</td>
-                        <td data-label="Estado">{{diaAberto.datadiaabertofim}}</td>
+                        <td data-label="Ano" data-value="{{diaAberto.ano}}">{{diaAberto.ano}} </td>
+                        <td id="start{{diaAberto.id}}" data-label="Dia Inicio" date-value="{{diaAberto.datadiaabertoinicio|date:'Y-m-d H:i'}}">{{diaAberto.datadiaabertoinicio}}</td>
+                        <td data-label="Dia Fim" date-value="{{diaAberto.datadiaabertofim|date:'Y-m-d H:i'}}">{{diaAberto.datadiaabertofim}}</td>
                         <td data-label="Operações">
                             <div class="columns">
                                 
@@ -176,8 +175,8 @@
                         </td>
                         
                       </tr> 
-                    </tbody>
                     {% endfor %}
+                    </tbody>
                 </table>
             </div>
 
@@ -201,36 +200,4 @@
 </div>
 {% endblock content %}
 {% block scripts %}
-<script>
-var alert = new eliminar();
-function eliminar() {
-    this.render=function(txt){
-        var msg = document.getElementById("msg")
-        document.getElementById('text-00').innerHTML = txt;
-        msg.classList.add("is-active");
-    }
-    this.confirmar=function(){
-        var href = document.getElementById("del").value;
-        window.location.href = href;
-    }
-    this.cancelar=function(){
-        var msg = document.getElementById("msg")
-        msg.classList.remove("is-active");
-    }   
-}
-
-function resetForm(){
-    oFormObject = document.forms['filter'];
-    oFormObject.elements["searchAno"].value = '';
-    oFormObject.elements["orderBy"].value = '';
-    oFormObject.elements["showBy"].value = '';
-}
-
-function displayDetails(idForDetails){
-    var objectDetails = document.getElementById("Details"+idForDetails);
-    if(objectDetails.style.display == 'none') {
-        objectDetails.style.display = "contents";
-    } else objectDetails.style.display = "none";
-}
-</script>
 {% endblock scripts %}
