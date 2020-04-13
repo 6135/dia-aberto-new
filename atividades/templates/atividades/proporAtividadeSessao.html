@@ -76,7 +76,7 @@
                           <div class="select is-fullwidth" >
                             <select name="diasessao">
                               {% for dia in dias %}
-                              <option value="{{dia}}">{{dia}}</option>
+                              <option value="{{dia|date:'Y-m-d'}}">{{dia}}</option>
                               {% endfor %}
                             </select>
                           </div>

@@ -7,7 +7,7 @@ from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario
 from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
 from django.http import HttpResponseRedirect
-from datetime import datetime, date
+from datetime import datetime, date,timezone
 from _datetime import timedelta
 
 
@@ -95,13 +95,15 @@ def proporatividade(request):
     #    if total!= len(Horario.objects.all()):
     #        espacodisponivel.append(Espaco.objects.get(id=esp.id))
     #espacos = Espaco.objects.all()  
-             
+    today= datetime.now(timezone.utc) 
+    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    #print("datahoje"+datahoje)      
     if request.method == "POST":
         #print(request.POST['espaco'])
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
-                             estado = "Pendente", diaabertoid = Diaaberto.objects.get(id=3),espacoid= Espaco.objects.get(id=request.POST['espacoid']),
+                             estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=request.POST['espacoid']),
                              tema=Tema.objects.get(id=request.POST['tema']))
         formAtividade = AtividadeForm(request.POST, instance=new_form)
         
@@ -146,16 +148,15 @@ def inserirsessao(request,id):
     #    for sessao2 in sessao:
     #        horariosindisponiveis.append(sessao2.horarioid)
     ##print(horariosindisponiveis)
-
-    diainicio= Diaaberto.objects.get(id=3).datadiaabertoinicio.date()
-    diafim= Diaaberto.objects.get(id=3).datadiaabertofim.date()
+    today= datetime.now(timezone.utc) 
+    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    diainicio= diaaberto.datadiaabertoinicio.date()
+    diafim= diaaberto.datadiaabertofim.date()
     totaldias= diafim-diainicio
-    diainicio=date(diainicio.strptime('%d-%m-%Y'))
     print(totaldias.days)
     dias_diaaberto= []
     for d in range(totaldias.days):
         dias_diaaberto.append(diainicio+timedelta(days=d))
-
     print(dias_diaaberto)
     sessao_indis= Sessao.objects.all().filter(atividadeid=id)
     for sessao in sessao_indis:
@@ -169,7 +170,7 @@ def inserirsessao(request,id):
 
         
     if request.method == "POST":
-        diasessao=datetime.strptime(request.POST['diasessao'],'%d-%m-%y')
+        diasessao=request.POST['diasessao']
         
         sessoes= Sessao.objects.all().filter(atividadeid=id)
         if 'save' in request.POST and len(sessoes)!=0 :
