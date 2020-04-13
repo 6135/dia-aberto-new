@@ -1,7 +1,24 @@
 @import 'https://fonts.googleapis.com/css?family=Lato';
-.icon-expandable.is-expanded-180 {
+.icon-expandable-180.is-expanded {
   -webkit-transform: rotate(180deg);
   transform: rotate(180deg);
+}
+.icon-expandable-180{
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  height: 1.5rem;
+  width: 1.5rem;
+  -webkit-transition: opacity 86ms ease-out,-webkit-transform .15s ease-out;
+  transition: opacity 86ms ease-out,-webkit-transform .15s ease-out;
+  transition: transform .15s ease-out,opacity 86ms ease-out;
+  transition: transform .15s ease-out,opacity 86ms ease-out,-webkit-transform .15s ease-out;
 }
 .icon-expandable.is-expanded {
     -webkit-transform: rotate(90deg);
