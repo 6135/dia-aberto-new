@@ -1,5 +1,8 @@
 @import 'https://fonts.googleapis.com/css?family=Lato';
-
+.icon-expandable.is-expanded-180 {
+  -webkit-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
 .icon-expandable.is-expanded {
     -webkit-transform: rotate(90deg);
     transform: rotate(90deg);
