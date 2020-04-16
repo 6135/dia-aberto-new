@@ -9,6 +9,7 @@ from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
 from django.http import HttpResponseRedirect
 from datetime import datetime, date,timezone
 from _datetime import timedelta
+from django.core import serializers
 
 
 
@@ -99,6 +100,7 @@ def proporatividade(request):
     diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
     #print("datahoje"+datahoje)      
     if request.method == "POST":
+        print(request.POST['edificioid'])
         #print(request.POST['espaco'])
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
@@ -115,12 +117,16 @@ def proporatividade(request):
             materiais.save()
             idAtividade= Atividade.objects.all().order_by('-id').first()
             return redirect('inserirSessao', idAtividade.id)
-        else:
-            return render(request, 'atividades/proporAtividadeAtividade.html',{'form': formAtividade, 'campu':-1, 'campus': Campus.objects.all(),'edificios': Edificio.objects.all(), 'espacos': Espaco.objects.all(), 'mat': form_Materiais})
     else:  
         formAtividade = AtividadeForm()
         form_Materiais= MateriaisForm() 
-    return render(request,'atividades/proporAtividadeAtividade.html',{'form': formAtividade,'campu':-1,  'campus': Campus.objects.all(), 'edificios': Edificio.objects.all(),'espacos': Espaco.objects.all(),'mat': form_Materiais})  
+    edi=Edificio.objects.all()
+    camps=Campus.objects.all()
+    esp=Espaco.objects.all()
+    edificios_json=serializers.serialize("json",list(edi) )
+    campus_json=serializers.serialize("json",list(camps))
+    espaco_json=serializers.serialize("json", list(esp))
+    return render(request,'atividades/proporAtividadeAtividade.html',{'form': formAtividade,'campu':-1, "campus_json":campus_json, 'campus': Campus.objects.all(), "edificios_json":edificios_json, 'edificios': Edificio.objects.all(),"espaco_json":espaco_json,'espacos': Espaco.objects.all(),'mat': form_Materiais})  
 
 
 
