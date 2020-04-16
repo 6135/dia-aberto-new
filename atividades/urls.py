@@ -3,7 +3,8 @@ from django.conf.urls import url
 from . import views
 
 urlpatterns = [
-    url('minhasatividades',views.minhasatividades,name="minhasAtividades"),
+    url(r'^minhasatividades/$',views.minhasatividades,name="minhasAtividades"),
+    url(r'^atividadadesUOrganica/$',views.atividadescoordenador,name="atividadesUOrganica"),
     path('alteraratividade/<int:id>',views.alterarAtividade,name='alterarAtividade'),
     path('sessao/<id>',views.inserirsessao,name='inserirSessao'),
     path('alteraratividade/<id>',views.alterarAtividade,name='alterarAtividade'),

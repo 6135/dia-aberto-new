@@ -10,18 +10,57 @@
                 <ul class="menu-list">
                 <div class="field">
                     <div class="control has-icons-left is-clearfix">
-                        <input type="text" name="searchAtividade" placeholder="Atividade" class="input" value=""> 
+                        {{filter.searchAtividade}}
                         <span class="icon is-left">
                             <i class="mdi mdi-magnify mdi-24px"></i>
                         </span>
                     </div>
                 </div>
-                <div class="field">
-                    <div class="control is-expanded">
-                        <span class="select is-fullwidth is-empty">
-                            {{filter.showBy}}
-                        </span>
+                <li>
+                    <div class="field">
+                        <div class="control is-expanded">
+                            <div class="select is-fullwidth">
+                                {{filter.departamentos}}
+                            </div>
+                        </div>
                     </div>
+                    <div class="field">
+                        <div class="control is-expanded">
+                            <div class="select is-fullwidth">
+                                {{filter.tipo}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Estado:</label>
+                    </div>
+                    <ul>
+                        <div class="field" style="padding-left: 1rem;">
+                            <label class="checkbox">
+                                    {{filter.Aceite}}
+                                    Aceite
+                            </label>
+                        </div>
+                        <div class="field" style="padding-left: 1rem;">
+                            <label class="checkbox">
+                                    {{filter.Pendente}}
+                                    Pendente
+                            </label>
+                        </div>
+                        <div class="field" style="padding-left: 1rem;">
+                            <label class="checkbox">
+                                    {{filter.Recusada}}
+                                    Recusada
+                            </label>
+                        </div>
+                    </ul>
+                </li>
+                <li></li>
+                <div class="field" >
+                    <label class="checkbox">
+                            {{filter.diaAbertoAtual}}
+                            Atividades do Dia Aberto Atual
+                    </label>
                 </div>
                 <div class="field">
                     <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
@@ -47,22 +86,16 @@
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
               <li><a href="#">Início</a></li>
-              <li class="is-active"><a href="#" aria-current="page">Minhas Atividades</a></li>
+              <li class="is-active"><a href="#" aria-current="page">Atividades</a></li>
             </ul>
           </nav>
-        <a href="{% url 'proporAtividade' %}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
-            <span class="icon is-small">
-                <i class="mdi mdi-plus"></i>
-            </span>
-            <span>Propor nova atividade</span>
-        </a>
         <div class="table">
             <div class="table-wrapper">
                 <table class="table has-mobile-cards is-hoverable is-fullwidth" id="table01">
                     <thead>
                         <tr>
                             <th width="40px"></th>
-                            <th  onclick="sortTable(1,false)" style="cursor:pointer;width: 300px;" class="pre-expandable">
+                            <th  onclick="sortTable(1,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
                                 Nome
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
@@ -74,15 +107,19 @@
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
-                            <th onclick="sortTable(3,false)" style="cursor:pointer;" class="pre-expandable">
+                            <th onclick="sortTable(3,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
                                 Estado
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
-                            <th >
+                            <th onclick="sortTable(4,false)" style="cursor:pointer;" class="pre-expandable">
+                                Criador
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
                             </th>
-                            <th style="width:300px">
+                            <th style="">
                             </th>
                         </tr>
                     </thead>
@@ -111,22 +148,8 @@
                                 <span class="tag text is-success" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
                             </td>
                             {% endif %}
-                            <td >
-                                <a href="{% url 'alterarAtividade' atividade.id %}">
-                                    <span class="icon has-text-link">
-                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                    </span>
-                                </a>
-                                
-                            </td>
-                            <td>
-                                <input type="hidden" id="del" name="variable" value="{% url 'eliminarAtividade' atividade.id %}"> 
-                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta atividade?')">
-                                    <span class="icon has-text-danger">
-                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                                    </span>
-                                </a>
-                            </td>
+                            <td data-label="Criador">{{atividade.professoruniversitarioutilizadorid.utilizadorid.nome}} </td> 
+                            <td ></td>       
                         </tr> 
                         <tr class="detail" style="display:none;" id='Details{{atividade.id}}'>
                         <td colspan="7">
@@ -155,15 +178,15 @@
                                         </p>
                                         <p>
                                             <strong>Descrição:</strong>
-                                            {{atividade.descricao}}
+                                            <div class="container">{{atividade.descricao}}</div>
+                                        </p>  
+                                        <p>
+                                            <strong>Materiais:</strong>
+
                                         </p>
                                         <p>
                                             <strong>Campus:</strong>
                                             {{atividade.espacoid.edificio.campus.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Entidade Organizacional:</strong>
-                                            
                                         </p>
                                         <p>
                                             <strong>Departamento:</strong>
@@ -185,7 +208,7 @@
                                                     {% if  sessao.atividadeid.id == atividade.id %}
                                                         <tbody>
                                                             <tr >
-                                                                <td data-label="Dia">{{atividade.diaabertoid.datadiaabertoinicio}}</td>
+                                                                <td data-label="Dia">{{atividade.diaabertoid.datadiaabertoinicio.date}}</td>
                                                                 <td data-label="Hora">{{sessao.horarioid.inicio}} até {{sessao.horarioid.fim}}</td>
                                                                 <td data-label="Vagas">{{sessao.vagas}}</td>
                                                             </tr>
@@ -196,8 +219,8 @@
                                         </div>
                                         {% if  atividade.estado == 'Pendente' %}
                                             <div style="margin-top:13px">
-                                                <a type="button" href="{% url 'validarAtividade' atividade.id 1 %}" class="button is-success" style="margin-right: 10px;" ><span class="icon is-small"><i class="mdi mdi-check"></i></span><span>Aceitar</span></a>
-                                                <a type="button" href="{% url 'validarAtividade' atividade.id 0 %}" class="button is-danger"><span class="icon is-small"><i class="mdi mdi-delete"></i></span> <span>Rejeitar</span></a>
+                                                <a type="button" href="{% url 'validarAtividade' atividade.id 1%}" class="validatebutton button is-success" style="margin-right: 10px;" ><span class="icon is-small"><i class="mdi mdi-check"></i></span><span>Aceitar</span></a>
+                                                <a type="button" href="{% url 'validarAtividade' atividade.id 0%}" class="validatebutton button is-danger"><span class="icon is-small"><i class="mdi mdi-delete"></i></span> <span>Rejeitar</span></a>
                                             </div>
                                         {% endif %}
                                     </div>
@@ -243,3 +266,24 @@ tr.detail{
 }
 </style>
 {% endblock content %}
+{% block scripts%}
+<script>
+/*$('.validatebutton').click(function(){
+    var action= $(this).attr("action");
+    var id= $(this).attr("id");
+    console.log({{form.searchAtividade.value}});
+    $.ajax(
+        {
+            type:"GET",
+            url: "",
+            data:{
+                searchAtividade:form.searchAtividade.value,
+                Aceite:form.Aceite.value,
+                Recusada:form.Recusada.value,
+                Pendente:form.Pendente.value,
+                diaAbertoAtual:form.diaAbertoAtual.value
+            }
+    })
+});*/
+</script>
+{% endblock scripts%}

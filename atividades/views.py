@@ -7,28 +7,82 @@ from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario
 from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
 from django.http import HttpResponseRedirect
-from datetime import datetime, date
+from datetime import datetime, date,timezone
 from _datetime import timedelta
+from django.db.models import Q
 
 
 
 #-------------Diogo----------------------
+def login(request):
+    return 0
+
+def filters(request):
+    filters=[]
+    if request.POST.get('Aceite'):
+        filters.append('Aceite')
+    else:
+        filters.append('')
+
+    if request.POST.get('Recusada'):
+        filters.append('Recusada')
+    else:
+        filters.append('')
+
+    if request.POST.get('Pendente'):
+        filters.append('Pendente')
+    else:
+        filters.append('')
+    return filters
+
 def minhasatividades(request):
     atividades=Atividade.objects.all()
     sessoes=Sessao.objects.all()
-    if request.method == 'POST':
+    if request.method == 'POST' or request.GET.get('searchAtividade'):
+        today=datetime.now(timezone.utc)
+        diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
         filterForm=atividadesFilterForm(request.POST)
-        showBy=str(request.POST.get('showBy'))
-        if showBy != '':
-            atividades=Atividade.objects.filter(estado=showBy)
-        else:
-            atividades=Atividade.objects.all()
-        print(atividades)
+        nome=str(request.POST.get('searchAtividade'))
+        atividades=atividades.filter(nome__icontains=nome)
+        if request.POST.get('Aceite') or request.POST.get('Pendente') or request.POST.get('Recusada'):
+            filter=filters(request)
+            atividades=atividades.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
+        if request.POST.get('diaAbertoAtual'):
+            atividades=atividades.filter(diaabertoid=diaAberto)     
     else:
         filterForm=atividadesFilterForm()
 
     return render(request=request,
-			template_name="atividades/listaAtividades.html",
+			template_name="atividades/minhasAtividades.html",
+            context={"atividades": atividades,"sessoes":sessoes,"filter":filterForm})
+
+def atividadescoordenador(request):
+    atividades=Atividade.objects.all()
+    sessoes=Sessao.objects.all()
+    if request.method == 'POST' or request.GET.get('searchAtividade'):
+        today=datetime.now(timezone.utc)
+        diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
+        filterForm=atividadesFilterForm(request.POST)
+        nome=str(request.POST.get('searchAtividade'))
+        atividades=atividades.filter(nome__icontains=nome)
+        tipo=str(request.POST.get('tipo'))
+        departamento=str(request.POST.get('departamentos'))
+        if tipo != ' ' and tipo != 'None':
+            atividades=atividades.filter(tipo=tipo)
+        if departamento != 'None' and departamento > '-1':
+            print('departamento')
+            atividades=atividades.filter(professoruniversitarioutilizadorid__departamento__id=departamento)
+        if request.POST.get('Aceite') or request.POST.get('Pendente') or request.POST.get('Recusada'):
+            print('estado')
+            filter=filters(request)
+            atividades=atividades.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
+        if request.POST.get('diaAbertoAtual'):
+            atividades=atividades.filter(diaabertoid=diaAberto)    
+    else:
+        filterForm=atividadesFilterForm()
+
+    return render(request=request,
+			template_name="atividades/atividadesUOrganica.html",
             context={"atividades": atividades,"sessoes":sessoes,"filter":filterForm})
 
 def alterarAtividade(request,id):
@@ -192,10 +246,8 @@ def inserirsessao(request,id):
 def validaratividade(request,id, action):
     atividade=Atividade.objects.get(id=id)
     if action==0:
-        print("r")
         atividade.estado='Recusada'
     if action==1:
-        print("r1")
         atividade.estado='Aceite'
     atividade.save()
     return redirect('minhasAtividades')

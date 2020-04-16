@@ -1,5 +1,5 @@
 from django.forms import * 
-from .models import Atividade, Sessao,Materiais,Horario,Espaco,Tema
+from .models import Atividade, Sessao,Materiais,Horario,Espaco,Tema,Departamento
 from datetime import datetime
 
 def get_choices_time():
@@ -58,20 +58,16 @@ class MateriaisForm(ModelForm):
             }
 
 class atividadesFilterForm(Form):
-    searchAtividade = CharField(widget=TextInput, required=False)
-    #orderByChoices = [('', 'Nao ordenar'),
-    #    ('ano', 'Ordernar por: Ano'),
-    #    ('-ano', 'Ordernar por: Ano (Decrescente)'),
-    #    ('datadiaabertoinicio', 'Ordernar por: Inicio'),
-    #    ('-datadiaabertoinicio', 'Ordernar por: Inicio (Descrescente)'),
-    #    ('datadiaabertofim', 'Ordernar por: Fim'),
-    #    ('-datadiaabertofim', 'Ordernar por: Fim (Descrescente)'),
-    #]
-    #orderBy = ChoiceField(choices=orderByChoices, widget=Select(), required=False)
-
-    showByChoices = [('','Mostrar todos'),
-        ('Aceite','Mostrar: Atividades Aceites'),
-        ('Recusada','Mostrar: Atividades Recusadas'),
-        ('Pendente','Mostrar: Atividades Pendentes'),
-    ]
-    showBy = ChoiceField(choices=showByChoices, widget=Select(), required=False)
+    searchAtividade = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Atividade'}), required=False)
+    Aceite=BooleanField(widget=CheckboxInput(),required=False)
+    Recusada=BooleanField(widget=CheckboxInput(),required=False)
+    Pendente=BooleanField(widget=CheckboxInput(),required=False)
+    diaAbertoAtual=BooleanField(widget=CheckboxInput(),required=False)
+    dep=[(-1,'Mostra todos os Departamentos')] + [(departamento.id,departamento.nome) for departamento in Departamento.objects.all()]
+    departamentos = ChoiceField(choices=dep,widget=Select(), required=False)
+    tipo = ChoiceField(choices=[
+        (" ", "Mostrar todos os tipos de Atividade"),
+        ("Atividade Laboratorial", "Atividade Laboratorial"),
+        ("Tertulia", "Tertulia"),
+        ("Palestra", "Palestra")
+     ],widget=Select())
