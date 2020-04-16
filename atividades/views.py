@@ -10,6 +10,7 @@ from django.http import HttpResponseRedirect
 from datetime import datetime, date,timezone
 from _datetime import timedelta
 from django.db.models import Q
+from django.core import serializers
 
 
 
@@ -149,13 +150,16 @@ def proporatividade(request):
     #    if total!= len(Horario.objects.all()):
     #        espacodisponivel.append(Espaco.objects.get(id=esp.id))
     #espacos = Espaco.objects.all()  
-             
+    today= datetime.now(timezone.utc) 
+    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    #print("datahoje"+datahoje)      
     if request.method == "POST":
+        print(request.POST['edificioid'])
         #print(request.POST['espaco'])
         form_Materiais= MateriaisForm(request.POST)
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
-                             estado = "Pendente", diaabertoid = Diaaberto.objects.get(id=3),espacoid= Espaco.objects.get(id=request.POST['espacoid']),
+                             estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=request.POST['espacoid']),
                              tema=Tema.objects.get(id=request.POST['tema']))
         formAtividade = AtividadeForm(request.POST, instance=new_form)
         
@@ -167,12 +171,16 @@ def proporatividade(request):
             materiais.save()
             idAtividade= Atividade.objects.all().order_by('-id').first()
             return redirect('inserirSessao', idAtividade.id)
-        else:
-            return render(request, 'atividades/proporAtividadeAtividade.html',{'form': formAtividade, 'campu':-1, 'campus': Campus.objects.all(),'edificios': Edificio.objects.all(), 'espacos': Espaco.objects.all(), 'mat': form_Materiais})
     else:  
         formAtividade = AtividadeForm()
         form_Materiais= MateriaisForm() 
-    return render(request,'atividades/proporAtividadeAtividade.html',{'form': formAtividade,'campu':-1,  'campus': Campus.objects.all(), 'edificios': Edificio.objects.all(),'espacos': Espaco.objects.all(),'mat': form_Materiais})  
+    edi=Edificio.objects.all()
+    camps=Campus.objects.all()
+    esp=Espaco.objects.all()
+    edificios_json=serializers.serialize("json",list(edi) )
+    campus_json=serializers.serialize("json",list(camps))
+    espaco_json=serializers.serialize("json", list(esp))
+    return render(request,'atividades/proporAtividadeAtividade.html',{'form': formAtividade,'campu':-1, "campus_json":campus_json, 'campus': Campus.objects.all(), "edificios_json":edificios_json, 'edificios': Edificio.objects.all(),"espaco_json":espaco_json,'espacos': Espaco.objects.all(),'mat': form_Materiais})  
 
 
 
@@ -200,16 +208,15 @@ def inserirsessao(request,id):
     #    for sessao2 in sessao:
     #        horariosindisponiveis.append(sessao2.horarioid)
     ##print(horariosindisponiveis)
-
-    diainicio= Diaaberto.objects.get(id=3).datadiaabertoinicio.date()
-    diafim= Diaaberto.objects.get(id=3).datadiaabertofim.date()
+    today= datetime.now(timezone.utc) 
+    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    diainicio= diaaberto.datadiaabertoinicio.date()
+    diafim= diaaberto.datadiaabertofim.date()
     totaldias= diafim-diainicio
-    diainicio=date(diainicio.strptime('%d-%m-%Y'))
     print(totaldias.days)
     dias_diaaberto= []
     for d in range(totaldias.days):
         dias_diaaberto.append(diainicio+timedelta(days=d))
-
     print(dias_diaaberto)
     sessao_indis= Sessao.objects.all().filter(atividadeid=id)
     for sessao in sessao_indis:
@@ -223,7 +230,7 @@ def inserirsessao(request,id):
 
         
     if request.method == "POST":
-        diasessao=datetime.strptime(request.POST['diasessao'],'%d-%m-%y')
+        diasessao=request.POST['diasessao']
         
         sessoes= Sessao.objects.all().filter(atividadeid=id)
         if 'save' in request.POST and len(sessoes)!=0 :

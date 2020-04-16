@@ -114,12 +114,15 @@
                                 <label class="label">Campus</label>
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
-                                            <select name="campusid">
+                                            <select id="campusid" name="campusid" onchange="camp()">
                                                 {% if  campu != -1 %}
                                                 <option selected value="{{campus.id}}">{{campus.nome}}</option>
+                                                {% else %}
+                                                <option selected value=""></option>
                                                 {% endif %}
+
                                                 {% for c in campus %}
-                                                    <option value="{{c.id}}" >{{c.nome}}</option>
+                                                    <option  value="{{c.id}}" >{{c.nome}}</option>
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -131,13 +134,12 @@
                                 <label class="label">Edificio</label>
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
-                                                <select name="edificioid" >
+                                                <select id="edificioid" name="edificioid" onchange="edif()">
                                                 {% if  campu != -1 %}
                                                 <option selected value="{{edificio.id}}">{{edificio.nome}}</option>
+                                                {% else %}
+                                                <option selected value=""></option>
                                                 {% endif %}
-                                                {% for edi in edificios %}
-                                                    <option value="{{edi.id}}" >{{edi.nome}}</option>
-                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>
@@ -152,6 +154,8 @@
                                             <select name="espacoid" required>
                                                 {% if  campu != -1 %}
                                                 <option selected value="{{espaco.id}}">{{espaco.nome}}</option>
+                                                {% else %}
+                                                <option selected value=""></option>
                                                 {% endif %}
                                                 {% for esp in espacos %}
                                                     <option value="{{esp.id}}" >{{esp.nome}}</option>
@@ -211,3 +215,49 @@
 }
 </style>
 {% endblock content %}
+{% block scripts %}
+
+<script>
+    function camp(){
+        var edificio= JSON.parse('{{edificios_json|safe}}')
+        var selectcampus=document.getElementById("campusid").value;
+        var selectedificio=document.getElementById("edificioid");
+        var edificios=[]
+        while(selectedificio.length > 0) {
+        selectedificio.remove(selectedificio.lenght-1);
+        }
+        $.each(edificio,function(index,item){
+            if(selectcampus==item.fields.campus){
+                var option= document.createElement("option");
+                option.text=item.fields.nome;
+                selectedificio.add(option);
+            }
+        })  
+    }
+
+    function edif(){
+        var selectedificio=document.getElementById("edificioid").value;
+        console.log(selectedificio);
+        var edificio= JSON.parse('{{edificios_json|safe}}')
+        var sala= JSON.parse('{{espacos_json|safe}}')
+        selectedificio=document.getElementById("edificioid").value;
+    
+        $.each(edificio,function(index,item){
+            if(selectedificio==item.fields.nome){
+                var edificio_id=item.fields.id;
+                console.log(edificio_id);
+                $.each(sala,function(index,item){
+                    if(edificio_id==item.fields.edificio){
+                        
+                    }    
+                })
+                var option= document.createElement("option");
+                option.text=item.fields.nome;
+                selectedificio.add(option);
+            }
+        })  
+    }
+
+    
+</script>
+{% endblock scripts %}
