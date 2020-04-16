@@ -21,4 +21,5 @@ urlpatterns = [
     path('inscricoes/', include('inscricoes.urls')),
     path('', include('atividades.urls')),
     path('', include('configuracao.urls')),
+    path('', include('coordenadores.urls')),
 ]
