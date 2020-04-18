@@ -5,6 +5,8 @@ from .models import *
 from utilizadores.models import *
 from datetime import datetime, timezone,date, time
 from atividades.models import Espaco
+from django.core import serializers
+from django.core.serializers import json
 
 # Create your views here.
 
@@ -94,3 +96,69 @@ def delDay(request, id=None):
 		dia_aberto = Diaaberto.objects.filter(id=id,administradorutilizadorid=1)
 		dia_aberto.delete()
 	return redirect('diasAbertos')
+
+def view_days_as_json(request): 
+	dias = Edificio.objects.all()
+	dias_as_json = serializers.serialize('json',list(dias))
+	return render(request=request,
+				  template_name='configuracao/blank.html', 
+				  context = {'dias_as_json': dias_as_json}
+				)
+def viewMenus(request):
+	return render(request=request,
+				  template_name='configuracao/listaMenu.html',
+				  context = {'menus': Menu.objects.all()}
+				)
+
+def newMenu(request, id = None):
+	menu_object = Menu()
+	if id is not None:
+		menu_object = Menu.objects.get(id=id)
+	menu_form = menuForm(instance=menu_object)
+	if request.method == 'POST':
+		submitted_data = request.POST.copy()
+		menu_form = menuForm(submitted_data,instance=menu_object)
+
+		if menu_form.is_valid():
+			menu_form_object = menu_form.save(commit=False)
+			menu_form_object.horarioid = Horario.objects.get(inicio='12:00:00',fim='14:00:00')
+			menu_form_object.campus = Campus.objects.get(id=submitted_data['campus'])
+			menu_form_object.diaaberto = Diaaberto.objects.get(id=submitted_data['diaaberto'])
+			menu_form_object.save()
+			return redirect('novoPrato', menu_form_object.id)
+
+	return render(request=request,
+				  template_name='configuracao/menuForm.html',
+				  context = {'form': menu_form}
+				)
+
+def delMenu(request, id = None):
+	menu=Menu.objects.get(id=id)
+	menu.delete()
+	return redirect('verMenus')
+
+
+def newPrato(request, id):
+	pratos = Prato.objects.filter(menuid=Menu.objects.get(id=id))
+	print(pratos)
+	prato_object = Prato(menuid=Menu.objects.get(id=id))
+	prato_form=pratosForm(instance=prato_object)
+	if request.method == 'POST':
+		prato_form=pratosForm(request.POST,instance=prato_object)
+		if prato_form.is_valid():
+			prato_form.save()
+			if 'save' in request.POST:
+				print('save found')
+				return redirect('verMenus')
+			else:
+				return redirect('novoPrato',id)
+	return render(request=request,
+				  template_name='configuracao/pratoForm.html',
+				  context = {'form': prato_form, 'pratos': pratos}
+				)
+
+def delPrato(request, id):
+	prato=Prato.objects.get(id=id)
+	menuid=prato.menuid.id
+	prato.delete()
+	return redirect('novoPrato',menuid)

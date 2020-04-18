@@ -1,0 +1,141 @@
+{% extends 'configuracao/app.html' %}
+{% block content %}
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'inicio' %}">Início</a></li>
+    <li><a href="{% url 'verMenus' %}">Menus</a></li>
+    <li class="is-active"><a href="{% url 'novoMenu' %}" aria-current="page"> Inserir Prato</a></li>
+  </ul>
+</nav>
+<div style="padding: 3rem 2vw 1rem">
+  <form method="POST">
+    {% csrf_token %}
+  <div class="b-steps">
+    <section class="step-content">
+        <div class="step-item">
+          <div style="padding: 1rem 2vw 0px;">
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Pratos</h2>
+
+            <div class="table ">
+              <div class="table-wrapper">
+                <table class="table has-mobile-cards is-hoverable">
+                  <thead>
+                    <tr>
+                      <th  style="width: 300px;">
+                        <div class="th-wrap">
+                            Prato
+                          <span class="icon is-small">
+                            <i class="mdi mdi-menu-up"></i>
+                          </span>
+                        </div>
+                      </th>
+                      <th  style="width: 300px;">
+                        <div class="th-wrap">
+                          # Pratos Disponiveis
+                          <span class="icon is-small">
+                            <i class="mdi mdi-menu-up"></i>
+                          </span>
+                        </div>
+                      </th>
+                      <th style=""></th>
+                    </tr>
+                  </thead>
+                  <tbody>    
+                    {% for prato in pratos %} 
+                      <tr id="sessao.id" draggable="false">
+                        <td data-label="Prato">{{prato.prato}}</td>
+                        <td data-label="# Pratos Disponiveis">{{prato.nrpratosdisponiveis}}</td>
+                        <td>
+                          <input type="hidden" id="del-{{prato.id}}" name="variable" value="{% url 'eliminarPrato' prato.id%}">
+                          <a onclick="alert.render('Tem a certeza que deseja eliminar este prato?','del-{{prato.id}}')">
+                            <span class="icon has-text-danger">
+                              <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                            </span>
+                          </a>
+                        </td>
+                      </tr>
+                    {% endfor %} 
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <hr>
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Adicionar Prato</h2>
+            <div class="columns">
+                    <div class="column is-4">
+                      <div class="field" >
+                      <strong>{{form.prato.errors}}</strong>
+                        <label class="label">Prato</label>
+                        <div class="control">
+                          {{form.prato}}
+                        </div>
+                      </div>
+                    </div>        
+                    <div class="column is-3">
+                      <div class="field" >
+                      {{form.nrpratosdisponiveis.errors}}
+                        <label class="label">Pratos Disponiveis</label>
+                        <div class="control">
+                          {{form.nrpratosdisponiveis}}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="column is-1">
+                      <div class="field" >
+                        <label class="label"></label>
+                        <br>
+                        <div class="control">
+                            <div class="has-text-centered">
+                                <button type='submit' class="button is-success" name="new" value="New">
+                                    <span class="icon is-small">
+                                        <i class="mdi mdi-plus"></i>
+                                    </span>
+                                    <span>Adicionar Prato</span>
+                                </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+              </div>
+        <hr>
+        </div>     
+    </section>
+    <div class="column is-8 is-offset-2">
+      <div class="level">
+      <div class="level-left">
+         <button  class="button is-outlined" name="cancelar" value="Cancelar">
+            <span>Cancelar</span>
+         </button>
+      </div>
+      <div class="level-right">
+        <button id="concluir" class="button is-large is-success is-outlined is-link" name="save" value="save">
+          <span>Finalizar</span>
+            <span class="icon is-medium">
+              <i class="mdi mdi-forward mdi-36px"></i>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+<div id="msg" class="dialog modal">
+    <div class="modal-background"></div>
+    <div class="modal-card animation-content">
+        <section class="modal-card-body is-titleless" style="border-top-left-radius: 6px; border-top-right-radius: 6px;">
+            <div class="media">
+                <div class="media-content">
+                    <p id='text-00'></p>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button onclick="alert.cancelar()" class="button">Cancelar</button>
+            <button id='dialog-confirm' onclick="alert.confirmar()" class="button is-success">Confirmar</button>
+        </footer>
+    </div>
+</div>
+
+{% endblock content %}
