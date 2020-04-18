@@ -210,17 +210,22 @@ def proporatividade(request):
             sala= Edificio.objects.get(id=edificioid)
             salas= Espaco.objects.filter(edificio=sala).exclude(id=edificioid)
             return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form, 'campu':campu, 'campus': campus,'edificio':sala,'edificios': Edificios,'espacos': salas})
-        
+
+        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
+                             professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
+                             estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=request.POST['espacoid']),
+                             tema=Tema.objects.get(id=request.POST['tema']))
         
         if activity_object_form.is_valid():
             activity_object_form.save(commit=False)
-            activity_object_form.coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1)
-            activity_object_form.professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2)
-            activity_object_form=estado = "Pendente"
-            activity_object_form.diaabertoid = Diaaberto.objects.get(id=diaaberto.id)
-            activity_object_form.espacoid= Espaco.objects.get(id=request.POST['espacoid'])
-            activity_object_form.tema=Tema.objects.get(id=request.POST['tema'])
+            #activity_object_form.coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1)
+            #activity_object_form.professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2)
+            #activity_object_form=estado = "Pendente"
+            #activity_object_form.diaabertoid = diaaberto
+            #activity_object_form.espacoid= Espaco.objects.get(id=request.POST['espacoid'])
+            #activity_object_form.tema=Tema.objects.get(id=request.POST['tema'])
             activity_object_form.save()
+
             return redirect('inserirSessao', activity_object_form.id)
     else:  
         activity_object_form= AtividadeForm()
