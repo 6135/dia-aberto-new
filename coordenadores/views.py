@@ -11,7 +11,7 @@ from django.http import HttpResponseRedirect
 from datetime import datetime, date,timezone
 from _datetime import timedelta
 from django.db.models import Q
-from django.core import serializers
+from coordenadores.forms import tarefaFilterForm
 
 
 
