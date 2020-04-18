@@ -1,0 +1,118 @@
+
+{% extends 'configuracao/app.html' %}
+{% load static %}
+{% block content %}
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'inicio' %}">Início</a></li>
+    <li><a href="{% url 'adminpage' %}">Administrador</a></li>
+    <li class="is-active"><a href="" aria-current="page">Configuracao do Dia Aberto</a></li>
+  </ul>
+</nav>
+<div style="padding: 3rem 2vw 1rem">
+  <form method="POST" action="">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+  <div class="b-steps">
+    <section class="step-content">
+        <div class="step-item">
+            <div style="padding: 1rem 2vw 0px">
+              <hr>
+              <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+                Menu
+              </h2>
+              <div class="columns">
+                <div class="column">
+                  <strong>{{form.tipo.errors}}</strong>                
+                  <div class="field">
+                    <label class="label">Tipo</label>
+                    <div class="control">
+                      <span class="select is-fullwidth is-empty">
+                        {{form.tipo}}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="column">
+                  <strong>{{form.campus.errors}}</strong>
+                  <div class="field">
+                    <label class="label">Campus</label>
+                    <div class="control">
+                      <span class="select is-fullwidth is-empty">
+                        {{form.campus}}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="columns">
+
+                <div class="column is-half">
+                <strong>{{form.precoalunos.errors}}</strong>
+                  <div class="field">
+                    <label class="label">Preço Alunos</label>
+                    <div class="control">
+                      {{form.precoalunos}}
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-half">
+                  <strong>{{form.precoprofessores.errors}}</strong>            
+                  <div class="field">
+                    <label class="label">Preço Professores</label>
+                    <div class="control">
+                      {{form.precoprofessores}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column is-half">
+                  <strong>{{form.diaaberto.errors}}</strong>
+                  <div class="field">
+                    <label class="label">Dia Aberto</label>
+                      <div class="control">
+                        <span class="select is-fullwidth is-empty">
+                          {{form.diaaberto}}
+                        </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <hr/>
+          </div>
+        </div>
+        </div>
+      
+    </section>
+    <div class="column is-8 is-offset-2">
+      <div class="level">
+        <div class="level-left">
+          <a class="button is-outlined" type="button" href="javascript:history.back();">
+            <span>Cancelar</span>
+          </a>
+        </div>
+        <div class="level-right">
+          <button class="button is-large is-success is-outlined is-link" type="submit">
+            <span>Continuar</span>
+            <span class="icon is-medium">
+              <i class="mdi mdi-forward mdi-36px"></i>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+<style>
+  .label {
+  font-weight: normal;
+}
+.b-steps .steps .step-items .step-item .step-details .step-title {
+  font-size: 1rem;
+}
+</style>
+{% endblock content %}
