@@ -75,6 +75,7 @@
                         <div class="control">
                           <div class="select is-fullwidth" >
                             <select name="diasessao">
+                              <option selected value="{{sessao}}">{{sessao}}</option>
                               {% for dia in dias %}
                               <option value="{{dia|date:'Y-m-d'}}">{{dia}}</option>
                               {% endfor %}
@@ -89,7 +90,7 @@
                         <br>
                         <div class="control">
                             <div class="has-text-centered">
-                                <button class="button is-success" name="ver" value="Ver">
+                                <button class="button is-success" name="ver" value="ver">
                                     <span>Ver os Horarios Disponiveis</span>
                                 </button>
                             </div>

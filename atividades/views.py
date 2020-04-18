@@ -227,68 +227,123 @@ def proporatividade(request):
 
     
       
+#def inserirsessao(request,id):
+#    disp= []
+#    horariosindisponiveis= []
+#    #espaco_id= Atividade.objects.get(id=id).espacoid # Busca o espaco da atividade
+#    #espacoidtest= espaco_id.id #  Busca o id do espaco
+#    ##print(espacoidtest)
+#    #atividadescomespaco_id=Atividade.objects.all().filter(espacoid=espacoidtest).exclude(id=id) # Busca as atividades com o espaco da atividade
+#    ##print(atividadescomespaco_id)
+##
+##
+#    #idAtividades= []
+#    #for atv_id in atividadescomespaco_id: 
+#    #    idAtividades.append(atv_id.id) # Busca o id das atividades
+#    ##print(idAtividades)
+##
+#    #sessao_espaco= []
+#    #for sessao in idAtividades:
+#    #    print(sessao)
+#    #    sessao_espaco.append(Sessao.objects.all().filter(atividadeid=sessao)) # Busca as sessoes das atividades
+#    ##print(sessao_espaco)
+#    #for sessao in sessao_espaco:
+#    #    for sessao2 in sessao:
+#    #        horariosindisponiveis.append(sessao2.horarioid)
+#    ##print(horariosindisponiveis)
+#    today= datetime.now(timezone.utc) 
+#    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+#    diainicio= diaaberto.datadiaabertoinicio.date()
+#    diafim= diaaberto.datadiaabertofim.date()
+#    totaldias= diafim-diainicio
+#    #print(totaldias.days)
+#    dias_diaaberto= []
+#    for d in range(totaldias.days):
+#        dias_diaaberto.append(diainicio+timedelta(days=d))
+#    #print(dias_diaaberto)
+#    #sessao_indis= Sessao.objects.all().filter(atividadeid=id)
+#
+#    #for sessao in sessao_indis:
+#    #    horariosindisponiveis.append(sessao.horarioid)
+#    ##print(horariosindisponiveis)
+#    #horariosindisponiveis= list(dict.fromkeys(horariosindisponiveis))
+##
+#    #for t in Horario.objects.all():
+#    #    if  t not in horariosindisponiveis:
+#    #        disp.append(t)
+##
+#        
+#    if request.method == "POST":
+#
+#        if 'ver' in request.POST:
+#            diasessao=request.POST['diasessao'] 
+#            sessoes= Sessao.objects.all().filter(atividadeid=id, dia=diasessao)
+#            for sessao in sessoes:
+#                horariosindisponiveis.append(sessao.horarioid)
+#            #print(horariosindisponiveis)
+#            horariosindisponiveis= list(dict.fromkeys(horariosindisponiveis))
+#
+#            for t in Horario.objects.all():
+#                if  t not in horariosindisponiveis:
+#                    disp.append(t)
+#        return render(request,'atividades/proporAtividadeSessao.html',{'horarios': disp , 'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 'dias':dias_diaaberto}) 
+#
+#        if 'save' in request.POST and len(sessoes)!=0 :
+#            return redirect('minhasAtividades')
+#        elif 'save' in request.POST and len(sessoes)==0:
+#            return redirect('inserirSessao', id)
+#        new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
+#        new_Sessao.save()
+#        if 'cancelar' in request.POST :
+#            Atividade.objects.get(id=id).delete()
+#            return redirect('proporAtividade')
+#        elif 'new' in request.POST:
+#            return redirect('inserirSessao', id)
+#    return render(request,'atividades/proporAtividadeSessao.html',{'horarios': "Escolha primeiro um dia" , 'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 'dias':dias_diaaberto}) 
+
+
 def inserirsessao(request,id):
-    disp= []
-    horariosindisponiveis= []
-    #espaco_id= Atividade.objects.get(id=id).espacoid # Busca o espaco da atividade
-    #espacoidtest= espaco_id.id #  Busca o id do espaco
-    ##print(espacoidtest)
-    #atividadescomespaco_id=Atividade.objects.all().filter(espacoid=espacoidtest).exclude(id=id) # Busca as atividades com o espaco da atividade
-    ##print(atividadescomespaco_id)
-#
-#
-    #idAtividades= []
-    #for atv_id in atividadescomespaco_id: 
-    #    idAtividades.append(atv_id.id) # Busca o id das atividades
-    ##print(idAtividades)
-#
-    #sessao_espaco= []
-    #for sessao in idAtividades:
-    #    print(sessao)
-    #    sessao_espaco.append(Sessao.objects.all().filter(atividadeid=sessao)) # Busca as sessoes das atividades
-    ##print(sessao_espaco)
-    #for sessao in sessao_espaco:
-    #    for sessao2 in sessao:
-    #        horariosindisponiveis.append(sessao2.horarioid)
-    ##print(horariosindisponiveis)
     today= datetime.now(timezone.utc) 
     diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
     diainicio= diaaberto.datadiaabertoinicio.date()
     diafim= diaaberto.datadiaabertofim.date()
     totaldias= diafim-diainicio
-    print(totaldias.days)
     dias_diaaberto= []
     for d in range(totaldias.days):
         dias_diaaberto.append(diainicio+timedelta(days=d))
-    print(dias_diaaberto)
-    sessao_indis= Sessao.objects.all().filter(atividadeid=id)
 
-    for sessao in sessao_indis:
-        horariosindisponiveis.append(sessao.horarioid)
-    #print(horariosindisponiveis)
-    horariosindisponiveis= list(dict.fromkeys(horariosindisponiveis))
 
-    for t in Horario.objects.all():
-        if  t not in horariosindisponiveis:
-            disp.append(t)
 
-        
+    horariosindisponiveis= []
+    disp= []
     if request.method == "POST":
-        diasessao=request.POST['diasessao'] 
-        sessoes= Sessao.objects.all().filter(atividadeid=id, dia=diasessao)
+        atividadeid=Atividade.objects.get(id=id)
+        if 'ver' in request.POST:
+            diasessao=request.POST["diasessao"]
+            print(diasessao)
+            sessaodia=Sessao.objects.filter(atividadeid=id, dia=diasessao)
+            for sessao in sessaodia:
+                horariosindisponiveis.append(sessao.horarioid)
+            for t in Horario.objects.all():
+                if  t not in horariosindisponiveis:
+                    disp.append(t)
+            print(disp)
+            return render(request,'atividades/proporAtividadeSessao.html',{'horarios': disp , 'sessao': diasessao, 'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 'dias': dias_diaaberto }) 
+        sessoes=Sessao.objects.all().filter(atividadeid=id)
         if 'save' in request.POST and len(sessoes)!=0 :
             return redirect('minhasAtividades')
-        elif 'save' in request.POST and len(sessoes)==0:
+        if 'save' in request.POST and len(sessoes)==0:
             return redirect('inserirSessao', id)
-        new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
-        new_Sessao.save()
         if 'cancelar' in request.POST :
             Atividade.objects.get(id=id).delete()
             return redirect('proporAtividade')
-        elif 'new' in request.POST:
+        if 'new' in request.POST:
+            diasessao=request.POST["diasessao"]
+            print(diasessao)
+            new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
+            new_Sessao.save()
             return redirect('inserirSessao', id)
-    return render(request,'atividades/proporAtividadeSessao.html',{'horarios': disp , 'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 'dias':dias_diaaberto}) 
-
+    return render(request,'atividades/proporAtividadeSessao.html',{'horarios': "" , 'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 'dias': dias_diaaberto})        
 
 
 
