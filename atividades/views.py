@@ -186,10 +186,10 @@ def eliminarSessao(request,id):
 
 
 def proporatividade(request):
+    today= datetime.now(timezone.utc) 
+    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
     if request.method == "POST":
 
-        today= datetime.now(timezone.utc) 
-        diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
         print(diaaberto.id)
 
 
@@ -215,18 +215,11 @@ def proporatividade(request):
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
                              estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=request.POST['espacoid']),
                              tema=Tema.objects.get(id=request.POST['tema']))
-        
+        activity_object_form = AtividadeForm(request.POST, instance=new_form)
         if activity_object_form.is_valid():
-            activity_object_form.save(commit=False)
-            #activity_object_form.coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1)
-            #activity_object_form.professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2)
-            #activity_object_form=estado = "Pendente"
-            #activity_object_form.diaabertoid = diaaberto
-            #activity_object_form.espacoid= Espaco.objects.get(id=request.POST['espacoid'])
-            #activity_object_form.tema=Tema.objects.get(id=request.POST['tema'])
             activity_object_form.save()
-
-            return redirect('inserirSessao', activity_object_form.id)
+            idAtividade= Atividade.objects.all().order_by('-id').first()
+            return redirect('inserirSessao', idAtividade.id)
     else:  
         activity_object_form= AtividadeForm()
     return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form,'campu':-1,'campus': Campus.objects.all(), 'edificios': "",'espacos': ""})
