@@ -3,7 +3,6 @@ from atividades.forms import AtividadeForm , MateriaisForm
 from .models import *
 from .forms import *
 from configuracao.models import Horario
-from atividades.models import Atividade, Sessao, Tema
 from coordenadores.models import Coordenador
 from utilizadores.models import Professoruniversitario
 from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
@@ -31,28 +30,28 @@ def filters(request):
 
 # Create your views here.
 def consultartarefa(request):
-    atividades=Atividade.objects.all()
-    sessoes=Sessao.objects.all()
-    if request.method == 'POST' or request.GET.get('searchAtividade'):
+    tarefa=Tarefa.objects.all()
+
+    if request.method == 'POST' or request.GET.get('searchTarefa'):
         today=datetime.now(timezone.utc)
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
         filterForm=tarefaFilterForm(request.POST)
-        nome=str(request.POST.get('searchAtividade'))
-        atividades=atividades.filter(nome__icontains=nome)
+        nome=str(request.POST.get('searchTarefa'))
+        tarefas=Tarefa.filter(nome__icontains=nome)
         tipo=str(request.POST.get('tipo'))
         departamento=str(request.POST.get('departamentos'))
         if tipo != ' ' and tipo != 'None':
-            atividades=atividades.filter(tipo=tipo)
+            tarefas=tarefas.filter(tipo=tipo)
         if departamento != 'None' and departamento > '-1':
             print('departamento')
-            atividades=atividades.filter(professoruniversitarioutilizadorid__departamento__id=departamento)
+            tarefas=tarefas.filter(professoruniversitarioutilizadorid__departamento__id=departamento)
             filter=filters(request)
-            atividades=atividades.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
+            tarefas=tarefas.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
         if request.POST.get('diaAbertoAtual'):
-            atividades=atividades.filter(diaabertoid=diaAberto)    
+            tarefas=tarefas.filter(diaabertoid=diaAberto)    
     else:
         filterForm=tarefaFilterForm()
 
     return render(request=request,
 			template_name="coordenadores/consultartarefa.html",
-            context={"atividades": atividades,"sessoes":sessoes,"filter":filterForm})
+            context={"tarefas": tarefas,"filter":filterForm})

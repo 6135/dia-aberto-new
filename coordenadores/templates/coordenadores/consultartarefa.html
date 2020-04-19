@@ -10,7 +10,7 @@
                 <ul class="menu-list">
                     <div class="field">
                         <div class="control has-icons-left is-clearfix">
-                            {{filter.searchAtividade}}
+                            {{filter.searchTarefa}}
                             <span class="icon is-left">
                                 <i class="mdi mdi-magnify mdi-24px"></i>
                             </span>
@@ -188,18 +188,7 @@
                                                         <th><div class="th-wrap" style="width:150px">Hora</div></th>
                                                         <th><div class="th-wrap" style="width:150px">Vagas</div></th>
                                                     </tr>
-                                                </thead>
-                                                {% for  sessao in  sessoes%}
-                                                    {% if  sessao.atividadeid.id == atividade.id %}
-                                                        <tbody>
-                                                            <tr >
-                                                                <td data-label="Dia">{{atividade.diaabertoid.datadiaabertoinicio.date}}</td>
-                                                                <td data-label="Hora">{{sessao.horarioid.inicio}} até {{sessao.horarioid.fim}}</td>
-                                                                <td data-label="Vagas">{{sessao.vagas}}</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    {% endif %}
-                                                {% endfor %}
+                                                </thead>                        
                                             </table>
                                         </div>
                                     </div>
