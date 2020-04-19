@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , MateriaisForm, atividadesFilterForm
+from .forms import AtividadeForm , MateriaisForm, atividadesFilterForm, CampusForm
 from .models import *
 from configuracao.models import Horario
 from .models import Atividade, Sessao, Tema
@@ -359,3 +359,7 @@ def validaratividade(request,id, action):
 
 #---------------------End David
     
+def load_campus(request):
+    campus_id = request.GET.get('campusid')
+    cities = Campus.objects.filter(id=campus_id.id).order_by('name')
+    return render(request, 'hr/city_dropdown_list_options.html', {'cities': cities})

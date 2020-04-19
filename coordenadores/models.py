@@ -21,28 +21,3 @@ class Coordenador(models.Model):
     class Meta:
         db_table = 'Coordenador'
 
-class Tarefa(models.Model):
-    # Field name made lowercase.
-    id = models.AutoField(db_column='ID', primary_key=True)
-    # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255)
-    # Field name made lowercase.
-    concluida = models.IntegerField(db_column='Concluida')
-    # Field name made lowercase.
-    descricao = models.CharField(db_column='Descricao', max_length=255)
-    # Field name made lowercase.
-    coordenadorutilizadorid = models.ForeignKey(
-        'coordenadores.Coordenador', models.CASCADE, db_column='CoordenadorUtilizadorID')
-    # Field name made lowercase.
-    colaboradorutilizadorid = models.ForeignKey(
-        'colaboradores.Colaborador', models.CASCADE, db_column='ColaboradorUtilizadorID')
-    # Field name made lowercase.
-    atividadeid = models.ForeignKey(
-        'atividades.Atividade', models.CASCADE, db_column='AtividadeID')
-    inscricaoid = models.ForeignKey('inscricoes.Inscricao', models.CASCADE, db_column='inscricaoid', blank=True, null=True)
-
-    tipo = models.CharField(db_column='Tipo', max_length=64)  # Field name made lowercase.
-
-
-    class Meta:
-        db_table = 'Tarefa'
