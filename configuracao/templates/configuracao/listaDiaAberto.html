@@ -66,7 +66,6 @@
               <li class="is-active"><a href="#" aria-current="page">Dias Abertos</a></li>
             </ul>
           </nav>
-        {{is_open}}
         {% if is_open == True %}
         <input type="hidden" id="novoDia" value="{% url 'novoDia'%}">  
         <a onclick="alert.render('Ainda existe um dia aberto em vigor.\nTem a certeza que deseja criar um novo?','novoDia')" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">     
@@ -122,9 +121,8 @@
                                         </span>
                                     </a>
                                 </div>
-                                <div class="column">    
-                                    <input type="hidden" id="del-{{diaAberto.id}}" name="variable" value="{% url 'eliminarDia' diaAberto.id %}">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia Aberto?<br>Atenção, isto irá eliminar todas as atividades e insciçoes associadas!','del-{{diaAberto.id}}')">
+                                <div class="column">               
+                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia Aberto?<br>Atenção, isto irá eliminar todas as atividades e insciçoes associadas!','{% url 'eliminarDia' diaAberto.id %}')">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                                         </span>
@@ -164,6 +162,17 @@
                                                         <span> {{diaAberto.datainscricaoatividadesfim}} </span>
                                                     </th>
                                                 </tr>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <th class="th-wrap">Preço Professores:</th>
+                                                    <th class="th-wrap" style="font-weight: normal;">
+                                                        <span>{{diaAberto.precoprofessores}}</span>
+                                                    </th>
+                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
+                                                    <th class="th-wrap">Preço Alunos:</th>
+                                                    <th class="th-wrap" style="font-weight: normal;">
+                                                        <span> {{diaAberto.precoalunos}} </span>
+                                                    </th>
+                                                </tr>
                                                 <tr>
                                                     <th class="th-wrap">Descrição:</th>
                                                     <td colspan="4">
@@ -197,7 +206,7 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button onclick="alert.cancelar()" class="button">Cancelar</button>
+            <button id='dialog-cancel' onclick="alert.cancelar()" class="button">Cancelar</button>
             <button id='dialog-confirm' onclick="alert.confirmar()" class="button is-success">Confirmar</button>
         </footer>
     </div>

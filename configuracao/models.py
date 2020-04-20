@@ -59,6 +59,11 @@ class Transporteuniversitario(models.Model):
 
 class Diaaberto(models.Model):
     # Field name made lowercase.
+    precoalunos = models.FloatField(db_column='PrecoAlunos')
+    # Field name made lowercase.
+    precoprofessores = models.FloatField(
+        db_column='PrecoProfessores', blank=True, null=True)
+    # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
     enderecopaginaweb = models.CharField(
@@ -98,19 +103,6 @@ class Menu(models.Model):
     # Field name made lowercase.
     horarioid = models.ForeignKey(
         'Horario', models.CASCADE, db_column='HorarioID')
-    # Field name made lowercase.
-    precoalunos = models.FloatField(db_column='PrecoAlunos')
-    # Field name made lowercase.
-    precoprofessores = models.FloatField(
-        db_column='PrecoProfessores', blank=True, null=True)
-    # Field name made lowercase.
-    tipos = {
-        ('Carne',"Carne"),
-        ('Peixe','Peixe'),
-        ('Vegetariano', 'Vegetariano'),
-    }
-    tipo = models.CharField(
-        choices=tipos,db_column='Tipo', max_length=255, blank=True, null=True)
     campus = models.ForeignKey(
         'Campus', models.CASCADE, db_column='Campus')
     diaaberto = models.ForeignKey(
@@ -127,6 +119,15 @@ class Prato(models.Model):
     nrpratosdisponiveis = models.IntegerField(db_column='NrPratosDisponiveis')
     # Field name made lowercase.
     prato = models.CharField(db_column='Prato',max_length=255)
+    # Field name made lowercase.
+    tipos = {
+        ('Carne',"Carne"),
+        ('Peixe','Peixe'),
+        ('Vegetariano', 'Vegetariano'),
+        ('Sobremesa', 'Sobremesa'),
+    }
+    tipo = models.CharField(
+         default='Carne', choices=tipos,db_column='Tipo', max_length=255, blank=False, null=False)
     # Field name made lowercase.
     menuid = models.ForeignKey(Menu, models.CASCADE, db_column='MenuID')
 
@@ -169,6 +170,8 @@ class Departamento(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
+    sigla = models.CharField(
+        db_column='Sigla', max_length=32, blank=True, null=True)
     # Field name made lowercase.
     unidadeorganicaid = models.ForeignKey(
         'Unidadeorganica', models.CASCADE, db_column='UnidadeOrganicaID')
@@ -179,6 +182,8 @@ class Departamento(models.Model):
     class Meta:
         db_table = 'Departamento'
 
+    def str(self):
+        return self.nome
 
 class Sala(models.Model):
     # Field name made lowercase.
@@ -228,3 +233,24 @@ class Unidadeorganica(models.Model):
     class Meta:
         managed = False
         db_table = 'UnidadeOrganica'
+
+    def str(self):
+        return self.nome
+
+class Curso(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)
+
+    sigla = models.CharField(
+        db_column='Sigla', max_length=32, blank=True, null=True)
+
+    nome = models.CharField(
+        db_column='Nome', max_length=255, blank=True, null=True)
+
+    unidadeorganicaid = models.ForeignKey(
+        'Unidadeorganica', models.CASCADE, db_column='UnidadeorganicaID')
+
+    class Meta:
+        db_table = 'Curso'
+
+    def str(self):
+        return self.nome

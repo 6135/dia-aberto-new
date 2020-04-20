@@ -4,7 +4,7 @@ from .models import *
 from configuracao.models import Horario
 from .models import Atividade, Sessao, Tema
 from coordenadores.models import Coordenador
-from utilizadores.models import Professoruniversitario
+from utilizadores.models import ProfessorUniversitario
 from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
 from django.http import HttpResponseRedirect
 from datetime import datetime, date,timezone
@@ -15,9 +15,6 @@ from django.core import serializers
 
 
 #-------------Diogo----------------------
-def login(request):
-    return 0
-
 def filters(request):
     filters=[]
     if request.POST.get('Aceite'):

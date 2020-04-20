@@ -8,13 +8,11 @@
 from django.db import models
 
 class Colaborador(models.Model):
-    # Field name made lowercase.
-    utilizadorid = models.OneToOneField(
-        'utilizadores.Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
-    # Field name made lowercase.
-    curso = models.CharField(db_column='Curso', max_length=255)
+    utilizadorid = models.OneToOneField('Utilizador', models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
+    curso = models.CharField(db_column='Curso', max_length=255)  # Field name made lowercase.
 
     class Meta:
+        managed = False
         db_table = 'Colaborador'
 
 

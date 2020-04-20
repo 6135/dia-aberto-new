@@ -10,6 +10,7 @@ from configuracao.models import *
 from colaboradores.models import *
 from atividades.models import *
 from inscricoes.models import *
+from utilizadores.models import *
 
 class Coordenador(models.Model):
     # Field name made lowercase.
@@ -21,6 +22,7 @@ class Coordenador(models.Model):
     unidadeorganicaid = models.ForeignKey('configuracao.Unidadeorganica', models.CASCADE, db_column='unidadeOrganicaID')  # Field name made lowercase.
 
     class Meta:
+        managed = False
         db_table = 'Coordenador'
 
 class Tarefa(models.Model):

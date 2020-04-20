@@ -1,0 +1,48 @@
+{% extends 'configuracao/app.html' %}
+{% block content %}
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'inicio' %}">Início</a></li>
+    <li><a href="{% url 'minhasAtividades' %}">Tarefas</a></li>
+    <li class="is-active"><a href="">Adicionar Tarefa</a></li>
+  </ul>
+</nav>
+<div style="padding: 3rem 2vw 1rem">
+    <div class="b-steps">
+        <form method="POST" action="">
+            <section class="step-content">
+                <div class="step-item">
+                    <div style="padding: 1rem 2vw 0px;">
+                        <hr>
+                        <div class="column is-offset-3 is-6">
+                            <div class="block">
+                                <div class="field">
+                                    <label class="label">Tipo de tarefa:</label>
+                                </div>
+                                <label>
+                                    
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{field.label|escape}}{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% csrf_token %}
+        </form>
+    </div>
+</div>
+{% endblock content %}

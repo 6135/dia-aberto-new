@@ -43,7 +43,7 @@ class Atividade(models.Model):
     tipo = models.CharField(db_column='Tipo', max_length=64, choices=tipos, default='Palestra')  # Field name made lowercase.
     estado = models.CharField(db_column='Estado', max_length=64)  # Field name made lowercase.
     coordenadorutilizadorid = models.ForeignKey(Coordenador, models.CASCADE, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
-    professoruniversitarioutilizadorid = models.ForeignKey(Professoruniversitario, models.CASCADE, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
+    professoruniversitarioutilizadorid = models.ForeignKey(ProfessorUniversitario, models.CASCADE, db_column='ProfessorUniversitarioUtilizadorID')  # Field name made lowercase.
     datasubmissao = models.DateTimeField(db_column='dataSubmissao',auto_now_add=True)  # Field name made lowercase.
     dataalteracao = models.DateTimeField(db_column='dataAlteracao',auto_now=True)  # Field name made lowercase.
     duracaoesperada = models.IntegerField(db_column='duracaoEsperada')  # Field name made lowercase.

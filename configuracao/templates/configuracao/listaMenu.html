@@ -82,16 +82,13 @@
                     <thead>
                         <tr>
                             <th style="width: 30px;" ></th>
-                            <th onclick="sortTable(1,false)" style="cursor: pointer;width: 120px" class="pre-arrow">
-                                Tipo<span class="arrow active"><span></span><span></span></span>
-                            </th>
                             <th onclick="sortTable(2,true)" style=" cursor: pointer;" class="pre-arrow">
                                 Dia Aberto<span class="arrow active"><span></span><span></span></span>
                             </th>
                             <th onclick="sortTable(3,false)" style=" cursor: pointer;" class="pre-arrow">
                                 Campus<span class="arrow active"><span></span><span></span></span>
                             </th>
-                            <th>
+                            <th style="">
                                 Operações
                             </th>                            
                         </tr>
@@ -106,7 +103,6 @@
                                 </span>
                             </a>
                         </td>
-                        <td data-label="Tipo">{{menu.tipo}} </td>
                         <td data-label="Dia Aberto" date-value="{{menu.diaaberto.datadiaabertoinicio|date:'Y-m-d'}}">
                             {{menu.diaaberto.datadiaabertoinicio|date:'Y-m-d'}}
                         </td>
@@ -129,8 +125,6 @@
                                         </span>
                                     </a> 
                                 </div>
-                                <div class="column"></div>
-                                <div class="column"></div> 
                             </div> 
                         </td>                     
                       </tr> 
@@ -177,8 +171,8 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button onclick="alert.cancelar()" class="button">Cancelar</button>
-            <button onclick="alert.confirmar()" class="button is-success">Confirmar</button>
+            <button onclick="alert.cancelar()" class="button" id='dialog-cancel'>Cancelar</button>
+            <button onclick="alert.confirmar()" class="button is-success" id='dialog-confirm'>Confirmar</button>
         </footer>
     </div>
 </div>

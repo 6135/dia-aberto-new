@@ -3,7 +3,7 @@ from .models import *
 from .forms import *
 from configuracao.models import Horario
 from coordenadores.models import Coordenador
-from utilizadores.models import Professoruniversitario
+from utilizadores.models import ProfessorUniversitario
 from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
 from django.http import HttpResponseRedirect
 from datetime import datetime, date,timezone
@@ -11,6 +11,10 @@ from _datetime import timedelta
 from django.db.models import Q
 from coordenadores.forms import tarefaFilterForm
 
+# Create your views here.
+def adicionartarefa(request):
+    
+    return render(request=request,template_name='coordenadores/criarTarefa.html')
 
 
 

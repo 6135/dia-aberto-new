@@ -29,7 +29,7 @@ class DateTimeWidget(DateTimeInput):
 
 class AtividadeForm(ModelForm):
     tema = ChoiceField(choices=[(tema.id,tema.tema) for tema in Tema.objects.all()])
-    duracaoesperada= ChoiceField(choices=get_choices_time())
+    #duracaoesperada= ChoiceField(choices=get_choices_time())
     class Meta:  
         model = Atividade  
         exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid','tema','espacoid']
@@ -39,7 +39,7 @@ class AtividadeForm(ModelForm):
             'descricao': Textarea(attrs={'class':'textarea'}),
             'publicoalvo': Select(),
             'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input'}),
-            'duracaoesperada': NumberInput(attrs={'class': 'input'}),
+            'tempo': DateField(widget=DateInput(attrs={'class':'timepicker'})),
             'participantesmaximo': NumberInput(attrs={'class': 'input'}),
             'duracaoesperada': Select(),
             }
