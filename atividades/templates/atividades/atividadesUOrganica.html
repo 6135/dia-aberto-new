@@ -2,24 +2,15 @@
 {% block content %}
 <div class="columns">
        <div class="column is-3">
-        <form method="POST" action="" id='filter'>
-            {% csrf_token %}
+        <form method="GET" action="">
             <div>
             <div class="menu">
                 <p class="menu-label">Filtros Atividades</p>
                 <ul class="menu-list">
-                <div class="field">
-                    <div class="control has-icons-left is-clearfix">
-                        {{filter.searchAtividade}}
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify mdi-24px"></i>
-                        </span>
-                    </div>
-                </div>
                 <li>
                     <div class="field">
                         <div class="control is-expanded">
-                            <div class="select is-fullwidth">
+                            <div id="departamento" class="select is-fullwidth">
                                 {{filter.departamentos}}
                             </div>
                         </div>
@@ -61,6 +52,14 @@
                             {{filter.diaAbertoAtual}}
                             Atividades do Dia Aberto Atual
                     </label>
+                </div>
+                <div class="field">
+                    <div class="control has-icons-left is-clearfix">
+                        {{filter.searchAtividade}}
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                    </div>
                 </div>
                 <div class="field">
                     <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
@@ -268,22 +267,14 @@ tr.detail{
 {% endblock content %}
 {% block scripts%}
 <script>
-/*$('.validatebutton').click(function(){
-    var action= $(this).attr("action");
-    var id= $(this).attr("id");
-    console.log({{form.searchAtividade.value}});
-    $.ajax(
-        {
-            type:"GET",
-            url: "",
-            data:{
-                searchAtividade:form.searchAtividade.value,
-                Aceite:form.Aceite.value,
-                Recusada:form.Recusada.value,
-                Pendente:form.Pendente.value,
-                diaAbertoAtual:form.diaAbertoAtual.value
-            }
-    })
-});*/
+$("#departamento").change(function(){
+    console.log($(this).find(':selected').text());
+    var departamento=$(this).find(':selected').text();
+    $.ajax({
+        type:"GET",
+        dataType:"jsonp",
+        url:"{% url 'atividadesUOrganica' %}"
+    });
+});
 </script>
 {% endblock scripts%}

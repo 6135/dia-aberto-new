@@ -8,14 +8,6 @@
             <div class="menu">
                 <p class="menu-label">Filtros Atividades</p>
                 <ul class="menu-list">
-                    <div class="field">
-                        <div class="control has-icons-left is-clearfix">
-                            {{filter.searchAtividade}}
-                            <span class="icon is-left">
-                                <i class="mdi mdi-magnify mdi-24px"></i>
-                            </span>
-                        </div>
-                    </div>
                     <li>
                         <div class="field" >
                             <label>Estado:</label>
@@ -47,6 +39,14 @@
                                 {{filter.diaAbertoAtual}}
                                 Atividades do Dia Aberto Atual
                         </label>
+                    </div>
+                    <div class="field">
+                        <div class="control has-icons-left is-clearfix">
+                            {{filter.searchAtividade}}
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
                     </div>
                     <div class="field">
                         <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
