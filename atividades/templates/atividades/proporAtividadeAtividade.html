@@ -115,7 +115,11 @@
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
                                             <select id="campusid" name="campusid">
+                                                {% if espaco != -1 %}
+                                                <option selected value="{{espaco.edificio.campus.id}}">{{espaco.edificio.campus.nome}}</option>
+                                                {% else %}
                                                 <option selected value="{{campu.id}}">{{campu.nome}}</option>
+                                                {% endif %}
                                                 {% for c in campus %}
                                                     <option  value="{{c.id}}" >{{c.nome}}</option>
                                                 {% endfor %}
@@ -141,14 +145,19 @@
                                 </div>
                             </div>
                         </div>
+                        {% if edificios != "" %}
                         <div class="columns">
                             <div class="column is-2">
                                 <div class="field">
                                 <label class="label">Edificio</label>
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
-                                                <select name="edificioid" onchange="edif()">
+                                                <select name="edificioid">
+                                                {% if espaco != -1 %}
+                                                <option selected value="{{espaco.edificio.id}}">{{espaco.edificio.nome}}</option>
+                                                {% else %}
                                                 <option selected value="{{edificio.id}}">{{edificio.nome}}</option>
+                                                {% endif %}
                                                 {% for edi in edificios %}
                                                     <option value="{{edi.id}}" >{{edi.nome}}</option>
                                                 {% endfor %}
@@ -174,13 +183,15 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
+                        {% if espacos != "" %}
                         <div class="columns">
                             <div class="column is-2">
                                 <div class="field">
                                 <label class="label">Sala</label>
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
-                                            <select name="espacoid">
+                                            <select name="espacoid" required>
                                                 <option selected value="{{espaco.id}}">{{espaco.nome}}</option>
                                                 {% for esp in espacos %}
                                                     <option value="{{esp.id}}" >{{esp.nome}}</option>
@@ -191,6 +202,7 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                         <hr>
                     </div>
                 </div>

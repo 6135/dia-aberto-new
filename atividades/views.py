@@ -67,18 +67,19 @@ def atividadescoordenador(request):
     for atividade1 in atividades:
         for atividade2 in atividades:
             if atividade1.id!=atividade2.id:
-                sessao1= Sessao.objects.filter(atividadeid=atividade1)
-                sessao2= Sessao.objects.filter(atividadeid=atividade2)
-                sessao1horario= []
-                sessao2horario= []
-                for s1 in sessao1:
-                    sessao1horario.append(s1.horarioid) 
-                for s2 in sessao2:
-                    sessao2horario.append(s2.horarioid)
-                for horario1 in sessao1horario:
-                    if horario1 in sessao2horario:
-                        C1=Conflito(atividade1,atividade2)
-                        conflito2.append(C1)
+                if atividade1.espacoid== atividade2.espacoid:
+                    sessao1= Sessao.objects.filter(atividadeid=atividade1)
+                    sessao2= Sessao.objects.filter(atividadeid=atividade2)
+                    sessao1horario= []
+                    sessao2horario= []
+                    for s1 in sessao1:
+                        sessao1horario.append(s1.horarioid) 
+                    for s2 in sessao2:
+                        sessao2horario.append(s2.horarioid)
+                    for horario1 in sessao1horario:
+                        if horario1 in sessao2horario:
+                            C1=Conflito(atividade1,atividade2)
+                            conflito2.append(C1)
     for c in conflito2:
         print(c.atividade1)                
     if request.method == 'POST' or request.GET.get('searchAtividade'):
@@ -223,14 +224,14 @@ def proporatividade(request):
         if 'veredificios' in request.POST:    
             activity_object_form=AtividadeForm(request.POST)
             print(activity_object_form)
-            return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form,'campu':campu, 'campus': campus, 'edificios': Edificios,'espacos': ""})
+            return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form,'campu':campu, 'espaco': -1, 'campus': campus, 'edificios': Edificios,'espacos': ""})
 
         
         if 'versala' in request.POST:
             edificioid=request.POST["edificioid"]
             sala= Edificio.objects.get(id=edificioid)
             salas= Espaco.objects.filter(edificio=sala).exclude(id=edificioid)
-            return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form, 'campu':campu, 'campus': campus,'edificio':sala,'edificios': Edificios,'espacos': salas})
+            return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form, 'campu':campu, 'espaco': -1, 'campus': campus,'edificio':sala,'edificios': Edificios,'espacos': salas})
 
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=5),
                              professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
@@ -243,7 +244,7 @@ def proporatividade(request):
             return redirect('inserirSessao', idAtividade.id)
     else:  
         activity_object_form= AtividadeForm()
-    return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form,'campu':-1,'campus': Campus.objects.all(), 'edificios': "",'espacos': ""})
+    return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form,'campu':-1,'campus': Campus.objects.all(), "espaco": -1,'edificios': "",'espacos': ""})
 
 
     
