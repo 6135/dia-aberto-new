@@ -21,6 +21,14 @@
                 <table class="table has-mobile-cards is-hoverable">
                   <thead>
                     <tr>
+                      <th  style="">
+                        <div class="th-wrap">
+                            Tipo
+                          <span class="icon is-small">
+                            <i class="mdi mdi-menu-up"></i>
+                          </span>
+                        </div>
+                      </th>
                       <th  style="width: 300px;">
                         <div class="th-wrap">
                             Prato
@@ -29,7 +37,7 @@
                           </span>
                         </div>
                       </th>
-                      <th  style="width: 300px;">
+                      <th  style="">
                         <div class="th-wrap">
                           # Pratos Disponiveis
                           <span class="icon is-small">
@@ -37,17 +45,17 @@
                           </span>
                         </div>
                       </th>
-                      <th style=""></th>
+                      <th style="">Operações</th>
                     </tr>
                   </thead>
                   <tbody>    
                     {% for prato in pratos %} 
                       <tr id="sessao.id" draggable="false">
+                        <td data-label="Prato">{{prato.tipo}}</td>
                         <td data-label="Prato">{{prato.prato}}</td>
                         <td data-label="# Pratos Disponiveis">{{prato.nrpratosdisponiveis}}</td>
                         <td>
-                          <input type="hidden" id="del-{{prato.id}}" name="variable" value="{% url 'eliminarPrato' prato.id%}">
-                          <a onclick="alert.render('Tem a certeza que deseja eliminar este prato?','del-{{prato.id}}')">
+                          <a onclick="alert.render('Tem a certeza que deseja eliminar este prato?','{% url 'eliminarPrato' prato.id%}')">
                             <span class="icon has-text-danger">
                               <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                             </span>
@@ -62,7 +70,18 @@
             <hr>
             <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Adicionar Prato</h2>
             <div class="columns">
-                    <div class="column is-4">
+                    <div class="column ">
+                      <div class="field" >
+                      {{form.nrpratosdisponiveis.errors}}
+                        <label class="label">Tipo</label>
+                        <div class="control">
+                          <div class="select is-fullwidth is-empty">
+                            {{form.tipo}}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="column ">
                       <div class="field" >
                       <strong>{{form.prato.errors}}</strong>
                         <label class="label">Prato</label>
@@ -71,7 +90,7 @@
                         </div>
                       </div>
                     </div>        
-                    <div class="column is-3">
+                    <div class="column ">
                       <div class="field" >
                       {{form.nrpratosdisponiveis.errors}}
                         <label class="label">Pratos Disponiveis</label>
@@ -80,7 +99,7 @@
                         </div>
                       </div>
                     </div>
-                    <div class="column is-1">
+                    <div class="column ">
                       <div class="field" >
                         <label class="label"></label>
                         <br>
@@ -109,16 +128,25 @@
          </button>
       </div>
       <div class="level-right">
-        <button id="concluir" class="button is-large is-success is-outlined is-link" name="save" value="save">
+      {% if has_one %}
+        <a id="concluir" class="button is-large is-success is-outlined is-link" name="save" value="save" href={% url 'verMenus' %}>
           <span>Finalizar</span>
-            <span class="icon is-medium">
-              <i class="mdi mdi-forward mdi-36px"></i>
-            </span>
-          </button>
-        </div>
+          <span class="icon is-medium">
+            <i class="mdi mdi-forward mdi-36px"></i>
+          </span>
+        </a>
+      {% else %}
+        <a id="concluir" onclick='alert.warning("Não existe nenhum prato neste menu, por favor adicione um primeiro")' class="button is-large is-success is-outlined is-link" name="save" value="save" >
+          <span>Finalizar</span>
+          <span class="icon is-medium">
+            <i class="mdi mdi-forward mdi-36px"></i>
+          </span>
+        </a>      
+      {% endif %}
       </div>
     </div>
   </div>
+</div>
 </form>
 </div>
 <div id="msg" class="dialog modal">
@@ -132,8 +160,8 @@
             </div>
         </section>
         <footer class="modal-card-foot">
-            <button onclick="alert.cancelar()" class="button">Cancelar</button>
-            <button id='dialog-confirm' onclick="alert.confirmar()" class="button is-success">Confirmar</button>
+            <button onclick="alert.cancelar()" class="button" id='dialog-cancel'>Cancelar</button>
+            <button onclick="alert.confirmar()" class="button is-success" id='dialog-confirm'>Confirmar</button>
         </footer>
     </div>
 </div>

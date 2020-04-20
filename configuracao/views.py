@@ -54,7 +54,8 @@ def viewDays(request):
 
 	earliest = Diaaberto.objects.all().order_by('ano').first()	#Obtain some constants
 	latest = Diaaberto.objects.all().order_by('ano').last()
-	is_open =(latest.datadiaabertofim > datetime.now(timezone.utc))
+	current = Diaaberto.objects.get(ano=datetime.now().year)
+	is_open =(current.datadiaabertofim > datetime.now(timezone.utc))
 
 	filterRes = orderBy(request, list_diaaberto)		#Filter/order
 	list_diaaberto = filterRes['list_diaaberto']
@@ -140,7 +141,7 @@ def delMenu(request, id = None):
 
 def newPrato(request, id):
 	pratos = Prato.objects.filter(menuid=Menu.objects.get(id=id))
-	print(pratos)
+	has_one = pratos.count() > 0
 	prato_object = Prato(menuid=Menu.objects.get(id=id))
 	prato_form=pratosForm(instance=prato_object)
 	if request.method == 'POST':
@@ -154,7 +155,7 @@ def newPrato(request, id):
 				return redirect('novoPrato',id)
 	return render(request=request,
 				  template_name='configuracao/pratoForm.html',
-				  context = {'form': prato_form, 'pratos': pratos}
+				  context = {'form': prato_form, 'pratos': pratos, 'has_one': has_one}
 				)
 
 def delPrato(request, id):

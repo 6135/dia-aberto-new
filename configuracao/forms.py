@@ -39,7 +39,9 @@ class diaAbertoSettingsForm(ModelForm):
             'dataporpostaatividadesfim': DateTimeWidget(hours='23', minutes='55'),
             'datainscricaoatividadesinicio': DateTimeWidget(hours='23', minutes='55'),
             'datainscricaoatividadesfim': DateTimeWidget(hours='23', minutes='55'),
-            'descricao': Textarea(attrs={'class':'textarea'})
+            'descricao': Textarea(attrs={'class':'textarea'}),
+            'precoalunos': NumberInput(attrs={'class':'input', 'step': '0.01','min': '0'}),
+            'precoprofessores': NumberInput(attrs={'class':'input','step': '0.01','min': '0'})
         }
     
 class diaAbertoFilterForm(Form):
@@ -64,18 +66,9 @@ class diaAbertoFilterForm(Form):
 class menuForm(ModelForm):
     diaaberto = ChoiceField(choices=[(dia.id,dia.ano) for dia in Diaaberto.objects.all()],widget=Select(), required=True)
     campus = ChoiceField(choices=[(camp.id,camp.nome) for camp in Campus.objects.all()],widget=Select(), required=True)
-    tipo = ChoiceField(choices=[
-            ('Carne',"Carne"),
-            ('Peixe','Peixe'),
-            ('Vegetariano', 'Vegetariano'),
-        ],widget=Select())
     class Meta:
         model = Menu
         exclude = ['id','horarioid','campus','diaaberto']
-        widgets={
-            'precoalunos': NumberInput(attrs={'class':'input', 'step': '0.01','min': '0'}),
-            'precoprofessores': NumberInput(attrs={'class':'input','step': '0.01','min': '0'})
-        }
 
 class pratosForm(ModelForm):
     class Meta:
@@ -84,4 +77,5 @@ class pratosForm(ModelForm):
         widgets = {
             'prato': TextInput(attrs={'class':'input'}),
             'nrpratosdisponiveis': NumberInput(attrs={'class':'input'}),
+            'tipo': Select()
         }
