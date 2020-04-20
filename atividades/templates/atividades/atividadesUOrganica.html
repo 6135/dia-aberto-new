@@ -216,6 +216,15 @@
                                                     {% endif %}
                                                 {% endfor %}
                                             </table>
+                                            <p class="has-text-danger">
+                                                {% for conf in conflitos %}
+                                                {% if atividade.id == conf.atividade1.id  %}
+                                                    <strong class="has-text-danger">Conflitos nos horarios com a atividade:</strong>
+                                                    {{conf.atividade2.nome}}
+                                                    <br>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </p>
                                         </div>
                                         {% if  atividade.estado == 'Pendente' %}
                                             <div style="margin-top:13px">

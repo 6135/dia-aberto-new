@@ -29,10 +29,6 @@ def filters(request):
 
 def consultartarefa(request):
     tarefas=Tarefa.objects.all()
-    horarios= []
-    for t in tarefas:
-        horarios.append(t.sessaoid.horarioid)
-    print(horarios)
     if request.method == 'POST' or request.GET.get('searchTarefa'):
         today=datetime.now(timezone.utc)
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
@@ -55,4 +51,4 @@ def consultartarefa(request):
 
     return render(request=request,
 			template_name="coordenadores/consultartarefa.html",
-            context={"tarefas": tarefas,"horarios": horarios,"filter":filterForm})
+            context={"tarefas": tarefas,"filter":filterForm})

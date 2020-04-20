@@ -77,6 +77,12 @@
               <li class="is-active"><a href="#" aria-current="page">Tarefas</a></li>
             </ul>
           </nav>
+           <a href="{% url 'consultarTarefa' %}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
+            <span class="icon is-small">
+                <i class="mdi mdi-plus"></i>
+            </span>
+            <span>Criar nova Tarefa</span>
+        </a>
         <div class="table">
             <div class="table-wrapper">
                 <table class="table has-mobile-cards is-hoverable is-fullwidth" id="table01">
@@ -134,9 +140,7 @@
                                 </a>
                             </td>
                             <td data-label="Dia">{{tarefa.sessaoid.dia|date:'d-m-Y'}}</td>
-                            {% for horario in horarios %}
-                            <td data-label="Horarios">{{horario.inicio}} - {{horario.fim}}</td>
-                            {% endfor %}
+                            <td data-label="Horarios">{{tarefa.sessaoid.horarioid.inicio}} - {{tarefa.sessaoid.horarioid.fim}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
                             <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
                             <td data-label="Sessao">{{tarefa.sessaoid.atividadeid.nome}}</td>
