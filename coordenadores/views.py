@@ -45,13 +45,11 @@ def consultartarefa(request):
             tarefas=tarefas.filter(tipo=tipo)
         if departamento != 'None' and departamento > '-1':
             print('departamento')
-            tarefas=tarefas.filter(professoruniversitarioutilizadorid__departamento__id=departamento)
+            tarefas=tarefas.filter(sessaoid__atividadeid__professoruniversitarioutilizadorid__departamento__id=departamento)
         if request.POST.get('Concluida') or request.POST.get('naoConcluida'):
             print('estado')
             filter=filters(request)
-            tarefas=tarefas.filter(Q(concluida=filter[0]) | Q(concluida=filter[1]))
-        if request.POST.get('diaAbertoAtual'):
-            tarefas=tarefas.filter(diaabertoid=diaAberto)    
+            tarefas=tarefas.filter(Q(concluida=1) | Q(concluida=0))
     else:
         filterForm=tarefaFilterForm()
 
