@@ -1,11 +1,13 @@
 var alert = new eliminar();
 function eliminar() {
-    this.render=function(txt){
+    this.render=function(txt,elementId){
         var msg = document.getElementById("msg")
         document.getElementById('text-00').innerHTML = txt;
+        document.getElementById('dialog-confirm').setAttribute('data-target',elementId)
         msg.classList.add("is-active");
     }
-    this.confirmar=function(elementId = 'del'){
+    this.confirmar=function(){
+        var elementId = document.getElementById('dialog-confirm').getAttribute('data-target');
         var href = document.getElementById(elementId).value;
         window.location.href = href;
     }

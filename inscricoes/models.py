@@ -65,8 +65,8 @@ class Inscricaoindividual(Inscricao):
 
 
 class Inscricaoprato(models.Model):
-    inscricao = models.ForeignKey(Inscricao, models.CASCADE)
-    prato = models.ForeignKey('configuracao.Prato', models.CASCADE)
+    inscricao = models.ForeignKey(Inscricao, models.CASCADE, db_column='InscricaoID')
+    prato = models.ForeignKey('configuracao.Prato', models.CASCADE,db_column='PratoID')
     npessoas = models.IntegerField(
         validators=[
             validators.MinValueValidator(1),

@@ -99,21 +99,22 @@ class Menu(models.Model):
     horarioid = models.ForeignKey(
         'Horario', models.CASCADE, db_column='HorarioID')
     # Field name made lowercase.
-    utilizadorid = models.ForeignKey(
-        'utilizadores.Utilizador', models.CASCADE, db_column='UtilizadorID')
-    # Field name made lowercase.
     precoalunos = models.FloatField(db_column='PrecoAlunos')
     # Field name made lowercase.
     precoprofessores = models.FloatField(
         db_column='PrecoProfessores', blank=True, null=True)
     # Field name made lowercase.
+    tipos = {
+        ('Carne',"Carne"),
+        ('Peixe','Peixe'),
+        ('Vegetariano', 'Vegetariano'),
+    }
     tipo = models.CharField(
-        db_column='Tipo', max_length=255, blank=True, null=True)
-    # Field name made lowercase.
-    menu = models.IntegerField(db_column='Menu', blank=True, null=True)
-    # Field name made lowercase.
-    horarioinicio = models.DateField(
-        db_column='HorarioInicio', blank=True, null=True)
+        choices=tipos,db_column='Tipo', max_length=255, blank=True, null=True)
+    campus = models.ForeignKey(
+        'Campus', models.CASCADE, db_column='Campus')
+    diaaberto = models.ForeignKey(
+        'Diaaberto', models.CASCADE, db_column='diaAberto')
 
     class Meta:
         db_table = 'Menu'
@@ -125,7 +126,7 @@ class Prato(models.Model):
     # Field name made lowercase.
     nrpratosdisponiveis = models.IntegerField(db_column='NrPratosDisponiveis')
     # Field name made lowercase.
-    prato = models.IntegerField(db_column='Prato')
+    prato = models.CharField(db_column='Prato',max_length=255)
     # Field name made lowercase.
     menuid = models.ForeignKey(Menu, models.CASCADE, db_column='MenuID')
 

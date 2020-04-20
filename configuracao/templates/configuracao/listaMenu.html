@@ -3,11 +3,13 @@
 {% load l10n %}
 <div class="columns">
     <div class="column is-3">
+    {% comment 'filter' %}
+    
         <form method="POST" action="" id='filter'>
             {% csrf_token %}
             <div>
             <div class="menu">
-                <p class="menu-label">Filtros Dia Aberto</p>
+                <p class="menu-label">Filtros Menu</p>
                 <ul class="menu-list">
                 <div class="field">
                     <!---->
@@ -58,25 +60,20 @@
             </div>
             
         </form>
+    {% endcomment %}
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
               <li><a href="#">Início</a></li>
-              <li class="is-active"><a href="#" aria-current="page">Dias Abertos</a></li>
+              <li class="is-active"><a href="#" aria-current="page">Menus</a></li>
             </ul>
           </nav>
-        {{is_open}}
-        {% if is_open == True %}
-        <input type="hidden" id="novoDia" value="{% url 'novoDia'%}">  
-        <a onclick="alert.render('Ainda existe um dia aberto em vigor.\nTem a certeza que deseja criar um novo?','novoDia')" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">     
-        {% else %}
-        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'novoDia'%}">     
-        {% endif %}
+        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'novoMenu'%}">     
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
-            <span>Criar novo Dia Aberto</span>
+            <span>Novo Menu</span>
         </a>   
 
         <div  class="table"></div>
@@ -86,13 +83,13 @@
                         <tr>
                             <th style="width: 30px;" ></th>
                             <th onclick="sortTable(1,false)" style="cursor: pointer;width: 120px" class="pre-arrow">
-                                Ano<span class="arrow active"><span></span><span></span></span>
+                                Tipo<span class="arrow active"><span></span><span></span></span>
                             </th>
                             <th onclick="sortTable(2,true)" style=" cursor: pointer;" class="pre-arrow">
-                                Dia Inicio<span class="arrow active"><span></span><span></span></span>
+                                Dia Aberto<span class="arrow active"><span></span><span></span></span>
                             </th>
-                            <th onclick="sortTable(3,true)" style=" cursor: pointer;" class="pre-arrow">
-                                Dia Fim<span class="arrow active"><span></span><span></span></span>
+                            <th onclick="sortTable(3,false)" style=" cursor: pointer;" class="pre-arrow">
+                                Campus<span class="arrow active"><span></span><span></span></span>
                             </th>
                             <th>
                                 Operações
@@ -100,31 +97,33 @@
                         </tr>
                     </thead>
                     <tbody> 
-                    {% for diaAberto in diaabertos %}     
+                    {% for menu in menus %}     
                     <tr draggable="false">
                         <td class="chevron-cell">
-                            <a role="button" onclick="displayDetails({{diaAberto.id}})">
+                            <a role="button" onclick="displayDetails({{menu.id}})">
                                 <span class="icon-expandable">
                                     <i class="mdi mdi-chevron-right mdi-24px"></i>
                                 </span>
                             </a>
                         </td>
-                        <td data-label="Ano" data-value="{{diaAberto.ano}}">{{diaAberto.ano}} </td>
-                        <td id="start{{diaAberto.id}}" data-label="Dia Inicio" date-value="{{diaAberto.datadiaabertoinicio|date:'Y-m-d H:i'}}">{{diaAberto.datadiaabertoinicio}}</td>
-                        <td data-label="Dia Fim" date-value="{{diaAberto.datadiaabertofim|date:'Y-m-d H:i'}}">{{diaAberto.datadiaabertofim}}</td>
+                        <td data-label="Tipo">{{menu.tipo}} </td>
+                        <td data-label="Dia Aberto" date-value="{{menu.diaaberto.datadiaabertoinicio|date:'Y-m-d'}}">
+                            {{menu.diaaberto.datadiaabertoinicio|date:'Y-m-d'}}
+                        </td>
+                        <td data-label="Campus">{{menu.campus.nome}}</td>
                         <td data-label="Operações">
                             <div class="columns">
                                 
                                 <div class="column">  
-                                    <a id='edit' href="{% url 'editarDia' diaAberto.id %}">
+                                    <a id='edit' href="{% url 'editarMenu' menu.id %}">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                                         </span>
                                     </a>
                                 </div>
                                 <div class="column">    
-                                    <input type="hidden" id="del-{{diaAberto.id}}" name="variable" value="{% url 'eliminarDia' diaAberto.id %}">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia Aberto?<br>Atenção, isto irá eliminar todas as atividades e insciçoes associadas!','del-{{diaAberto.id}}')">
+                                    <input type="hidden" id="del" name="variable" value="{% url 'eliminarMenu' menu.id %}">                 
+                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Menu?<br> Atenção, isto irá eliminar todas as atividades e insciçoes associadas!')">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                                         </span>
@@ -135,7 +134,7 @@
                             </div> 
                         </td>                     
                       </tr> 
-                      <tr class="detail" style="display: none" id='Details{{diaAberto.id}}'>
+                      <tr class="detail" style="display: none" id='Details{{menu.id}}'>
                         <td colspan="5">
                             <div class="detail-container">
                                 <div class="table"> 
@@ -143,39 +142,20 @@
                                         <table class="table has-mobile-cards">
                                             <thead>
                                                 <tr style="border-bottom: 1px solid #ddd">
-                                                    <th class="th-wrap">Inicio submissao Atividades:</th>
+                                                    <th class="th-wrap">Preço alunos:</th>
                                                     <th class="th-wrap" style="font-weight: normal;">
-                                                        <span>{{diaAberto.datapropostasatividadesincio}}</span>
+                                                        <span>{{menu.precoalunos}}&nbsp;€</span>
                                                     </th>
-                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
-                                                    <th class="th-wrap">Fim submissao Atividades:</th>
+                                                    <th class="th-wrap">Preco Professor:</th>
                                                     <th class="th-wrap" style="font-weight: normal;">
-                                                        <span> {{diaAberto.dataporpostaatividadesfim}} </span>
-                                                    </th>
-                                                </tr>
-                                                <tr style="border-bottom: 1px solid #ddd">
-                                                    <th class="th-wrap">Inicio Inscrições:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
-                                                        <span>{{diaAberto.datainscricaoatividadesinicio}}</span>
-                                                    </th>
-                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
-                                                    <th class="th-wrap">Fim Inscrições:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
-                                                        <span> {{diaAberto.datainscricaoatividadesfim}} </span>
+                                                        <span>{{menu.precoprofessores}}&nbsp;€</span>
                                                     </th>
                                                 </tr>
-                                                <tr>
-                                                    <th class="th-wrap">Descrição:</th>
-                                                    <td colspan="4">
-                                                        <textarea class="textarea" disabled style="resize: none;">{{diaAberto.descricao}}</textarea>
-                                                    </td>
-                                                </tr>
-
+                                            </thead>
                                         </table>
                                     </div>
                                 </div>
                             </div>
-                            <hr>
                         </td>
                         
                       </tr> 
@@ -198,11 +178,10 @@
         </section>
         <footer class="modal-card-foot">
             <button onclick="alert.cancelar()" class="button">Cancelar</button>
-            <button id='dialog-confirm' onclick="alert.confirmar()" class="button is-success">Confirmar</button>
+            <button onclick="alert.confirmar()" class="button is-success">Confirmar</button>
         </footer>
     </div>
 </div>
-
 {% endblock content %}
 {% block scripts %}
 {% endblock scripts %}
