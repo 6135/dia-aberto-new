@@ -233,7 +233,7 @@ def proporatividade(request):
             return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form, 'campu':campu, 'campus': campus,'edificio':sala,'edificios': Edificios,'espacos': salas})
 
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=5),
-                             professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
+                             professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
                              estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=request.POST['espacoid']),
                              tema=Tema.objects.get(id=request.POST['tema']))
         activity_object_form = AtividadeForm(request.POST, instance=new_form)
