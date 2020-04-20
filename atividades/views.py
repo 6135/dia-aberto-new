@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , MateriaisForm, atividadesFilterForm
+from .forms import AtividadeForm , MateriaisForm, atividadesFilterForm, CampusForm
 from .models import *
 from configuracao.models import Horario
 from .models import Atividade, Sessao, Tema
@@ -211,7 +211,7 @@ def proporatividade(request):
             salas= Espaco.objects.filter(edificio=sala).exclude(id=edificioid)
             return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form, 'campu':campu, 'campus': campus,'edificio':sala,'edificios': Edificios,'espacos': salas})
 
-        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=1),
+        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=5),
                              professoruniversitarioutilizadorid = Professoruniversitario.objects.get(utilizadorid=2),
                              estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=request.POST['espacoid']),
                              tema=Tema.objects.get(id=request.POST['tema']))

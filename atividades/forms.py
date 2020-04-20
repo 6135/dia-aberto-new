@@ -1,6 +1,8 @@
 from django.forms import * 
 from .models import Atividade, Sessao,Materiais,Horario,Espaco,Tema,Departamento
 from datetime import datetime
+from configuracao.models import Campus
+
 
 def get_choices_time():
     return [(str(t),t) for t in range(5, 61, 5)]  
@@ -71,3 +73,10 @@ class atividadesFilterForm(Form):
         ("Tertulia", "Tertulia"),
         ("Palestra", "Palestra")
      ],widget=Select())
+
+
+class CampusForm(Form):
+    campus= ChoiceField(choices= Campus.objects.all(),label='Campus')
+
+    class Meta:
+        fields=('campus')
