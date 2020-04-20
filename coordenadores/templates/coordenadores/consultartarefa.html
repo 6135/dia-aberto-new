@@ -77,38 +77,50 @@
               <li class="is-active"><a href="#" aria-current="page">Tarefas</a></li>
             </ul>
           </nav>
+           <a href="{% url 'consultarTarefa' %}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
+            <span class="icon is-small">
+                <i class="mdi mdi-plus"></i>
+            </span>
+            <span>Criar nova Tarefa</span>
+        </a>
         <div class="table">
             <div class="table-wrapper">
                 <table class="table has-mobile-cards is-hoverable is-fullwidth" id="table01">
                     <thead>
                         <tr>
                             <th width="40px"></th>
-                            <th onclick="sortTable(1,true)" style="cursor:pointer;width: 300px;" class="pre-expandable">
+                             <th onclick="sortTable(1,true)" style="cursor:pointer;width: 200px;" class="pre-expandable">
+                                Dia
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>
+                            <th onclick="sortTable(2,true)" style="cursor:pointer;width: 200px;" class="pre-expandable">
                                 Horario
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
-                            <th onclick="sortTable(2,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
+                            <th onclick="sortTable(3,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
                                 Nome
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
-                            <th onclick="sortTable(3,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
-                                Atribuido a
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(4,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
-                                Estado
+                            <th onclick="sortTable(4,false)" style="cursor:pointer;width: 300px;" class="pre-expandable">
+                                Colaborador atribuido
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
                             <th onclick="sortTable(5,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
-                                Criador
+                                Atividade
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>
+                            <th onclick="sortTable(6,false)" style="cursor:pointer;width: 200px;" class="pre-expandable">
+                                Estado
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
@@ -127,11 +139,11 @@
                                     </span>
                                 </a>
                             </td>
-                            {% for horario in horarios %}
-                            <td data-label="Horarios">{{horario.inicio}} - {{horario.fim}}</td>
-                            {% endfor %}
-                            <td data-label="Nome">{{tarefa.nome}} </td>
+                            <td data-label="Dia">{{tarefa.sessaoid.dia|date:'d-m-Y'}}</td>
+                            <td data-label="Horarios">{{tarefa.sessaoid.horarioid.inicio}} - {{tarefa.sessaoid.horarioid.fim}}</td>
+                            <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
                             <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
+                            <td data-label="Sessao">{{tarefa.sessaoid.atividadeid.nome}}</td>
                             {% if tarefa.concluida == 0 %}
                             <td data-label="Estado">
                                 <span class="tag text is-warning" data-value="{{tarefa.concluida}}" style="width: 7rem;font-size: small;">Não Concluida</span>
@@ -141,7 +153,6 @@
                                 <span class="tag text is-success" data-value="{{tarefa.concluida}}" style="width: 7rem;font-size: small;">Concluida</span>
                             </td>
                             {% endif %}
-                            <td data-label="Criador">{{tarefa.coordenadorutilizadorid.utilizadorid.nome}} </td> 
                             <td ></td>       
                         </tr> 
                         <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
@@ -154,16 +165,8 @@
                                             {{tarefa.nome}}
                                         </p>
                                         <p>
-                                            <strong>Professor:</strong>
-                                            {{tarefa.professoruniversitarioutilizadorid.utilizadorid.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Data de submissão:</strong>
-                                            {{tarefa.dataalteracao}}
-                                        </p>
-                                        <p>
-                                            <strong>Estado de submissão:</strong>
-                                            {{tarefa.estado}}
+                                            <strong>Professor da Atividade:</strong>
+                                            {{tarefa.sessaoid.atividadeid.professoruniversitarioutilizadorid.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Tipo de tarefa:</strong>
@@ -171,51 +174,24 @@
                                         </p>
                                         <p>
                                             <strong>Descrição:</strong>
-                                            <div class="container">{{tarefa.descricao}}</div>
+                                            {{tarefa.descricao}}</div>
                                         </p>  
                                         <p>
-                                            <strong>Materiais:</strong>
-
-                                        </p>
-                                        <p>
                                             <strong>Campus:</strong>
-                                            {{tarefa.espacoid.edificio.campus.nome}}
+                                            {{tarefa.sessaoid.atividadeid.espacoid.edificio.campus.nome}}
                                         </p>
                                         <p>
-                                            <strong>Departamento:</strong>
-                                            {{tarefa.professoruniversitarioutilizadorid.departamento.nome}}
+                                            <strong>Edificio:</strong>
+                                            {{tarefa.sessaoid.atividadeid.espacoid.edificio.nome}}
                                         </p>
                                         <p>
-                                            <strong>Sessões:</strong>
+                                            <strong>Sala:</strong>
+                                            {{tarefa.sessaoid.atividadeid.espacoid.nome}}
                                         </p>
-                                        <div class="table-wrapper">
-                                            <table class="table has-mobile-cards">
-                                                <thead> 
-                                                    <tr>
-                                                        <th><div class="th-wrap">Dia</div></th>
-                                                        <th><div class="th-wrap" style="width:150px">Hora</div></th>
-                                                        <th><div class="th-wrap" style="width:150px">Vagas</div></th>
-                                                    </tr>
-                                                </thead>
-                                                {% for  sessao in  sessoes%}
-                                                    {% if  sessao.tarefaid.id == tarefa.id %}
-                                                        <tbody>
-                                                            <tr >
-                                                                <td data-label="Dia">{{tarefa.diaabertoid.datadiaabertoinicio.date}}</td>
-                                                                <td data-label="Hora">{{sessao.horarioid.inicio}} até {{sessao.horarioid.fim}}</td>
-                                                                <td data-label="Vagas">{{sessao.vagas}}</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </table>
-                                        </div>
-                                        {% if  tarefa.estado == 'Pendente' %}
-                                            <div style="margin-top:13px">
-                                                <a type="button" href="{% url 'validartarefa' tarefa.id 1%}" class="validatebutton button is-success" style="margin-right: 10px;" ><span class="icon is-small"><i class="mdi mdi-check"></i></span><span>Aceitar</span></a>
-                                                <a type="button" href="{% url 'validartarefa' tarefa.id 0%}" class="validatebutton button is-danger"><span class="icon is-small"><i class="mdi mdi-delete"></i></span> <span>Rejeitar</span></a>
-                                            </div>
-                                        {% endif %}
+                                         <p>
+                                            <strong>Criador:</strong>
+                                            {{tarefa.coordenadorutilizadorid.utilizadorid.nome}}
+                                        </p>
                                     </div>
                                 </div>
                             </div>                        
