@@ -8,6 +8,8 @@
 from django.db import models
 from configuracao.models import *
 from colaboradores.models import *
+from atividades.models import *
+from inscricoes.models import *
 
 class Coordenador(models.Model):
     # Field name made lowercase.
@@ -21,3 +23,16 @@ class Coordenador(models.Model):
     class Meta:
         db_table = 'Coordenador'
 
+class Tarefa(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
+    concluida = models.IntegerField(db_column='Concluida')  # Field name made lowercase.
+    descricao = models.CharField(db_column='Descricao', max_length=255)  # Field name made lowercase.
+    coordenadorutilizadorid = models.ForeignKey('Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
+    colaboradorutilizadorid = models.ForeignKey('colaboradores.Colaborador', models.DO_NOTHING, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
+    sessaoid = models.ForeignKey('atividades.Sessao', models.DO_NOTHING, db_column='SessaoID')  # Field name made lowercase.
+    inscricaoid = models.ForeignKey('inscricoes.Inscricao', models.DO_NOTHING, db_column='inscricaoid', blank=True, null=True)
+    tipo = models.CharField(db_column='Tipo', max_length=64)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'Tarefa'

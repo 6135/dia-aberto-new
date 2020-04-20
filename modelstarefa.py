@@ -15,7 +15,7 @@ class Tarefa(models.Model):
     descricao = models.CharField(db_column='Descricao', max_length=255)  # Field name made lowercase.
     coordenadorutilizadorid = models.ForeignKey('Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
     colaboradorutilizadorid = models.ForeignKey('Colaborador', models.DO_NOTHING, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
-    atividadeid = models.ForeignKey('Atividade', models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
+    sessaoid = models.ForeignKey('Sessao', models.DO_NOTHING, db_column='SessaoID')  # Field name made lowercase.
     inscricaoid = models.ForeignKey('Inscricao', models.DO_NOTHING, db_column='inscricaoid', blank=True, null=True)
     tipo = models.CharField(db_column='Tipo', max_length=64)  # Field name made lowercase.
 
