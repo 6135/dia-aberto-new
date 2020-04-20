@@ -10,6 +10,7 @@ from configuracao.models import *
 from colaboradores.models import *
 from atividades.models import *
 from inscricoes.models import *
+from utilizadores.models import *
 
 class Coordenador(models.Model):
     # Field name made lowercase.

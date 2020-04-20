@@ -1,5 +1,5 @@
 from django.forms import * 
-from .models import Tarefa
+from .models import Tarefa,Departamento
 from datetime import datetime
 
 def get_choices_time():
@@ -26,17 +26,15 @@ class DateTimeWidget(DateTimeInput):
 
 
 class TarefaForm(ModelForm):
-    tema = ChoiceField(choices=[(tema.id,tema.tema) for tema in Tema.objects.all()])
     tipo=[('Atividade','Atividade'),('Acompanhar','Acompanhar participantes')]
     class Meta:  
-        model = Atividade  
+        model = Tarefa 
         exclude = ['coordenadorutilizadorid','id','colaboradorutilizadorid']
         widgets = {
             'tipo': RadioSelect(),
             }
         
-        
-from configuracao.models import Departamento
+    
 
 class tarefaFilterForm(Form):
     searchTarefa = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Tarefa'}), required=False)
