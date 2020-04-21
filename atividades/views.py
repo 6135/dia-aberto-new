@@ -326,7 +326,7 @@ def proporatividade(request):
 
 def inserirsessao(request,id):
     is_empty = Sessao.objects.filter(atividadeid=id).count() < 1
-    print(is_empty)
+    #print(is_empty)
     today= datetime.now(timezone.utc) 
     diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
     diainicio= diaaberto.datadiaabertoinicio.date()
@@ -375,9 +375,37 @@ def inserirsessao(request,id):
                   context={'horarios': "" , 
                            'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 
                            'dias': dias_diaaberto,
-                           'is_empty': is_empty})        
+                           'is_empty': is_empty, "id":id})     
 
 
+def veredificios(request):
+    campus=request.POST["valuecampus"]
+    edificios = Edificio.objects.filter(campus=campus)
+    print(request.POST["valuecampus"])
+    print(edificios)
+    return render(request, template_name="atividades/generic_list_options.html", context={"generic": edificios})
+
+def versalas(request):
+    edificios=request.POST["valueedificio"]
+    print(request.POST["valueedificio"])
+    salas = Espaco.objects.filter(edificio=edificios)
+    return render(request, template_name="atividades/generic_list_options.html", context={"generic": salas})
+
+def verhorarios(request):
+    print("Hello")
+    disp= []
+    horariosindisponiveis= []
+    diasessao=request.POST["valuedia"]
+    id= request.POST["id"]
+    sessaodia=Sessao.objects.filter(atividadeid=id, dia=diasessao)
+    print(sessaodia)
+    for sessao in sessaodia:
+        horariosindisponiveis.append(sessao.horarioid)
+    for t in Horario.objects.all():
+        if  t not in horariosindisponiveis:
+            disp.append(t)
+    print(disp)
+    return render(request, template_name="atividades/horario_list_options.html", context={"generic": disp})
 
 
 def validaratividade(request,id, action):
