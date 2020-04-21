@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from .forms import AtividadeForm , MateriaisForm, atividadesFilterForm, CampusForm
 from .models import *
 from configuracao.models import Horario
-from .models import Atividade, Sessao, Tema
+from .models import Atividade, Sessao, Tema, Materiais
 from coordenadores.models import Coordenador
 from utilizadores.models import ProfessorUniversitario
 from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
@@ -167,13 +167,18 @@ def proporatividade(request):
                              estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=request.POST['espacoid']),
                              tema=Tema.objects.get(id=request.POST['tema']))
         activity_object_form = AtividadeForm(request.POST, instance=new_form)
+        material_object_form= MateriaisForm(request.POST)
         if activity_object_form.is_valid():
             activity_object_form.save()
             idAtividade= Atividade.objects.all().order_by('-id').first()
+            new_material= Materiais(atividadeid=idAtividade)
+            material_object_form= MateriaisForm(request.POST, instance= new_material)
+            material_object_form.save()
             return redirect('inserirSessao', idAtividade.id)
-    else:  
+    else:
+        material_object_form= MateriaisForm() 
         activity_object_form= AtividadeForm()
-    return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(), "espaco": -1})
+    return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(), "espaco": -1, "materiais": material_object_form})
 
 
     
