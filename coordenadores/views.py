@@ -13,10 +13,34 @@ from coordenadores.forms import tarefaFilterForm
 
 # Create your views here.
 def adicionartarefa(request):
-    
-    return render(request=request,template_name='coordenadores/criarTarefa.html')
+    form=TarefaForm()
+    if request.method == 'POST':
+        print(request.POST['tipo'])
+        if request.POST['tipo']=='Atividade':
+            tarefa_form=tarefaAtividade(request)
+            tarefa_form.save()
+            return redirect('consultarTarefa')      
+    return render(request=request,template_name='coordenadores/criarTarefa.html',context={'form':form})
 
+def tarefaAtividade(request):
+    atividade=Atividade.objects.get(id=request.POST['atividades'])
+    nome='Auxiliar na atividade '+atividade.nome
+    sessaoid=Sessao.objects.get(id=int(request.POST['sessoes']))
+    colaborador=Colaborador.objects.get(utilizadorid=request.POST['colaborador'])
+    return Tarefa(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=5),concluida=0,nome=nome,sessaoid=sessaoid,colaboradorutilizadorid=colaborador)
+def sessoesAtividade(request):
+    dia = request.POST['dia']
+    sessoes= Sessao.objects.filter(dia=dia)
+    return render(request,template_name='coordenadores/sessoesDropdown.html',context={'sessoes':sessoes})
 
+def diasAtividade(request):
+    atividadeid = request.POST['atividadeid']
+    sessoes= Sessao.objects.filter(atividadeid=atividadeid)
+    dias=[]
+    for sessao in sessoes:
+        if sessao.dia not in dias:
+            dias.append(sessao.dia)
+    return render(request,template_name='coordenadores/diasDropdown.html',context={'dias':dias})
 
 def filters(request):
     filters=[]

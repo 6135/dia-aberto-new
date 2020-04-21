@@ -29,10 +29,10 @@ class DateTimeWidget(DateTimeInput):
 
 class AtividadeForm(ModelForm):
     tema = ChoiceField(choices=[(tema.id,tema.tema) for tema in Tema.objects.all()])
-    #duracaoesperada= ChoiceField(choices=get_choices_time())
+    duracaoesperada= ChoiceField(choices=get_choices_time())
     class Meta:  
         model = Atividade  
-        exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid','tema','espacoid']
+        exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid','tema','espacoid',]
         widgets = {
             'nome': TextInput(attrs={'class': 'input'}),
             'tipo': Select(),
