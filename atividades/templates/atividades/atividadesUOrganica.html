@@ -101,7 +101,13 @@
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
-                            <th onclick="sortTable(2,true)" style="cursor:pointer;width: 300px;" class="pre-expandable">
+                            <th onclick="sortTable(4,false)" style="cursor:pointer;" class="pre-expandable">
+                                Criador
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>
+                            <th onclick="sortTable(2,true)" style="cursor:pointer;width: 400px;" class="pre-expandable">
                                 Submetido a
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
@@ -109,12 +115,6 @@
                             </th>
                             <th onclick="sortTable(3,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
                                 Estado
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(4,false)" style="cursor:pointer;" class="pre-expandable">
-                                Criador
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
@@ -134,6 +134,7 @@
                                 </a>
                             </td>
                             <td data-label="Nome">{{atividade.nome}} </td>
+                            <td data-label="Criador">{{atividade.professoruniversitarioutilizadorid.utilizadorid.nome}} </td> 
                             <td data-label="Submetido a" date-value="{{atividade.dataalteracao|date:'Y-m-d H:i'}}">{{atividade.dataalteracao}}</td>
                             {% if atividade.estado == "Pendente"%}
                             <td data-label="Estado">
@@ -148,7 +149,6 @@
                                 <span class="tag text is-success" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
                             </td>
                             {% endif %}
-                            <td data-label="Criador">{{atividade.professoruniversitarioutilizadorid.utilizadorid.nome}} </td> 
                             <td ></td>       
                         </tr> 
                         <tr class="detail" style="display:none;" id='Details{{atividade.id}}'>

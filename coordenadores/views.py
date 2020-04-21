@@ -28,10 +28,23 @@ def tarefaAtividade(request):
     sessaoid=Sessao.objects.get(id=int(request.POST['sessoes']))
     colaborador=Colaborador.objects.get(utilizadorid=request.POST['colaborador'])
     return Tarefa(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=5),concluida=0,nome=nome,sessaoid=sessaoid,colaboradorutilizadorid=colaborador)
+
 def sessoesAtividade(request):
     dia = request.POST['dia']
     sessoes= Sessao.objects.filter(dia=dia)
     return render(request,template_name='coordenadores/sessoesDropdown.html',context={'sessoes':sessoes})
+
+def colaboradoresAtividade(request):
+    sessao = request.POST['sessao']
+    tarefas= Tarefa.objects.filter(sessaoid=sessao)
+    if tarefas.count()>0:
+        colaboradores=[]
+        for tarefa in tarefas:
+            colaboradores.append(Colaborador.objects.filter(~Q(utilizadorid=tarefa.colaboradorutilizadorid.utilizadorid)))
+    else:
+        print('hello')
+        colaboradores=Colaborador.objects.all()
+    return render(request,template_name='coordenadores/colaboradoresDropdown.html',context={'colaboradores':colaboradores})
 
 def diasAtividade(request):
     atividadeid = request.POST['atividadeid']

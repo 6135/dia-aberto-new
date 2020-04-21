@@ -166,5 +166,21 @@
         }
       });
     })
+
+    $("#id_sessoes").change(function(){
+      var sessao = $(this).val(); 
+      console.log(sessao);
+      $.ajax({                       
+        url: "{% url 'colaboradoresAtividade' %}", 
+        method: 'POST',             
+        data: {
+            'sessao': sessao,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {   
+          $("#id_colaborador").html(data);           
+        }
+      });
+    })
 </script>
 {% endblock scripts %}
