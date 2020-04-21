@@ -7,7 +7,6 @@ from datetime import datetime, timezone,date, time
 from atividades.models import Espaco
 from django.core import serializers
 from django.core.serializers import json
-from django.db.models import Q
 
 # Create your views here.
 
@@ -106,33 +105,10 @@ def view_days_as_json(request):
 				  template_name='configuracao/blank.html', 
 				  context = {'dias_as_json': dias_as_json}
 				)
-
-def filterMenus(request, menus):
-	if request.method == 'POST':
-		search_specific = request.POST['searchAno']
-		if search_specific != "" and int(search_specific) > 0:
-			menus = menus.filter(diaaberto = Diaaberto.objects.get(ano=search_specific))
-		filters=['','','']
-		if request.POST.get('penha'):
-			filters[0]='Penha'
-		if  request.POST.get('gambelas'):
-			filters[1]='Gambelas'
-		if  request.POST.get('portimao'):
-			filters[2]='Portimao'			
-		if request.POST.get('portimao') or request.POST.get('gambelas') or request.POST.get('penha'):
-			menus = menus.filter(Q(campus=Campus.objects.filter(nome=filters[0]).first()) 
-						| Q(campus=Campus.objects.filter(nome=filters[1]).first())
-						| Q(campus=Campus.objects.filter(nome=filters[2]).first()))
-	return menus
-
-
 def viewMenus(request):
-	form = menusFilterForm(request.POST)
-	menus = Menu.objects.all()
-	menus = filterMenus(request,menus)
 	return render(request=request,
 				  template_name='configuracao/listaMenu.html',
-				  context = {'menus': menus, 'form': form}
+				  context = {'menus': Menu.objects.all()}
 				)
 
 def newMenu(request, id = None):
@@ -148,7 +124,6 @@ def newMenu(request, id = None):
 			menu_form_object = menu_form.save(commit=False)
 			menu_form_object.horarioid = Horario.objects.get(inicio='12:00:00',fim='14:00:00')
 			menu_form_object.campus = Campus.objects.get(id=submitted_data['campus'])
-			#print(submitted_data['diaaberto'])
 			menu_form_object.diaaberto = Diaaberto.objects.get(id=submitted_data['diaaberto'])
 			menu_form_object.save()
 			return redirect('novoPrato', menu_form_object.id)
