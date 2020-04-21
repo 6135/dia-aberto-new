@@ -325,6 +325,8 @@ def proporatividade(request):
 
 
 def inserirsessao(request,id):
+    is_empty = Sessao.objects.filter(atividadeid=id).count() < 1
+    print(is_empty)
     today= datetime.now(timezone.utc) 
     diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
     diainicio= diaaberto.datadiaabertoinicio.date()
@@ -334,23 +336,26 @@ def inserirsessao(request,id):
     for d in range(totaldias.days):
         dias_diaaberto.append(diainicio+timedelta(days=d))
 
-
-
     horariosindisponiveis= []
     disp= []
     if request.method == "POST":
         atividadeid=Atividade.objects.get(id=id)
         if 'ver' in request.POST:
             diasessao=request.POST["diasessao"]
-            print(diasessao)
             sessaodia=Sessao.objects.filter(atividadeid=id, dia=diasessao)
             for sessao in sessaodia:
                 horariosindisponiveis.append(sessao.horarioid)
             for t in Horario.objects.all():
                 if  t not in horariosindisponiveis:
                     disp.append(t)
-            print(disp)
-            return render(request,'atividades/proporAtividadeSessao.html',{'horarios': disp , 'sessao': diasessao, 'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 'dias': dias_diaaberto }) 
+            
+            return render(request=request,
+                          template_name='atividades/proporAtividadeSessao.html',
+                          context={'horarios': disp , 
+                                   'sessao': diasessao, 
+                                   'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 
+                                   'dias': dias_diaaberto,
+                                   'is_empty': is_empty }) 
         sessoes=Sessao.objects.all().filter(atividadeid=id)
         if 'save' in request.POST and len(sessoes)!=0 :
             return redirect('minhasAtividades')
@@ -365,7 +370,12 @@ def inserirsessao(request,id):
             new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
             new_Sessao.save()
             return redirect('inserirSessao', id)
-    return render(request,'atividades/proporAtividadeSessao.html',{'horarios': "" , 'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 'dias': dias_diaaberto})        
+    return render(request=request,
+                  template_name='atividades/proporAtividadeSessao.html',
+                  context={'horarios': "" , 
+                           'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 
+                           'dias': dias_diaaberto,
+                           'is_empty': is_empty})        
 
 
 
