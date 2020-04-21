@@ -32,7 +32,7 @@ class AtividadeForm(ModelForm):
     duracaoesperada= ChoiceField(choices=get_choices_time())
     class Meta:  
         model = Atividade  
-        exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid','tema','espacoid']
+        exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid','tema','espacoid',]
         widgets = {
             'nome': TextInput(attrs={'class': 'input'}),
             'tipo': Select(),

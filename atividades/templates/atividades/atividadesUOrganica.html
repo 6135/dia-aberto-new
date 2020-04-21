@@ -2,7 +2,8 @@
 {% block content %}
 <div class="columns">
        <div class="column is-3">
-        <form method="GET" action="">
+        <form method="POST" action="" id='filter'>
+            {% csrf_token %}
             <div>
             <div class="menu">
                 <p class="menu-label">Filtros Atividades</p>
@@ -10,7 +11,7 @@
                 <li>
                     <div class="field">
                         <div class="control is-expanded">
-                            <div id="departamento" class="select is-fullwidth">
+                            <div class="select is-fullwidth">
                                 {{filter.departamentos}}
                             </div>
                         </div>
@@ -286,14 +287,22 @@ tr.detail{
 {% endblock content %}
 {% block scripts%}
 <script>
-$("#departamento").change(function(){
-    console.log($(this).find(':selected').text());
-    var departamento=$(this).find(':selected').text();
-    $.ajax({
-        type:"GET",
-        dataType:"jsonp",
-        url:"{% url 'atividadesUOrganica' %}"
-    });
-});
+/*$('.validatebutton').click(function(){
+    var action= $(this).attr("action");
+    var id= $(this).attr("id");
+    console.log({{form.searchAtividade.value}});
+    $.ajax(
+        {
+            type:"GET",
+            url: "",
+            data:{
+                searchAtividade:form.searchAtividade.value,
+                Aceite:form.Aceite.value,
+                Recusada:form.Recusada.value,
+                Pendente:form.Pendente.value,
+                diaAbertoAtual:form.diaAbertoAtual.value
+            }
+    })
+});*/
 </script>
 {% endblock scripts%}

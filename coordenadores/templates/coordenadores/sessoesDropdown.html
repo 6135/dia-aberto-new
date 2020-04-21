@@ -1,0 +1,4 @@
+<option value="">---------</option>
+{% for sessao in sessoes %}
+<option value="{{ sessao.id }}">{{ sessao.horarioid.inicio }} até {{ sessao.horarioid.fim }}</option>
+{% endfor %}
