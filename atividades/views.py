@@ -34,6 +34,7 @@ def filters(request):
     return filters
 
 def minhasatividades(request):
+    
     atividades=Atividade.objects.all()
     sessoes=Sessao.objects.all()
     if request.method == 'POST' or request.GET.get('searchAtividade'):
@@ -190,7 +191,7 @@ def inserirsessao(request,id):
     is_empty = Sessao.objects.filter(atividadeid=id).count() < 1
     #print(is_empty)
     today= datetime.now(timezone.utc) 
-    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
     diainicio= diaaberto.datadiaabertoinicio.date()
     diafim= diaaberto.datadiaabertofim.date()
     totaldias= diafim-diainicio
