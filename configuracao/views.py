@@ -142,6 +142,7 @@ def newMenu(request, id = None):
 	menu_form = menuForm(instance=menu_object)
 	if request.method == 'POST':
 		submitted_data = request.POST.copy()
+		submitted_data
 		menu_form = menuForm(submitted_data,instance=menu_object)
 
 		if menu_form.is_valid():

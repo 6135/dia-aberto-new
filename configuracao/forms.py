@@ -64,11 +64,11 @@ class diaAbertoFilterForm(Form):
     showBy = ChoiceField(choices=showByChoices, widget=Select(), required=False)
 
 class menuForm(ModelForm):
-    diaaberto = ChoiceField(choices=[(dia,dia.ano) for dia in Diaaberto.objects.all()],widget=Select(), required=True)
-    campus = ChoiceField(choices=[(camp,camp.nome) for camp in Campus.objects.all()],widget=Select(), required=True)
+    diaaberto = ChoiceField(choices=[(dia.id,dia.ano) for dia in Diaaberto.objects.all()],widget=Select())
+    campus = ChoiceField(choices=[(camp.id,camp.nome) for camp in Campus.objects.all()],widget=Select())
     class Meta:
         model = Menu
-        exclude = ['id','horarioid']
+        exclude = ['id','horarioid','campus','diaaberto']
 
 class pratosForm(ModelForm):
     class Meta:
