@@ -113,7 +113,9 @@ def alterarAtividade(request,id):
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
     espaco= Espaco.objects.get(id=activity_object.espacoid.id)
-
+    materiais_object= Materiais.objects.get(atividadeid=id)
+    new_material = Materiais(atividadeid=activity_object, nomematerial= materiais_object)
+    materiais_object_form= MateriaisForm(instance=materiais_object)
     campusid= espaco.edificio.campus.id
     campus= Campus.objects.all().exclude(id=campusid)
 
@@ -128,16 +130,18 @@ def alterarAtividade(request,id):
         submitted_data = request.POST.copy()
         activity_object.tema = Tema.objects.get(id=int(request.POST['tema']))
         activity_object_form = AtividadeForm(submitted_data, instance=activity_object)
+        materiais_object_form = MateriaisForm(request.POST, instance=materiais_object)
         if activity_object_form.is_valid():
                 #-------Guardar as mudancas a atividade em si------
                 activity_object_formed = activity_object_form.save(commit=False)  
                 activity_object_formed.estado = "Pendente"
                 activity_object_formed.dataalteracao = datetime.now()
                 activity_object_formed.save()
+                materiais_object_form.save()
                 return redirect('inserirSessao',id)          
     return render(request=request,
                     template_name='atividades/proporAtividadeAtividade.html',
-                    context={'form': activity_object_form, 'espaco':espaco,'espacos':espacos, "edificios": edificios, "campus":campus }
+                    context={'form': activity_object_form, 'espaco':espaco,'espacos':espacos, "edificios": edificios, "campus":campus, "materiais":materiais_object_form}
                     )
 
 def eliminarAtividade(request,id):
