@@ -39,10 +39,7 @@ def colaboradoresAtividade(request):
     tarefas= Tarefa.objects.filter(sessaoid=sessao)
     if tarefas.count()>0:
         colaboradores=[]
-        for tarefa in tarefas:
-            colaboradores.append(Colaborador.objects.filter(~Q(utilizadorid=tarefa.colaboradorutilizadorid.utilizadorid)))
     else:
-        print('hello')
         colaboradores=Colaborador.objects.all()
     return render(request,template_name='coordenadores/colaboradoresDropdown.html',context={'colaboradores':colaboradores})
 
