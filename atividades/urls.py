@@ -12,4 +12,7 @@ urlpatterns = [
     path('eliminarsessao/<id>',views.eliminarSessao,name='eliminarSessao'),
     path('proporatividade',views.proporatividade,name='proporAtividade'),
     path('validaratividade/<int:id>/<int:action>',views.validaratividade,name='validarAtividade'),
+    url(r'^veredificios/$',views.veredificios,name="verEdificios"),
+    url(r'^versalas/$',views.versalas,name="verSalas"),
+    url(r'^verhorarios/$',views.verhorarios,name="verHorarios"),
 ]

@@ -27,7 +27,7 @@ class Participante(Utilizador):
         db_table = 'Participante'
 
 
-class Professoruniversitario(models.Model):
+class ProfessorUniversitario(models.Model):
     # Field name made lowercase.
     utilizadorid = models.OneToOneField(
         Utilizador, models.CASCADE, db_column='UtilizadorID', primary_key=True)
