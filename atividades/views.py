@@ -194,7 +194,7 @@ def inserirsessao(request,id):
     diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
     diainicio= diaaberto.datadiaabertoinicio.date()
     diafim= diaaberto.datadiaabertofim.date()
-    totaldias= diafim-diainicio
+    totaldias= diafim-diainicio+timedelta(days=1)
     dias_diaaberto= []
     for d in range(totaldias.days):
         dias_diaaberto.append(diainicio+timedelta(days=d))
