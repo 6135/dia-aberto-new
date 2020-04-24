@@ -182,7 +182,15 @@
                                         </p>  
                                         <p>
                                             <strong>Materiais:</strong>
-
+                                            {% for mat in materiais %}
+                                                {% if mat.atividadeid == atividade %}
+                                                    {% if mat.nomematerial != Null %}
+                                                        {{mat.nomematerial}}
+                                                    {% else %}
+                                                        --------
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
                                         </p>
                                         <p>
                                             <strong>Campus:</strong>

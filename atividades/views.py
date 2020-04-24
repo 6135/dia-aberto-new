@@ -37,6 +37,7 @@ def minhasatividades(request):
     
     atividades=Atividade.objects.all()
     sessoes=Sessao.objects.all()
+    materiais= Materiais.objects.all()
     if request.method == 'POST' or request.GET.get('searchAtividade'):
         today=datetime.now(timezone.utc)
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
@@ -53,7 +54,7 @@ def minhasatividades(request):
 
     return render(request=request,
 			template_name="atividades/minhasAtividades.html",
-            context={"atividades": atividades,"sessoes":sessoes,"filter":filterForm})
+            context={"atividades": atividades,"sessoes":sessoes,"materiais": materiais,"filter":filterForm})
 
 class Conflito:
     def __init__(self, atividade1,atividade2):
@@ -64,6 +65,7 @@ class Conflito:
 def atividadescoordenador(request):
     atividades=Atividade.objects.all()
     sessoes=Sessao.objects.all()
+    materiais= Materiais.objects.all()
     conflito2= []
     for atividade1 in atividades:
         for atividade2 in atividades:
@@ -107,7 +109,7 @@ def atividadescoordenador(request):
 
     return render(request=request,
 			template_name="atividades/atividadesUOrganica.html",
-            context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"filter":filterForm})
+            context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm})
 
 def alterarAtividade(request,id):
     #------atividade a alterar----
