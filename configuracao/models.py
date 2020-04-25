@@ -112,6 +112,9 @@ class Menu(models.Model):
     class Meta:
         db_table = 'Menu'
 
+    def __str__(self):
+        return str(self.campus.nome) + ' ' + str(self.diaaberto.ano)
+
 
 class Prato(models.Model):
     # Field name made lowercase.

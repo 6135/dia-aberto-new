@@ -64,8 +64,20 @@ class diaAbertoFilterForm(Form):
     showBy = ChoiceField(choices=showByChoices, widget=Select(), required=False)
 
 class menuForm(ModelForm):
-    diaaberto = ChoiceField(choices=[(dia,dia.ano) for dia in Diaaberto.objects.all()],widget=Select(), required=True)
-    campus = ChoiceField(choices=[(camp,camp.nome) for camp in Campus.objects.all()],widget=Select(), required=True)
+    diaaberto = ChoiceField(choices=[(dia.id,dia.ano) for dia in Diaaberto.objects.all()],widget=Select())
+    campus = ChoiceField(choices=[(camp.id,camp.nome) for camp in Campus.objects.all()],widget=Select())
+
+    def clean(self):
+        cleaned_data = super().clean()
+        campus_data = cleaned_data['campus']
+        diaaberto_data = cleaned_data.get['diaaberto']
+        if campus_data and diaaberto_data:
+            cleaned_data['campus'] = Campus.objects.get(id=campus_data)
+            cleaned_data['diaaberto'] = Diaaberto.objects.get(id=diaaberto_data)
+            self.instance.horarioid = Horario.objects.get(inicio='12:00:00',fim='14:00:00')
+        else:
+            raise ValidationError('Os campos preenchidos estão incorretos!')
+        
     class Meta:
         model = Menu
         exclude = ['id','horarioid']
