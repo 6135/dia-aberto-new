@@ -6,6 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from _datetime import timedelta
 
 class Transporte(models.Model):
     # Field name made lowercase.
@@ -93,6 +94,27 @@ class Diaaberto(models.Model):
     administradorutilizadorid = models.ForeignKey(
         'utilizadores.Administrador', models.CASCADE, db_column='AdministradorUtilizadorID')
 
+    def days_as_dict(self):
+        data_inicio = self.datadiaabertoinicio
+        data_fim = self.datadiaabertofim
+        total_dias= data_fim-data_inicio+timedelta(days=1)
+        return [{
+                    'key':	str( (data_inicio+timedelta(days=d)).date()),
+                    'value':	str((data_inicio+timedelta(days=d)).date())
+                } for d in range(total_dias.days)
+            ]
+
+    def days_as_tuples(self):
+        data_inicio = self.datadiaabertoinicio
+        data_fim = self.datadiaabertofim
+        total_dias= data_fim-data_inicio+timedelta(days=1)
+        return [(
+                    str( (data_inicio+timedelta(days=d)).date()),
+                    str((data_inicio+timedelta(days=d)).date())
+                    ) for d in range(total_dias.days)
+                ]
+
+
     class Meta:
         db_table = 'DiaAberto'
 
@@ -107,6 +129,8 @@ class Menu(models.Model):
         'Campus', models.CASCADE, db_column='Campus')
     diaaberto = models.ForeignKey(
         'Diaaberto', models.CASCADE, db_column='diaAberto')
+    dia = models.DateField(db_column='Dia')
+
     def pratos_(self):
         return Prato.objects.filter(menuid=self)
     class Meta:

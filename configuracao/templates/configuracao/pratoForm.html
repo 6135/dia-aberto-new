@@ -123,9 +123,9 @@
     <div class="column is-8 is-offset-2">
       <div class="level">
       <div class="level-left">
-         <button  class="button is-outlined" name="cancelar" value="Cancelar">
+         <a class="button is-large is-outlined" name="cancelar" value="Cancelar" href={% url 'verMenus' %}>
             <span>Cancelar</span>
-         </button>
+         </a>
       </div>
       <div class="level-right">
       {% if has_one %}

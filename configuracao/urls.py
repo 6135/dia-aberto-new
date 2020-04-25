@@ -15,5 +15,6 @@ urlpatterns = [
     path('novomenu', views.newMenu, name='novoMenu'),
     path('adicionarprato/<int:id>', views.newPrato, name='novoPrato'),
     path('delprato/<int:id>', views.delPrato, name='eliminarPrato'),
+    path('ajax/getDias', views.getDias, name='getDias'),
 
 ]

@@ -1,6 +1,7 @@
 from django.forms import *
 from .models import *
 from datetime import datetime
+from _datetime import timedelta
     
 class DateTimeWidget(DateTimeInput):
 
@@ -64,13 +65,14 @@ class diaAbertoFilterForm(Form):
     showBy = ChoiceField(choices=showByChoices, widget=Select(), required=False)
 
 class menuForm(ModelForm):
-    diaaberto = ChoiceField(choices=[(dia.id,dia.ano) for dia in Diaaberto.objects.all()],widget=Select())
+    dia_choices = Diaaberto.objects.all()
+    diaaberto = ChoiceField(choices=[('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices],widget=Select())
     campus = ChoiceField(choices=[(camp.id,camp.nome) for camp in Campus.objects.all()],widget=Select())
 
     def clean(self):
         cleaned_data = super().clean()
         campus_data = cleaned_data['campus']
-        diaaberto_data = cleaned_data.get['diaaberto']
+        diaaberto_data = cleaned_data['diaaberto']
         if campus_data and diaaberto_data:
             cleaned_data['campus'] = Campus.objects.get(id=campus_data)
             cleaned_data['diaaberto'] = Diaaberto.objects.get(id=diaaberto_data)
@@ -80,7 +82,10 @@ class menuForm(ModelForm):
         
     class Meta:
         model = Menu
-        exclude = ['id','horarioid','campus','diaaberto']
+        exclude = ['id','horarioid']
+        widgets = {
+            'dia': Select(attrs={'onchange':'console.log(\'Hello\');'})
+        }
 
 class pratosForm(ModelForm):
     class Meta:
