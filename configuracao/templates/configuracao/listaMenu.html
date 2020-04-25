@@ -77,7 +77,7 @@
                     <thead>
                         <tr>
                             <th style="width: 30px;" ></th>
-                            <th  onclick="sortTable(1,false)" style=" cursor: pointer;" class="pre-arrow">
+                            <th  onclick="sortTable(1,true)" style=" cursor: pointer;" class="pre-arrow">
                                 Dia Aberto<span class="arrow active"><span></span><span></span></span>
                             </th>
                             <th onclick="sortTable(2,false)" style=" cursor: pointer;" class="pre-arrow">
@@ -98,8 +98,8 @@
                                 </span>
                             </a>
                         </td>
-                        <td data-label="Dia Aberto" date-value="{{menu.diaaberto.ano}}">
-                            {{menu.diaaberto.ano}}
+                        <td data-label="Dia Aberto" date-value="{{menu.dia|date:'Y-m-d'}}">
+                            {{menu.dia}}
                         </td>
                         <td data-label="Campus">{{menu.campus.nome}}</td>
                         <td data-label="Operações">

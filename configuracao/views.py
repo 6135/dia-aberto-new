@@ -9,6 +9,7 @@ from django.core import serializers
 from django.core.serializers import json
 from django.db.models import Q
 import random
+from _datetime import timedelta
 
 # Create your views here.
 
@@ -141,10 +142,9 @@ def newMenu(request, id = None):
 	if id is not None:
 		menu_object = Menu.objects.get(id=id)
 	menu_form = menuForm(instance=menu_object)
+
 	if request.method == 'POST':
-		submitted_data = request.POST.copy()
-		submitted_data
-		menu_form = menuForm(submitted_data,instance=menu_object)
+		menu_form = menuForm(request.POST,instance=menu_object)
 		if menu_form.is_valid():
 			menu_form_object = menu_form.save()
 			return redirect('novoPrato', menu_form_object.id)
@@ -175,7 +175,10 @@ def newPrato(request, id):
 				return redirect('novoPrato',id)
 	return render(request=request,
 				  template_name='configuracao/pratoForm.html',
-				  context = {'form': prato_form, 'pratos': pratos, 'has_one': has_one}
+				  context = {'form': prato_form, 
+				  			'pratos': pratos, 
+							'has_one': has_one,
+							}
 				)
 
 def delPrato(request, id):
@@ -185,4 +188,26 @@ def delPrato(request, id):
 	return redirect('novoPrato',menuid)
 
 	
+def getDias(request):
+	options = []
+	default = {
+		'key': '',
+		'value': 'Escolha um Dia',
+	}
+	if request.POST['diaaberto_id'] != '':
+		if 'default' in request.POST and request.POST['default'] != 'None':
+			default = { 	
+				'key': str(Menu.objects.get(id=request.POST['default']).dia),
+				'value': str(Menu.objects.get(id=request.POST['default']).dia),
+			}
+		diaaberto = Diaaberto.objects.get(id=request.POST['diaaberto_id'])
+		data_inicio = diaaberto.datadiaabertoinicio
+		data_fim = diaaberto.datadiaabertofim
+		total_dias= data_fim-data_inicio+timedelta(days=1)
+		options = diaaberto.days_as_dict()
+	return render(request = request,
+				  template_name='configuracao/dropdown.html',
+				  context={'options':options, 'default': default}
+				)
+
 
