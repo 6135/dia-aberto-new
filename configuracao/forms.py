@@ -80,7 +80,7 @@ class menuForm(ModelForm):
         
     class Meta:
         model = Menu
-        exclude = ['id','horarioid']
+        exclude = ['id','horarioid','campus','diaaberto']
 
 class pratosForm(ModelForm):
     class Meta:

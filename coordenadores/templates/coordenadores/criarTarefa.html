@@ -1,0 +1,186 @@
+{% extends 'configuracao/app.html' %}
+{% block content %}
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'inicio' %}">Início</a></li>
+    <li><a href="{% url 'minhasAtividades' %}">Tarefas</a></li>
+    <li class="is-active"><a href="">Adicionar Tarefa</a></li>
+  </ul>
+</nav>
+<div style="padding: 3rem 2vw 1rem">
+    <div class="b-steps">
+        <form method="POST" action="">
+            <section class="step-content">
+                <div class="step-item">
+                    <div style="padding: 1rem 2vw 0px;">
+                        <hr>
+                        <div class="column is-offset-3 is-6">
+                            <div class="block">
+                                <div class="field">
+                                    <label class="label">Tipo de tarefa: </label>
+                                </div>
+                                <div class="control">
+                                    {{form.tipo}}
+                                </div>
+                            </div>
+                            <div id="Atividade" style="display:none">
+                                <div class="columns">
+                                    <div class="column"> 
+                                        <div class="field">
+                                            <label class="label">Atividade</label>
+                                            <div class="control">
+                                                <div class="select is-fullwidth">
+                                                    {{form.atividades}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="column"> 
+                                        <div class="field">
+                                            <label class="label">Dia</label>
+                                            <div class="control">
+                                                <div class="select is-fullwidth">
+                                                    {{form.dias}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>   
+                                    <div class="column"> 
+                                        <div class="field">
+                                            <label class="label">Sessão</label>
+                                            <div class="control">
+                                                <div class="select is-fullwidth">
+                                                    {{form.sessoes}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>           
+                                </div>
+                            </div>
+                            <div id="Outra" style="display:none">
+                                <div class="field">
+                                    <label class="label">Descrição</label>
+                                    <div class="control">
+                                        {{form.descricao}}
+                                    </div>
+                                </div>    
+                            </div>
+                            <div class="field" style="padding-top:10px">
+                                <label class="label">Colaborador</label>
+                                <div class="control">
+                                    <div class="select is-fullwidth">
+                                        {{form.colaborador}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                    </div>
+                </div>
+            </section>
+            <div class="column is-8 is-offset-2">
+                <div class="level">
+                  <div class="level-left">
+                    <a href="javascript:history.back()" class="button is-outlined" type="button">
+                      <span>Cancelar</span>
+                    </a>
+                  </div>
+                  <div class="level-right">
+                    <button type="submit" class="button is-large is-success is-outlined is-link">
+                      <span>Adicionar Tarefa</span>
+                    </button>
+                  </div>
+                </div>
+            </div>
+            {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{field.label|escape}}{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% csrf_token %}
+        </form>
+    </div>
+</div>
+<style>
+    .label {
+    font-weight: normal;
+    }
+    .b-steps .steps .step-items .step-item .step-details .step-title {
+  font-size: 1rem;
+}
+</style>
+{% endblock content %}
+{% block scripts %}
+<script>
+    $('input:radio').change(function(){
+        if(this.checked && this.value == 'Atividade'){
+            $('#Atividade').css("display","inline")
+            $('#Outra').css("display","none")
+        }
+        else if(this.checked && this.value == 'Outra'){
+            $('#Outra').css("display","inline")
+            $('#Atividade').css("display","none")
+        }
+        else{
+            $('#Atividade').css("display","none")
+            $('#Outra').css("display","none")
+        }
+    })
+
+    $("#id_atividades").change(function(){
+      var atividadeId = $(this).val();  
+      $.ajax({                       
+        url: "{% url 'diasAtividade' %}", 
+        method: 'POST',             
+        data: {
+            'atividadeid': atividadeId,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {   
+          $("#id_dias").html(data);
+          $("#id_sessoes").html('<option value="">---------</option>');       
+        }
+      });
+    })
+
+    $("#id_dias").change(function(){
+      var dia = $(this).val();  
+      $.ajax({                       
+        url: "{% url 'sessoesAtividade' %}", 
+        method: 'POST',             
+        data: {
+            'dia': dia,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {   
+          $("#id_sessoes").html(data);           
+        }
+      });
+    })
+
+    $("#id_sessoes").change(function(){
+      var sessao = $(this).val(); 
+      console.log(sessao);
+      $.ajax({                       
+        url: "{% url 'colaboradoresAtividade' %}", 
+        method: 'POST',             
+        data: {
+            'sessao': sessao,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {   
+          $("#id_colaborador").html(data);           
+        }
+      });
+    })
+</script>
+{% endblock scripts %}

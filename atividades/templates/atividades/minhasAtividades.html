@@ -8,14 +8,6 @@
             <div class="menu">
                 <p class="menu-label">Filtros Atividades</p>
                 <ul class="menu-list">
-                    <div class="field">
-                        <div class="control has-icons-left is-clearfix">
-                            {{filter.searchAtividade}}
-                            <span class="icon is-left">
-                                <i class="mdi mdi-magnify mdi-24px"></i>
-                            </span>
-                        </div>
-                    </div>
                     <li>
                         <div class="field" >
                             <label>Estado:</label>
@@ -47,6 +39,14 @@
                                 {{filter.diaAbertoAtual}}
                                 Atividades do Dia Aberto Atual
                         </label>
+                    </div>
+                    <div class="field">
+                        <div class="control has-icons-left is-clearfix">
+                            {{filter.searchAtividade}}
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
                     </div>
                     <div class="field">
                         <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
@@ -145,8 +145,7 @@
                                 
                             </td>
                             <td>
-                                <input type="hidden" id="del" name="variable" value="{% url 'eliminarAtividade' atividade.id %}"> 
-                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta atividade?')">
+                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta atividade?','{% url 'eliminarAtividade' atividade.id %}')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                     </span>
@@ -183,9 +182,30 @@
                                             <div class="container">{{atividade.descricao}}</div>
                                         </p>
                                         <p>
+                                            <strong>Materiais:</strong>
+                                            {% for mat in materiais %}
+                                                {% if mat.atividadeid == atividade %}
+                                                    {% if mat.nomematerial != Null %}
+                                                        {{mat.nomematerial}}
+                                                    {% else %}
+                                                        --------
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                        <p>
                                             <strong>Campus:</strong>
                                             {{atividade.espacoid.edificio.campus.nome}}
                                         </p>
+                                        <p>
+                                            <strong>Edificio:</strong>
+                                            {{atividade.espacoid.edificio.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Sala:</strong>
+                                            {{atividade.espacoid.nome}}
+                                        </p>
+                                         <p>
                                         <p>
                                             <strong>Departamento:</strong>
                                             {{atividade.professoruniversitarioutilizadorid.departamento.nome}}
@@ -226,22 +246,7 @@
             </div>
     </div>
 </div>
-<div id="msg" class="dialog modal">
-    <div class="modal-background"></div>
-    <div class="modal-card animation-content">
-        <section class="modal-card-body is-titleless">
-            <div class="media">
-                <div class="media-content">
-                    <p id='text-00'></p>
-                </div>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            <button onclick="alert.cancelar()" class="button">Cancelar</button>
-            <button onclick="alert.confirmar()" class="button is-success">Confirmar</button>
-        </footer>
-    </div>
-</div>
+{% include 'configuracao/popup.html' %}
 <style>
 .dialog .modal-card .modal-card-body.is-titleless {
     border-top-left-radius: 6px;
