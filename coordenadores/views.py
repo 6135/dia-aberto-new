@@ -17,22 +17,34 @@ def adicionartarefa(request):
     if request.method == 'POST':
         print(request.POST['tipo'])
         if request.POST['tipo']=='Atividade':
-            tarefa_form=tarefaAtividade(request)
-            tarefa_form.save()
+            tarefa=tarefaAtividade(request)
+            tarefa.save()
             return redirect('consultarTarefa')      
-    return render(request=request,template_name='coordenadores/criarTarefa.html',context={'form':form})
+    return render(request=request,
+                template_name='coordenadores/criarTarefa.html',
+                context={'form':form}
+            )
 
 def tarefaAtividade(request):
+
     atividade=Atividade.objects.get(id=request.POST['atividades'])
-    nome='Auxiliar na atividade '+atividade.nome
+    nome='Auxiliar na atividade ' + str(atividade.nome)
     sessaoid=Sessao.objects.get(id=int(request.POST['sessoes']))
     colaborador=Colaborador.objects.get(utilizadorid=request.POST['colaborador'])
-    return Tarefa(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=5),concluida=0,nome=nome,sessaoid=sessaoid,colaboradorutilizadorid=colaborador)
+
+    return Tarefa(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=5),
+                concluida=0,nome=nome,
+                sessaoid=sessaoid,
+                colaboradorutilizadorid=colaborador
+            )
 
 def sessoesAtividade(request):
     dia = request.POST['dia']
     sessoes= Sessao.objects.filter(dia=dia)
-    return render(request,template_name='coordenadores/sessoesDropdown.html',context={'sessoes':sessoes})
+    return render(request=request,
+                template_name='coordenadores/sessoesDropdown.html',
+                context={'sessoes':sessoes}
+            )
 
 def colaboradoresAtividade(request):
     sessao = request.POST['sessao']
@@ -44,7 +56,10 @@ def colaboradoresAtividade(request):
     else:
         print('hello')
         colaboradores=Colaborador.objects.all()
-    return render(request,template_name='coordenadores/colaboradoresDropdown.html',context={'colaboradores':colaboradores})
+    return render(request=request,
+                template_name='coordenadores/colaboradoresDropdown.html',
+                context={'colaboradores':colaboradores}
+            )
 
 def diasAtividade(request):
     atividadeid = request.POST['atividadeid']
@@ -53,7 +68,10 @@ def diasAtividade(request):
     for sessao in sessoes:
         if sessao.dia not in dias:
             dias.append(sessao.dia)
-    return render(request,template_name='coordenadores/diasDropdown.html',context={'dias':dias})
+    return render(request=request,
+                template_name='coordenadores/diasDropdown.html',
+                context={'dias':dias}
+            )
 
 def filters(request):
     filters=[]
@@ -91,5 +109,6 @@ def consultartarefa(request):
         filterForm=tarefaFilterForm()
 
     return render(request=request,
-			template_name="coordenadores/consultartarefa.html",
-            context={"tarefas": tarefas,"filter":filterForm})
+			    template_name="coordenadores/consultartarefa.html",
+                context={"tarefas": tarefas,"filter":filterForm}
+            )
