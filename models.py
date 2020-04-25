@@ -130,6 +130,8 @@ class Diaaberto(models.Model):
     datainscricaoatividadesfim = models.DateTimeField(db_column='DataInscricaoAtividadesFim')  # Field name made lowercase.
     datapropostasatividadesincio = models.DateTimeField(db_column='DataPropostasAtividadesIncio')  # Field name made lowercase.
     dataporpostaatividadesfim = models.DateTimeField(db_column='DataPorpostaAtividadesFim')  # Field name made lowercase.
+    precoprofessores = models.FloatField(db_column='PrecoProfessores')  # Field name made lowercase.
+    precoalunos = models.FloatField(db_column='PrecoAlunos')  # Field name made lowercase.
     administradorutilizadorid = models.ForeignKey(Administrador, models.DO_NOTHING, db_column='AdministradorUtilizadorID')  # Field name made lowercase.
 
     class Meta:
@@ -284,11 +286,9 @@ class Materiais(models.Model):
 class Menu(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     horarioid = models.ForeignKey(Horario, models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
-    precoalunos = models.FloatField(db_column='PrecoAlunos')  # Field name made lowercase.
-    precoprofessores = models.FloatField(db_column='PrecoProfessores', blank=True, null=True)  # Field name made lowercase.
-    tipo = models.CharField(db_column='Tipo', max_length=128, blank=True, null=True)  # Field name made lowercase.
     campus = models.ForeignKey(Campus, models.DO_NOTHING, db_column='Campus')  # Field name made lowercase.
     diaaberto = models.ForeignKey(Diaaberto, models.DO_NOTHING, db_column='diaAberto')  # Field name made lowercase.
+    dia = models.DateField(db_column='Dia', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -317,6 +317,7 @@ class Prato(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nrpratosdisponiveis = models.IntegerField(db_column='NrPratosDisponiveis')  # Field name made lowercase.
     prato = models.CharField(db_column='Prato', max_length=255)  # Field name made lowercase.
+    tipo = models.CharField(db_column='Tipo', max_length=32)  # Field name made lowercase.
     menuid = models.ForeignKey(Menu, models.DO_NOTHING, db_column='MenuID')  # Field name made lowercase.
 
     class Meta:
@@ -370,16 +371,44 @@ class Tarefa(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
     concluida = models.IntegerField(db_column='Concluida')  # Field name made lowercase.
-    descricao = models.CharField(db_column='Descricao', max_length=255)  # Field name made lowercase.
     coordenadorutilizadorid = models.ForeignKey(Coordenador, models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
     colaboradorutilizadorid = models.ForeignKey(Colaborador, models.DO_NOTHING, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
-    sessaoid = models.ForeignKey(Sessao, models.DO_NOTHING, db_column='SessaoID')  # Field name made lowercase.
-    inscricaoid = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricaoid', blank=True, null=True)
     tipo = models.CharField(db_column='Tipo', max_length=64)  # Field name made lowercase.
+    created_at = models.DateTimeField()
 
     class Meta:
         managed = False
         db_table = 'Tarefa'
+
+
+class Tarefaacompanhar(models.Model):
+    tarefaid = models.OneToOneField(Tarefa, models.DO_NOTHING, db_column='tarefaid', primary_key=True)
+    inscricaoid = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricaoid')
+    origem = models.CharField(max_length=255)
+    destino = models.CharField(max_length=255)
+    horario = models.DateField()
+
+    class Meta:
+        managed = False
+        db_table = 'TarefaAcompanhar'
+
+
+class Tarefaauxilar(models.Model):
+    tarefaid = models.OneToOneField(Tarefa, models.DO_NOTHING, db_column='tarefaid', primary_key=True)
+    sessaoid = models.ForeignKey(Sessao, models.DO_NOTHING, db_column='sessaoid')
+
+    class Meta:
+        managed = False
+        db_table = 'TarefaAuxilar'
+
+
+class Tarefaoutra(models.Model):
+    tarefaid = models.OneToOneField(Tarefa, models.DO_NOTHING, db_column='tarefaid', primary_key=True)
+    descricao = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'TarefaOutra'
 
 
 class Tema(models.Model):
