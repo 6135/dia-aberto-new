@@ -15,7 +15,6 @@ from coordenadores.forms import tarefaFilterForm
 def adicionartarefa(request):
     form=TarefaForm()
     if request.method == 'POST':
-        print(request.POST['tipo'])
         if request.POST['tipo']=='Atividade':
             tarefa_form=tarefaAtividade(request)
             tarefa_form.save()
