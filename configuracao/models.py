@@ -107,9 +107,13 @@ class Menu(models.Model):
         'Campus', models.CASCADE, db_column='Campus')
     diaaberto = models.ForeignKey(
         'Diaaberto', models.CASCADE, db_column='diaAberto')
-
+    def pratos_(self):
+        return Prato.objects.filter(menuid=self)
     class Meta:
         db_table = 'Menu'
+
+    def __str__(self):
+        return str(self.campus.nome) + ' ' + str(self.diaaberto.ano)
 
 
 class Prato(models.Model):

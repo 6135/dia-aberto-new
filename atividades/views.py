@@ -34,8 +34,10 @@ def filters(request):
     return filters
 
 def minhasatividades(request):
+    
     atividades=Atividade.objects.all()
     sessoes=Sessao.objects.all()
+    materiais= Materiais.objects.all()
     if request.method == 'POST' or request.GET.get('searchAtividade'):
         today=datetime.now(timezone.utc)
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
@@ -52,7 +54,7 @@ def minhasatividades(request):
 
     return render(request=request,
 			template_name="atividades/minhasAtividades.html",
-            context={"atividades": atividades,"sessoes":sessoes,"filter":filterForm})
+            context={"atividades": atividades,"sessoes":sessoes,"materiais": materiais,"filter":filterForm})
 
 class Conflito:
     def __init__(self, atividade1,atividade2):
@@ -63,6 +65,7 @@ class Conflito:
 def atividadescoordenador(request):
     atividades=Atividade.objects.all()
     sessoes=Sessao.objects.all()
+    materiais= Materiais.objects.all()
     conflito2= []
     for atividade1 in atividades:
         for atividade2 in atividades:
@@ -106,7 +109,7 @@ def atividadescoordenador(request):
 
     return render(request=request,
 			template_name="atividades/atividadesUOrganica.html",
-            context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"filter":filterForm})
+            context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm})
 
 def alterarAtividade(request,id):
     #------atividade a alterar----
@@ -190,10 +193,10 @@ def inserirsessao(request,id):
     is_empty = Sessao.objects.filter(atividadeid=id).count() < 1
     #print(is_empty)
     today= datetime.now(timezone.utc) 
-    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
     diainicio= diaaberto.datadiaabertoinicio.date()
     diafim= diaaberto.datadiaabertofim.date()
-    totaldias= diafim-diainicio
+    totaldias= diafim-diainicio+timedelta(days=1)
     dias_diaaberto= []
     for d in range(totaldias.days):
         dias_diaaberto.append(diainicio+timedelta(days=d))
