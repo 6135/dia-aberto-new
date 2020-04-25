@@ -26,6 +26,7 @@ class TarefaAuxiliarForm(ModelForm):
     class Meta:
         model= TarefaAuxiliar
         exclude = ['tarefaid']
+        
 class TarefaAcompanharForm(ModelForm):
 
     class Meta:
