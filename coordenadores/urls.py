@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^ajax/adicionarsessoes/$', views.sessoesAtividade, name='sessoesAtividade'),
     url(r'^ajax/adicionardias/$', views.diasAtividade, name='diasAtividade'),
     url(r'^ajax/adicionarcolaboradores/$', views.colaboradoresAtividade, name='colaboradoresAtividade'),
+    url(r'^ajax/tipotarefa/$', views.tipoTarefa, name='tipoTarefa'),
 ]

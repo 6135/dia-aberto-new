@@ -27,12 +27,38 @@ class Tarefa(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
     concluida = models.IntegerField(db_column='Concluida')  # Field name made lowercase.
-    descricao = models.CharField(db_column='Descricao', max_length=255)  # Field name made lowercase.
-    coordenadorutilizadorid = models.ForeignKey('Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
-    colaboradorutilizadorid = models.ForeignKey('colaboradores.Colaborador', models.DO_NOTHING, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
-    sessaoid = models.ForeignKey('atividades.Sessao', models.DO_NOTHING, db_column='SessaoID')  # Field name made lowercase.
-    inscricaoid = models.ForeignKey('inscricoes.Inscricao', models.DO_NOTHING, db_column='inscricaoid', blank=True, null=True)
+    coordenadorutilizadorid = models.ForeignKey(Coordenador, models.CASCADE, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
+    colaboradorutilizadorid = models.ForeignKey(Colaborador, models.CASCADE, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
     tipo = models.CharField(db_column='Tipo', max_length=64)  # Field name made lowercase.
+    created_at = models.DateTimeField()
 
     class Meta:
         db_table = 'Tarefa'
+
+
+class TarefaAcompanhar(models.Model):
+    tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
+    inscricaoid = models.ForeignKey(Inscricao, models.CASCADE, db_column='inscricaoid')
+    origem = models.CharField(max_length=255, db_column='origem', blank=False, null=False)
+    destino = models.CharField(max_length=255, db_column='destino', blank=False, null=False)
+    horario = models.DateField( blank=False, null=False)
+
+    class Meta:
+        db_table = 'TarefaAcompanhar'
+
+
+class TarefaAuxiliar(models.Model):
+    tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
+    sessaoid = models.ForeignKey('atividades.Sessao', models.CASCADE, db_column='sessaoid')
+
+    class Meta:
+        db_table = 'TarefaAuxiliar'
+
+
+class TarefaOutra(models.Model):
+    tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
+    descricao = models.TextField(db_column='descricao', blank=False, null=False)
+
+    class Meta:
+        db_table = 'TarefaOutra'
+

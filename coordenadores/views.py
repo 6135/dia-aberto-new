@@ -9,7 +9,7 @@ from django.http import HttpResponseRedirect
 from datetime import datetime, date,timezone
 from _datetime import timedelta
 from django.db.models import Q
-from coordenadores.forms import tarefaFilterForm
+from coordenadores.forms import *
 
 # Create your views here.
 def adicionartarefa(request):
@@ -21,6 +21,21 @@ def adicionartarefa(request):
             return redirect('consultarTarefa')      
     return render(request=request,
                 template_name='coordenadores/criarTarefa.html',
+                context={'formTarefa':form}
+            )
+
+def tipoTarefa(request):
+    if request.method == 'POST':
+        tipo = request.POST['tipo']
+        if tipo == 'tarefaAuxiliar':
+            form = TarefaAuxiliarForm()
+            template='coordenadores/tarefaAuxiliar.html'
+        elif tipo == 'tarefaAcompanhar':
+            form = TarefaAcompanharForm()
+        elif tipo == 'tarefaOutra':   
+            form = TarefaOutraForm()
+    return render(request=request,
+                template_name=template,
                 context={'form':form}
             )
 
@@ -47,11 +62,7 @@ def sessoesAtividade(request):
 
 def colaboradoresAtividade(request):
     sessao = request.POST['sessao']
-    tarefas= Tarefa.objects.filter(sessaoid=sessao)
-    if tarefas.count()>0:
-        colaboradores=[]
-    else:
-        colaboradores=Colaborador.objects.all()
+    colaboradores=Colaborador.objects.all()
     return render(request=request,
                 template_name='coordenadores/colaboradoresDropdown.html',
                 context={'colaboradores':colaboradores}

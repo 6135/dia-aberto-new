@@ -20,56 +20,16 @@
                                     <label class="label">Tipo de tarefa: </label>
                                 </div>
                                 <div class="control">
-                                    {{form.tipo}}
+                                    {{formTarefa.tipo}}
                                 </div>
                             </div>
-                            <div id="Atividade" style="display:none">
-                                <div class="columns">
-                                    <div class="column"> 
-                                        <div class="field">
-                                            <label class="label">Atividade</label>
-                                            <div class="control">
-                                                <div class="select is-fullwidth">
-                                                    {{form.atividades}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="column"> 
-                                        <div class="field">
-                                            <label class="label">Dia</label>
-                                            <div class="control">
-                                                <div class="select is-fullwidth">
-                                                    {{form.dias}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>   
-                                    <div class="column"> 
-                                        <div class="field">
-                                            <label class="label">Sessão</label>
-                                            <div class="control">
-                                                <div class="select is-fullwidth">
-                                                    {{form.sessoes}}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>           
-                                </div>
-                            </div>
-                            <div id="Outra" style="display:none">
-                                <div class="field">
-                                    <label class="label">Descrição</label>
-                                    <div class="control">
-                                        {{form.descricao}}
-                                    </div>
-                                </div>    
+                            <div id="tipoTarefa">         
                             </div>
                             <div class="field" style="padding-top:10px">
                                 <label class="label">Colaborador</label>
                                 <div class="control">
                                     <div class="select is-fullwidth">
-                                        {{form.colaborador}}
+                                        {{formTarefa.colaborador}}
                                     </div>
                                 </div>
                             </div>
@@ -122,22 +82,24 @@
 {% block scripts %}
 <script>
     $('input:radio').change(function(){
-        if(this.checked && this.value == 'Atividade'){
-            $('#Atividade').css("display","inline")
-            $('#Outra').css("display","none")
-        }
-        else if(this.checked && this.value == 'Outra'){
-            $('#Outra').css("display","inline")
-            $('#Atividade').css("display","none")
-        }
-        else{
-            $('#Atividade').css("display","none")
-            $('#Outra').css("display","none")
-        }
-    })
+        var tipo=this.value;
 
-    $("#id_atividades").change(function(){
-      var atividadeId = $(this).val();  
+        $.ajax({                       
+        url: "{% url 'tipoTarefa' %}", 
+        method: 'POST',             
+        data: {
+            'tipo' : tipo,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {   
+          $("#tipoTarefa").html(data);     
+        }
+      });
+
+    });
+
+    function diasSelect(){
+      var atividadeId = document.getElementById("id_atividades").value; 
       $.ajax({                       
         url: "{% url 'diasAtividade' %}", 
         method: 'POST',             
@@ -150,10 +112,10 @@
           $("#id_sessoes").html('<option value="">---------</option>');       
         }
       });
-    })
+    }
 
-    $("#id_dias").change(function(){
-      var dia = $(this).val();  
+    function sessoesSelect(){
+      var dia = document.getElementById("id_dias").value; 
       $.ajax({                       
         url: "{% url 'sessoesAtividade' %}", 
         method: 'POST',             
@@ -165,10 +127,10 @@
           $("#id_sessoes").html(data);           
         }
       });
-    })
+    }
 
-    $("#id_sessoes").change(function(){
-      var sessao = $(this).val(); 
+    function colaboradoresSelect(){
+      var sessao = document.getElementById("id_sessoes").value;; 
       console.log(sessao);
       $.ajax({                       
         url: "{% url 'colaboradoresAtividade' %}", 
@@ -181,6 +143,6 @@
           $("#id_colaborador").html(data);           
         }
       });
-    })
+    }
 </script>
 {% endblock scripts %}
