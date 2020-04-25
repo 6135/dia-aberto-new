@@ -13,6 +13,7 @@ class TarefaForm(ModelForm):
     sessoes=ChoiceField(choices=[('','------------')])
     dias=ChoiceField(choices=[('','------------')])
     colaborador=ChoiceField(choices=[('','------------')])
+    
     def __init__(self, *args, **kwargs):
         super(TarefaForm, self).__init__(*args, **kwargs)
         self.fields['descricao'].required = False

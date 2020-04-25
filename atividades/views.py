@@ -108,8 +108,9 @@ def atividadescoordenador(request):
         filterForm=atividadesFilterForm()
 
     return render(request=request,
-			template_name="atividades/atividadesUOrganica.html",
-            context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm})
+                template_name="atividades/atividadesUOrganica.html",
+                context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm}
+                )
 
 def alterarAtividade(request,id):
     #------atividade a alterar----
@@ -136,15 +137,18 @@ def alterarAtividade(request,id):
         materiais_object_form = MateriaisForm(request.POST, instance=materiais_object)
         if activity_object_form.is_valid():
                 #-------Guardar as mudancas a atividade em si------
-                activity_object_formed = activity_object_form.save(commit=False)  
+                activity_object_form.save()  
                 activity_object_formed.estado = "Pendente"
                 activity_object_formed.dataalteracao = datetime.now()
-                activity_object_formed.save()
                 materiais_object_form.save()
                 return redirect('inserirSessao',id)          
     return render(request=request,
                     template_name='atividades/proporAtividadeAtividade.html',
-                    context={'form': activity_object_form, 'espaco':espaco,'espacos':espacos, "edificios": edificios, "campus":campus, "materiais":materiais_object_form}
+                    context={'form': activity_object_form, 
+                            'espaco':espaco,'espacos':espacos, 
+                            "edificios": edificios, 
+                            "campus":campus, 
+                            "materiais":materiais_object_form}
                     )
 
 def eliminarAtividade(request,id):
@@ -171,7 +175,8 @@ def proporatividade(request):
         new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=5),
                              professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
                              estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=request.POST['espacoid']),
-                             tema=Tema.objects.get(id=request.POST['tema']))
+                             tema=Tema.objects.get(id=request.POST['tema'])
+                            )
         activity_object_form = AtividadeForm(request.POST, instance=new_form)
         material_object_form= MateriaisForm(request.POST)
         if activity_object_form.is_valid():
@@ -184,7 +189,13 @@ def proporatividade(request):
     else:
         material_object_form= MateriaisForm() 
         activity_object_form= AtividadeForm()
-    return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(), "espaco": -1, "materiais": material_object_form})
+    return render(request=request,
+                template_name='atividades/proporAtividadeAtividade.html',
+                context={'form': activity_object_form,
+                        'campus': Campus.objects.all(), 
+                        "espaco": -1, 
+                        "materiais": material_object_form}
+            )
 
 
     
