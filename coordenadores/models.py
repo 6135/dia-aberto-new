@@ -23,13 +23,14 @@ class Coordenador(models.Model):
     class Meta:
         db_table = 'Coordenador'
 
+
 class Tarefa(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
-    concluida = models.IntegerField(db_column='Concluida')  # Field name made lowercase.
-    coordenadorutilizadorid = models.ForeignKey(Coordenador, models.CASCADE, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
-    colaboradorutilizadorid = models.ForeignKey(Colaborador, models.CASCADE, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
-    tipo = models.CharField(db_column='Tipo', max_length=64)  # Field name made lowercase.
+    estado = models.CharField(max_length=64)
+    coordenadorutilizadorid = models.ForeignKey(Coordenador, models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
+    colaboradorutilizadorid = models.ForeignKey(Colaborador, models.DO_NOTHING, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
+    tipo = models.CharField(max_length=64)
     created_at = models.DateTimeField()
 
     class Meta:
@@ -41,8 +42,9 @@ class TarefaAcompanhar(models.Model):
     inscricaoid = models.ForeignKey(Inscricao, models.CASCADE, db_column='inscricaoid')
     origem = models.CharField(max_length=255, db_column='origem', blank=False, null=False)
     destino = models.CharField(max_length=255, db_column='destino', blank=False, null=False)
-    horario = models.DateField( blank=False, null=False)
-
+    horario = models.TimeField(blank=False, null=False)
+    dia = models.DateField()
+    
     class Meta:
         db_table = 'TarefaAcompanhar'
 
@@ -58,6 +60,8 @@ class TarefaAuxiliar(models.Model):
 class TarefaOutra(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
     descricao = models.TextField(db_column='descricao', blank=False, null=False)
+    horario = models.TimeField(blank=False, null=False)
+    dia = models.DateField()
 
     class Meta:
         db_table = 'TarefaOutra'

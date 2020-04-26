@@ -12,13 +12,6 @@
                     <div class="field">
                         <div class="control is-expanded">
                             <div class="select is-fullwidth">
-                                {{filter.departamentos}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control is-expanded">
-                            <div class="select is-fullwidth">
                                 {{filter.tipo}}
                             </div>
                         </div>
@@ -45,6 +38,12 @@
                             <label class="checkbox">
                                     {{filter.naoConcluida}}
                                     Não Concluida
+                            </label>
+                        </div>
+                        <div class="field" style="padding-left: 1rem;">
+                            <label class="checkbox">
+                                    {{filter.naoAtribuida}}
+                                    Não Atribuida
                             </label>
                         </div>
                     </ul>
@@ -89,13 +88,13 @@
                     <thead>
                         <tr>
                             <th width="40px"></th>
-                             <th onclick="sortTable(1,true)" style="cursor:pointer;width: 200px;" class="pre-expandable">
+                             <th onclick="sortTable(1,false)" style="cursor:pointer;width: 200px;" class="pre-expandable">
                                 Dia
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
-                            <th onclick="sortTable(2,true)" style="cursor:pointer;width: 200px;" class="pre-expandable">
+                            <th onclick="sortTable(2,false)" style="cursor:pointer;width: 200px;" class="pre-expandable">
                                 Horario
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
@@ -114,7 +113,7 @@
                                 </span>
                             </th>
                             <th onclick="sortTable(5,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
-                                Atividade
+                                Tipo
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
@@ -130,6 +129,9 @@
                         </tr>
                     </thead>
                     {% for tarefa in tarefas %}
+                    {% if tarefa.tipo == "Auxiliar" %}
+                    {% for tarefaauxiliar in tarefasauxiliar %}
+                    {% if tarefaauxiliar.tarefaid == tarefa %}
                     <tbody id="{{tarefa}}">      
                         <tr draggable="false">
                             <td class="chevron-cell">
@@ -139,18 +141,22 @@
                                     </span>
                                 </a>
                             </td>
-                            <td data-label="Dia">{{tarefa.sessaoid.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horarios">{{tarefa.sessaoid.horarioid.inicio}} - {{tarefa.sessaoid.horarioid.fim}}</td>
+                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
+                            <td data-label="Horarios">{{tarefaauxiliar.sessaoid.horarioid.inicio}} - {{tarefaauxiliar.sessaoid.horarioid.fim}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
                             <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
-                            <td data-label="Sessao">{{tarefa.sessaoid.atividadeid.nome}}</td>
-                            {% if tarefa.concluida == 0 %}
+                            <td data-label="Tipo">{{tarefa.tipo}}</td>
+                            {% if tarefa.estado == "naoConcluida" %}
                             <td data-label="Estado">
-                                <span class="tag text is-warning" data-value="{{tarefa.concluida}}" style="width: 7rem;font-size: small;">Não Concluida</span>
+                                <span class="tag text is-warning" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Concluida</span>
                             </td>
-                            {% elif tarefa.concluida == 1%}
+                            {% elif tarefa.estado == "Concluida"%}
                             <td data-label="Estado">
-                                <span class="tag text is-success" data-value="{{tarefa.concluida}}" style="width: 7rem;font-size: small;">Concluida</span>
+                                <span class="tag text is-success" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Concluida</span>
+                            </td>
+                            {% elif tarefa.estado == "naoAtribuida"%}
+                            <td data-label="Estado">
+                                <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
                             </td>
                             {% endif %}
                             <td ></td>       
@@ -166,30 +172,34 @@
                                         </p>
                                         <p>
                                             <strong>Professor da Atividade:</strong>
-                                            {{tarefa.sessaoid.atividadeid.professoruniversitarioutilizadorid.utilizadorid.nome}}
+                                            {{tarefaauxiliar.sessaoid.atividadeid.professoruniversitarioutilizadorid.utilizadorid.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Colaborador Atribuido:</strong>
+                                            {{tarefa.colaboradorutilizadorid.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Tipo de tarefa:</strong>
                                             {{tarefa.tipo}}
                                         </p>
-                                        <p>
+                                        <!--<p>
                                             <strong>Descrição:</strong>
                                             {{tarefa.descricao}}</div>
-                                        </p>  
+                                        </p>  -->
                                         <p>
                                             <strong>Campus:</strong>
-                                            {{tarefa.sessaoid.atividadeid.espacoid.edificio.campus.nome}}
+                                            {{tarefaauxiliar.sessaoid.atividadeid.espacoid.edificio.campus.nome}}
                                         </p>
                                         <p>
                                             <strong>Edificio:</strong>
-                                            {{tarefa.sessaoid.atividadeid.espacoid.edificio.nome}}
+                                            {{tarefaauxiliar.sessaoid.atividadeid.espacoid.edificio.nome}}
                                         </p>
                                         <p>
                                             <strong>Sala:</strong>
-                                            {{tarefa.sessaoid.atividadeid.espacoid.nome}}
+                                            {{tarefaauxiliar.sessaoid.atividadeid.espacoid.nome}}
                                         </p>
                                          <p>
-                                            <strong>Criador:</strong>
+                                            <strong>Coordenador Responsavel:</strong>
                                             {{tarefa.coordenadorutilizadorid.utilizadorid.nome}}
                                         </p>
                                     </div>
@@ -197,7 +207,157 @@
                             </div>                        
                         </td>                
                       </tr>
-                    </tbody>         
+                    </tbody>
+                    {% endif %}
+                    {% endfor %} 
+                    {% endif %}
+
+
+
+
+
+                    {% if tarefa.tipo == "Acompanhar" %}
+                    {% for tarefaacompanhar in tarefasacompanhar %}
+                    {% if tarefaacompanhar.tarefaid == tarefa %}
+                    <tbody id="{{tarefa}}">      
+                        <tr draggable="false">
+                            <td class="chevron-cell">
+                                <a class="detailbutton" role="button" onclick="displayDetails({{tarefa.id}})" tarefa="{{tarefa.id}}">
+                                    <span class="icon-expandable">
+                                        <i class="mdi mdi-chevron-right mdi-24px"></i>
+                                    </span>
+                                </a>
+                            </td>
+                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
+                            <td data-label="Horarios">{{tarefaacompanhar.horario}}</td>
+                            <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
+                            <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
+                            <td data-label="Tipo">{{tarefa.tipo}}</td>
+                            {% if tarefa.estado == "naoConcluida" %}
+                            <td data-label="Estado">
+                                <span class="tag text is-warning" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Concluida</span>
+                            </td>
+                            {% elif tarefa.estado == "Concluida"%}
+                            <td data-label="Estado">
+                                <span class="tag text is-success" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Concluida</span>
+                            </td>
+                            {% elif tarefa.estado == "naoAtribuida"%}
+                            <td data-label="Estado">
+                                <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
+                            </td>
+                            {% endif %}
+                            <td ></td>       
+                        </tr> 
+                        <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
+                        <td colspan="7">
+                            <div class="detail-container">
+                                <div class="content"> 
+                                    <div style="font-size: 15px">
+                                        <p>
+                                            <strong>Nome:</strong>
+                                            {{tarefa.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Colaborador Atribuido:</strong>
+                                            {{tarefa.colaboradorutilizadorid.utilizadorid.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Tipo de tarefa:</strong>
+                                            {{tarefa.tipo}}
+                                        </p>
+                                        <p>
+                                            <strong>Acompanhar quem:</strong>
+                            
+                                        </p>
+                                        <p>
+                                            <strong>Origem:</strong>
+                                            {{tarefaacompanhar.origem}}
+                                        </p>
+                                        <p>
+                                            <strong>Destino:</strong>
+                                            {{tarefaacompanhar.destino}}
+                                        </p>
+                                         <p>
+                                            <strong>Coordenador Responsavel:</strong>
+                                            {{tarefa.coordenadorutilizadorid.utilizadorid.nome}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>                        
+                        </td>                
+                      </tr>
+                    </tbody>
+                    {% endif %}
+                    {% endfor %} 
+                    {% endif %}    
+                            
+                    {% if tarefa.tipo == "Outra" %}
+                    {% for tarefaoutra in tarefasoutra %}
+                    {% if tarefaoutra.tarefaid == tarefa %}
+                    <tbody id="{{tarefa}}">      
+                        <tr draggable="false">
+                            <td class="chevron-cell">
+                                <a class="detailbutton" role="button" onclick="displayDetails({{tarefa.id}})" tarefa="{{tarefa.id}}">
+                                    <span class="icon-expandable">
+                                        <i class="mdi mdi-chevron-right mdi-24px"></i>
+                                    </span>
+                                </a>
+                            </td>
+                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
+                            <td data-label="Horarios">{{tarefaoutra.horario}}</td>
+                            <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
+                            <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
+                            <td data-label="Tipo">{{tarefa.tipo}}</td>
+                            {% if tarefa.estado == "naoConcluida" %}
+                            <td data-label="Estado">
+                                <span class="tag text is-warning" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Concluida</span>
+                            </td>
+                            {% elif tarefa.estado == "Concluida"%}
+                            <td data-label="Estado">
+                                <span class="tag text is-success" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Concluida</span>
+                            </td>
+                            {% elif tarefa.estado == "naoAtribuida"%}
+                            <td data-label="Estado">
+                                <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
+                            </td>
+                            {% endif %}
+                            <td ></td>       
+                        </tr> 
+                        <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
+                        <td colspan="7">
+                            <div class="detail-container">
+                                <div class="content"> 
+                                    <div style="font-size: 15px">
+                                        <p>
+                                            <strong>Nome:</strong>
+                                            {{tarefa.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Colaborador Atribuido:</strong>
+                                            {{tarefa.colaboradorutilizadorid.utilizadorid.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Tipo de tarefa:</strong>
+                                            {{tarefa.tipo}}
+                                        </p>
+                                        <p>
+                                            <strong>Descrição:</strong>
+                                            {{tarefaoutra.descricao}}
+                                        </p>
+                                         <p>
+                                            <strong>Coordenador Responsavel:</strong>
+                                            {{tarefa.coordenadorutilizadorid.utilizadorid.nome}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>                        
+                        </td>                
+                      </tr>
+                    </tbody>
+                    {% endif %}
+                    {% endfor %} 
+                    {% endif %}    
+
                     {% endfor %}
                 </table>
             </div>

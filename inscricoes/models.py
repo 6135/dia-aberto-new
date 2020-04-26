@@ -4,7 +4,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Inscricao(models.Model):
-    ninscricao = models.IntegerField()
+    nrinscricao = models.IntegerField()
     ano = models.IntegerField(
         validators=[
             validators.MinValueValidator(1),
@@ -13,10 +13,10 @@ class Inscricao(models.Model):
     )
     local = models.CharField(max_length=128)
     areacientifica = models.CharField(max_length=64)
-    participante = models.ForeignKey(
+    participanteutilizadorid = models.ForeignKey(
         'utilizadores.Participante', models.CASCADE)
     # TODO: Descomentar quando a configuração do Dia Aberto estiver pronta
-    # diaaberto = models.ForeignKey('configuracao.Diaaberto', models.CASCADE)
+    diaaberto = models.ForeignKey('configuracao.Diaaberto', models.CASCADE)
 
     class Meta:
         db_table = 'Inscricao'
