@@ -83,40 +83,44 @@ def diasAtividade(request):
 
 def filters(request):
     filters=[]
-    if request.POST.get('Realizada'):
-        filters.append('Realizada')
+    if request.POST.get('Concluida'):
+        filters.append('Concluida')
     else:
         filters.append('')
 
-    if request.POST.get('PorRealizar'):
-        filters.append('PorRealizar')
+    if request.POST.get('naoConcluida'):
+        filters.append('naoConcluida')
+    else:
+        filters.append('')
+
+    if request.POST.get('naoAtribuida'):
+        filters.append('naoAtribuida')
     else:
         filters.append('')
     return filters
 
 def consultartarefa(request):
     tarefas=Tarefa.objects.all()
+    tarefasacompanhar= TarefaAcompanhar.objects.all()
+    tarefasauxiliar= TarefaAuxiliar.objects.all()
+    tarefasoutra= TarefaOutra.objects.all()
     if request.method == 'POST' or request.GET.get('searchTarefa'):
         today=datetime.now(timezone.utc)
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
         filterForm=tarefaFilterForm(request.POST)
         nome=str(request.POST.get('searchTarefa'))
-        tarefas=tarefas.filter(nome__icontains=nome)
+        tarefas=tarefas.filter(Q(nome__icontains=nome) | Q(colaboradorutilizadorid__utilizadorid__nome__icontains=nome))
         tipo=str(request.POST.get('tipo'))
-        departamento=str(request.POST.get('departamentos'))
         if tipo != ' ' and tipo != 'None':
             tarefas=tarefas.filter(tipo=tipo)
-        if departamento != 'None' and departamento > '-1':
-            print('departamento')
-            tarefas=tarefas.filter(sessaoid__atividadeid__professoruniversitarioutilizadorid__departamento__id=departamento)
-        if request.POST.get('Concluida') or request.POST.get('naoConcluida'):
+        if request.POST.get('Concluida') or request.POST.get('Nao Concluida')  or request.POST.get('Nao Concluida'):
             print('estado')
             filter=filters(request)
-            tarefas=tarefas.filter(Q(concluida=1) | Q(concluida=0))
+            tarefas=tarefas.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
     else:
         filterForm=tarefaFilterForm()
 
     return render(request=request,
 			    template_name="coordenadores/consultartarefa.html",
-                context={"tarefas": tarefas,"filter":filterForm}
+                context={"tarefas": tarefas,"tarefasauxiliar": tarefasauxiliar,"tarefasacompanhar": tarefasacompanhar,"tarefasoutra": tarefasoutra,"filter":filterForm}
             )

@@ -130,7 +130,7 @@
             {% if is_empty %}
               <a id="concluir" onclick="alert.warning('Nao existem sessões atribuidas a esta atividade')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
             {% else %}
-              <a id="concluir" href="{% url 'minhasAtividades' %}" class="button is-large is-success is-outlined is-link" name="save" value="Save">
+              <a id="concluir" onclick="alert.render('Tem a certeza que pretende finalizar esta proposta?  (Terá sempre possibilidade de a alterar até ao prazo extipulado)','{% url 'minhasAtividades' %}')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
             {% endif %}
             <span>Finalizar Proposta</span>
             <span class="icon is-medium">
