@@ -95,6 +95,9 @@ def filters(request):
 
 def consultartarefa(request):
     tarefas=Tarefa.objects.all()
+    tarefasacompanhar= TarefaAcompanhar.objects.all()
+    tarefasauxiliar= TarefaAuxiliar.objects.all()
+    tarefasoutra= TarefaOutra.objects.all()
     if request.method == 'POST' or request.GET.get('searchTarefa'):
         today=datetime.now(timezone.utc)
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
@@ -117,5 +120,5 @@ def consultartarefa(request):
 
     return render(request=request,
 			    template_name="coordenadores/consultartarefa.html",
-                context={"tarefas": tarefas,"filter":filterForm}
+                context={"tarefas": tarefas,"tarefasauxiliar": tarefasauxiliar,"tarefasacompanhar": tarefasacompanhar,"tarefasoutra": tarefasoutra,"filter":filterForm}
             )

@@ -26,7 +26,8 @@ class Coordenador(models.Model):
 class Tarefa(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
-    concluida = models.IntegerField(db_column='Concluida')  # Field name made lowercase.
+    dia = models.DateField()
+    estado = models.CharField(max_length=64)
     coordenadorutilizadorid = models.ForeignKey(Coordenador, models.CASCADE, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
     colaboradorutilizadorid = models.ForeignKey(Colaborador, models.CASCADE, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
     tipo = models.CharField(db_column='Tipo', max_length=64)  # Field name made lowercase.
@@ -58,7 +59,8 @@ class TarefaAuxiliar(models.Model):
 class TarefaOutra(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
     descricao = models.TextField(db_column='descricao', blank=False, null=False)
-
+    horario = models.DateField( blank=False, null=False)
+    
     class Meta:
         db_table = 'TarefaOutra'
 
