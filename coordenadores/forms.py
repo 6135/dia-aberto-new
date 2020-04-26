@@ -4,17 +4,26 @@ from atividades.models import Atividade,Sessao
 from colaboradores.models import Colaborador
 from datetime import datetime
 
-def get_choices_time():
-    return [(str(t),t) for t in range(5, 61, 5)]  
-
 class TarefaForm(ModelForm):
-    colaborador=ChoiceField(choices=[('','------------')])
+    colaboradorutilizadorid=ChoiceField(choices=[('','------------')],widget=Select())
+
+    def clean(self):
+        #print(self.data)
+        cleaned_data=super().clean()
+        print(cleaned_data)
+        colaboradorutilizadorid_data=cleaned_data.get('colaboradorutilizadorid')
+        print(colaboradorutilizadorid_data)
+        if colaboradorutilizadorid_data:
+            cleaned_data['colaboradorutilizadorid']=Colaborador.objects.get(utilizadorid__id=colaboradorutilizadorid_data)
+            print(cleaned_data.get('colaboradorutilizadorid'))
+        else:
+            raise ValidationError('Colaborador não é válido')
+
     class Meta:  
         model = Tarefa 
-        exclude = ['coordenadorutilizadorid','id','colaboradorutilizadorid']
+        exclude = ['coordenadorutilizadorid','id','nome','created_at','estado','colaboradorutilizadorid']
         widgets = {
             'tipo': RadioSelect(attrs={'class':'radio'},choices=[('tarefaAuxiliar','Auxiliar Atividade'),('tarefaAcompanhar','Acompanhar participantes'),('tarefaOutra','Outra')]),
-            'colaborador' : Select()
             }
 
 class TarefaAuxiliarForm(ModelForm):
@@ -22,7 +31,6 @@ class TarefaAuxiliarForm(ModelForm):
     atividades= ChoiceField(choices=ativ,widget=Select(attrs={'onchange':'diasSelect();'}))
     sessoes=ChoiceField(choices=[('','------------')],widget=Select(attrs={'onchange':'colaboradoresSelect();'}))
     dias=ChoiceField(choices=[('','------------')],widget=Select(attrs={'onchange':'sessoesSelect();'}))
-
     class Meta:
         model= TarefaAuxiliar
         exclude = ['tarefaid']
@@ -30,7 +38,7 @@ class TarefaAuxiliarForm(ModelForm):
 class TarefaAcompanharForm(ModelForm):
 
     class Meta:
-        model= TarefaAuxiliar
+        model= TarefaAcompanhar
         exclude = ['tarefaid']
         widgets = {
 
@@ -38,8 +46,8 @@ class TarefaAcompanharForm(ModelForm):
 
 class TarefaOutraForm(ModelForm):
     class Meta:
-        model= TarefaAuxiliar
-        exclude = ['tarefaid']
+        model= TarefaOutra
+        exclude = []
         widgets = {
             'descricao' : Textarea(attrs={'class':'textarea'}),
             }           
