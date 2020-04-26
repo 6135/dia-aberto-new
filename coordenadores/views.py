@@ -87,8 +87,8 @@ def filters(request):
     else:
         filters.append('')
 
-    if request.POST.get('naoconcluida'):
-        filters.append('naoconcluida')
+    if request.POST.get('naoConcluida'):
+        filters.append('naoConcluida')
     else:
         filters.append('')
 
@@ -108,7 +108,7 @@ def consultartarefa(request):
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
         filterForm=tarefaFilterForm(request.POST)
         nome=str(request.POST.get('searchTarefa'))
-        tarefas=tarefas.filter(nome__icontains=nome)
+        tarefas=tarefas.filter(Q(nome__icontains=nome) | Q(colaboradorutilizadorid__utilizadorid__nome__icontains=nome))
         tipo=str(request.POST.get('tipo'))
         if tipo != ' ' and tipo != 'None':
             tarefas=tarefas.filter(tipo=tipo)

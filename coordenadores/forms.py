@@ -46,7 +46,7 @@ class TarefaOutraForm(ModelForm):
     
 
 class tarefaFilterForm(Form):
-    searchTarefa = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Tarefa'}), required=False)
+    searchTarefa = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Pesquisa'}), required=False)
     Concluida=BooleanField(widget=CheckboxInput(),required=False)
     naoConcluida=BooleanField(widget=CheckboxInput(),required=False)
     naoAtribuida=BooleanField(widget=CheckboxInput(),required=False)
