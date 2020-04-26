@@ -370,10 +370,11 @@ class Sessao(models.Model):
 class Tarefa(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
-    concluida = models.IntegerField(db_column='Concluida')  # Field name made lowercase.
+    dia = models.DateField()
+    estado = models.CharField(max_length=64)
     coordenadorutilizadorid = models.ForeignKey(Coordenador, models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
     colaboradorutilizadorid = models.ForeignKey(Colaborador, models.DO_NOTHING, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
-    tipo = models.CharField(db_column='Tipo', max_length=64)  # Field name made lowercase.
+    tipo = models.CharField(max_length=64)
     created_at = models.DateTimeField()
 
     class Meta:
@@ -386,25 +387,26 @@ class Tarefaacompanhar(models.Model):
     inscricaoid = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricaoid')
     origem = models.CharField(max_length=255)
     destino = models.CharField(max_length=255)
-    horario = models.DateField()
+    horario = models.TimeField()
 
     class Meta:
         managed = False
         db_table = 'TarefaAcompanhar'
 
 
-class Tarefaauxilar(models.Model):
+class Tarefaauxiliar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.DO_NOTHING, db_column='tarefaid', primary_key=True)
     sessaoid = models.ForeignKey(Sessao, models.DO_NOTHING, db_column='sessaoid')
 
     class Meta:
         managed = False
-        db_table = 'TarefaAuxilar'
+        db_table = 'TarefaAuxiliar'
 
 
 class Tarefaoutra(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.DO_NOTHING, db_column='tarefaid', primary_key=True)
     descricao = models.TextField()
+    horario = models.TimeField()
 
     class Meta:
         managed = False
