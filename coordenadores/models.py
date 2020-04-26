@@ -13,13 +13,15 @@ from inscricoes.models import *
 
 class Coordenador(models.Model):
     # Field name made lowercase.
-    utilizadorid = models.OneToOneField(
+    utilizador = models.OneToOneField(
         'utilizadores.Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
     # Field name made lowercase.
     gabinete = models.CharField(
         db_column='Gabinete', max_length=255, blank=True, null=True)
     unidadeorganicaid = models.ForeignKey('configuracao.Unidadeorganica', models.CASCADE, db_column='unidadeOrganicaID')  # Field name made lowercase.
 
+    def __str__(self):
+        return str(self.utilizadorid.nome)
     class Meta:
         db_table = 'Coordenador'
 
@@ -28,10 +30,10 @@ class Tarefa(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
     estado = models.CharField(max_length=64)
-    coordenadorutilizadorid = models.ForeignKey(Coordenador, models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
-    colaboradorutilizadorid = models.ForeignKey(Colaborador, models.DO_NOTHING, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
+    coord = models.ForeignKey(Coordenador, models.DO_NOTHING, db_column='CoordenadorUtilizadorID',null=True)  # Field name made lowercase.
+    colab = models.ForeignKey(Colaborador, models.DO_NOTHING, db_column='ColaboradorUtilizadorID',null=True,blank=True)  # Field name made lowercase.
     tipo = models.CharField(max_length=64)
-    created_at = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         db_table = 'Tarefa'

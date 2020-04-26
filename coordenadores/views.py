@@ -12,19 +12,22 @@ from django.db.models import Q
 from coordenadores.forms import *
 
 # Create your views here.
-def adicionartarefa(request):
-    form_tarefa=TarefaForm()
+def adicionartarefa(request, id = None):
+    tarefa = Tarefa()
+    if id is not None:
+        tarefa=Tarefa.objects.get(id=id)
+    form_tarefa=TarefaForm(instance=tarefa)
     if request.method == 'POST':
-        form_tarefa=TarefaForm(request.POST)
-        print(form_tarefa)
+        form_tarefa=TarefaForm(request.POST, instance=tarefa)
         if form_tarefa.is_valid():
-            tarefa.save()
+            form_tarefa.save()
             if request.POST['tipo'] == 'Atividade':
-                auxiliar_form = TarefaAuxiliarForm(request.POST,initial={'tarefaid':tarefa})
+                #auxiliar_form = TarefaAuxiliarForm(request.POST,initial={'tarefaid':form_tarefa.instance})
+                auxiliar_form = TarefaAuxiliarForm()
                 if auxiliar_form.is_valid():
                    auxiliar_form.save()
                 else:
-                    tarefa.delete() 
+                    form_tarefa.instance.delete() 
             return redirect('consultarTarefa')      
     return render(request=request,
                 template_name='coordenadores/criarTarefa.html',
@@ -55,30 +58,55 @@ def tipoTarefa(request):
 
 def sessoesAtividade(request):
     dia = request.POST['dia']
-    sessoes= Sessao.objects.filter(dia=dia)
+    sessoes = Sessao.objects.filter(dia=dia)
+    default = {
+        'key': '',
+        'value': '--------'
+    }
+    options = [{
+                    'key':	str(sessao.id),
+                    'value':	str(sessao.horarioid.inicio) + ' até ' + str(sessao.horarioid.fim)
+                } for sessao in sessoes
+            ]
     return render(request=request,
-                template_name='coordenadores/sessoesDropdown.html',
-                context={'sessoes':sessoes}
+                template_name='configuracao/dropdown.html',
+                context={'options': options, 'default': default}
             )
 
 def colaboradoresAtividade(request):
     sessao = request.POST['sessao']
-    colaboradores=Colaborador.objects.all()
+    colabs = Colaborador.objects.all()
+    default = {
+        'key': '',
+        'value': '--------'
+    }
+    
+    options = [{
+                    'key':	str(colab.utilizadorid.id),
+                    'value':	str(colab)
+                } for colab in colabs
+            ]
+
     return render(request=request,
-                template_name='coordenadores/colaboradoresDropdown.html',
-                context={'colaboradores':colaboradores}
+                template_name='configuracao/dropdown.html',
+                context={'options':options, 'default': default}
             )
 
 def diasAtividade(request):
     atividadeid = request.POST['atividadeid']
     sessoes= Sessao.objects.filter(atividadeid=atividadeid)
+    default = {
+        'key': '',
+        'value': '--------'
+    }
     dias=[]
     for sessao in sessoes:
         if sessao.dia not in dias:
-            dias.append(sessao.dia)
+            dias.append({'key':str(sessao.dia), 'value':sessao.dia})
+            
     return render(request=request,
-                template_name='coordenadores/diasDropdown.html',
-                context={'dias':dias}
+                template_name='configuracao/dropdown.html',
+                context={'options':dias, 'default': default}
             )
 
 def filters(request):
