@@ -82,13 +82,18 @@ def diasAtividade(request):
 
 def filters(request):
     filters=[]
-    if request.POST.get('Realizada'):
-        filters.append('Realizada')
+    if request.POST.get('Concluida'):
+        filters.append('Concluida')
     else:
         filters.append('')
 
-    if request.POST.get('PorRealizar'):
-        filters.append('PorRealizar')
+    if request.POST.get('naoconcluida'):
+        filters.append('naoconcluida')
+    else:
+        filters.append('')
+
+    if request.POST.get('naoAtribuida'):
+        filters.append('naoAtribuida')
     else:
         filters.append('')
     return filters
@@ -105,16 +110,12 @@ def consultartarefa(request):
         nome=str(request.POST.get('searchTarefa'))
         tarefas=tarefas.filter(nome__icontains=nome)
         tipo=str(request.POST.get('tipo'))
-        departamento=str(request.POST.get('departamentos'))
         if tipo != ' ' and tipo != 'None':
             tarefas=tarefas.filter(tipo=tipo)
-        if departamento != 'None' and departamento > '-1':
-            print('departamento')
-            tarefas=tarefas.filter(sessaoid__atividadeid__professoruniversitarioutilizadorid__departamento__id=departamento)
-        if request.POST.get('Concluida') or request.POST.get('naoConcluida'):
+        if request.POST.get('Concluida') or request.POST.get('Nao Concluida')  or request.POST.get('Nao Concluida'):
             print('estado')
             filter=filters(request)
-            tarefas=tarefas.filter(Q(concluida=1) | Q(concluida=0))
+            tarefas=tarefas.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
     else:
         filterForm=tarefaFilterForm()
 
