@@ -124,3 +124,7 @@ def consultartarefa(request):
 			    template_name="coordenadores/consultartarefa.html",
                 context={"tarefas": tarefas,"tarefasauxiliar": tarefasauxiliar,"tarefasacompanhar": tarefasacompanhar,"tarefasoutra": tarefasoutra,"filter":filterForm}
             )
+
+def eliminartarefa(request,id):
+    Tarefa.objects.get(id=id).delete()
+    return redirect('consultarTarefa')

@@ -62,7 +62,7 @@ class tarefaFilterForm(Form):
     departamentos = ChoiceField(choices=dep,widget=Select(), required=False)
     tipo = ChoiceField(choices=[
         (" ", "Mostrar todos os tipos de Tarefa"),
-        ("Acompanhar", "Acompanhar"),
-        ("Auxiliar", "Auxiliar"),
-        ("Outra", "Outra")
+        ("tarefaAcompanhar", "Acompanhar"),
+        ("tarefaAuxiliar", "Auxiliar"),
+        ("tarefaOutra", "Outra")
      ],widget=Select())
