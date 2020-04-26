@@ -14,6 +14,8 @@ class Colaborador(models.Model):
     # Field name made lowercase.
     curso = models.CharField(db_column='Curso', max_length=255)
 
+    def __str__(self):
+        return str(self.utilizadorid.nome)
     class Meta:
         db_table = 'Colaborador'
 

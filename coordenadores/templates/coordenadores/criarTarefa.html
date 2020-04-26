@@ -24,15 +24,16 @@
                                 </div>
                             </div>
                             <div id="tipoTarefa">         
-                            </div>
+                            </div>   
                             <div class="field" style="padding-top:10px">
                                 <label class="label">Colaborador</label>
                                 <div class="control">
                                     <div class="select is-fullwidth">
-                                        {{formTarefa.colaboradorutilizadorid}}
+                                      {{formTarefa.colab}}
                                     </div>
                                 </div>
                             </div>
+                         
                         </div>
                         <hr>
                     </div>
@@ -140,7 +141,7 @@
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
-          $("#id_colaboradorutilizadorid").html(data);           
+          $("#id_colab").html(data);           
         }
       });
     }
