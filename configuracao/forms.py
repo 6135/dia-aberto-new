@@ -83,9 +83,7 @@ class menuForm(ModelForm):
     class Meta:
         model = Menu
         exclude = ['id','horarioid']
-        widgets = {
-            'dia': Select(attrs={'onchange':'console.log(\'Hello\');'})
-        }
+
 
 class pratosForm(ModelForm):
     class Meta:

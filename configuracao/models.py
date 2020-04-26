@@ -111,8 +111,8 @@ class Diaaberto(models.Model):
         return [(
                     str( (data_inicio+timedelta(days=d)).date()),
                     str((data_inicio+timedelta(days=d)).date())
-                    ) for d in range(total_dias.days)
-                ]
+                ) for d in range(total_dias.days)
+            ]
 
 
     class Meta:
