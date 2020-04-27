@@ -168,7 +168,7 @@ def proporatividade(request):
         print(diaaberto.id)
         activity_object_form = AtividadeForm(request.POST)
         campus=Campus.objects.all()
-        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizadorid=5),
+        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizador=5),
                              professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
                              estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=request.POST['espacoid']),
                              tema=Tema.objects.get(id=request.POST['tema']))
