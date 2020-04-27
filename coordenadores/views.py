@@ -169,6 +169,5 @@ def atribuircolaborador(request,tarefa):
         if form_tarefa.is_valid():
             form_tarefa.save()
     #print(request.POST)
-    form_tarefa.save()
     return redirect('consultarTarefa')
 

@@ -203,6 +203,8 @@
                                             {{tarefa.coord.utilizador.nome}}
                                         </p>
                                         {% if tarefa.colab == NULL %}
+                                        <form action="{% url 'atribuirColaborador' tarefa.id%}" method='POST'>
+                                        {% csrf_token %}
                                         <div class="columns">
                                           <div class="column is-6">
                                             <div class="field" >
@@ -225,18 +227,20 @@
                                               <br>
                                                 <div class="control">
                                                   <div class="has-text-centered">
-                                                      <a id="concluir" onclick="alert.render('Tem a certeza que pretende atribuir este colaborador a esta tarefa? ','{% url 'atribuirColaborador' tarefa.id addcolaborador %}')" class="button is-success" name="addcolaborador" value="addcolaborador">
+                                                      <button type="submit" id="concluir"  class="button is-success">
                                                           <span class="icon is-small">
                                                               <i class="mdi mdi-plus"></i>
                                                           </span>
                                                           <span>Atribuir Colaborador</span>
-                                                      </a>
+                                                      </button>
                                                   </div>
                                                 </div>
                                               </div>
                                             </div>
                                         </div>
+                                        </form>
                                         {% endif %}
+
                                     </div>
                                 </div>
                             </div>                        
@@ -418,6 +422,7 @@
                                             {{tarefa.coord.utilizador.nome}}
                                         </p>
                                         {% if tarefa.colab == NULL %}
+                                        <form action="{% url 'atribuirColaborador' tarefa.id%}" method='POST'>
                                         <div class="columns">
                                           <div class="column is-6">
                                             <div class="field" >
@@ -440,17 +445,19 @@
                                               <br>
                                                 <div class="control">
                                                   <div class="has-text-centered">
-                                                      <a id="concluir" onclick="alert.render('Tem a certeza que pretende atribuir este colaborador a esta tarefa? ','{% url 'atribuirColaborador' tarefa.id addcolaborador %}')" class="button is-success" name="addcolaborador" value="addcolaborador">
+                                                      <button type="submit" id="concluir"  class="button is-success">
                                                           <span class="icon is-small">
                                                               <i class="mdi mdi-plus"></i>
                                                           </span>
                                                           <span>Atribuir Colaborador</span>
-                                                      </a>
+                                                      </button>
                                                   </div>
                                                 </div>
                                               </div>
                                             </div>
                                         </div>
+                                        {% csrf_token %}
+                                        </form>
                                         {% endif %}
                                     </div>
                                 </div>

@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^ajax/adicionarcolaboradores/$', views.colaboradoresAtividade, name='colaboradoresAtividade'),
     url(r'^ajax/tipotarefa/$', views.tipoTarefa, name='tipoTarefa'),
     path("eliminartarefa/<int:id>",views.eliminartarefa,name="eliminarTarefa"),
-    path("atribuircolaborador/<tarefa>",views.atribuircolaborador,name="atribuirColaborador"),
+    path("atribuircolaborador/<int:tarefa>",views.atribuircolaborador,name="atribuirColaborador"),
 ]
