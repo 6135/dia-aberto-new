@@ -78,9 +78,6 @@ class TarefaAcompanharForm(ModelForm):
     class Meta:
         model= TarefaAcompanhar
         exclude = ['tarefaid']
-        widgets = {
-
-            }
 
 class TarefaOutraForm(ModelForm):
     dia = ChoiceField(choices=get_dias(),widget=Select())

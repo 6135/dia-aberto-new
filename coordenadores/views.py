@@ -21,14 +21,14 @@ def adicionartarefa(request, id = None):
         form_tarefa=TarefaForm(request.POST, instance=tarefa)
         if form_tarefa.is_valid():
             form_tarefa.save()
-            if request.POST['tipo'] == 'tarefaAuxiliar':
-                auxiliar_form = TarefaAuxiliarForm(request.POST,initial={'tarefaid':form_tarefa.instance})
-                if auxiliar_form.is_valid():
-                    print('hello')
-                    auxiliar_form.save()
-                    return redirect('consultarTarefa') 
-                else:
-                    form_tarefa.instance.delete()      
+            #if request.POST['tipo'] == 'tarefaAuxiliar':
+            #    auxiliar_form = TarefaAuxiliarForm(request.POST,initial={'tarefaid':form_tarefa.instance})
+            #    if auxiliar_form.is_valid():
+            #        print('hello')
+            #        auxiliar_form.save()
+            #        return redirect('consultarTarefa') 
+            #    else:
+            #        form_tarefa.instance.delete()      
     return render(request=request,
                 template_name='coordenadores/criarTarefa.html',
                 context={'formTarefa':form_tarefa}
@@ -49,6 +49,7 @@ def tipoTarefa(request):
             template = 'coordenadores/tarefaAuxiliar.html'
         elif tipo == 'tarefaAcompanhar':
             form = TarefaAcompanharForm()
+            template = 'coordenadores/tarefaAcompanhar.html'
         elif tipo == 'tarefaOutra':   
             form = TarefaOutraForm()
             template = 'coordenadores/tarefaOutra.html'
