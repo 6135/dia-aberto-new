@@ -14,6 +14,7 @@ def get_dias():
     return [(diainicio+timedelta(days=d),diainicio+timedelta(days=d))for d in range(totaldias.days)]
 
 class TarefaForm(ModelForm):
+    
     def clean(self):
         cleaned_data=super().clean()
         self.instance.coord = Coordenador.objects.get(utilizador__id=5)
