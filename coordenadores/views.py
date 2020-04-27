@@ -142,7 +142,7 @@ def consultartarefa(request):
         tipo=str(request.POST.get('tipo'))
         if tipo != ' ' and tipo != 'None':
             tarefas=tarefas.filter(tipo=tipo)
-        if request.POST.get('Concluida') or request.POST.get('Nao Concluida')  or request.POST.get('Nao Concluida'):
+        if request.POST.get('Concluida') or request.POST.get('naoConcluida')  or request.POST.get('naoAtribuida'):
             print('estado')
             filter=filters(request)
             tarefas=tarefas.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
@@ -161,9 +161,10 @@ def eliminartarefa(request,id):
 
 
 def atribuircolaborador(request,tarefa):
-    if request.method == 'POST':
-        form_tarefa=TarefaForm(request.POST, instance=Tarefa.objects.get(id=tarefa))
-        if form_tarefa.is_valid():
-            form_tarefa.save()
+    tarefa= Tarefa.objects.get(id=tarefa)
+    colaborador= Colaborador.objects.get(utilizadorid=request.POST['colab'])
+    tarefa.estado= "naoConcluida"
+    tarefa.colab= colaborador
+    tarefa.save()
     return redirect('consultarTarefa')
 

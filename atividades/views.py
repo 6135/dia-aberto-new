@@ -210,9 +210,8 @@ def inserirsessao(request,id):
             return redirect('minhasAtividades')
         if 'save' in request.POST and len(sessoes)==0:
             return redirect('inserirSessao', id)
-        if 'cancelar' in request.POST :
-            Atividade.objects.get(id=id).delete()
-            return redirect('proporAtividade')
+        if 'anterior' in request.POST :
+            return redirect('alterarAtividade',id)
         if 'new' in request.POST:
             diasessao=request.POST["diasessao"]
             print(diasessao)
