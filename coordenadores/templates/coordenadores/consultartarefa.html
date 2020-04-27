@@ -211,12 +211,7 @@
                                               <label class="label">Atribuir Colaborador:</label>
                                               <div class="control">
                                                 <div class="select is-fullwidth" >
-                                                  <select name="addcolaborador">
-                                                    <option value="">---------</option>
-                                                    {% for col in colaboradores %}
-                                                    <option value={{col.utilizadorid}}>{{col.utilizadorid.nome}}</option>
-                                                    {% endfor %}
-                                                  </select>
+                                                    {{formtarefa.colab}}
                                                 </div>
                                               </div>
                                             </div>
@@ -429,12 +424,7 @@
                                               <label class="label">Atribuir Colaborador:</label>
                                               <div class="control">
                                                 <div class="select is-fullwidth" >
-                                                  <select name="addcolaborador">
                                                     {{formtarefa.colab}}
-                                                    {% for col in colaboradores %}
-                                                    <option value={{col.utilizadorid}}>{{col.utilizadorid.nome}}</option>
-                                                    {% endfor %}
-                                                  </select>
                                                 </div>
                                               </div>
                                             </div>

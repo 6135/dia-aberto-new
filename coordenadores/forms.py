@@ -14,7 +14,7 @@ def get_dias():
     return [(diainicio+timedelta(days=d),diainicio+timedelta(days=d))for d in range(totaldias.days)]
 
 class TarefaForm(ModelForm):
-    
+  
     def clean(self):
         cleaned_data=super().clean()
         self.instance.coord = Coordenador.objects.get(utilizador__id=5)
@@ -22,7 +22,8 @@ class TarefaForm(ModelForm):
         if cleaned_data.get('colab') is None:
             estado = 'naoAtribuida'
         self.instance.estado = estado
-        nome = Atividade.objects.get(id=self.data.get('atividades')).nome
+        if self.data.get('atividades'):
+            nome = Atividade.objects.get(id=self.data.get('atividades')).nome
         if cleaned_data.get('tipo') == 'tarefaAuxiliar':
             self.instance.nome = 'Auxiliar na atividade '+nome
         elif cleaned_data.get('tipo') == 'tarefaAcompanhar':
@@ -35,7 +36,7 @@ class TarefaForm(ModelForm):
         widgets = {
             'tipo': RadioSelect(attrs={'class':'radio'},choices=[('tarefaAuxiliar','Auxiliar Atividade'),('tarefaAcompanhar','Acompanhar participantes'),('tarefaOutra','Outra')]),
             }
-    
+
     def __init__(self,*args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['colab'].queryset =  Colaborador.objects.filter().order_by('utilizadorid__nome')

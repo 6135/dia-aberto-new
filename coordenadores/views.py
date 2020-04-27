@@ -160,14 +160,9 @@ def eliminartarefa(request,id):
 
 
 def atribuircolaborador(request,tarefa):
-    tarefa = Tarefa.objects.get(id=tarefa)
-    form_tarefa=TarefaForm(instance=tarefa)
-    #print(form_tarefa)
     if request.method == 'POST':
-        form_tarefa=TarefaForm(request.POST, instance=tarefa)
-        #print("Hello")
+        form_tarefa=TarefaForm(request.POST, instance=Tarefa.objects.get(id=tarefa))
         if form_tarefa.is_valid():
             form_tarefa.save()
-    #print(request.POST)
     return redirect('consultarTarefa')
 
