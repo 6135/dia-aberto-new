@@ -2,7 +2,16 @@ from django.forms import *
 from .models import *
 from atividades.models import Atividade,Sessao
 from colaboradores.models import Colaborador
-from datetime import datetime
+from configuracao.models import Diaaberto
+from datetime import datetime,timezone
+
+def get_dias():
+    today= datetime.now(timezone.utc) 
+    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
+    diainicio= diaaberto.datadiaabertoinicio.date()
+    diafim= diaaberto.datadiaabertofim.date()
+    totaldias= diafim-diainicio+timedelta(days=1)
+    return [(diainicio+timedelta(days=d),diainicio+timedelta(days=d))for d in range(totaldias.days)]
 
 class TarefaForm(ModelForm):
     def clean(self):
@@ -28,7 +37,7 @@ class TarefaForm(ModelForm):
     
     def __init__(self,*args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['colab'].queryset = Colaborador.objects.none()
+        self.fields['colab'].queryset =  Colaborador.objects.filter().order_by('utilizadorid__nome')
 
         if 'sessoes' in self.data:
             try:
@@ -62,19 +71,6 @@ class TarefaAuxiliarForm(ModelForm):
         elif self.instance.pk:
             self.fields['sessoes'].queryset = self.instance.sessoes.none() 
             
-    def __init__(self,*args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['dias'].queryset = Sessao.objects.none()
-        print(self.data.get('dias'))
-        if 'dias' in self.data:
-            try:
-                atividade = self.data.get('atividades')
-                self.fields['dias'].queryset = Sessao.objects.filter(atividadeid=atividade).dia
-                print(self.data.get('dias'))
-            except (ValueError, TypeError):
-                pass  # invalid input from the client; ignore and fallback to empty City queryset
-        elif self.instance.pk:
-            self.fields['dias'].queryset = self.instance.sessoes.none()   
 
 class TarefaAcompanharForm(ModelForm):
     class Meta:
@@ -85,9 +81,11 @@ class TarefaAcompanharForm(ModelForm):
             }
 
 class TarefaOutraForm(ModelForm):
+    dia = ChoiceField(choices=get_dias(),widget=Select())
+    horario = DateField(widget=DateInput(attrs={'class':'timepicker'}))
     class Meta:
         model= TarefaOutra
-        exclude = []
+        exclude = ['tarefaid']
         widgets = {
             'descricao' : Textarea(attrs={'class':'textarea'}),
             }           

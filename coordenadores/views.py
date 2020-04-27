@@ -46,15 +46,13 @@ def tipoTarefa(request):
         tipo = request.POST['tipo']
         if tipo == 'tarefaAuxiliar':
             form = TarefaAuxiliarForm()
-            template='coordenadores/tarefaAuxiliar.html'
+            template = 'coordenadores/tarefaAuxiliar.html'
         elif tipo == 'tarefaAcompanhar':
             form = TarefaAcompanharForm()
         elif tipo == 'tarefaOutra':   
             form = TarefaOutraForm()
-    return render(request=request,
-                template_name=template,
-                context={'form':form}
-            )
+            template = 'coordenadores/tarefaOutra.html'
+    return render(request=request,template_name=template,context={'form':form})
 
 def sessoesAtividade(request):
     dia = request.POST['dia']
