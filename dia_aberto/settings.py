@@ -31,7 +31,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['77.68.24.178','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['dia-aberto.streamonion.com','77.68.24.178','localhost','127.0.0.1']
 
 
 # Application definition
