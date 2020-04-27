@@ -124,14 +124,14 @@
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
+                            <th style="cursor:pointer;width: 200px;" class="pre-expandable">
+                            </th>
                             <th style="">
                             </th>
                         </tr>
                     </thead>
                     {% for tarefa in tarefas %}
-                    {% if tarefa.tipo == "Auxiliar" %}
-                    {% for tarefaauxiliar in tarefasauxiliar %}
-                    {% if tarefaauxiliar.tarefaid == tarefa %}
+                    {% if tarefa.tipo == "tarefaAuxiliar" %}
                     <tbody id="{{tarefa}}">      
                         <tr draggable="false">
                             <td class="chevron-cell">
@@ -141,25 +141,27 @@
                                     </span>
                                 </a>
                             </td>
-                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horarios">{{tarefaauxiliar.sessaoid.horarioid.inicio}} - {{tarefaauxiliar.sessaoid.horarioid.fim}}</td>
+                            <td data-label="Dia">{{tarefa.tarefaauxiliar.sessaoid.dia|date:'d-m-Y'}}</td>
+                            <td data-label="Horarios">{{tarefa.tarefaauxiliar.sessaoid.horarioid.inicio}} - {{tarefaauxiliar.sessaoid.horarioid.fim}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
                             <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
+                            <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
-                            <td data-label="Estado">
                                 <span class="tag text is-warning" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Concluida</span>
-                            </td>
                             {% elif tarefa.estado == "Concluida"%}
-                            <td data-label="Estado">
                                 <span class="tag text is-success" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Concluida</span>
-                            </td>
                             {% elif tarefa.estado == "naoAtribuida"%}
-                            <td data-label="Estado">
                                 <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
-                            </td>
                             {% endif %}
-                            <td ></td>       
+                            </td>
+                            <td>
+                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
+                                    <span class="icon has-text-danger">
+                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                                    </span>
+                                </a>
+                            </td>      
                         </tr> 
                         <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
                         <td colspan="7">
@@ -172,7 +174,7 @@
                                         </p>
                                         <p>
                                             <strong>Professor da Atividade:</strong>
-                                            {{tarefaauxiliar.sessaoid.atividadeid.professoruniversitarioutilizadorid.utilizadorid.nome}}
+                                            {{tarefa.tarefaauxiliar.sessaoid.atividadeid.professoruniversitarioutilizadorid.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Colaborador Atribuido:</strong>
@@ -188,15 +190,15 @@
                                         </p>  -->
                                         <p>
                                             <strong>Campus:</strong>
-                                            {{tarefaauxiliar.sessaoid.atividadeid.espacoid.edificio.campus.nome}}
+                                            {{tarefa.tarefaauxiliar.sessaoid.atividadeid.espacoid.edificio.campus.nome}}
                                         </p>
                                         <p>
                                             <strong>Edificio:</strong>
-                                            {{tarefaauxiliar.sessaoid.atividadeid.espacoid.edificio.nome}}
+                                            {{tarefa.tarefaauxiliar.sessaoid.atividadeid.espacoid.edificio.nome}}
                                         </p>
                                         <p>
                                             <strong>Sala:</strong>
-                                            {{tarefaauxiliar.sessaoid.atividadeid.espacoid.nome}}
+                                            {{tarefa.tarefaauxiliar.sessaoid.atividadeid.espacoid.nome}}
                                         </p>
                                          <p>
                                             <strong>Coordenador Responsavel:</strong>
@@ -209,16 +211,13 @@
                       </tr>
                     </tbody>
                     {% endif %}
-                    {% endfor %} 
-                    {% endif %}
 
 
 
 
 
-                    {% if tarefa.tipo == "Acompanhar" %}
-                    {% for tarefaacompanhar in tarefasacompanhar %}
-                    {% if tarefaacompanhar.tarefaid == tarefa %}
+                    {% if tarefa.tipo == "tarefaAcompanhar" %}
+                    
                     <tbody id="{{tarefa}}">      
                         <tr draggable="false">
                             <td class="chevron-cell">
@@ -228,25 +227,27 @@
                                     </span>
                                 </a>
                             </td>
-                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horarios">{{tarefaacompanhar.horario}}</td>
+                            <td data-label="Dia">{{tarefa.tarefaacompanhar.dia|date:'d-m-Y'}}</td>
+                            <td data-label="Horarios">{{tarefa.tarefaacompanhar.horario}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
                             <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
+                             <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
-                            <td data-label="Estado">
                                 <span class="tag text is-warning" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Concluida</span>
-                            </td>
                             {% elif tarefa.estado == "Concluida"%}
-                            <td data-label="Estado">
                                 <span class="tag text is-success" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Concluida</span>
-                            </td>
                             {% elif tarefa.estado == "naoAtribuida"%}
-                            <td data-label="Estado">
                                 <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
-                            </td>
                             {% endif %}
-                            <td ></td>       
+                            </td>
+                             <td>
+                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
+                                    <span class="icon has-text-danger">
+                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                                    </span>
+                                </a>
+                            </td>             
                         </tr> 
                         <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
                         <td colspan="7">
@@ -287,11 +288,9 @@
                         </td>                
                       </tr>
                     </tbody>
-                    {% endif %}
-                    {% endfor %} 
                     {% endif %}    
                             
-                    {% if tarefa.tipo == "Outra" %}
+                    {% if tarefa.tipo == "tarefaOutra" %}
                     {% for tarefaoutra in tarefasoutra %}
                     {% if tarefaoutra.tarefaid == tarefa %}
                     <tbody id="{{tarefa}}">      
@@ -303,25 +302,27 @@
                                     </span>
                                 </a>
                             </td>
-                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
+                            <td data-label="Dia">{{tarefaoutra.dia|date:'d-m-Y'}}</td>
                             <td data-label="Horarios">{{tarefaoutra.horario}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
                             <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
+                            <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
-                            <td data-label="Estado">
                                 <span class="tag text is-warning" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Concluida</span>
-                            </td>
                             {% elif tarefa.estado == "Concluida"%}
-                            <td data-label="Estado">
                                 <span class="tag text is-success" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Concluida</span>
-                            </td>
                             {% elif tarefa.estado == "naoAtribuida"%}
-                            <td data-label="Estado">
                                 <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
-                            </td>
                             {% endif %}
-                            <td ></td>       
+                            </td>
+                             <td>
+                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
+                                    <span class="icon has-text-danger">
+                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                                    </span>
+                                </a>
+                            </td>             
                         </tr> 
                         <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
                         <td colspan="7">
@@ -379,6 +380,7 @@
         </footer>
     </div>
 </div>
+{% include 'configuracao/popup.html' %}
 <style>
 .dialog .modal-card .modal-card-body.is-titleless {
     border-top-left-radius: 6px;
