@@ -66,7 +66,7 @@
                 </ul>
             </div>
             </div>
-            
+        </form>    
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -316,6 +316,8 @@
                                             {{tarefa.coord.utilizador.nome}}
                                         </p>
                                         {% if tarefa.colab == NULL %}
+                                        <form action="{% url 'atribuirColaborador' tarefa.id%}" method='POST'>
+                                        {% csrf_token %}
                                         <div class="columns">
                                           <div class="column is-6">
                                             <div class="field" >
@@ -333,17 +335,18 @@
                                               <br>
                                                 <div class="control">
                                                   <div class="has-text-centered">
-                                                      <a id="concluir" href="{% url 'atribuirColaborador' tarefa.id%}" class="button is-success" type="submit" name="addcolaborador2" value="addcolaborador2">
+                                                      <button type="submit" id="concluir"  class="button is-success">
                                                           <span class="icon is-small">
                                                               <i class="mdi mdi-plus"></i>
                                                           </span>
                                                           <span>Atribuir Colaborador</span>
-                                                      </a>
+                                                      </button>
                                                   </div>
                                                 </div>
                                               </div>
                                             </div>
                                         </div>
+                                        </form>
                                         {% endif %}
                                     </div>
                                 </div>
@@ -461,7 +464,6 @@
 
                     {% endfor %}
                 </table>
-                </form>
             </div>
     </div>
 </div>
