@@ -14,6 +14,7 @@ def get_dias():
     return [(diainicio+timedelta(days=d),diainicio+timedelta(days=d))for d in range(totaldias.days)]
 
 class TarefaForm(ModelForm):
+    
     def clean(self):
         cleaned_data=super().clean()
         self.instance.coord = Coordenador.objects.get(utilizador__id=5)
@@ -46,7 +47,7 @@ class TarefaForm(ModelForm):
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
         elif self.instance.pk:
-            self.fields['colab'].queryset = self.instance.colab.none()
+            self.fields['colab'].queryset = Colaborador.objects.none()
 
 class TarefaAuxiliarForm(ModelForm):
     ativ=[('','Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]

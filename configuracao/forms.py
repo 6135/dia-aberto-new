@@ -68,7 +68,7 @@ class menuForm(ModelForm):
     dia_choices = Diaaberto.objects.all()
     diaaberto = ChoiceField(choices=[('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices],widget=Select())
     campus = ChoiceField(choices=[(camp.id,camp.nome) for camp in Campus.objects.all()],widget=Select())
-    
+
     def clean(self):
         cleaned_data = super().clean()
         campus_data = cleaned_data['campus']
