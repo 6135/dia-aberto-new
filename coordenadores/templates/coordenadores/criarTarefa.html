@@ -52,15 +52,15 @@
                   </div>
                 </div>
             </div>
-            {% if form.errors %}
-                {% for field in form %}
+            {% if formTarefa.errors %}
+                {% for field in formTarefa %}
                     {% for error in field.errors %}
                         <div class="alert alert-danger">
                             <strong>{{field.label|escape}}{{ error|escape }}</strong>
                         </div>
                     {% endfor %}
                 {% endfor %}
-                {% for error in form.non_field_errors %}
+                {% for error in formTarefa.non_field_errors %}
                     <div class="alert alert-danger">
                         <strong>{{ error|escape }}</strong>
                     </div>
