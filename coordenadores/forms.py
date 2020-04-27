@@ -2,7 +2,16 @@ from django.forms import *
 from .models import *
 from atividades.models import Atividade,Sessao
 from colaboradores.models import Colaborador
-from datetime import datetime
+from configuracao.models import Diaaberto
+from datetime import datetime,timezone
+
+def get_dias():
+    today= datetime.now(timezone.utc) 
+    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
+    diainicio= diaaberto.datadiaabertoinicio.date()
+    diafim= diaaberto.datadiaabertofim.date()
+    totaldias= diafim-diainicio+timedelta(days=1)
+    return [(diainicio+timedelta(days=d),diainicio+timedelta(days=d))for d in range(totaldias.days)]
 
 class TarefaForm(ModelForm):
     def clean(self):
@@ -12,11 +21,12 @@ class TarefaForm(ModelForm):
         if cleaned_data.get('colab') is None:
             estado = 'naoAtribuida'
         self.instance.estado = estado
-        nome = 'Auxiliar atividade'
-        if cleaned_data.get('tipo') == 'a':
-            self.instance.nome = nome + 'otherstuff'
-        elif True:
-            print('')
+        nome = Atividade.objects.get(id=self.data.get('atividades')).nome
+        if cleaned_data.get('tipo') == 'tarefaAuxiliar':
+            self.instance.nome = 'Auxiliar na atividade '+nome
+        elif cleaned_data.get('tipo') == 'tarefaAcompanhar':
+            nome = 'grupo'
+            self.instance.nome = 'Acompanhar o grupo '+nome
 
     class Meta:  
         model = Tarefa 
@@ -39,16 +49,30 @@ class TarefaForm(ModelForm):
             self.fields['colab'].queryset = self.instance.colab.none()
 
 class TarefaAuxiliarForm(ModelForm):
-    ativ=[('','Escolha')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]
+    ativ=[('','Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]
     atividades= ChoiceField(choices=ativ,widget=Select(attrs={'onchange':'diasSelect();'}))
-    sessoes=ChoiceField(choices=[('','------------')],widget=Select(attrs={'onchange':'colaboradoresSelect();'}))
-    dias=ChoiceField(choices=[('','------------')],widget=Select(attrs={'onchange':'sessoesSelect();'}))
+    sessoes=ChoiceField(choices=[('','Escolha a Sessão')],widget=Select(attrs={'onchange':'colaboradoresSelect();'}))
+    dias=ChoiceField(choices=[('','Escolha o Dia')],widget=Select(attrs={'onchange':'sessoesSelect();'}))
     class Meta:
         model= TarefaAuxiliar
         exclude = ['tarefaid']
-        
-class TarefaAcompanharForm(ModelForm):
 
+    def __init__(self,*args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['sessoes'].queryset = Sessao.objects.none()
+        print(self.data.get('sessoes'))
+        if 'dias' in self.data:
+            try:
+                dia = self.data.get('dias')
+                self.fields['sessoes'].queryset = Sessao.objects.filter(dia=dia)
+                print(self.data.get('sessoes'))
+            except (ValueError, TypeError):
+                pass  # invalid input from the client; ignore and fallback to empty City queryset
+        elif self.instance.pk:
+            self.fields['sessoes'].queryset = self.instance.sessoes.none() 
+            
+
+class TarefaAcompanharForm(ModelForm):
     class Meta:
         model= TarefaAcompanhar
         exclude = ['tarefaid']
@@ -57,9 +81,11 @@ class TarefaAcompanharForm(ModelForm):
             }
 
 class TarefaOutraForm(ModelForm):
+    dia = ChoiceField(choices=get_dias(),widget=Select())
+    horario = DateField(widget=DateInput(attrs={'class':'timepicker'}))
     class Meta:
         model= TarefaOutra
-        exclude = []
+        exclude = ['tarefaid']
         widgets = {
             'descricao' : Textarea(attrs={'class':'textarea'}),
             }           
