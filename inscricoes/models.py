@@ -4,69 +4,52 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Inscricao(models.Model):
-    nrinscricao = models.IntegerField()
+    nalunos = models.IntegerField()
+    escola = models.ForeignKey('Escola', models.CASCADE)
     ano = models.IntegerField(
         validators=[
             validators.MinValueValidator(1),
             validators.MaxValueValidator(12)
         ]
     )
-    local = models.CharField(max_length=128)
+    turma = models.CharField(max_length=1)
     areacientifica = models.CharField(max_length=64)
-    participanteutilizadorid = models.ForeignKey(
-        'utilizadores.Participante', models.CASCADE)
-    # TODO: Descomentar quando a configuração do Dia Aberto estiver pronta
+    participante = models.ForeignKey('utilizadores.Participante', models.CASCADE)
     diaaberto = models.ForeignKey('configuracao.Diaaberto', models.CASCADE)
 
     class Meta:
         db_table = 'Inscricao'
 
 
-class Escola(models.Model):
+class Responsavel(models.Model):
+    inscricao = models.ForeignKey(Inscricao, models.CASCADE)
     nome = models.CharField(max_length=128)
+    email = models.EmailField(max_length=128)
+    tel = PhoneNumberField()
+
+    class Meta:
+        db_table = 'Responsavel'
+
+
+class Escola(models.Model):
+    nome = models.CharField(max_length=200)
     local = models.CharField(max_length=128)
-    telefone = PhoneNumberField()
-    email = models.EmailField()
 
     class Meta:
         db_table = 'Escola'
 
 
-class Inscricaocoletiva(Inscricao):
-    escola = models.ForeignKey(Escola, models.CASCADE)
-    nalunos = models.IntegerField(
-        validators=[
-            validators.MinValueValidator(1),
-            validators.MaxValueValidator(300)
-        ]
-    )
-    nresponsaveis = models.IntegerField(
-        validators=[
-            validators.MinValueValidator(1),
-            validators.MaxValueValidator(20)
-        ]
-    )
-    turma = models.CharField(max_length=255)
+class EscolaPortugal(models.Model):
+    nome = models.CharField(max_length=200)
 
     class Meta:
-        db_table = 'InscricaoColetiva'
-
-
-class Inscricaoindividual(Inscricao):
-    nacompanhantes = models.IntegerField(
-        validators=[
-            validators.MinValueValidator(0),
-            validators.MaxValueValidator(20)
-        ]
-    )
-
-    class Meta:
-        db_table = 'InscricaoIndividual'
+        db_table = 'EscolaPortugal'
 
 
 class Inscricaoprato(models.Model):
-    inscricao = models.ForeignKey(Inscricao, models.CASCADE, db_column='InscricaoID')
-    prato = models.ForeignKey('configuracao.Prato', models.CASCADE,db_column='PratoID')
+    inscricao = models.ForeignKey(Inscricao, models.CASCADE)
+    prato = models.ForeignKey('configuracao.Prato', models.CASCADE)
+    campus = models.ForeignKey('configuracao.Campus', models.CASCADE)
     npessoas = models.IntegerField(
         validators=[
             validators.MinValueValidator(1),
@@ -81,10 +64,10 @@ class Inscricaoprato(models.Model):
 
 class Inscricaosessao(models.Model):
     inscricao = models.ForeignKey(
-        Inscricao, models.CASCADE, db_column='InscricaoID')
+        Inscricao, models.CASCADE)
     sessao = models.ForeignKey(
-        'atividades.Sessao', models.CASCADE, db_column='SessaoID')
-    nparticipantes = models.IntegerField(db_column='nrParticipantes',
+        'atividades.Sessao', models.CASCADE)
+    nparticipantes = models.IntegerField(
         validators=[
             validators.MinValueValidator(1),
             validators.MaxValueValidator(300),
@@ -94,10 +77,11 @@ class Inscricaosessao(models.Model):
 
     class Meta:
         db_table = 'InscricaoSessao'
-        
+        unique_together = (('inscricao', 'sessao'),)
+
+
 class Inscricaotransporte(models.Model):
-    inscricao = models.ForeignKey(
-        Inscricao, models.CASCADE)
+    inscricao = models.ForeignKey(Inscricao, models.CASCADE)
     transporte = models.ForeignKey('configuracao.Transporte', models.CASCADE)
     npassageiros = models.IntegerField(
         validators=[
