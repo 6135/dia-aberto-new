@@ -67,7 +67,6 @@
             </div>
             </div>
             
-        </form>
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -129,6 +128,9 @@
                             <th style="">
                             </th>
                         </tr>
+
+
+
                     </thead>
                     {% for tarefa in tarefas %}
                     {% if tarefa.tipo == "tarefaAuxiliar" %}
@@ -144,7 +146,7 @@
                             <td data-label="Dia">{{tarefa.tarefaauxiliar.sessaoid.dia|date:'d-m-Y'}}</td>
                             <td data-label="Horarios">{{tarefa.tarefaauxiliar.sessaoid.horarioid.inicio}} - {{tarefaauxiliar.sessaoid.horarioid.fim}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
+                            <td data-label="Atribuido a">{{tarefa.colab.utilizadorid.nome}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
                             <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
@@ -178,16 +180,12 @@
                                         </p>
                                         <p>
                                             <strong>Colaborador Atribuido:</strong>
-                                            {{tarefa.colaboradorutilizadorid.utilizadorid.nome}}
+                                            {{tarefa.colab.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Tipo de tarefa:</strong>
                                             {{tarefa.tipo}}
                                         </p>
-                                        <!--<p>
-                                            <strong>Descrição:</strong>
-                                            {{tarefa.descricao}}</div>
-                                        </p>  -->
                                         <p>
                                             <strong>Campus:</strong>
                                             {{tarefa.tarefaauxiliar.sessaoid.atividadeid.espacoid.edificio.campus.nome}}
@@ -202,8 +200,43 @@
                                         </p>
                                          <p>
                                             <strong>Coordenador Responsavel:</strong>
-                                            {{tarefa.coordenadorutilizadorid.utilizadorid.nome}}
+                                            {{tarefa.coord.utilizador.nome}}
                                         </p>
+                                        {% if tarefa.colab == NULL %}
+                                        <div class="columns">
+                                          <div class="column is-6">
+                                            <div class="field" >
+                                              <label class="label">Atribuir Colaborador:</label>
+                                              <div class="control">
+                                                <div class="select is-fullwidth" >
+                                                  <select name="addcolaborador">
+                                                    <option value="">---------</option>
+                                                    {% for col in colaboradores %}
+                                                    <option value={{col.utilizadorid}}>{{col.utilizadorid.nome}}</option>
+                                                    {% endfor %}
+                                                  </select>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="column is-1">
+                                              <div class="field" >
+                                              <label class="label"></label>
+                                              <br>
+                                                <div class="control">
+                                                  <div class="has-text-centered">
+                                                      <a id="concluir" onclick="alert.render('Tem a certeza que pretende atribuir este colaborador a esta tarefa? ','{% url 'atribuirColaborador' tarefa.id addcolaborador %}')" class="button is-success" name="addcolaborador" value="addcolaborador">
+                                                          <span class="icon is-small">
+                                                              <i class="mdi mdi-plus"></i>
+                                                          </span>
+                                                          <span>Atribuir Colaborador</span>
+                                                      </a>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>                        
@@ -230,7 +263,7 @@
                             <td data-label="Dia">{{tarefa.tarefaacompanhar.dia|date:'d-m-Y'}}</td>
                             <td data-label="Horarios">{{tarefa.tarefaacompanhar.horario}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
+                            <td data-label="Atribuido a">{{tarefa.colab.utilizadorid.nome}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
                              <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
@@ -260,7 +293,7 @@
                                         </p>
                                         <p>
                                             <strong>Colaborador Atribuido:</strong>
-                                            {{tarefa.colaboradorutilizadorid.utilizadorid.nome}}
+                                            {{tarefa.colab.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Tipo de tarefa:</strong>
@@ -272,16 +305,46 @@
                                         </p>
                                         <p>
                                             <strong>Origem:</strong>
-                                            {{tarefaacompanhar.origem}}
+                                            {{tarefa.tarefaacompanhar.origem}}
                                         </p>
                                         <p>
                                             <strong>Destino:</strong>
-                                            {{tarefaacompanhar.destino}}
+                                            {{tarefa.tarefaacompanhar.destino}}
                                         </p>
                                          <p>
                                             <strong>Coordenador Responsavel:</strong>
-                                            {{tarefa.coordenadorutilizadorid.utilizadorid.nome}}
+                                            {{tarefa.coord.utilizador.nome}}
                                         </p>
+                                        {% if tarefa.colab == NULL %}
+                                        <div class="columns">
+                                          <div class="column is-6">
+                                            <div class="field" >
+                                              <label class="label">Atribuir Colaborador:</label>
+                                              <div class="control">
+                                                <div class="select is-fullwidth" >
+                                                    {{formtarefa.colab}}
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="column is-1">
+                                              <div class="field" >
+                                              <label class="label"></label>
+                                              <br>
+                                                <div class="control">
+                                                  <div class="has-text-centered">
+                                                      <a id="concluir" href="{% url 'atribuirColaborador' tarefa.id%}" class="button is-success" type="submit" name="addcolaborador2" value="addcolaborador2">
+                                                          <span class="icon is-small">
+                                                              <i class="mdi mdi-plus"></i>
+                                                          </span>
+                                                          <span>Atribuir Colaborador</span>
+                                                      </a>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>                        
@@ -290,6 +353,8 @@
                     </tbody>
                     {% endif %}    
                             
+
+
                     {% if tarefa.tipo == "tarefaOutra" %}
                     {% for tarefaoutra in tarefasoutra %}
                     {% if tarefaoutra.tarefaid == tarefa %}
@@ -305,7 +370,7 @@
                             <td data-label="Dia">{{tarefaoutra.dia|date:'d-m-Y'}}</td>
                             <td data-label="Horarios">{{tarefaoutra.horario}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
+                            <td data-label="Atribuido a">{{tarefa.colab.utilizadorid.nome}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
                             <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
@@ -335,7 +400,7 @@
                                         </p>
                                         <p>
                                             <strong>Colaborador Atribuido:</strong>
-                                            {{tarefa.colaboradorutilizadorid.utilizadorid.nome}}
+                                            {{tarefa.colab.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Tipo de tarefa:</strong>
@@ -347,8 +412,43 @@
                                         </p>
                                          <p>
                                             <strong>Coordenador Responsavel:</strong>
-                                            {{tarefa.coordenadorutilizadorid.utilizadorid.nome}}
+                                            {{tarefa.coord.utilizador.nome}}
                                         </p>
+                                        {% if tarefa.colab == NULL %}
+                                        <div class="columns">
+                                          <div class="column is-6">
+                                            <div class="field" >
+                                              <label class="label">Atribuir Colaborador:</label>
+                                              <div class="control">
+                                                <div class="select is-fullwidth" >
+                                                  <select name="addcolaborador">
+                                                    {{formtarefa.colab}}
+                                                    {% for col in colaboradores %}
+                                                    <option value={{col.utilizadorid}}>{{col.utilizadorid.nome}}</option>
+                                                    {% endfor %}
+                                                  </select>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          <div class="column is-1">
+                                              <div class="field" >
+                                              <label class="label"></label>
+                                              <br>
+                                                <div class="control">
+                                                  <div class="has-text-centered">
+                                                      <a id="concluir" onclick="alert.render('Tem a certeza que pretende atribuir este colaborador a esta tarefa? ','{% url 'atribuirColaborador' tarefa.id addcolaborador %}')" class="button is-success" name="addcolaborador" value="addcolaborador">
+                                                          <span class="icon is-small">
+                                                              <i class="mdi mdi-plus"></i>
+                                                          </span>
+                                                          <span>Atribuir Colaborador</span>
+                                                      </a>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                        </div>
+                                        {% endif %}
                                     </div>
                                 </div>
                             </div>                        
@@ -361,6 +461,7 @@
 
                     {% endfor %}
                 </table>
+                </form>
             </div>
     </div>
 </div>

@@ -27,7 +27,7 @@ class TarefaForm(ModelForm):
     
     def __init__(self,*args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['colab'].queryset = Colaborador.objects.none()
+        self.fields['colab'].queryset = Colaborador.objects.filter().order_by('utilizadorid__nome')
 
         if 'sessoes' in self.data:
             try:

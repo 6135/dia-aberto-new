@@ -131,13 +131,15 @@ def consultartarefa(request):
     tarefas=Tarefa.objects.all()
     tarefasacompanhar= TarefaAcompanhar.objects.all()
     tarefasauxiliar= TarefaAuxiliar.objects.all()
+    colaboradores= Colaborador.objects.all()
     tarefasoutra= TarefaOutra.objects.all()
     if request.method == 'POST' or request.GET.get('searchTarefa'):
+        form_tarefa=TarefaForm(request.POST)
         today=datetime.now(timezone.utc)
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
         filterForm=tarefaFilterForm(request.POST)
         nome=str(request.POST.get('searchTarefa'))
-        tarefas=tarefas.filter(Q(nome__icontains=nome) | Q(colaboradorutilizadorid__utilizadorid__nome__icontains=nome))
+        tarefas=tarefas.filter(Q(nome__icontains=nome) | Q(colab__utilizadorid__nome__icontains=nome))
         tipo=str(request.POST.get('tipo'))
         if tipo != ' ' and tipo != 'None':
             tarefas=tarefas.filter(tipo=tipo)
@@ -146,13 +148,22 @@ def consultartarefa(request):
             filter=filters(request)
             tarefas=tarefas.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
     else:
+        form_tarefa= TarefaForm()
         filterForm=tarefaFilterForm()
 
     return render(request=request,
 			    template_name="coordenadores/consultartarefa.html",
-                context={"tarefas": tarefas,"tarefasauxiliar": tarefasauxiliar,"tarefasacompanhar": tarefasacompanhar,"tarefasoutra": tarefasoutra,"filter":filterForm}
+                context={"tarefas": tarefas,"tarefasauxiliar": tarefasauxiliar,"tarefasacompanhar": tarefasacompanhar,"tarefasoutra": tarefasoutra,"filter":filterForm, "formtarefa":form_tarefa, "colaboradores": colaboradores}
             )
 
 def eliminartarefa(request,id):
     Tarefa.objects.get(id=id).delete()
+    return redirect('consultarTarefa')
+
+
+def atribuircolaborador(request,tarefa):
+    tarefa= Tarefa.objects.get(id=tarefa)
+    form_tarefa=TarefaForm(request.POST, instance=tarefa)
+    print(request.POST)
+    form_tarefa.save()
     return redirect('consultarTarefa')
