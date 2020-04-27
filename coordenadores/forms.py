@@ -12,11 +12,12 @@ class TarefaForm(ModelForm):
         if cleaned_data.get('colab') is None:
             estado = 'naoAtribuida'
         self.instance.estado = estado
-        nome = 'Auxiliar atividade'
-        if cleaned_data.get('tipo') == 'a':
-            self.instance.nome = nome + 'otherstuff'
-        elif True:
-            print('')
+        nome = Atividade.objects.get(id=self.data.get('atividades')).nome
+        if cleaned_data.get('tipo') == 'tarefaAuxiliar':
+            self.instance.nome = 'Auxiliar na atividade '+nome
+        elif cleaned_data.get('tipo') == 'tarefaAcompanhar':
+            nome = 'grupo'
+            self.instance.nome = 'Acompanhar o grupo '+nome
 
     class Meta:  
         model = Tarefa 
@@ -39,16 +40,43 @@ class TarefaForm(ModelForm):
             self.fields['colab'].queryset = self.instance.colab.none()
 
 class TarefaAuxiliarForm(ModelForm):
-    ativ=[('','Escolha')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]
+    ativ=[('','Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]
     atividades= ChoiceField(choices=ativ,widget=Select(attrs={'onchange':'diasSelect();'}))
-    sessoes=ChoiceField(choices=[('','------------')],widget=Select(attrs={'onchange':'colaboradoresSelect();'}))
-    dias=ChoiceField(choices=[('','------------')],widget=Select(attrs={'onchange':'sessoesSelect();'}))
+    sessoes=ChoiceField(choices=[('','Escolha a Sessão')],widget=Select(attrs={'onchange':'colaboradoresSelect();'}))
+    dias=ChoiceField(choices=[('','Escolha o Dia')],widget=Select(attrs={'onchange':'sessoesSelect();'}))
     class Meta:
         model= TarefaAuxiliar
         exclude = ['tarefaid']
-        
-class TarefaAcompanharForm(ModelForm):
 
+    def __init__(self,*args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['sessoes'].queryset = Sessao.objects.none()
+        print(self.data.get('sessoes'))
+        if 'dias' in self.data:
+            try:
+                dia = self.data.get('dias')
+                self.fields['sessoes'].queryset = Sessao.objects.filter(dia=dia)
+                print(self.data.get('sessoes'))
+            except (ValueError, TypeError):
+                pass  # invalid input from the client; ignore and fallback to empty City queryset
+        elif self.instance.pk:
+            self.fields['sessoes'].queryset = self.instance.sessoes.none() 
+            
+    def __init__(self,*args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['dias'].queryset = Sessao.objects.none()
+        print(self.data.get('dias'))
+        if 'dias' in self.data:
+            try:
+                atividade = self.data.get('atividades')
+                self.fields['dias'].queryset = Sessao.objects.filter(atividadeid=atividade).dia
+                print(self.data.get('dias'))
+            except (ValueError, TypeError):
+                pass  # invalid input from the client; ignore and fallback to empty City queryset
+        elif self.instance.pk:
+            self.fields['dias'].queryset = self.instance.sessoes.none()   
+
+class TarefaAcompanharForm(ModelForm):
     class Meta:
         model= TarefaAcompanhar
         exclude = ['tarefaid']
