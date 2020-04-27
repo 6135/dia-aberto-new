@@ -46,7 +46,7 @@ class TarefaForm(ModelForm):
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
         elif self.instance.pk:
-            self.fields['colab'].queryset = self.instance.colab.none()
+            self.fields['colab'].queryset = Colaborador.objects.none()
 
 class TarefaAuxiliarForm(ModelForm):
     ativ=[('','Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]
@@ -104,3 +104,5 @@ class tarefaFilterForm(Form):
         ("tarefaAuxiliar", "Auxiliar"),
         ("tarefaOutra", "Outra")
      ],widget=Select())
+
+
