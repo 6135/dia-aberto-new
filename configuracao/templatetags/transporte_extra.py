@@ -15,7 +15,7 @@ def transport_type(value):
         pass
     return tipo
 
-@register.filter
+@register.filter(name='trans_id')
 def transport_id(value):
     id = 'Não aplicável'
     try:
