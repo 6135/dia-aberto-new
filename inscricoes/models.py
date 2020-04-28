@@ -3,7 +3,6 @@ from django.core import validators
 from phonenumber_field.modelfields import PhoneNumberField
 from configuracao.models import *
 from colaboradores.models import *
-from atividades.models import *
 from utilizadores.models import *
 
 class Escola(models.Model):
@@ -21,7 +20,7 @@ class Inscricao(models.Model):
     ano = models.IntegerField()
     turma = models.CharField(max_length=255)
     areacientifica = models.CharField(max_length=255)
-    participante = models.ForeignKey('Participante', models.DO_NOTHING, db_column='participante')
+    participante = models.ForeignKey(Participante, models.DO_NOTHING, db_column='participante')
     diaaberto = models.ForeignKey(Diaaberto, models.DO_NOTHING, db_column='diaaberto')
 
     class Meta:
@@ -31,7 +30,7 @@ class Inscricao(models.Model):
 
 class Inscricaosessao(models.Model):
     inscricao = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricao')
-    sessao = models.ForeignKey('Sessao', models.DO_NOTHING, db_column='sessao')
+    sessao = models.ForeignKey('atividades.Sessao', models.DO_NOTHING, db_column='sessao')
     nparticipantes = models.IntegerField()
 
     class Meta:
@@ -40,7 +39,7 @@ class Inscricaosessao(models.Model):
 
 
 class Inscricaotransporte(models.Model):
-    transporte = models.ForeignKey('Transporte', models.DO_NOTHING, db_column='transporte')
+    transporte = models.ForeignKey(Transporte, models.DO_NOTHING, db_column='transporte')
     npassageiros = models.IntegerField()
     inscricao = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricao')
 
@@ -51,7 +50,7 @@ class Inscricaotransporte(models.Model):
 
 class Inscricaprato(models.Model):
     inscricao = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricao')
-    prato = models.ForeignKey('Prato', models.DO_NOTHING, db_column='prato')
+    prato = models.ForeignKey(Prato, models.DO_NOTHING, db_column='prato')
     campus = models.ForeignKey(Campus, models.DO_NOTHING, db_column='campus')
     npessoas = models.IntegerField()
 
