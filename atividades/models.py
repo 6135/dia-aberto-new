@@ -81,8 +81,10 @@ class Sessao(models.Model):
     vagas = models.IntegerField(db_column='Vagas')  # Field name made lowercase.
     atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
     dia = models.DateField(db_column='Dia', blank=True, null=True)  # Field name made lowercase.
+
     def timeRange_(self, seperator = ' até '):
         return self.horarioid.inicio.strftime('%H:%M') + str(seperator) + self.horarioid.fim.strftime('%H:%M')
+        
     class Meta:
         db_table = 'Sessao'
 

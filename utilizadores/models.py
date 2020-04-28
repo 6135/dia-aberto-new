@@ -22,8 +22,12 @@ class Administrador(Utilizador):
         db_table = 'Administrador'
 
 
-class Participante(Utilizador):
+
+class Participante(models.Model):
+    utilizadorid = models.OneToOneField('Utilizador', models.DO_NOTHING, db_column='UtilizadorID', primary_key=True)  # Field name made lowercase.
+
     class Meta:
+        managed = False
         db_table = 'Participante'
 
 
