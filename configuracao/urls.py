@@ -23,7 +23,6 @@ urlpatterns = [
     path('criartransporte', views.criarTransporte, name='criarTransporte'),
 
     #-Utility
-    path('source', views.sourceView),
     #ajax ----------
     path('ajax/getDias', views.getDias, name='getDias'),
 
