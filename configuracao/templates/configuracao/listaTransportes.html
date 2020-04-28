@@ -1,8 +1,10 @@
 {% extends 'configuracao/app.html' %}
 {% block content %}
 {% load l10n %}
+{% load transporte_extra %}
 <div class="columns">
     <div class="column is-3">
+        {% comment 'filters' %}
         <form method="POST" action="" id='filter'>
             {% csrf_token %}
             <div>
@@ -54,8 +56,8 @@
                 </ul>
             </div>
             </div>
-            
         </form>
+        {% endcomment %}
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -64,11 +66,11 @@
               <li class="is-active"><a href="#" aria-current="page">Transportes</a></li>
             </ul>
           </nav>
-        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'novoMenu'%}">     
+        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'criarTransporte'%}">     
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
-            <span>Novo Transporte</span>
+            <span>Criar Transporte</span>
         </a>   
 
         <div  class="table"></div>
@@ -77,43 +79,63 @@
                     <thead>
                         <tr>
                             <th style="width: 30px;" ></th>
-                            <th  onclick="sortTable(1,true)" style=" cursor: pointer;" class="pre-arrow">
-                                Dia Aberto<span class="arrow active"><span></span><span></span></span>
+                            <th  onclick="sortTable(1,false)" style=" cursor: pointer;" class="pre-arrow">
+                                Identificador<span class="arrow active"><span></span><span></span></span>
                             </th>
                             <th onclick="sortTable(2,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Campus<span class="arrow active"><span></span><span></span></span>
+                                Tipo<span class="arrow active"><span></span><span></span></span>
                             </th>
-                            <th style="width: 400px">
+                            <th onclick="sortTable(3,false)" style=" cursor: pointer;" class="pre-arrow">
+                                Origem - Destino<span class="arrow active"><span></span><span></span></span>
+                            </th>
+                            <th onclick="sortTable(4,true)" style=" cursor: pointer;" class="pre-arrow">
+                                Hora Partida<span class="arrow active"><span></span><span></span></span>
+                            </th>
+                            <th onclick="sortTable(5,true)" style=" cursor: pointer;" class="pre-arrow">
+                                Hora Chegada<span class="arrow active"><span></span><span></span></span>
+                            </th>
+                            <th style="width: 40px">
                                 Operações
                             </th>                            
                         </tr>
                     </thead>
                     <tbody> 
-                    {% for menu in menus %}     
+                    {% for horarioTra in horariosTra %}     
                     <tr draggable="false">
                         <td class="chevron-cell">
-                            <a role="button" onclick="displayDetails({{menu.id}})">
+                            <a role="button" onclick="displayDetails({{horarioTra.id}})">
                                 <span class="icon-expandable">
                                     <i class="mdi mdi-chevron-right mdi-24px"></i>
                                 </span>
                             </a>
                         </td>
-                        <td data-label="Dia Aberto" date-value="{{menu.dia|date:'Y-m-d'}}">
-                            {{menu.dia}}
+                        <td data-label="Identificador">
+                            {{horarioTra.transporte.identificador}}
                         </td>
-                        <td data-label="Campus">{{menu.campus.nome}}</td>
+                        <td data-label="Tipo">
+                            {{horarioTra|transport_type}}
+                        </td>
+                        <td data-label="Origem - Destino">
+                            {{horarioTra.trip}}
+                        </td>
+                        <td data-label="Hora Partida">
+                            {{horarioTra.horario.inicio}}
+                        </td>
+                        <td data-label="Hora Chegada">
+                            {{horarioTra.horario.fim}}
+                        </td>
                         <td data-label="Operações">
                             <div class="columns">
                                 
                                 <div class="column is-1">  
-                                    <a id='edit' href="{% url 'editarMenu' menu.id %}">
+                                    <a id='edit' href="">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                                         </span>
                                     </a>
                                 </div>
                                 <div class="column is-1">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Menu?','{% url 'eliminarMenu' menu.id %}')">
+                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Transporte?','{% url 'verTransportes' %}')">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                                         </span>
@@ -122,7 +144,9 @@
                             </div> 
                         </td>                     
                       </tr> 
-                      <tr class="detail" style="display: none" id='Details{{menu.id}}'>
+                        
+                      <tr class="detail" style="display: none" id='Details{{horarioTra.id}}'>
+                      {% comment 'details' %}
                       <td colspan="5">
                         <div class="detail-container">
                             <div class="table"> 
@@ -151,7 +175,9 @@
                             </div>
                         </div>
                     </td>
-                      </tr> 
+                    {% endcomment %}
+                      </tr>
+                    
                     {% endfor %}
                     </tbody>
                 </table>

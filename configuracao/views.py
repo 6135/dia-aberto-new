@@ -210,4 +210,17 @@ def getDias(request):
 				  context={'options':options, 'default': default}
 				)
 
+def sourceView(request):
+	return redirect('https://github.com/6135/dia-aberto')
+
+def verTransportes(request):
+	form = []
+	transporte = Transportehorario.objects.all()
+	return render(request = request,
+				  template_name='configuracao/listaTransportes.html',
+				  context={'form': form, 'horariosTra': transporte})
+
+def criarTransporte(request):
+	return None
+
 
