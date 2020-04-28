@@ -14,3 +14,13 @@ def transport_type(value):
     except ObjectDoesNotExist:
         pass
     return tipo
+
+@register.filter
+def transport_id(value):
+    id = 'Não aplicável'
+    try:
+        trans = value.transporte.transporteuniversitario
+        id = value.transporte.identificador
+    except ObjectDoesNotExist:
+        pass
+    return id

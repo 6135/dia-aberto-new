@@ -221,6 +221,6 @@ def verTransportes(request):
 				  context={'form': form, 'horariosTra': transporte})
 
 def criarTransporte(request):
-	return None
+	return HttpResponse()
 
 
