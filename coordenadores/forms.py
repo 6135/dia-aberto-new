@@ -75,6 +75,7 @@ class TarefaAuxiliarForm(ModelForm):
             
 
 class TarefaAcompanharForm(ModelForm):
+    grupo = [('','Escolha um grupo')]+[(grupo.escola,grupo.ano) for grupo in Inscricao.objects.filter(nalunos__gt=1)]
     class Meta:
         model= TarefaAcompanhar
         exclude = ['tarefaid']
