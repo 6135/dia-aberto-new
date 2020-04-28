@@ -41,7 +41,7 @@ class Tarefa(models.Model):
 
 class TarefaAcompanhar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
-    inscricaoid = models.ForeignKey(Inscricao, models.CASCADE, db_column='inscricaoid')
+    inscricaoid = models.ForeignKey(Inscricao, models.CASCADE, db_column='inscricao')
     origem = models.CharField(max_length=255, db_column='origem', blank=False, null=False)
     destino = models.CharField(max_length=255, db_column='destino', blank=False, null=False)
     horario = models.TimeField(blank=False, null=False)
