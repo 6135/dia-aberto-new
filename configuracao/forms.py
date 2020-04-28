@@ -4,7 +4,6 @@ from datetime import datetime
 from _datetime import timedelta
     
 class DateTimeWidget(DateTimeInput):
-
     def __init__(self, attrs=None, format=None, input_type=None, hours='09', minutes='00', default=None):
         #input_type = 'datetime-local'
         now = datetime.now()
@@ -102,3 +101,5 @@ class menusFilterForm(Form):
     penha=BooleanField(widget=CheckboxInput(),required=False)
     gambelas=BooleanField(widget=CheckboxInput(),required=False)
     portimao=BooleanField(widget=CheckboxInput(),required=False)
+
+
