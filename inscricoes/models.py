@@ -32,11 +32,16 @@ class Responsavel(models.Model):
 
 
 class Escola(models.Model):
-    nome = models.CharField(max_length=200)
-    local = models.CharField(max_length=128)
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
+    local = models.CharField(db_column='Local', max_length=255)  # Field name made lowercase.
+    telefone = models.CharField(db_column='Telefone', max_length=16)  # Field name made lowercase.
+    email = models.CharField(db_column='Email', max_length=255)  # Field name made lowercase.
 
     class Meta:
+        managed = False
         db_table = 'Escola'
+
 
 class Inscricaoprato(models.Model):
     inscricao = models.ForeignKey(Inscricao, models.CASCADE)
