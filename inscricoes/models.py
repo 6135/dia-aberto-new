@@ -30,7 +30,7 @@ class Inscricao(models.Model):
 
 class Inscricaosessao(models.Model):
     inscricao = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricao')
-    sessao = models.ForeignKey('atividades.Sessao, models.DO_NOTHING, db_column='sessao')
+    sessao = models.ForeignKey('atividades.Sessao', models.DO_NOTHING, db_column='sessao')
     nparticipantes = models.IntegerField()
 
     class Meta:
