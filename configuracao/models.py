@@ -12,36 +12,41 @@ class Transporte(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
-    identificador = models.IntegerField(db_column='Identificador')
+    identificador = models.CharField(db_column='Identificador', max_length=32)
 
+    def __str__(self):
+        return str(self.identificador)
     class Meta:
         db_table = 'Transporte'
-
 
 class Transportehorario(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
-    origem = models.IntegerField(db_column='Origem')
+    origem = models.CharField(db_column='Origem', max_length=32)
     # Field name made lowercase.
-    chegada = models.IntegerField(db_column='Chegada')
+    chegada = models.CharField(db_column='Chegada', max_length=32)
     # Field name made lowercase.
-    horarioid = models.ForeignKey(
-        'Horario', models.CASCADE, db_column='HorarioID')
-    # Field name made lowercase.
-    transporteid = models.ForeignKey(
-        Transporte, models.CASCADE, db_column='TransporteID')
+    horario = models.ForeignKey(
+        'Horario', models.CASCADE, db_column='Horario')
+    
+    transporte = models.ForeignKey(
+        Transporte, models.CASCADE, db_column='Transporte')
 
+    def trip(self):
+        return str(self.origem) + ' - ' + str(self.chegada)
     class Meta:
         db_table = 'TransporteHorario'
-
-
+        
 class Transportepessoal(models.Model):
     # Field name made lowercase.
-    transporteid = models.OneToOneField(
-        Transporte, models.CASCADE, db_column='TransporteID', primary_key=True)
+    transporte = models.OneToOneField(
+        Transporte, models.CASCADE, db_column='Transporte', primary_key=True)
     # Field name made lowercase.
     tipo = models.CharField(db_column='Tipo', max_length=255)
+
+    def __str__(self):
+        return str(self.transporte.id) + ' ' + str(self.tipo)
 
     class Meta:
         db_table = 'TransportePessoal'
@@ -49,11 +54,13 @@ class Transportepessoal(models.Model):
 
 class Transporteuniversitario(models.Model):
     # Field name made lowercase.
-    transporteid = models.OneToOneField(
-        Transporte, models.CASCADE, db_column='TransporteID', primary_key=True)
+    transporte = models.OneToOneField(
+        Transporte, models.CASCADE, db_column='Transporte', primary_key=True)
     # Field name made lowercase.
     capacidade = models.IntegerField(db_column='Capacidade')
 
+    def __str__(self):
+        return str(self.transporte.id) + ' ' + str(self.capacidade)
     class Meta:
         db_table = 'TransporteUniversitario'
 
@@ -114,7 +121,8 @@ class Diaaberto(models.Model):
                 ) for d in range(total_dias.days)
             ]
 
-
+    def __str__(self):
+        return str(self.ano)
     class Meta:
         db_table = 'DiaAberto'
 
@@ -133,11 +141,13 @@ class Menu(models.Model):
 
     def pratos_(self):
         return Prato.objects.filter(menuid=self)
-    class Meta:
-        db_table = 'Menu'
 
     def __str__(self):
         return str(self.campus.nome) + ' ' + str(self.diaaberto.ano)
+    class Meta:
+        db_table = 'Menu'
+
+
 
 
 class Prato(models.Model):
@@ -159,6 +169,8 @@ class Prato(models.Model):
     # Field name made lowercase.
     menuid = models.ForeignKey(Menu, models.CASCADE, db_column='MenuID')
 
+    def __str__(self):
+        return (self.prato)
     class Meta:
         db_table = 'Prato'
 
@@ -210,8 +222,8 @@ class Departamento(models.Model):
     class Meta:
         db_table = 'Departamento'
 
-    def str(self):
-        return self.nome
+    def __str__(self):
+        return str(self.nome)
 
 class Sala(models.Model):
     # Field name made lowercase.
@@ -262,10 +274,11 @@ class Unidadeorganica(models.Model):
         managed = False
         db_table = 'UnidadeOrganica'
 
-    def str(self):
+    def __str__(self):
         return self.nome
 
 class Curso(models.Model):
+
     id = models.AutoField(db_column='ID', primary_key=True)
 
     sigla = models.CharField(
@@ -277,8 +290,9 @@ class Curso(models.Model):
     unidadeorganicaid = models.ForeignKey(
         'Unidadeorganica', models.CASCADE, db_column='UnidadeorganicaID')
 
+    def __str__(self):
+        return self.nome
+
     class Meta:
         db_table = 'Curso'
 
-    def str(self):
-        return self.nome

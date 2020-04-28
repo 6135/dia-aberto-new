@@ -4,17 +4,27 @@ from . import views
 urlpatterns = [
     path("",views.homepage,name="inicio"),
     path('admin', views.homepage, name='adminpage'),
+    #-diaAberto
     path('diasabertos', views.viewDays, name='diasAbertos'),
     path('editardia/<int:id>', views.newDay, name='editarDia'),
     path('inserirdiaaberto', views.newDay,name='novoDia' ),
     path('deldia/<int:id>', views.delDay, name='eliminarDia'),
-    path('daysjson', views.view_days_as_json, name='daysjson'),
+    #path('daysjson', views.view_days_as_json, name='daysjson'),
+
+    #-almoco
     path('menus',views.viewMenus, name='verMenus'),
     path('delmenu/<int:id>', views.delMenu, name='eliminarMenu'),
     path('editarmenu/<int:id>',views.newMenu, name='editarMenu'),
     path('novomenu', views.newMenu, name='novoMenu'),
     path('adicionarprato/<int:id>', views.newPrato, name='novoPrato'),
     path('delprato/<int:id>', views.delPrato, name='eliminarPrato'),
+    #-Transporte
+    path('transportes', views.verTransportes, name='verTransportes'),
+    path('criartransporte', views.criarTransporte, name='criarTransporte'),
+
+    #-Utility
+    path('source', views.sourceView),
+    #ajax ----------
     path('ajax/getDias', views.getDias, name='getDias'),
 
 ]
