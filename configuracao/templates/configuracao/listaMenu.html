@@ -123,36 +123,42 @@
                         </td>                     
                       </tr> 
                       <tr class="detail" style="display: none" id='Details{{menu.id}}'>
-                      <td colspan="5">
-                        <div class="detail-container">
-                            <div class="table"> 
-                                <div class="table-wrapper">
-                                    <table class="table has-mobile-cards">
-                                        <thead id='tabble-details{{menu.id}}'>
-                                            {% for prato in menu.pratos_ %}
-                                            <tr style="border-bottom: 1px solid #ddd">
-                                                <th class="th-wrap">Tipo:</th>
-                                                <th class="th-wrap" style="font-weight: normal;">
-                                                    <span>{{prato.tipo}}</span>
-                                                </th>
-                                                <th class="th-wrap">Prato:</th>
-                                                <th class="th-wrap" style="font-weight: normal;">
-                                                    <span>{{prato.prato}}</span>
-                                                </th>
-                                                <th class="th-wrap"># Pratos:</th>
-                                                <th class="th-wrap" style="font-weight: normal;">
-                                                    <span>{{prato.nrpratosdisponiveis}}</span>
-                                                </th>
-                                            </tr>
-                                            {% endfor %}
-                                        </thead>
-                                    </table>
+                        <td colspan="5">
+                            <div class="detail-container">
+                                <div class="table"> 
+                                    <div class="table-wrapper">
+                                        <table class="table is-stripped has-mobile-cards is-fullwidth">
+                                            <thead id='tabble-details{{menu.id}}'>
+                                                <tr>
+                                                    <th class="th-wrap">Tipo:</th>
+                                                    <th class="th-wrap">Prato:</th>
+                                                    <th class="th-wrap"># Pratos:</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for prato in menu.pratos_ %}
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <td data-label='Tipo:' style="font-weight: normal;">
+                                                        <span>{{prato.tipo}}</span>
+                                                    </td>
+                                                    <td data-label='Prato:' style="font-weight: normal;">
+                                                        <span>{{prato.prato}}</span>
+                                                    </td>
+                                                    <td data-label='# Pratos:' style="font-weight: normal;">
+                                                        <span>{{prato.nrpratosdisponiveis}}</span>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </td>
-                      </tr> 
+                            <hr>
+                        </td>
+                       </tr> 
                     {% endfor %}
+                    
                     </tbody>
                 </table>
             </div>

@@ -1,6 +1,7 @@
 {% extends 'configuracao/app.html' %}
 {% block content %}
 {% load l10n %}
+
 <div class="columns">
     <div class="column is-3">
         <form method="POST" action="" id='filter'>
@@ -78,7 +79,7 @@
             <span>Criar novo Dia Aberto</span>
         </a>   
 
-        <div  class="table">
+        <div class="b-table">
             <div class="table-wrapper">
                 <table id="table01" class="table has-mobile-cards is-hoverable is-fullwidth">
                     <thead>
@@ -138,55 +139,89 @@
                             <div class="detail-container">
                                 <div class="table"> 
                                     <div class="table-wrapper">
-                                        <table class="table has-mobile-cards">
+                                        <table class="table has-mobile-cards is-fullwidth">
+                                            <thead>
+                                                <tr>
+                                                    <th class="th-wrap">Inicio submissao Atividades:</th>
+                                                    <th class="th-wrap">Fim submissao Atividades:</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <td data-label='Inicio submissao Atividades:'style="font-weight: normal;">
+                                                        <span>{{diaAberto.datapropostasatividadesincio}}</span>
+                                                    </td>
+                                                    <td data-label='Fim submissao Atividades:'style="font-weight: normal;">
+                                                        <span> {{diaAberto.dataporpostaatividadesfim}} </span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="table"> 
+                                    <div class="table-wrapper">
+                                        <table class="table has-mobile-cards is-fullwidth">
                                             <thead>
                                                 <tr style="border-bottom: 1px solid #ddd">
-                                                    <th class="th-wrap">Inicio submissao Atividades:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
-                                                        <span>{{diaAberto.datapropostasatividadesincio}}</span>
-                                                    </th>
-                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
-                                                    <th class="th-wrap">Fim submissao Atividades:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
-                                                        <span> {{diaAberto.dataporpostaatividadesfim}} </span>
-                                                    </th>
-                                                </tr>
-                                                <tr style="border-bottom: 1px solid #ddd">
                                                     <th class="th-wrap">Inicio Inscrições:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
+                                                    <th class="th-wrap">Fim Inscrições:</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <td data-label='Inicio Inscrições:' style="font-weight: normal;">
                                                         <span>{{diaAberto.datainscricaoatividadesinicio}}</span>
-                                                    </th>
-                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
-                                                    <th class="th-wrap">Fim Inscrições:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
+                                                    </td>
+
+                                                    <td data-label="Fim Inscrições:" style="font-weight: normal;">
                                                         <span> {{diaAberto.datainscricaoatividadesfim}} </span>
-                                                    </th>
-                                                </tr>
+                                                    </td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="table"> 
+                                    <div class="table-wrapper">
+                                        <table class="table has-mobile-cards is-fullwidth">
+                                            <thead>
                                                 <tr style="border-bottom: 1px solid #ddd">
                                                     <th class="th-wrap">Preço Professores:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
-                                                        <span>{{diaAberto.precoprofessores}}</span>
-                                                    </th>
-                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
                                                     <th class="th-wrap">Preço Alunos:</th>
-                                                    <th class="th-wrap" style="font-weight: normal;">
-                                                        <span> {{diaAberto.precoalunos}} </span>
-                                                    </th>
                                                 </tr>
-                                                <tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <td data-label="Preço Professores:" style="font-weight: normal;">
+                                                        <span>{{diaAberto.precoprofessores}}</span>
+                                                    </td>
+                                                    <td data-label='Preço Alunos:' style="font-weight: normal;">
+                                                        <span> {{diaAberto.precoalunos}} </span>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="table"> 
+                                    <div class="table-wrapper">
+                                        <table class="table has-mobile-cards is-fullwidth">
+                                            <tbody>
+                                                <tr style="border-bottom: 1px solid #ddd">
                                                     <th class="th-wrap">Descrição:</th>
+                                                </tr>
+                                            </tbody>
+                                            <tbody>
+                                                <tr style="border-bottom: 1px solid #ddd">
                                                     <td colspan="4">
                                                         <textarea class="textarea" disabled style="resize: none;">{{diaAberto.descricao}}</textarea>
                                                     </td>
                                                 </tr>
-
+                                            </tbody>
                                         </table>
                                     </div>
-                                </div>
+                                </div>                                                                                            
                             </div>
                             <hr>
                         </td>
-                        
                       </tr> 
                     {% endfor %}
                     </tbody>
