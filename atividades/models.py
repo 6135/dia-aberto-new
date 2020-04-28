@@ -30,7 +30,14 @@ class Arlivre(models.Model):
     class Meta:
         managed = False
         db_table = 'ArLivre'
- 
+
+class Tema(models.Model):
+    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
+    tema = models.CharField(db_column='Tema', max_length=64)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'Tema'
 
 class Atividade(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
@@ -79,11 +86,5 @@ class Sessao(models.Model):
     class Meta:
         db_table = 'Sessao'
 
-class Tema(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    tema = models.CharField(db_column='Tema', max_length=64)  # Field name made lowercase.
 
-    class Meta:
-        managed = False
-        db_table = 'Tema'
 

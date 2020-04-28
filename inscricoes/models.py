@@ -38,14 +38,6 @@ class Escola(models.Model):
     class Meta:
         db_table = 'Escola'
 
-
-class EscolaPortugal(models.Model):
-    nome = models.CharField(max_length=200)
-
-    class Meta:
-        db_table = 'EscolaPortugal'
-
-
 class Inscricaoprato(models.Model):
     inscricao = models.ForeignKey(Inscricao, models.CASCADE)
     prato = models.ForeignKey('configuracao.Prato', models.CASCADE)
