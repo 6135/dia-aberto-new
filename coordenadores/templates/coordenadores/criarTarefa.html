@@ -52,15 +52,15 @@
                   </div>
                 </div>
             </div>
-            {% if formTarefa.errors %}
-                {% for field in formTarefa %}
+            {% if form.errors %}
+                {% for field in form %}
                     {% for error in field.errors %}
                         <div class="alert alert-danger">
                             <strong>{{field.label|escape}}{{ error|escape }}</strong>
                         </div>
                     {% endfor %}
                 {% endfor %}
-                {% for error in formTarefa.non_field_errors %}
+                {% for error in form.non_field_errors %}
                     <div class="alert alert-danger">
                         <strong>{{ error|escape }}</strong>
                     </div>
@@ -81,6 +81,26 @@
 {% endblock content %}
 {% block scripts %}
 <script>
+    function defaultDias(){
+      var atividadeId = document.getElementById("id_atividades").value;
+      console.log(atividadeId)
+      if(typeof ativiadeId === 'undefined') 
+        atividadeId = '';
+      $.ajax({                       
+        url: "{% url 'diasAtividade' %}", 
+        method: 'POST',             
+        data: {
+            'atividadeid': atividadeId,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            'default': '{{form.instance.id}}'
+        },
+        success: function (data) {   
+          $("#id_dias").html(data);
+          $("#id_sessaoid").html('<option value="">Escolha uma sessão</option>');       
+        }
+      });
+    }
+
     $('input:radio').change(function(){
         var tipo=this.value;
 
@@ -92,10 +112,11 @@
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
-          $("#tipoTarefa").html(data);     
+          $("#tipoTarefa").html(data); 3
+          defaultDias();    
         }
       });
-
+      
     });
 
     function diasSelect(){
@@ -109,7 +130,7 @@
         },
         success: function (data) {   
           $("#id_dias").html(data);
-          $("#id_sessoes").html('<option value="">---------</option>');       
+          $("#id_sessaoid").html('<option value="">Escolha uma sessão</option>');       
         }
       });
     }
@@ -124,13 +145,13 @@
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
-          $("#id_sessoes").html(data);           
+          $("#id_sessaoid").html(data);           
         }
       });
     }
 
     function colaboradoresSelect(){
-      var sessao = document.getElementById("id_sessoes").value;; 
+      var sessao = document.getElementById("id_sessaoid").value;; 
       console.log(sessao);
       $.ajax({                       
         url: "{% url 'colaboradoresAtividade' %}", 
@@ -144,5 +165,7 @@
         }
       });
     }
+
+
 </script>
 {% endblock scripts %}

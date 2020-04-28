@@ -21,14 +21,18 @@ def adicionartarefa(request, id = None):
         form_tarefa=TarefaForm(request.POST, instance=tarefa)
         if form_tarefa.is_valid():
             form_tarefa.save()
-            #if request.POST['tipo'] == 'tarefaAuxiliar':
-            #    auxiliar_form = TarefaAuxiliarForm(request.POST,initial={'tarefaid':form_tarefa.instance})
-            #    if auxiliar_form.is_valid():
-            #        print('hello')
-            #        auxiliar_form.save()
-            #        return redirect('consultarTarefa') 
-            #    else:
-            #        form_tarefa.instance.delete()      
+            if request.POST['tipo'] == 'tarefaAuxiliar':        
+                auxiliar_form = TarefaAuxiliarForm(request.POST,instance=TarefaAuxiliar(tarefaid=form_tarefa.instance))
+                if auxiliar_form.is_valid():
+                    auxiliar_form.save()
+                    return redirect('consultarTarefa') 
+            elif request.POST['tipo'] == 'tarefaOutra': 
+                outra_form = TarefaOutraForm(request.POST,instance=TarefaOutra(tarefaid=form_tarefa.instance)) 
+                if outra_form.is_valid():
+                    outra_form.save()
+                    return redirect('consultarTarefa') 
+            else:
+                form_tarefa.instance.delete()      
     return render(request=request,
                 template_name='coordenadores/criarTarefa.html',
                 context={'formTarefa':form_tarefa}
@@ -60,7 +64,7 @@ def sessoesAtividade(request):
     sessoes = Sessao.objects.filter(dia=dia)
     default = {
         'key': '',
-        'value': '--------'
+        'value': 'Escolha a sessão'
     }
     options = [{
                     'key':	str(sessao.id),
@@ -77,7 +81,7 @@ def colaboradoresAtividade(request):
     colabs = Colaborador.objects.all()
     default = {
         'key': '',
-        'value': '--------'
+        'value': 'Escolha o colaborador'
     }
     
     options = [{
@@ -92,17 +96,16 @@ def colaboradoresAtividade(request):
             )
 
 def diasAtividade(request):
-    atividadeid = request.POST['atividadeid']
-    sessoes= Sessao.objects.filter(atividadeid=atividadeid)
     default = {
         'key': '',
-        'value': '--------'
+        'value': 'Escolha o dia'
     }
     dias=[]
-    for sessao in sessoes:
-        if sessao.dia not in dias:
-            dias.append({'key':str(sessao.dia), 'value':sessao.dia})
-            
+    if request.POST['atividadeid'] != '':
+        atividadeid = request.POST.get('atividadeid')
+        atividade = Atividade.objects.get(id=atividadeid)   
+        dias = atividade.get_dias()
+    print(default)    
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':dias, 'default': default}
