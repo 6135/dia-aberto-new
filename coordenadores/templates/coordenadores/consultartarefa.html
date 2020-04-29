@@ -123,6 +123,9 @@
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
+                             <th  style="cursor:pointer;width: 200px;" class="pre-expandable">
+                                Operações
+                            </th>
                             <th style="cursor:pointer;width: 200px;" class="pre-expandable">
                             </th>
                             <th style="">
@@ -157,13 +160,18 @@
                                 <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
                             {% endif %}
                             </td>
-                            <td>
+                            <td >
+                                <a href="">
+                                    <span class="icon has-text-link">
+                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                                    </span>
+                                </a>
                                 <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                     </span>
                                 </a>
-                            </td>      
+                            </td>             
                         </tr> 
                         <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
                         <td colspan="7">
@@ -273,7 +281,12 @@
                                 <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
                             {% endif %}
                             </td>
-                             <td>
+                            <td >
+                                <a href="">
+                                    <span class="icon has-text-link">
+                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                                    </span>
+                                </a>
                                 <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
@@ -383,7 +396,12 @@
                                 <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
                             {% endif %}
                             </td>
-                             <td>
+                             <td >
+                                <a href="">
+                                    <span class="icon has-text-link">
+                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                                    </span>
+                                </a>
                                 <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
