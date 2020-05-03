@@ -11,6 +11,21 @@
   <form method="POST">
     {% csrf_token %}
   <div class="b-steps">
+  <div class="columns is-mobile is-centered">
+            <div class="column is-5 ">
+                <label class="label has-text-info is-centered">Atividade</label>
+            </div>
+            <div class="column is-1 ">
+                <label class="label has-text-info is-centered">Sessoes</label>
+            </div>
+        </div>
+            <div class="columns is-mobile is-centered">
+            <div class="column is-four-fifths">
+            <progress class="progress is-success" value="100" max="100">
+        
+            </progress>
+            </div>
+            </div>
     <section class="step-content">
         <div class="step-item">
           <div style="padding: 1rem 2vw 0px;">
@@ -53,11 +68,15 @@
                                             <td data-label="Nome">{{sessao.horarioid.inicio}} até  {{sessao.horarioid.fim}}</td>
                                             <td data-label="Submetido a">{{sessao.vagas}}</td>  
                                             <td>
-                                               <a onclick="alert.render('Tem a certeza que deseja eliminar a sessão?','{% url 'eliminarSessao' sessao.id%}')">
+                                              {% if is_empty %}
+                                              <a  onclick="alert.warning('Não poderá eliminar esta sessao, caso queira eliminar a ultima sessao, adicione outra primeiro. Caso deseja eliminar a atividade carregue em eliminar atividade')"> 
+                                              {% else %}
+                                              <a onclick="alert.render('Tem a certeza que deseja eliminar a sessão?','{% url 'eliminarSessao' sessao.id%}')">
+                                              {% endif %}
                                                     <span class="icon has-text-danger">
                                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                                     </span>
-                                                </a>
+                                              </a>
                                             </td>
                                         </tr>
                                         {% endfor %} 

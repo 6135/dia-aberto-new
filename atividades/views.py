@@ -159,34 +159,102 @@ def eliminarSessao(request,id):
 #-----------------EndDiogo------------------
 
 
+#----------------- original
 
+#def proporatividade(request):
+#    today= datetime.now(timezone.utc) 
+#    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+#    if request.method == "POST":
+#        print(diaaberto.id)
+#        activity_object_form = AtividadeForm(request.POST)
+#        campus=Campus.objects.all()
+#        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizador=5),
+#                             professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
+#                             estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=request.POST['espacoid']),
+#                             tema=Tema.objects.get(id=request.POST['tema']))
+#        activity_object_form = AtividadeForm(request.POST, instance=new_form)
+#        material_object_form= MateriaisForm(request.POST)
+#        if activity_object_form.is_valid():
+#            #activity_object_form.save()
+#            idAtividade= Atividade.objects.all().order_by('-id').first()
+#            #new_material= Materiais(atividadeid=idAtividade)
+#            #material_object_form= MateriaisForm(request.POST, instance= new_material)
+#            #material_object_form.save()
+#            #return redirect('inserirSessao', idAtividade.id)
+#            
+#    else:
+#        material_object_form= MateriaisForm() 
+#        activity_object_form= AtividadeForm()
+#    return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(), "espaco": -1, "materiais": material_object_form})
+
+
+#-------------------- versao sem reload
 
 def proporatividade(request):
     today= datetime.now(timezone.utc) 
-    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    diaabertopropostas=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+
+    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
+    diainicio= diaaberto.datadiaabertoinicio.date()
+    diafim= diaaberto.datadiaabertofim.date()
+    totaldias= diafim-diainicio+timedelta(days=1)
+    dias_diaaberto= []
+    for d in range(totaldias.days):
+        dias_diaaberto.append(diainicio+timedelta(days=d))
+
+    sessoes= ""
     if request.method == "POST":
-        print(diaaberto.id)
+        
         activity_object_form = AtividadeForm(request.POST)
         campus=Campus.objects.all()
-        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizador=5),
-                             professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
-                             estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=request.POST['espacoid']),
-                             tema=Tema.objects.get(id=request.POST['tema']))
-        activity_object_form = AtividadeForm(request.POST, instance=new_form)
+        activity_object_form = AtividadeForm(request.POST)
         material_object_form= MateriaisForm(request.POST)
-        if activity_object_form.is_valid():
+        if activity_object_form.is_valid():  
+            espacoid=request.POST["espacoid"] 
+            espaco=Espaco.objects.get(id=espacoid)  
+            if "proximo" in request.POST:
+                campusid= espaco.edificio.campus.id
+                campus= Campus.objects.all().exclude(id=campusid)
+
+                edificioid= espaco.edificio.id
+                edificios= Edificio.objects.filter(campus=campusid).exclude(id=edificioid)
+
+                espacos= Espaco.objects.filter(edificio=edificioid).exclude(id=espaco.id)
+                is_empty = Sessao.objects.filter(atividadeid=-1).count() < 1
+                return render(request,'atividades/testAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(),"materiais": material_object_form, "espaco":espaco,
+                            'horarios': "" , 'sessions_activity':sessoes, 'dias': dias_diaaberto, "id":-1, "style1": "display:none", "style2":"",'espacos':espacos, "edificios": edificios, "campus":campus,
+                            "is_empty": is_empty})
+        else:
+            return render(request,'atividades/testAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(),"materiais": material_object_form,
+                            'horarios': "" , 'sessions_activity':sessoes, 'dias': dias_diaaberto, "id":-1,"style1": "", "style2":"display:none"
+                            })   
+        if "new" in request.POST:
+            print("new")
+            new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizador=5),
+                             professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
+                             estado = "Pendente", diaabertoid = diaabertopropostas,espacoid= Espaco.objects.get(id=espaco.id),
+                             tema=Tema.objects.get(id=request.POST['tema']))
+            activity_object_form = AtividadeForm(request.POST, instance=new_form)
             activity_object_form.save()
             idAtividade= Atividade.objects.all().order_by('-id').first()
             new_material= Materiais(atividadeid=idAtividade)
             material_object_form= MateriaisForm(request.POST, instance= new_material)
             material_object_form.save()
+            diasessao=request.POST["diasessao"]
+            #print(diasessao)
+            new_Sessao= Sessao(vagas=Atividade.objects.get(id= idAtividade.id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=idAtividade.id),dia=diasessao)
+            new_Sessao.save()
             return redirect('inserirSessao', idAtividade.id)
     else:
         material_object_form= MateriaisForm() 
         activity_object_form= AtividadeForm()
-    return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(), "espaco": -1, "materiais": material_object_form})
+    return render(request,'atividades/testAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(),"materiais": material_object_form,
+                            'horarios': "" , 'sessions_activity':sessoes, 'dias': dias_diaaberto, "id":-1, "style1": "", "style2":"display:none"
+                            })
 
 
+
+#---------------original 
     
 
 def inserirsessao(request,id):
@@ -200,7 +268,6 @@ def inserirsessao(request,id):
     dias_diaaberto= []
     for d in range(totaldias.days):
         dias_diaaberto.append(diainicio+timedelta(days=d))
-
     horariosindisponiveis= []
     disp= []
     if request.method == "POST":

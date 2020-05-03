@@ -1,20 +1,15 @@
 {% extends 'configuracao/app.html' %}
 {% block content %}
+<form method="POST" action="">
+<div id="proporatividade" style="{{style1}}">
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
     <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-    {% if  espaco != -1 %}
-    <li class="is-active"><a href="" aria-current="page">Alterar Atividade</a></li>
-    {% else %}
     <li class="is-active"><a href="" aria-current="page">Propor Atividade</a></li>
-    {% endif %}
-    
-    
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
-    <form method="POST" action="">
         <div class="b-steps">
         <div class="columns is-mobile is-centered">
             <div class="column is-5 ">
@@ -151,7 +146,7 @@
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
                                             <select id="edificioid" name="edificioid">
-                                                {% if espaco != -1 %}
+                                                {% if espaco %}
                                                     <option selected value="{{espaco.edificio.id}}">{{espaco.edificio.nome}}</option>
                                                     {% for edi in edificios %}
                                                         <option  value="{{edi.id}}" >{{edi.nome}}</option>
@@ -181,7 +176,7 @@
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
                                             <select id="espacoid" name="espacoid" required>
-                                               {% if espaco != -1 %}
+                                               {% if espaco %}
                                                 <option selected value="{{espaco.id}}">{{espaco.nome}}</option>
                                                 {% for esp in espacos %}
                                                     <option  value="{{esp.id}}" >{{esp.nome}}</option>
@@ -208,7 +203,7 @@
               </a>
             </div>
             <div class="level-right">
-              <button type="submit" class="button is-large is-success is-outlined is-link">
+              <button type="submit" class="button is-large is-success is-outlined is-link" name="proximo" value="proximo">
                 <span>Próximo</span>
                 <span class="icon is-medium">
                   <i class="mdi mdi-forward mdi-36px"></i>
@@ -217,24 +212,174 @@
             </div>
           </div>
         </div>
-    {% if form.errors %}
-    {% for field in form %}
-        {% for error in field.errors %}
-            <div class="alert alert-danger">
-                <strong>{{field.label|escape}}{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endfor %}
-    {% for error in form.non_field_errors %}
-        <div class="alert alert-danger">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
-{% endif %}
-    {% csrf_token %}
-</form>
   </div>
 </div>
+
+<div id="inserirsessao" style="{{style2}}">
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'inicio' %}">Início</a></li>
+    <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
+    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page"> Inserir Sessão</a></li>
+  </ul>
+</nav>
+<div style="padding: 3rem 2vw 1rem">
+  <div class="b-steps">
+    <div class="columns is-mobile is-centered">
+            <div class="column is-5 ">
+                <label class="label has-text-info is-centered">Atividade</label>
+            </div>
+            <div class="column is-1 ">
+                <label class="label has-text-info is-centered">Sessoes</label>
+            </div>
+        </div>
+            <div class="columns is-mobile is-centered">
+            <div class="column is-four-fifths">
+            <progress class="progress is-success" value="100" max="100">
+        
+            </progress>
+            </div>
+            </div>
+    <section class="step-content">
+        <div class="step-item">
+          <div style="padding: 1rem 2vw 0px;">
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Minhas Sessoes</h2>
+
+            <div class="table ">
+                            <div class="table-wrapper">
+                                <table class="table has-mobile-cards is-hoverable">
+                                    <thead>
+                                        <tr>
+                                            <th  style="width: 300px;">
+                                                <div class="th-wrap">
+                                                     Dia
+                                                    <span class="icon is-small">
+                                                        <i class="mdi mdi-menu-up"></i>
+                                                    </span>
+                                                </div>
+                                            </th>
+                                            <th  style="width: 300px;">
+                                                <div class="th-wrap">
+                                                     Horário
+                                                    <span class="icon is-small">
+                                                        <i class="mdi mdi-menu-up"></i>
+                                                    </span>
+                                                </div>
+                                            </th>
+                                            <th style="width: 300px;">
+                                                Vagas
+                                                <span class="icon is-small">
+                                                    <i class="mdi mdi-menu-up"></i>
+                                                </span>
+                                            </th>
+                                            <th style=""></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>    
+                                        {% for sessao in sessions_activity %} 
+                                        <tr id="sessao.id" draggable="false">
+                                            <td data-label="Dia">{{sessao.dia}}</td>
+                                            <td data-label="Nome">{{sessao.horarioid.inicio}} até  {{sessao.horarioid.fim}}</td>
+                                            <td data-label="Submetido a">{{sessao.vagas}}</td>  
+                                            <td>
+                                               <a onclick="alert.render('Tem a certeza que deseja eliminar a sessão?','{% url 'eliminarSessao' sessao.id%}')">
+                                                    <span class="icon has-text-danger">
+                                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                                                    </span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %} 
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <hr/>
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Adicionar Sessao</h2>
+            <div class="columns">
+                    <div class="column is-2">
+                      <div class="field" >
+                        <label class="label">Dia</label>
+                        <div class="control">
+                          <div class="select is-fullwidth" >
+                            <select id="diasessao" name="diasessao">
+                              <option value="">---------</option>
+                              {% for dia in dias %}
+                              <option value="{{dia|date:'Y-m-d'}}">{{dia}}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>  
+                    
+                    <div class="columns">
+                      <div class="column is-2">
+                      <div class="field" >
+                        <label class="label">Horário</label>
+                        <div class="control">
+                          <div class="select is-fullwidth" >
+                            <select id="horarioid" name="horarioid">
+                              <option value="">---------</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="column is-1">
+                        <div class="field" >
+                        <label class="label"></label>
+                        <br>
+                          <div class="control">
+                            <div class="has-text-centered">
+                                <button class="button is-success" name="new" value="new">
+                                    <span class="icon is-small">
+                                        <i class="mdi mdi-plus"></i>
+                                    </span>
+                                    <span>Adicionar Sessão</span>
+                                </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+        <hr>
+        </div>     
+    </section>
+    <div class="column is-8 is-offset-2">
+      <div class="level">
+      <div class="level-left">
+         <a  class="button is-outlined" onclick="myFunction()">
+            <span class="icon is-medium">
+              <i class="mdi fa fa-arrow-left mdi-36px"></i>
+            </span>
+            <span>Anterior</span>
+         </a>
+      </div>
+      <div class="level-right">
+            {% if is_empty %}
+              <a id="concluir" onclick="alert.warning('Nao existem sessões atribuidas a esta atividade')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
+            {% else %}
+              <a id="concluir" onclick="alert.render('Tem a certeza que pretende finalizar esta proposta?  (Terá sempre possibilidade de a alterar até ao prazo das propostas terminar)','{% url 'minhasAtividades' %}')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
+            {% endif %}
+            <span>Finalizar Proposta</span>
+            <span class="icon is-medium">
+              <i class="mdi fa fa-check mdi-36px"></i>
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+{% csrf_token %}
+</form>
+{% include 'configuracao/popup.html' %}
+
+
 <style>
   .label {
   font-weight: normal;
@@ -243,6 +388,13 @@
   font-size: 1rem;
 }
 </style>
+<style>
+    .dialog .modal-card .modal-card-body.is-titleless {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+</style>
+
 {% endblock content %}
 {% block scripts %}
 
@@ -283,6 +435,39 @@
         })
 
     })
+
+     $("#diasessao").change(function()
+    {
+        var id= "{{id}}"
+        console.log(id)
+        var valuedia= $(this).val();
+        $.ajax({
+            url:"{% url 'verHorarios'%}",
+            method: 'POST',
+            data: { 
+                'valuedia': valuedia,
+                'id': id,
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(data){
+                $("#horarioid").html(data)
+            }
+
+        })
+
+    })    
+
+    function myFunction() {
+    var x = document.getElementById("proporatividade");
+    var x2 = document.getElementById("inserirsessao");
+    if (x.style.display === "none") {
+      x.style.display = "block";
+      x2.style.display = "none";
+    } else {
+      x.style.display = "none";
+      x2.style.display = "block";
+    }
+}
     
 </script>
 {% endblock scripts %}
