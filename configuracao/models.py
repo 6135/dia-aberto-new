@@ -13,6 +13,8 @@ class Transporte(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
     identificador = models.CharField(db_column='Identificador', max_length=32)
+    diaaberto = models.ForeignKey(
+        'Diaaberto', models.CASCADE, db_column='diaAberto')
     dia = models.DateField(db_column="Dia", blank=False, null=False)
     def __str__(self):
         return str(self.identificador)
@@ -38,7 +40,7 @@ class Transportehorario(models.Model):
 
     def __str__(self):
         return self.origem + " - " + self.chegada + ' Horas: ' + str(self.horaChegada) + ' - ' + str(self.horaPartida) + ' ' + str(self.transporte)
-        
+
     def trip(self):
         return str(self.origem) + ' - ' + str(self.chegada)
     class Meta:
