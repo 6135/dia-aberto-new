@@ -7,7 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from _datetime import timedelta
-
+from django.core import validators
 class Transporte(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
@@ -27,9 +27,11 @@ class Transportehorario(models.Model):
     # Field name made lowercase.
     chegada = models.CharField(db_column='Chegada', max_length=32)
     # Field name made lowercase.
-    horario = models.ForeignKey(
-        'Horario', models.CASCADE, db_column='Horario')
-    
+    #horario = models.ForeignKey(
+    #    'Horario', models.CASCADE, db_column='Horario')
+    horaPartida = models.TimeField(db_column="HoraPartida")
+    horaChegada = models.TimeField(db_column="HoraChegada")
+    #TODO 
     transporte = models.ForeignKey(
         Transporte, models.CASCADE, db_column='Transporte')
 
@@ -38,19 +40,18 @@ class Transportehorario(models.Model):
     class Meta:
         db_table = 'TransporteHorario'
         
-class Transportepessoal(models.Model):
+#class Transportepessoal(models.Model):
     # Field name made lowercase.
-    transporte = models.OneToOneField(
-        Transporte, models.CASCADE, db_column='Transporte', primary_key=True)
+#    transporte = models.OneToOneField(
+#        Transporte, models.CASCADE, db_column='Transporte', primary_key=True)
     # Field name made lowercase.
-    tipo = models.CharField(db_column='Tipo', max_length=255)
+#    tipo = models.CharField(db_column='Tipo', max_length=255)
 
-    def __str__(self):
-        return str(self.transporte.id) + ' ' + str(self.tipo)
+#    def __str__(self):
+#        return str(self.transporte.id) + ' ' + str(self.tipo)
 
-    class Meta:
-        db_table = 'TransportePessoal'
-
+#    class Meta:
+#        db_table = 'TransportePessoal'
 
 class Transporteuniversitario(models.Model):
     # Field name made lowercase.
@@ -58,9 +59,10 @@ class Transporteuniversitario(models.Model):
         Transporte, models.CASCADE, db_column='Transporte', primary_key=True)
     # Field name made lowercase.
     capacidade = models.IntegerField(db_column='Capacidade')
+    vagas = models.IntegerField(db_column='Vagas')
 
     def __str__(self):
-        return str(self.transporte.id) + ' ' + str(self.capacidade)
+        return str(self.transporte.id) + ' ' + str(self.capacidade) + ' ' + str(self.vagas)
     class Meta:
         db_table = 'TransporteUniversitario'
 
@@ -259,9 +261,18 @@ class Horario(models.Model):
     inicio = models.TimeField(db_column='Inicio')  # Field name made lowercase.
     fim = models.TimeField(db_column='Fim')  # Field name made lowercase.
 
+    def add(self, inicio, fim):
+        try:
+            return Horario.objects.get(inicio=inicio,fim=fim).id
+        except Exception:
+            horario = Horario(inicio=inicio,fim=fim).save()
+            return horario.id
+        return "Err!"
+
     class Meta:
         managed = False
         db_table = 'Horario'
+
 
         
 class Unidadeorganica(models.Model):

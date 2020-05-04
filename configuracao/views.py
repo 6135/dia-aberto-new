@@ -210,8 +210,8 @@ def getDias(request):
 				  context={'options':options, 'default': default}
 				)
 
-def sourceView(request):
-	return redirect('https://github.com/6135/dia-aberto')
+#def sourceView(request):
+#	return redirect('https://github.com/6135/dia-aberto')
 
 def verTransportes(request):
 	form = []
@@ -220,7 +220,46 @@ def verTransportes(request):
 				  template_name='configuracao/listaTransportes.html',
 				  context={'form': form, 'horariosTra': transporte})
 
-def criarTransporte(request):
-	return HttpResponse()
+def criarTransporte(request, id = None):
+	form_transport = transporteForm()
+	form_universitario = transporteUniversitarioForm()
+	if request.method == "POST":
+		form_transport = transporteForm(request.POST)
+		form_universitario = transporteUniversitarioForm(request.POST)
+		if form_transport.is_valid() and form_universitario.is_valid():
+			return transporteHorario(request,form_t=form_transport,form_uni=form_universitario,id=id)
+	return render(request = request,
+				template_name='configuracao/criarTransporte.html',
+				context={'form_t':form_transport,
+						'form_uni':form_universitario})
 
+def transporteHorario(request,form_t,form_uni, id = None):
+	forms_h = transporteHorarioFormset(id=id)
+	return render(request=request,
+				template_name='configuracao/transporteHorario.html',
+				context={'formset':forms_h})
 
+def transporteHorarioFormset(id = None, extra = 1):
+	formSets = modelformset_factory(model=Transportehorario, exclude = ['transporte','id'],widgets={
+            'origem': TextInput(attrs={'class': 'input'}),
+            'chegada': TextInput(attrs={'class': 'input'}),
+            'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
+            'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
+        }, extra = 1)
+	if id is not None:
+		print('stuff')
+		form = formSets(queryset=Transportehorario.objects.filter(transporte=id))
+	else:
+		print('stuff2')
+		form = formSets(queryset=Transportehorario.objects.none())
+	return form
+
+def newHorarioRow(request):
+	value = int(request.POST.get('extra'))
+	data = {
+		'form_origem': "form-" + str(value-1) + "-origem",
+		'form_chegada': "form-" + str(value-1) + "-chegada",
+		'form_horaPartida': "form-" + str(value-1) + "-horaPartida",
+		'form_horaChegada': "form-" + str(value-1) + "-horaChegada",
+	}
+	return render(request=request, template_name='configuracao/transporteHorarioEmptyRow.html', context=data)

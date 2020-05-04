@@ -6,7 +6,7 @@
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
     <li><a href="{% url 'adminpage' %}">Administrador</a></li>
-    <li class="is-active"><a href="" aria-current="page">Configuracao do Dia Aberto</a></li>
+    <li class="is-active"><a href="" aria-current="page">Criar Transporte</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
@@ -19,58 +19,44 @@
             <div style="padding: 1rem 2vw 0px">
               <hr>
               <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                Menu
+                Transporte
               </h2>
 
               <div class="columns">
                 <div class="column">
-                  <strong>{{form.campus.errors}}</strong>
+                  <strong>{{form_t.identificador.errors}}</strong>
                   <div class="field">
-                    <label class="label">Campus</label>
+                    <label class="label">Identificador</label>
                     <div class="control">
-                      <span class="select is-fullwidth is-empty">
-                        {{form.campus}}
+                      <span class="is-fullwidth is-empty">
+                        {{form_t.identificador}}
                       </span>
                     </div>
                   </div>
                 </div>
-
-                <div class="column "> 
-                  <strong>{{form.diaaberto.errors}}</strong>
+                <div class="column">
+                  <strong>{{form_uni.capacidade.errors}}</strong>
                   <div class="field">
-                    <label class="label">Dia Aberto</label>
-                      <div class="control">
-                        <span class="select is-fullwidth is-empty">
-                          {{form.diaaberto}}
-                        </span>
+                    <label class="label">Capacidade</label>
+                    <div class="control">
+                      <span class="is-fullwidth is-empty">
+                        {{form_uni.capacidade}}
+                      </span>
                     </div>
                   </div>
                 </div>
-
-                <div class="column "> 
-                  <strong>{{form.dia.errors}}</strong>
-                  <div class="field">
-                    <label class="label">Dia</label>
-                      <div class="control">
-                        <span class="select is-fullwidth is-empty">
-                          {{form.dia}}
-                        </span>
-                    </div>
-                  </div>
-                </div>
-
               </div>
+
             </div>
-            <hr/>
+            <hr>
           </div>
         </div>
         </div>
-      
     </section>
     <div class="column is-8 is-offset-2">
       <div class="level">
         <div class="level-left">
-          <a class="button is-outlined" type="button" href="javascript:history.back();">
+          <a class="button is-outlined" type="button" href="{% url 'verTransportes' %}">
             <span>Cancelar</span>
           </a>
         </div>

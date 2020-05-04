@@ -2,6 +2,7 @@ from django.forms import *
 from .models import *
 from datetime import datetime
 from _datetime import timedelta
+from coordenadores.forms import CustomTimeWidget
     
 class DateTimeWidget(DateTimeInput):
     def __init__(self, attrs=None, format=None, input_type=None, hours='09', minutes='00', default=None):
@@ -103,3 +104,38 @@ class menusFilterForm(Form):
     portimao=BooleanField(widget=CheckboxInput(),required=False)
 
 
+class transporteForm(ModelForm):
+    
+    class Meta:
+        model = Transporte
+        exclude = ['id']
+        widgets = {
+            'identificador': TextInput(attrs={'class': 'input'})
+        }
+
+class transporteHorarioForm(ModelForm):
+
+    class Meta:
+        model = Transportehorario
+        exclude = ['transporte','id']
+        widgets={
+            'origem': TextInput(attrs={'class': 'input'}),
+            'chegada': TextInput(attrs={'class': 'input'}),
+            'horaPartida': TextInput(attrs={'class': 'input'}),
+            'horaChegada': TextInput(attrs={'class': 'input'}),
+        }
+
+class transporteUniversitarioForm(ModelForm):
+
+    def clean(self):
+        cleaned_data = super().clean()
+        capacidade = cleaned_data.get('capacidade')
+        if self.instance.vagas is None:
+            cleaned_data['vagas'] = capacidade
+
+    class Meta:
+        model = Transporteuniversitario
+        exclude = ['transporte', 'vagas']
+        widgets = {
+            'capacidade': TextInput(attrs={'class': 'input is-half'})
+        }

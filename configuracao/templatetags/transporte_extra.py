@@ -9,8 +9,8 @@ register = template.Library()
 def transport_type(value):
     tipo = 'Transporte Universitario'
     try:
-        trans = value.transporte.transportepessoal
-        tipo = trans.tipo
+        trans = value.transporte#.transportepessoal
+        #tipo = trans.tipo
     except ObjectDoesNotExist:
         pass
     return tipo
@@ -24,3 +24,16 @@ def transport_id(value):
     except ObjectDoesNotExist:
         pass
     return id
+
+@register.filter
+def vagas_cap(value):
+    vagas = "Não disponivel"
+    cap = "Não disponivel"
+    try:
+        vagas = value.transporte.transporteuniversitario.vagas
+        cap = value.transporte.transporteuniversitario.capacidade
+        if value == 0:
+            vagas = "Sem vagas"
+    except ObjectDoesNotExist:
+        pass
+    return str(vagas) + '/' + str(cap)
