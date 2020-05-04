@@ -25,5 +25,6 @@ urlpatterns = [
     #-Utility
     #ajax ----------
     path('ajax/getDias', views.getDias, name='getDias'),
+    path('ajax/addHorarioRow', views.newHorarioRow, name='ajaxAddHorarioRow'),
 
 ]

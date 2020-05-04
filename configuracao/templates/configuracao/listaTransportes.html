@@ -79,21 +79,36 @@
                     <thead>
                         <tr>
                             <th style="width: 30px;" ></th>
-                            <th  onclick="sortTable(1,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Identificador<span class="arrow active"><span></span><span></span></span>
+                            <th  onclick="sortTable(1,false)" style=" cursor: pointer;" class="pre-expandable">
+                                Identificador
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
                             </th>
-                            <th onclick="sortTable(2,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Tipo<span class="arrow active"><span></span><span></span></span>
+                            <th onclick="sortTable(2,false)" style=" cursor: pointer;" class="pre-expandable">
+                                Tipo
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>                                
                             </th>
-                            <th onclick="sortTable(3,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Origem - Destino<span class="arrow active"><span></span><span></span></span>
+                            <th onclick="sortTable(3,false)" style=" cursor: pointer;" class="pre-expandable">
+                                Origem - Destino
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
                             </th>
-                            <th onclick="sortTable(4,true)" style=" cursor: pointer;" class="pre-arrow">
-                                Hora Partida<span class="arrow active"><span></span><span></span></span>
+                            <th onclick="sortTable(4,false)" style=" cursor: pointer;" class="pre-expandable">
+                                Horário
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
                             </th>
-                            <th onclick="sortTable(5,true)" style=" cursor: pointer;" class="pre-arrow">
-                                Hora Chegada<span class="arrow active"><span></span><span></span></span>
-                            </th>
+                            <th onclick="sortTable(5,false)" style=" cursor: pointer;" class="pre-expandable">
+                                Vagas/Capacidade
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>                            
                             <th style="width: 40px">
                                 Operações
                             </th>                            
@@ -118,15 +133,22 @@
                         <td data-label="Origem - Destino">
                             {{horarioTra.trip}}
                         </td>
-                        <td data-label="Hora Partida">
-                            {{horarioTra.horario.inicio}}
+                        <td data-label="Horário">
+                            {{horarioTra.horaPartida}}&nbsp;-&nbsp;{{horarioTra.horaChegada}}
                         </td>
-                        <td data-label="Hora Chegada">
-                            {{horarioTra.horario.fim}}
+                        <td data-label="Vagas/Capacidade">
+                            {{horarioTra|vagas_cap}}
                         </td>
                         <td data-label="Operações">
                             <div class="columns">
-                                
+                                <div class="column is-1">  
+                                    <a id='assign' href="">
+                                        <span class="icon is-small">
+                                            <i class="mdi mdi-bus-school mdi-24px"></i>
+                                        </span>
+                                    </a>
+                                </div>
+                                &nbsp;
                                 <div class="column is-1">  
                                     <a id='edit' href="">
                                         <span class="icon is-small">
@@ -134,6 +156,7 @@
                                         </span>
                                     </a>
                                 </div>
+                                &nbsp;
                                 <div class="column is-1">                 
                                     <a onclick="alert.render('Tem a certeza que pretende eliminar este Transporte?','{% url 'verTransportes' %}')">
                                         <span class="icon is-small">
@@ -141,6 +164,7 @@
                                         </span>
                                     </a> 
                                 </div>
+                                &nbsp;
                             </div> 
                         </td>                     
                       </tr> 
