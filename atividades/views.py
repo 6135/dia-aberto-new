@@ -316,7 +316,7 @@ def verhorarios(request):
     print(sessaodia)
     for sessao in sessaodia:
         horariosindisponiveis.append(sessao.horarioid)
-    for t in Horario.objects.all():
+    for t in Horario.objects.exclude(inicio="12:00", fim="14:00"):
         if  t not in horariosindisponiveis:
             disp.append(t)
     print(disp)
