@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from django.http import HttpResponse
+from django.http import HttpRequest, HttpResponse
 from .forms import *
 from .models import *
 from utilizadores.models import *
@@ -196,10 +196,16 @@ def getDias(request):
 	}
 	if request.POST['diaaberto_id'] != '':
 		if 'default' in request.POST and request.POST['default'] != 'None':
-			default = { 	
-				'key': str(Menu.objects.get(id=request.POST['default']).dia),
-				'value': str(Menu.objects.get(id=request.POST['default']).dia),
-			}
+			if request.POST['typeForm'] == 'menu':
+				default = { 	
+					'key': str(Menu.objects.get(id=request.POST['default']).dia),
+					'value': str(Menu.objects.get(id=request.POST['default']).dia),
+				}
+			if request.POST['typeForm'] == 'transporte':
+				default = { 	
+					'key': str(Transporte.objects.get(id=request.POST['default']).dia),
+					'value': str(Transporte.objects.get(id=request.POST['default']).dia),
+				}
 		diaaberto = Diaaberto.objects.get(id=request.POST['diaaberto_id'])
 		data_inicio = diaaberto.datadiaabertoinicio
 		data_fim = diaaberto.datadiaabertofim
@@ -209,7 +215,7 @@ def getDias(request):
 				  template_name='configuracao/dropdown.html',
 				  context={'options':options, 'default': default}
 				)
-
+				
 #def sourceView(request):
 #	return redirect('https://github.com/6135/dia-aberto')
 
@@ -221,38 +227,51 @@ def verTransportes(request):
 				  context={'form': form, 'horariosTra': transporte})
 
 def criarTransporte(request, id = None):
+
+	HorarioFormSet = transporteHorarioFormset()
+	horario_form_set = HorarioFormSet(queryset=Transportehorario.objects.none())
 	form_transport = transporteForm()
 	form_universitario = transporteUniversitarioForm()
+
+	if id is not None:
+		transport_by_default = Transporte.objects.get(id=id)
+		horario_form_set = HorarioFormSet(queryset=Transportehorario.objects.filter(transporte=transport_by_default))
+		form_transport = transporteForm(instance=transport_by_default)
+		form_universitario = transporteUniversitarioForm(Transporteuniversitario(transporte=transport_by_default))
+
 	if request.method == "POST":
 		form_transport = transporteForm(request.POST)
 		form_universitario = transporteUniversitarioForm(request.POST)
-		if form_transport.is_valid() and form_universitario.is_valid():
-			return transporteHorario(request,form_t=form_transport,form_uni=form_universitario,id=id)
+		horario_form_set = HorarioFormSet(request.POST)
+		if form_transport.is_valid() and form_universitario.is_valid() and horario_form_set.is_valid():
+
+			transport = form_transport.save()
+			form_universitario.instance.transporte = transport
+			form_universitario.save()
+			instances = horario_form_set.save(commit=False)
+
+			for instance in instances:
+				
+				instance.transporte = transport
+				print(instance)
+				instance.save()
+
+			return redirect('verTransportes')
+
 	return render(request = request,
 				template_name='configuracao/criarTransporte.html',
-				context={'form_t':form_transport,
-						'form_uni':form_universitario})
+				context={'form_t': form_transport,
+						'form_uni': form_universitario,
+						'formset': horario_form_set})
 
-def transporteHorario(request,form_t,form_uni, id = None):
-	forms_h = transporteHorarioFormset(id=id)
-	return render(request=request,
-				template_name='configuracao/transporteHorario.html',
-				context={'formset':forms_h})
-
-def transporteHorarioFormset(id = None, extra = 1):
-	formSets = modelformset_factory(model=Transportehorario, exclude = ['transporte','id'],widgets={
-            'origem': TextInput(attrs={'class': 'input'}),
+def transporteHorarioFormset(extra = 0, minVal = 1):
+	formSets = modelformset_factory(model=Transportehorario, exclude = ['transporte','id','dia'],widgets={
+            'origem': TextInput(attrs={'class': 'input'},),
             'chegada': TextInput(attrs={'class': 'input'}),
             'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
             'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
-        }, extra = 1)
-	if id is not None:
-		print('stuff')
-		form = formSets(queryset=Transportehorario.objects.filter(transporte=id))
-	else:
-		print('stuff2')
-		form = formSets(queryset=Transportehorario.objects.none())
-	return form
+        }, extra = extra, min_num = minVal)
+	return formSets
 
 def newHorarioRow(request):
 	value = int(request.POST.get('extra'))

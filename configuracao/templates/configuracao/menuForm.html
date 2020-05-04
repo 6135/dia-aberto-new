@@ -108,7 +108,8 @@ $( document ).ready(function() {
     data: {
       'diaaberto_id':diaaberto_id,
       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-      'default': '{{form.instance.id}}'
+      'default': '{{form.instance.id}}',
+      'typeForm': 'menu',
     },
     success: function(data){
       $('#id_dia').html(data);
@@ -124,6 +125,7 @@ $('#id_diaaberto').change(function(){
     data: {
       'diaaberto_id':diaaberto_id,
       csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+      'typeForm': 'menu',
     },
     success: function(data){
       $('#id_dia').html(data);
