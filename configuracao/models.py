@@ -13,7 +13,7 @@ class Transporte(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
     identificador = models.CharField(db_column='Identificador', max_length=32)
-
+    dia = models.DateField(db_column="Dia", blank=False, null=False)
     def __str__(self):
         return str(self.identificador)
     class Meta:
@@ -23,18 +23,22 @@ class Transportehorario(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
-    origem = models.CharField(db_column='Origem', max_length=32)
+    origem = models.CharField(db_column='Origem', max_length=32, blank=False, null=False)
     # Field name made lowercase.
-    chegada = models.CharField(db_column='Chegada', max_length=32)
+    chegada = models.CharField(db_column='Chegada', max_length=32, blank=False, null=False)
     # Field name made lowercase.
     #horario = models.ForeignKey(
     #    'Horario', models.CASCADE, db_column='Horario')
-    horaPartida = models.TimeField(db_column="HoraPartida")
-    horaChegada = models.TimeField(db_column="HoraChegada")
+
+    horaPartida = models.TimeField(db_column="HoraPartida", blank=False, null=False)
+    horaChegada = models.TimeField(db_column="HoraChegada", blank=False, null=False)
     #TODO 
     transporte = models.ForeignKey(
         Transporte, models.CASCADE, db_column='Transporte')
 
+    def __str__(self):
+        return self.origem + " - " + self.chegada + ' Horas: ' + str(self.horaChegada) + ' - ' + str(self.horaPartida) + ' ' + str(self.transporte)
+        
     def trip(self):
         return str(self.origem) + ' - ' + str(self.chegada)
     class Meta:

@@ -105,24 +105,23 @@ class menusFilterForm(Form):
 
 
 class transporteForm(ModelForm):
-    
+    dia_choices = Diaaberto.objects.all()
+    diaaberto = ChoiceField(choices=[('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices],widget=Select())
+
+    def clean(self):
+        cleaned_data = super().clean()
+        diaaberto_data = cleaned_data['diaaberto']
+        if diaaberto_data:
+            cleaned_data['diaaberto'] = Diaaberto.objects.get(id=diaaberto_data)
+        else:
+            raise ValidationError('Os campos preenchidos estão incorretos!')
+
     class Meta:
         model = Transporte
         exclude = ['id']
         widgets = {
-            'identificador': TextInput(attrs={'class': 'input'})
-        }
-
-class transporteHorarioForm(ModelForm):
-
-    class Meta:
-        model = Transportehorario
-        exclude = ['transporte','id']
-        widgets={
-            'origem': TextInput(attrs={'class': 'input'}),
-            'chegada': TextInput(attrs={'class': 'input'}),
-            'horaPartida': TextInput(attrs={'class': 'input'}),
-            'horaChegada': TextInput(attrs={'class': 'input'}),
+            'identificador': TextInput(attrs={'class': 'input'}),
+            'dia': Select(),
         }
 
 class transporteUniversitarioForm(ModelForm):
@@ -131,7 +130,7 @@ class transporteUniversitarioForm(ModelForm):
         cleaned_data = super().clean()
         capacidade = cleaned_data.get('capacidade')
         if self.instance.vagas is None:
-            cleaned_data['vagas'] = capacidade
+            self.instance.vagas = capacidade
 
     class Meta:
         model = Transporteuniversitario
