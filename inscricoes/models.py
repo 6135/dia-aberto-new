@@ -22,6 +22,8 @@ class Inscricao(models.Model):
     areacientifica = models.CharField(max_length=255)
     participante = models.ForeignKey(Participante, models.DO_NOTHING, db_column='participante')
     diaaberto = models.ForeignKey(Diaaberto, models.DO_NOTHING, db_column='diaaberto')
+    horariochegada = models.TimeField(blank=True, null=True)
+    horariopartida = models.TimeField(blank=True, null=True)
 
     class Meta:
         managed = False
