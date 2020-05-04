@@ -227,7 +227,10 @@ def verTransportes(request):
 				  context={'form': form, 'horariosTra': transporte})
 
 def criarTransporte(request, id = None):
-
+	#vars
+	transport_by_default = Transporte()
+	transport_universitario_default = Transporteuniversitario(transporte=transport_by_default)
+	#forms
 	HorarioFormSet = transporteHorarioFormset()
 	horario_form_set = HorarioFormSet(queryset=Transportehorario.objects.none())
 	form_transport = transporteForm()
@@ -236,13 +239,14 @@ def criarTransporte(request, id = None):
 	if id is not None:
 		
 		transport_by_default = Transporte.objects.get(id=id)
+		transport_universitario_default = Transporteuniversitario(transporte=transport_by_default)
 		horario_form_set = HorarioFormSet(queryset=Transportehorario.objects.filter(transporte=transport_by_default))
 		form_transport = transporteForm(instance=transport_by_default)
 		form_universitario = transporteUniversitarioForm(instance=Transporteuniversitario.objects.get(transporte=transport_by_default))
 
 	if request.method == "POST":
-		form_transport = transporteForm(request.POST)
-		form_universitario = transporteUniversitarioForm(request.POST)
+		form_transport = transporteForm(request.POST, instance=transport_by_default)
+		form_universitario = transporteUniversitarioForm(request.POST, instance=transport_universitario_default)
 		horario_form_set = HorarioFormSet(request.POST)
 		if form_transport.is_valid() and form_universitario.is_valid() and horario_form_set.is_valid():
 
