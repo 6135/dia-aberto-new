@@ -282,7 +282,3 @@ def newHorarioRow(request):
 		'form_horaChegada': "form-" + str(value-1) + "-horaChegada",
 	}
 	return render(request=request, template_name='configuracao/transporteHorarioEmptyRow.html', context=data)
-
-
-def atribuirtransporte(request, id):
-	return render(request= request, template_name='configuracao/atribuirtransporte.html')
