@@ -14,6 +14,8 @@ class Transporte(models.Model):
     # Field name made lowercase.
     identificador = models.CharField(db_column='Identificador', max_length=32)
     dia = models.DateField(db_column="Dia", blank=False, null=False)
+    diaaberto = models.ForeignKey('Diaaberto', models.CASCADE, db_column='Diaaberto')  # Field name made lowercase.
+
     def __str__(self):
         return str(self.identificador)
     class Meta:

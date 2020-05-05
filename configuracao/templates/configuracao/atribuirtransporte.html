@@ -1,0 +1,157 @@
+{% extends 'configuracao/app.html' %}
+{% load static %}
+{% block content %}
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'inicio' %}">Início</a></li>
+    <li><a href="{% url 'adminpage' %}">Administrador</a></li>
+    <li class="is-active"><a href="" aria-current="page">Atribuir Transporte</a></li>
+  </ul>
+</nav>
+<div style="padding: 3rem 2vw 1rem">
+  <form method="POST" action="">
+    {% csrf_token %}
+  <div class="b-steps">
+    <section class="step-content">
+        <div class="step-item">
+			<div style="padding: 1rem 2vw 0px">
+
+              <hr>
+              <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+                Informação de  Transporte
+              </h2>
+
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <strong>Identificador:</strong>
+                    <div class="control">
+                      {{transporte|transport_id}} 
+                    </div>
+                  </div>
+                </div>
+                <div class="column">
+                  <div class="field">
+                    <strong>Origem/Destino:</strong>
+                    <div class="control">
+                      {{transporte.trip}}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="column">
+                  <strong>{{form_t.diaaberto.errors}}</strong>
+                  <div class="field">
+                    <label class="label">Dia Aberto</label>
+                    <div class="select is-fullwidth is-empty">
+                      <span class="is-fullwidth is-empty">
+                        {{form_t.diaaberto}}
+                      </span>
+                    </div>
+                  	</div>
+                </div>
+
+                <div class="column">
+					<strong>{{form_t.dia.errors}}</strong>
+					<div class="field">
+					  <label class="label">Dia</label>
+					  <div class="select is-fullwidth is-empty">
+						<span class="is-fullwidth is-empty">
+						  {{form_t.dia}}
+						</span>
+					  </div>
+						</div>
+				  </div>
+
+              </div>
+              	<hr>
+				<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+					Transporte Horario
+				</h2>
+              	<div class='table'>
+                  	<div class='table-wrapper'>
+                      	{{formset.management_form}}
+                    		<table class="table has-mobile-cards is-hoverable is-fullwidth" id='table01'>
+								<thead>
+									<tr>
+										<th style="cursor: pointer">Origem</th>
+										<th style="cursor: pointer">Chegada</th>
+										<th style="cursor: pointer">Hora Partida</th>
+										<th style="cursor: pointer">Hora Chegada</th>
+										<th style="cursor: pointer;width: 30px"></th>
+									</tr>
+								</thead>
+								<tbody id='tableBody-01'>
+								{% for form in formset %}
+								{{form.non_field_errors}}
+									<tr>
+											{% for field in form.visible_fields  %}
+											{% for error in field.errors %}
+												<div class="alert alert-danger">
+													<strong>{{field.label|escape}}{{ error|escape }}</strong>
+												</div>
+											{% endfor %}
+											<td data-label="{{field.label}}">
+												{{field}}
+											</td>
+										{% endfor %}
+										<td>
+										</td>
+									</tr>
+								{% endfor %}
+
+								</tbody>
+                    		</table>
+                      	<a role="button" type="button" class="button" id="add-more-rows">
+                      		<span>Adicionar Linha</span>
+							<span class="icon is-small">
+								<i class="mdi mdi-plus mdi-24px"></i>
+							</span>
+                    	</a>
+						<a id="del-row" role="button" type="button" class="button">
+							<span>Remover Linha</span>                            
+                          	<span class="icon is-small">
+                               	<i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                          	</span>
+                      	</a>
+                  	</div>
+              	</div>
+            </div>
+            <hr>
+          </div>
+        </div>
+        </div>
+    </section>
+    <div class="column is-8 is-offset-2">
+      <div class="level">
+        <div class="level-left">
+          <a class="button is-outlined" type="button" href="{% url 'verTransportes' %}">
+            <span>Cancelar</span>
+          </a>
+        </div>
+        <div class="level-right">
+          <button class="button is-large is-success is-outlined is-link" type="submit">
+            <span>Continuar</span>
+            <span class="icon is-medium">
+              <i class="mdi mdi-forward mdi-36px"></i>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+</div>
+<style>
+  .label {
+  font-weight: normal;
+}
+.b-steps .steps .step-items .step-item .step-details .step-title {
+  font-size: 1rem;
+}
+</style>
+{% endblock content %}
+{% block scripts %}
+<script>
+</script>
+{% endblock scripts %}

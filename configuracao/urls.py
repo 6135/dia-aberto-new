@@ -22,6 +22,8 @@ urlpatterns = [
     path('transportes', views.verTransportes, name='verTransportes'),
     path('criartransporte', views.criarTransporte, name='criarTransporte'),
     path('editartransporte/<int:id>', views.criarTransporte, name='criarTransporte'),
+    path('atribuirtransporte/<int:id>', views.atribuirtransporte, name='atribuirTransporte'),
+
 
     #-Utility
     #ajax ----------
