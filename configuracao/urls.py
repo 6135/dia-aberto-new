@@ -21,7 +21,7 @@ urlpatterns = [
     #-Transporte
     path('transportes', views.verTransportes, name='verTransportes'),
     path('criartransporte', views.criarTransporte, name='criarTransporte'),
-    path('editartransporte/<int:id>', views.criarTransporte, name='criarTransporte'),
+    path('editartransporte/<int:id>', views.criarTransporte, name='editarTransporte'),
 
     #-Utility
     #ajax ----------
