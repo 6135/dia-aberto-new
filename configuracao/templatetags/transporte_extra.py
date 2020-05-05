@@ -27,13 +27,13 @@ def transport_id(value):
 
 @register.filter
 def vagas_cap(value):
-    vagas = "Não disponivel"
+    #vagas = "Não disponivel"
     cap = "Não disponivel"
     try:
-        vagas = value.transporte.transporteuniversitario.vagas
+        #vagas = value.transporte.transporteuniversitario.vagas
         cap = value.transporte.transporteuniversitario.capacidade
-        if value == 0:
-            vagas = "Sem vagas"
+        #if value == 0:
+            #vagas = "Sem vagas"
     except ObjectDoesNotExist:
         pass
-    return str(vagas) + '/' + str(cap)
+    return str(cap)#str(vagas) + '/' + str(cap)

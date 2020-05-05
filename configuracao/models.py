@@ -65,7 +65,6 @@ class Transporteuniversitario(models.Model):
         Transporte, models.CASCADE, db_column='Transporte', primary_key=True)
     # Field name made lowercase.
     capacidade = models.IntegerField(db_column='Capacidade')
-    vagas = models.IntegerField(db_column='Vagas')
 
     def __str__(self):
         return str(self.transporte.id) + ' ' + str(self.capacidade) + ' ' + str(self.vagas)

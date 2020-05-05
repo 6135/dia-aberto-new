@@ -126,12 +126,6 @@ class transporteForm(ModelForm):
 
 class transporteUniversitarioForm(ModelForm):
 
-    def clean(self):
-        cleaned_data = super().clean()
-        capacidade = cleaned_data.get('capacidade')
-        if self.instance.vagas is None:
-            self.instance.vagas = capacidade
-
     class Meta:
         model = Transporteuniversitario
         exclude = ['transporte', 'vagas']
