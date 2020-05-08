@@ -259,6 +259,8 @@ def criarTransporte(request, id = None):
 			for instance in instances:
 				instance.transporte = transport
 				instance.save()
+			for instance in horario_form_set.deleted_objects:
+				instance.delete()
 
 			return redirect('verTransportes')
 		print(form_transport.errors)
@@ -273,11 +275,11 @@ def criarTransporte(request, id = None):
 
 def transporteHorarioFormset(extra = 0, minVal = 1):
 	formSets = modelformset_factory(model=Transportehorario, exclude = ['transporte','id'],widgets={
-			'origem': TextInput(attrs={'class': 'input'},),
-			'chegada': TextInput(attrs={'class': 'input'}),
-			'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
-			'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
-		}, extra = extra, min_num = minVal)
+            'origem': TextInput(attrs={'class': 'input'},),
+            'chegada': TextInput(attrs={'class': 'input'}),
+            'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
+            'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
+        }, extra = extra, min_num = minVal, can_delete=True)
 	return formSets
 
 def newHorarioRow(request):
