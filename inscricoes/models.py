@@ -24,6 +24,7 @@ class Inscricao(models.Model):
     diaaberto = models.ForeignKey(Diaaberto, models.DO_NOTHING, db_column='diaaberto')
     horariochegada = models.TimeField(blank=True, null=True)
     horariopartida = models.TimeField(blank=True, null=True)
+    localchegada = models.CharField(db_column='Localchegada', max_length=255, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -41,7 +42,7 @@ class Inscricaosessao(models.Model):
 
 
 class Inscricaotransporte(models.Model):
-    transporte = models.ForeignKey(Transporte, models.DO_NOTHING, db_column='transporte')
+    transporte = models.ForeignKey(Transportehorario, models.DO_NOTHING, db_column='transporte')
     npassageiros = models.IntegerField()
     inscricao = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricao')
 

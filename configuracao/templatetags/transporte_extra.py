@@ -30,7 +30,7 @@ def vagas_cap(value):
     vagas = "Não disponivel"
     cap = "Não disponivel"
     try:
-        vagas = value.transporte.transporteuniversitario.vagas
+        #vagas = value.transporte.transporteuniversitario.vagas
         cap = value.transporte.transporteuniversitario.capacidade
         if value == 0:
             vagas = "Sem vagas"

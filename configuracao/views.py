@@ -3,11 +3,12 @@ from django.http import HttpRequest, HttpResponse
 from .forms import *
 from .models import *
 from utilizadores.models import *
+from inscricoes.models import Inscricao, Inscricaosessao, Inscricaotransporte
 from datetime import datetime, timezone,date, time
-from atividades.models import Espaco
+from atividades.models import Espaco, Sessao
 from django.core import serializers
 from django.core.serializers import json
-from django.db.models import Q
+from django.db.models import Count, Q
 import random
 from _datetime import timedelta
 
@@ -30,8 +31,8 @@ def orderBy(request, list_diaaberto):
 	else:
 		list_diaaberto = list_diaaberto.order_by('-ano')
 		search_specific = ""
-	
-	return {'list_diaaberto': list_diaaberto, 
+
+	return {'list_diaaberto': list_diaaberto,
 			'current': {'specific_year': search_specific,}
 			}
 
@@ -67,8 +68,8 @@ def viewDays(request):
 	list_diaaberto = showBy(request,list_diaaberto)
 
 	return render(request=request,
-				  template_name='configuracao/listaDiaAberto.html', 
-				  context = {'form':formFilter, 'diaabertos': list_diaaberto, 'earliest': (earliest.ano), 
+				  template_name='configuracao/listaDiaAberto.html',
+				  context = {'form':formFilter, 'diaabertos': list_diaaberto, 'earliest': (earliest.ano),
 							'latest': (latest.ano), 'is_open': is_open, 'current': current,
 							}
 					)
@@ -79,7 +80,7 @@ def newDay(request, id=None):
 		dia_aberto = Diaaberto(administradorutilizadorid=Administrador.objects.get(id='1'))
 	else:
 		dia_aberto = Diaaberto.objects.get(id=id,administradorutilizadorid=1)
-		
+
 	dia_aberto_form = diaAbertoSettingsForm(instance=dia_aberto)
 
 	if request.method == 'POST':
@@ -101,11 +102,11 @@ def delDay(request, id=None):
 		dia_aberto.delete()
 	return redirect('diasAbertos')
 
-def view_days_as_json(request): 
+def view_days_as_json(request):
 	dias = Edificio.objects.all()
 	dias_as_json = serializers.serialize('json',list(dias))
 	return render(request=request,
-				  template_name='configuracao/blank.html', 
+				  template_name='configuracao/blank.html',
 				  context = {'dias_as_json': dias_as_json}
 				)
 
@@ -120,9 +121,9 @@ def filterMenus(request, menus):
 		if  request.POST.get('gambelas'):
 			filters[1]='Gambelas'
 		if  request.POST.get('portimao'):
-			filters[2]='Portimao'			
+			filters[2]='Portimao'
 		if request.POST.get('portimao') or request.POST.get('gambelas') or request.POST.get('penha'):
-			menus = menus.filter(Q(campus=Campus.objects.filter(nome=filters[0]).first()) 
+			menus = menus.filter(Q(campus=Campus.objects.filter(nome=filters[0]).first())
 						| Q(campus=Campus.objects.filter(nome=filters[1]).first())
 						| Q(campus=Campus.objects.filter(nome=filters[2]).first()))
 	return menus
@@ -175,8 +176,8 @@ def newPrato(request, id):
 				return redirect('novoPrato',id)
 	return render(request=request,
 				  template_name='configuracao/pratoForm.html',
-				  context = {'form': prato_form, 
-				  			'pratos': pratos, 
+				  context = {'form': prato_form,
+							  'pratos': pratos,
 							'has_one': has_one,
 							}
 				)
@@ -187,7 +188,7 @@ def delPrato(request, id):
 	prato.delete()
 	return redirect('novoPrato',menuid)
 
-	
+
 def getDias(request):
 	options = []
 	default = {
@@ -197,12 +198,12 @@ def getDias(request):
 	if request.POST['diaaberto_id'] != '':
 		if 'default' in request.POST and request.POST['default'] != 'None':
 			if request.POST['typeForm'] == 'menu':
-				default = { 	
+				default = {
 					'key': str(Menu.objects.get(id=request.POST['default']).dia),
 					'value': str(Menu.objects.get(id=request.POST['default']).dia),
 				}
 			if request.POST['typeForm'] == 'transporte':
-				default = { 	
+				default = {
 					'key': str(Transporte.objects.get(id=request.POST['default']).dia),
 					'value': str(Transporte.objects.get(id=request.POST['default']).dia),
 				}
@@ -215,7 +216,7 @@ def getDias(request):
 				  template_name='configuracao/dropdown.html',
 				  context={'options':options, 'default': default}
 				)
-				
+
 #def sourceView(request):
 #	return redirect('https://github.com/6135/dia-aberto')
 
@@ -237,7 +238,7 @@ def criarTransporte(request, id = None):
 	form_universitario = transporteUniversitarioForm()
 
 	if id is not None:
-		
+
 		transport_by_default = Transporte.objects.get(id=id)
 		transport_universitario_default = Transporteuniversitario(transporte=transport_by_default)
 		horario_form_set = HorarioFormSet(queryset=Transportehorario.objects.filter(transporte=transport_by_default))
@@ -272,11 +273,11 @@ def criarTransporte(request, id = None):
 
 def transporteHorarioFormset(extra = 0, minVal = 1):
 	formSets = modelformset_factory(model=Transportehorario, exclude = ['transporte','id'],widgets={
-            'origem': TextInput(attrs={'class': 'input'},),
-            'chegada': TextInput(attrs={'class': 'input'}),
-            'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
-            'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
-        }, extra = extra, min_num = minVal)
+			'origem': TextInput(attrs={'class': 'input'},),
+			'chegada': TextInput(attrs={'class': 'input'}),
+			'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
+			'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
+		}, extra = extra, min_num = minVal)
 	return formSets
 
 def newHorarioRow(request):
@@ -289,3 +290,73 @@ def newHorarioRow(request):
 		'form_id': 'form-' + str(value-1) + '-id',
 	}
 	return render(request=request, template_name='configuracao/transporteHorarioEmptyRow.html', context=data)
+
+
+class ChegadaPartida:
+	def __init__(self, id,nparticipantes,local,horario, check):
+		self.id=id
+		self.nparticipantes=nparticipantes
+		self.local= local
+		self.horario=horario
+		self.check=check
+
+
+def atribuirTransporte(request, id):
+	transportehorario = Transportehorario.objects.get(id=id)
+	inscricoesindisponiveis= []
+	inscricaotransporte= Inscricaotransporte.objects.filter(transporte=transportehorario.id)
+	ocupadas=0
+	for ocp in inscricaotransporte:
+		ocupadas+=ocp.npassageiros
+	print(ocupadas)
+	transportevagas= transportehorario.transporte.transporteuniversitario.capacidade - ocupadas
+	inscricoestotais = Inscricao.objects.filter(nalunos__lte=transportevagas)
+	dadoschepart= []
+	inscricoes= []
+
+	for t in inscricaotransporte:
+		inscricoesindisponiveis.append(t.inscricao)
+	
+	for inscricao in inscricoestotais:
+		if inscricao not in inscricoesindisponiveis:
+					inscricoes.append(inscricao)
+		
+	for inscricao in inscricoes:
+		isessaochegada=Inscricaosessao.objects.filter(inscricao=inscricao.id).order_by('sessao__horarioid__inicio').first()
+		if isessaochegada.sessao.dia == transportehorario.transporte.dia:
+			if transportehorario.origem == "Gambelas" or transportehorario.origem == "Penha":
+				isessaopartida=Inscricaosessao.objects.filter(inscricao=inscricao.id).order_by('-sessao__horarioid__inicio').first() # ultima sessao da inscricao
+				isessaopartidalocal= isessaopartida.sessao.atividadeid.espacoid.edificio.campus.nome	# campus ultima sessao da inscricao
+				isessaopartidahorario= isessaopartida.sessao.horarioid.fim #horario de fim da ultima sessao
+				horapartida= (transportehorario.horaPartida.hour*60 + transportehorario.horaPartida.minute) - (isessaopartidahorario.hour*60 + isessaopartidahorario.minute) # diferença entre horario transporte e da ultima sessao
+				if isessaopartidalocal == transportehorario.origem  and horapartida <=60:
+					chepart= ChegadaPartida(inscricao.id, inscricao.nalunos,inscricao.localchegada, isessaopartidahorario, True)
+			else:
+				isessaochegadalocal= isessaochegada.sessao.atividadeid.espacoid.edificio.campus.nome
+				horachegada= (transportehorario.horaChegada.hour*60 + transportehorario.horaChegada.minute )- (inscricao.horariochegada.hour*60 + inscricao.horariochegada.minute)
+				if isessaochegadalocal == transportehorario.chegada and horachegada <=60:
+					chepart= ChegadaPartida(inscricao.id,inscricao.nalunos,inscricao.localchegada,inscricao.horariochegada, False)
+
+			dadoschepart.append(chepart)
+
+
+
+
+	print(inscricoes)
+	if request.method == "POST":
+		gruposid=request.POST["gruposid"]
+		if "new" in request.POST:
+			grupo= Inscricao.objects.get(id=gruposid)
+			new_inscricaotransporte= Inscricaotransporte(transporte=transportehorario, npassageiros=grupo.nalunos, inscricao= grupo)
+			new_inscricaotransporte.save()
+			return redirect('atribuirTransporte', id)
+
+	return render(request = request,
+				  template_name='configuracao/atribuirTransporte.html',
+				  context={'transporte': transportehorario,  "inscricoestransporte": inscricaotransporte, "vagas": transportevagas, 'chegadapartida': dadoschepart})
+
+def eliminarAtribuicao(request, id):
+	transportehorario=Inscricaotransporte.objects.get(id=id).transporte.id
+	print(transportehorario)
+	Inscricaotransporte.objects.get(id=id).delete()
+	return redirect('atribuirTransporte', transportehorario)

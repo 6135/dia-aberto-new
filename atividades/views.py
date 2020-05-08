@@ -258,7 +258,7 @@ def proporatividade(request):
     
 
 def inserirsessao(request,id):
-    is_empty = Sessao.objects.filter(atividadeid=id).count() < 1
+    is_empty = Sessao.objects.filter(atividadeid=id).count() < 2
     #print(is_empty)
     today= datetime.now(timezone.utc) 
     diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)

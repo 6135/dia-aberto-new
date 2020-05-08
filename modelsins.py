@@ -8,16 +8,18 @@
 from django.db import models
 
 
-class Tarefa(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
-    dia = models.DateField()
-    estado = models.CharField(max_length=64)
-    coordenadorutilizadorid = models.ForeignKey('Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID')  # Field name made lowercase.
-    colaboradorutilizadorid = models.ForeignKey('Colaborador', models.DO_NOTHING, db_column='ColaboradorUtilizadorID')  # Field name made lowercase.
-    tipo = models.CharField(max_length=64)
-    created_at = models.DateTimeField()
+class Inscricao(models.Model):
+    escola = models.ForeignKey('Escola', models.DO_NOTHING, db_column='escola')
+    nalunos = models.IntegerField()
+    ano = models.IntegerField()
+    turma = models.CharField(max_length=255)
+    areacientifica = models.CharField(max_length=255)
+    participante = models.ForeignKey('Participante', models.DO_NOTHING, db_column='participante')
+    diaaberto = models.ForeignKey('Diaaberto', models.DO_NOTHING, db_column='diaaberto')
+    horariochegada = models.TimeField(blank=True, null=True)
+    horariopartida = models.TimeField(blank=True, null=True)
+    localchegada = models.CharField(db_column='Localchegada', max_length=255, blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
-        db_table = 'Tarefa'
+        db_table = 'Inscricao'

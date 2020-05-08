@@ -22,7 +22,8 @@ urlpatterns = [
     path('transportes', views.verTransportes, name='verTransportes'),
     path('criartransporte', views.criarTransporte, name='criarTransporte'),
     path('editartransporte/<int:id>', views.criarTransporte, name='editarTransporte'),
-
+    path('atribuirtransporte/<int:id>', views.atribuirTransporte, name='atribuirTransporte'),
+    path('eliminaratribuicao/<int:id>', views.eliminarAtribuicao, name='eliminarAtribuicao'),
     #-Utility
     #ajax ----------
     path('ajax/getDias', views.getDias, name='getDias'),
