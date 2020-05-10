@@ -14,7 +14,6 @@ import json
 from pip._vendor import requests
 from django.core import serializers
 
-api_key="RGAPI-c4bbc099-83bc-4c3f-90fc-f57e7f68fb24"
 # Create your views here.
 
 def homepage(request):
@@ -365,57 +364,3 @@ def eliminarAtribuicao(request, id):
 	print(transportehorario)
 	Inscricaotransporte.objects.get(id=id).delete()
 	return redirect('atribuirTransporte', transportehorario)
-
-class Player:
-	name = None
-	puuid = None
-	data = None
-	matches = []
-	def __init__(self,name = None, puuid = None):
-		super().__init__()
-		print(players)
-		if puuid in players:
-			self.name = players[puuid].name
-			self.puuid = players[puuid].puuid
-			self.data = players[puuid].data
-			self.matches = players[puuid].matches
-		elif name is not None:
-			print('Oh no, api qwewy!')
-			self.name = name
-			URL = "https://euw1.api.riotgames.com/tft/summoner/v1/summoners/by-name/" + str(name) + "?api_key=" + str(api_key)
-			self.data = requests.get(URL).json()
-			self.puuid = self.data.get('puuid')
-		elif puuid is not None:
-			print('Oh no, api qwewy!')
-			self.puuid = puuid
-			URL = "https://euw1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/"+ str(self.puuid) + "?api_key=" + str(api_key)
-			self.data = requests.get(URL).json()
-			self.name = self.data.get('name')
-
-
-	def tft_matches(self,count = 1):
-		if matches is None or len(self.matches) != count:
-			URL = "https://europe.api.riotgames.com/tft/match/v1/matches/by-puuid/"+str(self.puuid)+"/ids?count=" + str(count) + "&api_key=" + str(api_key)
-			self.matches = requests.get(URL).json()
-		return self.matches
-	def __str__(self):
-		return str(self.name)
-
-
-def stats(request, player):
-	plyer = Player(name=player)
-
-	return render(request = request,
-				template_name='configuracao/tftstats.html',
-				context={'data':plyer.tft_matches(count=1)})
-
-def matches(id):
-	URL = "https://europe.api.riotgames.com/tft/match/v1/matches/" + str(id) + "?api_key=" + str(api_key)
-	response = requests.get(URL).json()
-	metadata = response.get('metadata')
-	participants = metadata.get('participants')
-
-	for i, participant in enumerate(participants):
-		participants[i] = str(participant) + " name: " + str(Player(puuid=participant))
-
-	return response
