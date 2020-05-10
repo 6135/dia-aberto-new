@@ -25,7 +25,7 @@ urlpatterns = [
     path('atribuirtransporte/<int:id>', views.atribuirTransporte, name='atribuirTransporte'),
     path('eliminaratribuicao/<int:id>', views.eliminarAtribuicao, name='eliminarAtribuicao'),
     #-Utility
-    path('tft/<player>', views.stats),
+
     #ajax ----------
     path('ajax/getDias', views.getDias, name='getDias'),
     path('ajax/addHorarioRow', views.newHorarioRow, name='ajaxAddHorarioRow'),
