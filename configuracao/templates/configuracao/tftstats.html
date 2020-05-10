@@ -1,5 +1,7 @@
 {% load l10n %}
 {% load transporte_extra %}
 {% for match in data %}
+<pre>
 {{match|get_matches|safe}}
+</pre>
 {% endfor %}
