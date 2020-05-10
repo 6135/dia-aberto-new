@@ -6,12 +6,14 @@ from utilizadores.models import *
 from inscricoes.models import Inscricao, Inscricaosessao, Inscricaotransporte
 from datetime import datetime, timezone,date, time
 from atividades.models import Espaco, Sessao
-from django.core import serializers
-from django.core.serializers import json
+from django.core.serializers import *
 from django.db.models import Count, Q
 import random
 from _datetime import timedelta
+import json
+from pip._vendor import requests
 
+api_key="RGAPI-19ba8969-1de0-4108-a286-6efdcb889cd2"
 # Create your views here.
 
 def homepage(request):
@@ -362,3 +364,42 @@ def eliminarAtribuicao(request, id):
 	print(transportehorario)
 	Inscricaotransporte.objects.get(id=id).delete()
 	return redirect('atribuirTransporte', transportehorario)
+
+class Player:
+	name = None
+	puuid = None
+	data = None
+	matches = []
+	def __init__(self,name = None, puuid = None):
+		super().__init__()
+		if name is not None:
+			self.name = name
+			URL = "https://euw1.api.riotgames.com/tft/summoner/v1/summoners/by-name/" + str(name) + "?api_key=" + str(api_key)
+			self.data = requests.get(URL).json()
+			self.puuid = self.data.get('puuid')
+		elif puuid is not None:
+			self.puuid = puuid
+			URL = "https://euw1.api.riotgames.com/tft/summoner/v1/summoners/by-puuid/"+ str(self.puuid) + "?api_key=" + str(api_key)
+			self.data = requests.get(URL).json()
+			self.puuid = self.data.get('name')
+	def tft_matches(self,count = 5):
+		if matches is None or len(self.matches) != count:
+			URL = "https://europe.api.riotgames.com/tft/match/v1/matches/by-puuid/"+str(self.puuid)+"/ids?count=" + str(count) + "&api_key=" + str(api_key)
+			self.matches = requests.get(URL).json()
+		return self.matches
+
+
+def stats(request, player):
+	plyer = Player(name=player)
+	print(plyer.tft_matches(count=5))
+	return render(request = request,
+				template_name='configuracao/tftstats.html',
+				context={'data':plyer.tft_matches(count=1)})
+
+def matches(id):
+	URL = "https://europe.api.riotgames.com/tft/match/v1/matches/" + str(id) + "?api_key=" + str(api_key)
+	response = requests.get(URL).json()
+	metadata = response.get('metadata')
+	participants = metadata.get('participants')
+	parsed_participants = []
+	return response

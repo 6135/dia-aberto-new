@@ -2,6 +2,8 @@ from django import template
 from django.core.exceptions import ObjectDoesNotExist
 from configuracao.forms import *
 from configuracao.models import *
+from configuracao import views
+import json
 
 register = template.Library()
 
@@ -37,3 +39,11 @@ def vagas_cap(value):
     except ObjectDoesNotExist:
         pass
     return str(cap)#str(vagas) + '/' + str(cap)
+
+@register.filter
+def pretty_json(value):
+    return value
+
+@register.filter
+def get_matches(id):
+    return pretty_json(views.matches(id))

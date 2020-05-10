@@ -223,7 +223,7 @@ $('#id_diaaberto').change(function(){
 	url: "{% url 'getDias' %}",
 	method: 'POST',
 	data: {
-		'diaaberto_id':diaaberto_id,
+		'diaaberto_id': diaaberto_id,
 		csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
 		'typeForm': 'transporte',
 	},
