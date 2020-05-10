@@ -42,7 +42,7 @@ def vagas_cap(value):
 
 @register.filter
 def pretty_json(value):
-    return value
+    return json.dumps(value, indent=4)
 
 @register.filter
 def get_matches(id):

@@ -13,7 +13,7 @@ from _datetime import timedelta
 import json
 from pip._vendor import requests
 
-api_key="RGAPI-19ba8969-1de0-4108-a286-6efdcb889cd2"
+api_key="RGAPI-c4bbc099-83bc-4c3f-90fc-f57e7f68fb24"
 # Create your views here.
 
 def homepage(request):
