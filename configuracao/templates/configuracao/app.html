@@ -1,154 +1,105 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="pt-pt"> 
+<html lang="pt-pt">
+
 <head>
   <title>
-    Dia Aberto
+    Dia Aberto {% block title %} {% endblock title %}
+ 
   </title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" src="{% static 'configuracao/imgs/logo.png' %}">
-  <link rel="stylesheet" href="{% static 'configuracao/css/bulma.css' %}">
-  <link rel="stylesheet" href="{% static 'configuracao/css/animated-arrows.css' %}">
-    <link rel="stylesheet" href="{% static 'configuracao/css/responsive-tables.css' %}">
+  <link rel="stylesheet" href="{% static 'css/animated-arrows.css' %}">
+  <link rel="stylesheet" href="{% static 'css/responsive-tables.css' %}">
+  <link rel="stylesheet" href="{% static 'css/bulma.css' %}">
+  <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
   <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.0.45/css/materialdesignicons.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <link rel="icon" href="{% static 'img/logo.png' %}"/>
   
-{% block load%}
-{% endblock load %}
+
+
+  {% block load %}
+  {% endblock load %}
 </head>
 <style>
   body,
-      html {
-        min-height: 100%;
-        background-size: cover;
-        background: linear-gradient(to bottom, #ffffff, #eeeeff) no-repeat fixed
-          center center;
-      }
-      * {
-        outline: none;
-      }
+  html {
+    min-height: 100%;
+    background-size: cover;
+    background: linear-gradient(to bottom, #ffffff, #eeeeff) no-repeat fixed center center;
+  }
+
+  * {
+    outline: none;
+  }
+
+  #app {
+    position: relative;
+    min-height: 100vh;
+    padding-bottom: 5rem
+  }
+
+  #top-hero-body {
+    height: 45vh;
+  }
+
+  #page-content {
+    margin: -37vh 5vw 0
+  }
+
+  #page-content .card {
+    min-height: 70vh
+  }
+
+
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #fafafa;
+    padding: 1rem 3rem;
+  }
 </style>
 
 <body>
-<div id="app">
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-      <a class="navbar-item" href="/">
-        <img src="{% static 'configuracao/imgs/logo-navbar.png' %}">
-      </a>
 
-      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-      </a>
+
+  <div id="app">
+    {% include 'navbar.html' %}
+    <div class="hero is-primary is-bold" id="top-hero">
+      <div id="top-hero-body" class="hero-body"></div>
     </div>
-
-    <div class="navbar-menu">
-      <div class="navbar-start">
-        <a href="{% url 'minhasAtividades' %}" class="navbar-item">
-          Minhas Atividades
-        </a>
-        <a href="{% url 'atividadesUOrganica' %}" class="navbar-item">
-          Atividades
-        </a>  
-        <a href="{% url 'consultarTarefa' %}" class="navbar-item">
-          Tarefas
-        </a>
-      </div>
-      <div class="navbar-end">
-        <div class="navbar-item">
-          <div class="dropdown is-bottom-left is-mobile-modal">
-            <div role="button" class="dropdown-trigger">
-              <span role="button">
-                <button type="button" data-badge="0" class="button has-badge-rounded has-badge-warning is-text" style="margin-right: 0.9rem">
-                  <span>
-                    <span class="icon">
-                      <i class="mdi mdi-bell mdi-24px"></i>
-                    </span>
-                  </span>
-                </button>
-              </span>
-            </div>
-            <div class="background" style="display:none" aria-hidden="true"></div>
-            <div class="dropdown-menu" style="display:none" aria-hidden="true">
-              <div role="menu" class="dropdown-content">
-                <div role="menuitem" tabindex="0" class="dropdown-item">
-                  <strong>test</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="dropdown is-bottom-left is-mobile-modal">
-            <div role="button" class="dropdown-trigger">
-              <span role="button">
-                <button type="button" data-badge="0" class="button has-badge-rounded has-badge-warning is-text" style="margin-right: 0.9rem">
-                  <span>
-                    <span class="icon">
-                      <i class="mdi mdi-account-circle mdi-24px"></i>
-                    </span>
-                  </span>
-                </button>
-              </span>
-            </div>
-            <div class="background" style="display:none" aria-hidden="true"></div>
-            <div class="dropdown-menu" style="display:none" aria-hidden="true">
-              <div role="menu" class="dropdown-content">
-                <div role="menuitem" tabindex="0" class="dropdown-item">
-                  <strong>test</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div type="button" class="button">
-            <span class="icon is-small">
-              <i class="mdi mdi-login-variant"></i>
-            </span>
-            <span>Entrar</span>
-          </div>
+    <div id="page-content">
+      <div class="card">
+        <div class="card-content">
+          {% block content %}
+          <!-- include the content here-->
+          {% endblock content %}     
         </div>
       </div>
+
     </div>
-  </nav>
-  <div class="hero is-primary is-bold" id="top-hero">
-    <div id="top-hero-body" class="hero-body" ></div>
   </div>
-  <div id="page-content">
-    <div class="card">
-      <div class="card-content">
-      {% block content %}
-        <!-- include the content here-->
-      {% endblock content %}
-      </div>
-    </div>   
+  <footer class="footer">
+    <div style="float: left;">
+      &#169; 2020
+    </div>
+    <div style="float: right;">
+      Designed by Grupo 9
+    </div>
+    <div style="margin: auto; width: max-content">
+      Dia Aberto
+    </div>
+  </footer>
   </div>
-</div>
-<!--<footer class="footer">
-      <div style="float: left;">
-        (c) 2020
-      </div>
-      <div style="float: right;">
-        Designed by Grupo 9
-      </div>
-      <div style="margin: auto; width: max-content">
-        Dia Aberto
-      </div>
-</footer>-->
-</div>
-<style>
-  .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
+
 </style>
   <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
-  <script type="text/javascript" src="{% static 'configuracao/js/jquery-3.4.1.min.js' %}"></script>
-  <script type="text/javascript" src="{% static 'configuracao/js/animated-arrows.js' %}"></script>
-  <script type="text/javascript" src="{% static 'configuracao/js/js_custom.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/animated-arrows.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/js_custom.js' %}"></script>
 {% block scripts %}
 {% endblock scripts %}
+</body>
 
-  </body>
-  </html>
-
-  
+</html>
