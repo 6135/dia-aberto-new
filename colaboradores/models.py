@@ -1,7 +1,6 @@
 
 from django.db import models
 from utilizadores.models import Colaborador
-from coordenadores.models import Tarefa
 
 
 class Colaboradorhorario(models.Model):
