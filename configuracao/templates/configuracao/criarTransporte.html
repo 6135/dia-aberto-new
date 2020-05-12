@@ -102,9 +102,17 @@
 														<strong>{{field.label|escape}} {{ error|escape }}</strong>
 													</div>
 												{% endfor %}
-												<td data-label="{{field.label}}">
-													{{field}}
-												</td>
+												
+													<td data-label="{{field.label}}">
+														{% if field.label == "Origem" or field.label == "Chegada" %}
+															<span class="select is-fullwidth is-empty">
+																{{field}}
+															</span>
+														{% else %}
+															{{field}}
+														{% endif %}
+													</td>
+												
 											{% endif %}
 										{% endfor %}
 									</tr>
@@ -185,7 +193,7 @@ $('#del-row').click(function(e){
 	var value = $("#id_form-TOTAL_FORMS").val();
 	var initial = $("#id_form-INITIAL_FORMS").val();
 	var rowCount = $('#tableBody-01 tr').length;
-	if(Number(value) > Number(initial)) {
+	if(Number(value) > Number(initial) && Number(value) > 1) {
 		$('#table01 tr:last').remove();
 		value = Number(value) - Number('1');
 		document.getElementById("id_form-TOTAL_FORMS").value = value;

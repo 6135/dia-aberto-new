@@ -277,8 +277,8 @@ def criarTransporte(request, id = None):
 
 def transporteHorarioFormset(extra = 0, minVal = 1):
 	formSets = modelformset_factory(model=Transportehorario, exclude = ['transporte','id'],widgets={
-			'origem': TextInput(attrs={'class': 'input'},),
-			'chegada': TextInput(attrs={'class': 'input'}),
+			'origem': Select(attrs={'class': 'input'}),
+			'chegada': Select(attrs={'class': 'input'}),
 			'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
 			'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
 		}, extra = extra, min_num = minVal, can_delete=True)
