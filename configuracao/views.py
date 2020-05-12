@@ -296,16 +296,18 @@ def newHorarioRow(request):
 	return render(request=request, template_name='configuracao/transporteHorarioEmptyRow.html', context=data)
 
 
-class ChegadaPartida:
-	def __init__(self, id,nparticipantes,local,horario, check):
-		self.id=id
-		self.nparticipantes=nparticipantes
-		self.local= local
-		self.horario=horario
-		self.check=check
 
 
 def atribuirTransporte(request, id):
+
+	class ChegadaPartida:
+		def __init__(self, id,nparticipantes,local,horario, check):
+			self.id=id
+			self.nparticipantes=nparticipantes
+			self.local= local
+			self.horario=horario
+			self.check=check
+
 	transportehorario = Transportehorario.objects.get(id=id)
 	inscricoesindisponiveis= []
 	inscricaotransporte= Inscricaotransporte.objects.filter(transporte=transportehorario.id)
