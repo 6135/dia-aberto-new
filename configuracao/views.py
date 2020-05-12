@@ -277,11 +277,11 @@ def criarTransporte(request, id = None):
 
 def transporteHorarioFormset(extra = 0, minVal = 1):
 	formSets = modelformset_factory(model=Transportehorario, exclude = ['transporte','id'],widgets={
-            'origem': TextInput(attrs={'class': 'input'},),
-            'chegada': TextInput(attrs={'class': 'input'}),
-            'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
-            'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
-        }, extra = extra, min_num = minVal, can_delete=True)
+			'origem': TextInput(attrs={'class': 'input'},),
+			'chegada': TextInput(attrs={'class': 'input'}),
+			'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
+			'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
+		}, extra = extra, min_num = minVal, can_delete=True)
 	return formSets
 
 def newHorarioRow(request):
@@ -295,6 +295,10 @@ def newHorarioRow(request):
 	}
 	return render(request=request, template_name='configuracao/transporteHorarioEmptyRow.html', context=data)
 
+
+def eliminarTransporte(request, id):
+	Transportehorario.objects.get(id=id).delete()
+	return redirect('verTransportes')
 
 
 

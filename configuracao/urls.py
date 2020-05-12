@@ -24,6 +24,7 @@ urlpatterns = [
     path('editartransporte/<int:id>', views.criarTransporte, name='editarTransporte'),
     path('atribuirtransporte/<int:id>', views.atribuirTransporte, name='atribuirTransporte'),
     path('eliminaratribuicao/<int:id>', views.eliminarAtribuicao, name='eliminarAtribuicao'),
+    path('eliminartransporte/<int:id>', views.eliminarTransporte, name='eliminarTransporte'),
     #-Utility
 
     #ajax ----------
