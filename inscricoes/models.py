@@ -4,7 +4,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from configuracao.models import *
 from colaboradores.models import *
 from utilizadores.models import *
-
+from datetime import datetime,time,timedelta
 class Escola(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
@@ -29,6 +29,36 @@ class Inscricao(models.Model):
     class Meta:
         managed = False
         db_table = 'Inscricao'
+
+    def get_dias(self):
+        inscricao_sessoes= Inscricaosessao.objects.filter(inscricao=self)
+        dias=[]
+        for sessao in inscricao_sessoes:
+            if sessao.sessao.dia not in dias:
+                dias.append({'key':str(sessao.sessao.dia), 'value':sessao.sessao.dia})      
+        return dias
+
+    def get_horarios(self,dia):
+        inscricao_sessoes= Inscricaosessao.objects.filter(inscricao=self)
+        horarios=[]
+        for sessao in inscricao_sessoes:
+            if sessao.sessao.horarioid not in horarios:
+                #hora = sessao.sessao.horarioid.inicio.timedelta
+                #minutes =timedelta(minutes=int(sessao.sessao.atividadeid.duracaoesperada))
+                #horario = hora + minutes
+                #print(hora)             
+                horario = sessao.sessao.horarioid.inicio
+                print(horario)
+                duracao = sessao.sessao.atividadeid.duracaoesperada*60
+                print(duracao)
+                td = (datetime.combine(datetime.min,horario) - datetime.min)
+                secondsTotal = td.total_seconds() + duracao
+                time = str(timedelta(seconds=secondsTotal))
+                print(time)
+                horarios.append({'key':sessao.sessao.horarioid.id, 'value':time})
+        print(horarios)
+        return horarios
+
 
 
 class Inscricaosessao(models.Model):

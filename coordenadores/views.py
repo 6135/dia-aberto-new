@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect  
 from .models import *
 from .forms import *
+from inscricoes.models import *
 from configuracao.models import Horario
 from coordenadores.models import Coordenador
 from utilizadores.models import ProfessorUniversitario
@@ -104,13 +105,54 @@ def diasAtividade(request):
     if request.POST['atividadeid'] != '':
         atividadeid = request.POST.get('atividadeid')
         atividade = Atividade.objects.get(id=atividadeid)   
-        dias = atividade.get_dias()
-    print(default)    
+        dias = atividade.get_dias()  
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':dias, 'default': default}
             )
 
+def grupoInfo(request):
+    info = Inscricao.objects.get(id=request.POST['grupo_id'])
+    return render(request=request,
+                template_name='coordenadores/grupoInfo.html',
+                context={'info': info}
+            )
+
+def diasGrupo(request):
+    default = {
+        'key': '',
+        'value': 'Escolha o dia'
+    }
+    dias=[]
+    if request.POST['grupo_id'] != '':
+        inscricaoid = request.POST.get('grupo_id')
+        inscricao = Inscricao.objects.get(id=inscricaoid)
+        dias = inscricao.get_dias()
+    return render(request=request,
+                template_name='configuracao/dropdown.html',
+                context={'options':dias, 'default': default}
+            )
+
+def horarioGrupo(request):
+    default = {
+        'key': '',
+        'value': 'Escolha o horário'
+    }
+    horario=[]
+    if request.POST['dia'] != '' and request.POST['grupo_id'] != '':
+        inscricaoid = request.POST.get('grupo_id')
+        inscricao = Inscricao.objects.get(id=inscricaoid)
+        horario = inscricao.get_horarios(request.POST['dia'])
+    return render(request=request,
+                template_name='configuracao/dropdown.html',
+                context={'options':horario, 'default': default}
+            )
+
+def locaisGrupo(request):
+    default = {
+        'key': '',
+        'value': 'Escolha o horário'
+    }
 def filters(request):
     filters=[]
     if request.POST.get('Concluida'):

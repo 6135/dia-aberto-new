@@ -313,7 +313,7 @@
                                         </p>
                                         <p>
                                             <strong>Acompanhar quem:</strong>
-                                            Grupo {{tarefa.tarefaacompanhar.inscricao.id}}
+                                            {{tarefa.tarefaacompanhar.inscricao.ano}}º{{tarefa.tarefaacompanhar.inscricao.turma}} - {{tarefa.tarefaacompanhar.inscricao.escola.nome}}
                                         </p>
                                         <p>
                                             <strong>Origem:</strong>
@@ -517,6 +517,22 @@ tr.detail{
 {% endblock content %}
 {% block scripts%}
 <script>
-
+/*$('.validatebutton').click(function(){
+    var action= $(this).attr("action");
+    var id= $(this).attr("id");
+    console.log({{form.searchtarefa.value}});
+    $.ajax(
+        {
+            type:"GET",
+            url: "",
+            data:{
+                searchtarefa:form.searchtarefa.value,
+                Aceite:form.Aceite.value,
+                Recusada:form.Recusada.value,
+                Pendente:form.Pendente.value,
+                diaAbertoAtual:form.diaAbertoAtual.value
+            }
+    })
+});*/
 </script>
 {% endblock scripts%}

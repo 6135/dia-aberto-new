@@ -19,9 +19,7 @@ class Coordenador(models.Model):
     gabinete = models.CharField(
         db_column='Gabinete', max_length=255, blank=True, null=True)
     unidadeorganicaid = models.ForeignKey('configuracao.Unidadeorganica', models.CASCADE, db_column='unidadeOrganicaID')  # Field name made lowercase.
-
-    def __str__(self):
-        return str(self.utilizadorid.nome)
+ 
     class Meta:
         db_table = 'Coordenador'
 

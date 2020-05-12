@@ -71,7 +71,6 @@ class TarefaForm(ModelForm):
 class TarefaAuxiliarForm(ModelForm):
     ativ=[(" ",'Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]
     atividades= ChoiceField(choices=ativ,widget=Select(attrs={'onchange':'diasSelect();'}))
-    #sessaoid=ChoiceField(widget=Select(attrs={'onchange':'colaboradoresSelect();'}))
     dias=DateField(widget=Select(attrs={'onchange':'sessoesSelect();'}))
     class Meta:
         model= TarefaAuxiliar
@@ -96,14 +95,16 @@ class TarefaAuxiliarForm(ModelForm):
             
 
 class TarefaAcompanharForm(ModelForm):
-    grupos = [('','Escolha um grupo')]+[(grupo.id,str(grupo.escola.nome)+' '+str(grupo.ano)+'ºano') for grupo in Inscricao.objects.filter(nalunos__gt=1)]
-    grupo =  ChoiceField(choices=grupos,widget=Select(attrs={'onchange':'diasInscricaoSelect();'}))
-    dias = DateField(widget=Select(attrs={'onchange':'horarioSelect();'})) 
+    grupos = [('','Escolha um grupo')]+[(grupo.id,'Grupo '+str(grupo.id)) for grupo in Inscricao.objects.filter(nalunos__gt=1)]
+    grupo =  ChoiceField(choices=grupos,widget=Select(attrs={'onchange':'grupoInfo();diasGrupo();'}))
+    dias = DateField(widget=Select(attrs={'onchange':'grupoHorario();'}))
     class Meta:
         model= TarefaAcompanhar
         exclude = ['tarefaid']
         widgets ={
-            
+            'horario' : Select(),
+            'origem' : Select(),
+            'destino' : Select()
         }
 
 class TarefaOutraForm(ModelForm):

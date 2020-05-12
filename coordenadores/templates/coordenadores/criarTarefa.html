@@ -152,7 +152,6 @@
 
     function colaboradoresSelect(){
       var sessao = document.getElementById("id_sessaoid").value;; 
-      console.log(sessao);
       $.ajax({                       
         url: "{% url 'colaboradoresAtividade' %}", 
         method: 'POST',             
@@ -166,6 +165,52 @@
       });
     }
 
+    function grupoInfo(){
+      var grupo_id = document.getElementById("id_grupo").value;; 
+      $.ajax({                       
+        url: "{% url 'grupoInfo' %}", 
+        method: 'POST',             
+        data: {
+            'grupo_id': grupo_id,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {   
+          $("#grupoinfo").html(data);           
+        }
+      });
+    }
+
+    function diasGrupo(){
+      var grupo_id = document.getElementById("id_grupo").value; 
+      $.ajax({                       
+        url: "{% url 'diasGrupo' %}", 
+        method: 'POST',             
+        data: {
+            'grupo_id': grupo_id,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {   
+          $("#id_dias").html(data);           
+        }
+      });
+    }
+
+    function grupoHorario(){
+      var dia = document.getElementById("id_dias").value;
+      var grupo_id = document.getElementById("id_grupo").value; 
+      $.ajax({                       
+        url: "{% url 'horarioGrupo' %}", 
+        method: 'POST',             
+        data: {
+            'dia': dia,
+            'grupo_id' : grupo_id,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function (data) {   
+          $("#id_horario").html(data);           
+        }
+      });
+    }
 
 </script>
 {% endblock scripts %}
