@@ -148,7 +148,13 @@ def horarioGrupo(request):
                 context={'options':horario, 'default': default}
             )
 
-def locaisGrupo(request):
+def locaisOrigem(request):
+    default = {
+        'key': '',
+        'value': 'Escolha o horário'
+    }
+
+def locaisDestino(request):
     default = {
         'key': '',
         'value': 'Escolha o horário'

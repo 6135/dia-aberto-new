@@ -42,22 +42,17 @@ class Inscricao(models.Model):
         inscricao_sessoes= Inscricaosessao.objects.filter(inscricao=self)
         horarios=[]
         for sessao in inscricao_sessoes:
-            if sessao.sessao.horarioid not in horarios:
-                #hora = sessao.sessao.horarioid.inicio.timedelta
-                #minutes =timedelta(minutes=int(sessao.sessao.atividadeid.duracaoesperada))
-                #horario = hora + minutes
-                #print(hora)             
+            if sessao.sessao.horarioid not in horarios:             
                 horario = sessao.sessao.horarioid.inicio
-                print(horario)
                 duracao = sessao.sessao.atividadeid.duracaoesperada*60
-                print(duracao)
                 td = (datetime.combine(datetime.min,horario) - datetime.min)
                 secondsTotal = td.total_seconds() + duracao
                 time = str(timedelta(seconds=secondsTotal))
-                print(time)
                 horarios.append({'key':sessao.sessao.horarioid.id, 'value':time})
-        print(horarios)
         return horarios
+
+    def get_locais(self):
+        locais 
 
 
 
