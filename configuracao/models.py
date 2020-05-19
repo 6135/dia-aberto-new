@@ -26,14 +26,13 @@ class Transportehorario(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
     choices = {
-        ('','---------'),
         ('Penha','Penha'),
         ('Terminal','Terminal'),
         ('Gambelas','Gambelas'),
     }
-    origem = models.CharField(db_column='Origem', max_length=32, blank=False, null=False, choices=choices)
+    origem = models.CharField(db_column='Origem', max_length=32, blank=True, null=False, choices=choices)
     # Field name made lowercase.
-    chegada = models.CharField(db_column='Chegada', max_length=32, blank=False, null=False, choices=choices)
+    chegada = models.CharField(db_column='Chegada', max_length=32, blank=True, null=False, choices=choices)
     # Field name made lowercase.
     #horario = models.ForeignKey(
     #    'Horario', models.CASCADE, db_column='Horario')
