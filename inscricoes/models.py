@@ -4,6 +4,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from configuracao.models import *
 from colaboradores.models import *
 from utilizadores.models import *
+from atividades.models import *
 from datetime import datetime,time,timedelta
 class Escola(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
@@ -38,9 +39,10 @@ class Inscricao(models.Model):
                 dias.append({'key':str(sessao.sessao.dia), 'value':sessao.sessao.dia})      
         return dias
 
+
     def get_horarios(self,dia):
-        inscricao_sessoes= Inscricaosessao.objects.filter(inscricao=self)
-        horarios=[]
+        inscricao_sessoes = Inscricaosessao.objects.filter(inscricao=self).filter(sessao__dia=dia)
+        horarios = []
         for sessao in inscricao_sessoes:
             if sessao.sessao.horarioid not in horarios:             
                 horario = sessao.sessao.horarioid.inicio
@@ -51,10 +53,22 @@ class Inscricao(models.Model):
                 horarios.append({'key':sessao.sessao.horarioid.id, 'value':time})
         return horarios
 
-    def get_locais(self):
-        locais 
-
-
+    def get_origem(self,dia,horario_id):
+        horario = Horario.objects.get(id=horario_id)
+        inscricao_sessoes =  Inscricaosessao.objects.filter(inscricao=self).filter(sessao__dia=dia).filter(sessao__horarioid__inicio=horario.inicio)
+        origem = []
+        for local in inscricao_sessoes:
+            origem.append({'key':local.sessao.atividadeid.espacoid.nome,'value':local.sessao.atividadeid.espacoid.nome})
+        return origem
+    
+    def get_destino(self,dia,horario_id):
+        horario = Horario.objects.get(id=horario_id)
+        inscricao_sessoes =  Inscricaosessao.objects.filter(inscricao=self).filter(sessao__dia=dia).filter(sessao__horarioid__inicio=horario.fim)
+        destino = []
+        for local in inscricao_sessoes:
+            destino.append({'key':local.sessao.atividadeid.espacoid.id,'value':local.sessao.atividadeid.espacoid.nome})
+        return destino
+        return
 
 class Inscricaosessao(models.Model):
     inscricao = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricao')

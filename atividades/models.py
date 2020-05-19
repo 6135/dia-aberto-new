@@ -7,7 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from utilizadores.models import *
-from coordenadores.models import *
+from coordenadores.models import Coordenador
 from configuracao.models import *
 from inscricoes.models import *
 from notificacoes.models import *

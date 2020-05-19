@@ -12,6 +12,8 @@ urlpatterns = [
     url(r'^ajax/grupoinfo/$', views.grupoInfo, name='grupoInfo'),
     url(r'^ajax/diasgrupo/$', views.diasGrupo, name='diasGrupo'),
     url(r'^ajax/horariogrupo/$', views.horarioGrupo, name='horarioGrupo'),
+    url(r'^ajax/origemgrupo/$', views.locaisOrigem, name='locaisOrigem'),
+    url(r'^ajax/destinogrupo/$', views.locaisDestino, name='locaisDestino'),
     path("eliminartarefa/<int:id>",views.eliminartarefa,name="eliminarTarefa"),
     path("atribuircolaborador/<int:tarefa>",views.atribuircolaborador,name="atribuirColaborador"),
 ]
