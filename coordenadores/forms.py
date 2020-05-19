@@ -1,3 +1,4 @@
+
 from django.forms import * 
 from .models import *
 from atividades.models import Atividade,Sessao
@@ -13,24 +14,7 @@ def get_dias():
     totaldias= diafim-diainicio+timedelta(days=1)
     return [(diainicio+timedelta(days=d),diainicio+timedelta(days=d))for d in range(totaldias.days)]
 
-class CustomTimeWidget(TimeInput):
-
-    def __init__(self, attrs=None, format=None, input_type=None, default=None):
-        input_type = 'time'
-        if input_type is not None:
-            self.input_type=input_type
-        if attrs is not None:
-            self.attrs = attrs.copy()
-        else:
-            if default is not None:
-                self.attrs = {'class': 'input', 'value': default}
-        if format is not None:
-            self.format = format
-        else: 
-            self.format = '%H:%M'
-
 class TarefaForm(ModelForm):
-  
     def clean(self):
         cleaned_data=super().clean()
         self.instance.coord = Coordenador.objects.get(utilizador__id=5)
@@ -38,84 +22,73 @@ class TarefaForm(ModelForm):
         if cleaned_data.get('colab') is None:
             estado = 'naoAtribuida'
         self.instance.estado = estado
-        if self.data.get('atividades'):
-            nome = Atividade.objects.get(id=self.data.get('atividades')).nome
+        nome = Atividade.objects.get(id=self.data.get('atividades')).nome
         if cleaned_data.get('tipo') == 'tarefaAuxiliar':
             self.instance.nome = 'Auxiliar na atividade '+nome
         elif cleaned_data.get('tipo') == 'tarefaAcompanhar':
             nome = 'grupo'
             self.instance.nome = 'Acompanhar o grupo '+nome
-        elif cleaned_data.get('tipo') == 'tarefaOutra':
-            nome = self.data.get('descricao')
-            self.instance.nome = nome[0:18] + '...'
+
     class Meta:  
         model = Tarefa 
         exclude = ['coord','id','nome','created_at','estado','created_at']
         widgets = {
             'tipo': RadioSelect(attrs={'class':'radio'},choices=[('tarefaAuxiliar','Auxiliar Atividade'),('tarefaAcompanhar','Acompanhar participantes'),('tarefaOutra','Outra')]),
             }
-
+    
     def __init__(self,*args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['colab'].queryset =  Colaborador.objects.filter().order_by('utilizadorid__nome')
 
-        if 'sessaoid' in self.data:
+        if 'sessoes' in self.data:
             try:
-                sessoes_id = int(self.data.get('sessaoid'))
+                sessoes_id = int(self.data.get('sessoes'))
                 self.fields['colab'].queryset = Colaborador.objects.filter().order_by('utilizadorid__nome')
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
         elif self.instance.pk:
-            self.fields['colab'].queryset = Colaborador.objects.none()
+            self.fields['colab'].queryset = self.instance.colab.none()
 
 class TarefaAuxiliarForm(ModelForm):
-    ativ=[(" ",'Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]
+    ativ=[('','Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]
     atividades= ChoiceField(choices=ativ,widget=Select(attrs={'onchange':'diasSelect();'}))
-    dias=DateField(widget=Select(attrs={'onchange':'sessoesSelect();'}))
+    sessoes=ChoiceField(choices=[('','Escolha a Sessão')],widget=Select(attrs={'onchange':'colaboradoresSelect();'}))
+    dias=ChoiceField(choices=[('','Escolha o Dia')],widget=Select(attrs={'onchange':'sessoesSelect();'}))
     class Meta:
         model= TarefaAuxiliar
         exclude = ['tarefaid']
-        widgets = {         
-            'sessaoid' : Select(attrs={'onchange':'colaboradoresSelect();'})
-        }
-     
 
     def __init__(self,*args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['sessaoid'].queryset =  Sessao.objects.all()
+        self.fields['sessoes'].queryset = Sessao.objects.none()
+        print(self.data.get('sessoes'))
         if 'dias' in self.data:
             try:
                 dia = self.data.get('dias')
-                self.fields['sessaoid'].queryset = Sessao.objects.filter(dia=dia)
-                print(self.fields['sessaoid'].queryset)
+                self.fields['sessoes'].queryset = Sessao.objects.filter(dia=dia)
+                print(self.data.get('sessoes'))
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
         elif self.instance.pk:
-            self.fields['sessaoid'].queryset = Sessao.objects.none()
+            self.fields['sessoes'].queryset = self.instance.sessoes.none() 
             
 
 class TarefaAcompanharForm(ModelForm):
-    grupos = [('','Escolha um grupo')]+[(grupo.id,'Grupo '+str(grupo.id)) for grupo in Inscricao.objects.filter(nalunos__gt=1)]
-    grupo =  ChoiceField(choices=grupos,widget=Select(attrs={'onchange':'grupoInfo();diasGrupo();'}))
-    dias = DateField(widget=Select(attrs={'onchange':'grupoHorario();'}))
     class Meta:
         model= TarefaAcompanhar
         exclude = ['tarefaid']
-        widgets ={
-            'horario' : Select(),
-            'origem' : Select(),
-            'destino' : Select()
-        }
+        widgets = {
+
+            }
 
 class TarefaOutraForm(ModelForm):
     dia = ChoiceField(choices=get_dias(),widget=Select())
-    #horario = DateField(widget=DateInput(attrs={'class':'timepicker'}))
+    horario = DateField(widget=DateInput(attrs={'class':'timepicker'}))
     class Meta:
         model= TarefaOutra
         exclude = ['tarefaid']
         widgets = {
             'descricao' : Textarea(attrs={'class':'textarea'}),
-            'horario' : CustomTimeWidget(attrs={'class':'input'})
             }           
     
 

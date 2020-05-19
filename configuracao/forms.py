@@ -1,10 +1,9 @@
 from django.forms import *
 from .models import *
 from datetime import datetime
-from _datetime import timedelta
-from coordenadores.forms import CustomTimeWidget
     
 class DateTimeWidget(DateTimeInput):
+
     def __init__(self, attrs=None, format=None, input_type=None, hours='09', minutes='00', default=None):
         #input_type = 'datetime-local'
         now = datetime.now()
@@ -40,9 +39,7 @@ class diaAbertoSettingsForm(ModelForm):
             'dataporpostaatividadesfim': DateTimeWidget(hours='23', minutes='55'),
             'datainscricaoatividadesinicio': DateTimeWidget(hours='23', minutes='55'),
             'datainscricaoatividadesfim': DateTimeWidget(hours='23', minutes='55'),
-            'descricao': Textarea(attrs={'class':'textarea'}),
-            'precoalunos': NumberInput(attrs={'class':'input', 'step': '0.01','min': '0'}),
-            'precoprofessores': NumberInput(attrs={'class':'input','step': '0.01','min': '0'})
+            'descricao': Textarea(attrs={'class':'textarea'})
         }
     
 class diaAbertoFilterForm(Form):
@@ -65,28 +62,20 @@ class diaAbertoFilterForm(Form):
     showBy = ChoiceField(choices=showByChoices, widget=Select(), required=False)
 
 class menuForm(ModelForm):
-    dia_choices = Diaaberto.objects.all()
-    diaaberto = ChoiceField(choices=[('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices],widget=Select())
-    campus = ChoiceField(choices=[(camp.id,camp.nome) for camp in Campus.objects.all()],widget=Select())
-
-    def clean(self):
-        cleaned_data = super().clean()
-        campus_data = cleaned_data['campus']
-        diaaberto_data = cleaned_data['diaaberto']
-        if campus_data and diaaberto_data:
-            cleaned_data['campus'] = Campus.objects.get(id=campus_data)
-            cleaned_data['diaaberto'] = Diaaberto.objects.get(id=diaaberto_data)
-            self.instance.horarioid = Horario.objects.get(inicio='12:00:00',fim='14:00:00')
-        else:
-            raise ValidationError('Os campos preenchidos estão incorretos!')
-        
+    diaaberto = ChoiceField(choices=[(dia.id,dia.ano) for dia in Diaaberto.objects.all()],widget=Select(), required=True)
+    campus = ChoiceField(choices=[(camp.id,camp.nome) for camp in Campus.objects.all()],widget=Select(), required=True)
+    tipo = ChoiceField(choices=[
+            ('Carne',"Carne"),
+            ('Peixe','Peixe'),
+            ('Vegetariano', 'Vegetariano'),
+        ],widget=Select())
     class Meta:
         model = Menu
-        exclude = ['id','horarioid']
-        widgets = {
-            'dia': Select()
+        exclude = ['id','horarioid','campus','diaaberto']
+        widgets={
+            'precoalunos': NumberInput(attrs={'class':'input', 'step': '0.01','min': '0'}),
+            'precoprofessores': NumberInput(attrs={'class':'input','step': '0.01','min': '0'})
         }
-
 
 class pratosForm(ModelForm):
     class Meta:
@@ -95,40 +84,4 @@ class pratosForm(ModelForm):
         widgets = {
             'prato': TextInput(attrs={'class':'input'}),
             'nrpratosdisponiveis': NumberInput(attrs={'class':'input'}),
-            'tipo': Select()
-        }
-class menusFilterForm(Form):
-    searchAno = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Ano'}), required=False)
-    penha=BooleanField(widget=CheckboxInput(),required=False)
-    gambelas=BooleanField(widget=CheckboxInput(),required=False)
-    portimao=BooleanField(widget=CheckboxInput(),required=False)
-
-
-class transporteForm(ModelForm):
-    dia_choices = Diaaberto.objects.all()
-    diaaberto = ChoiceField(choices=[('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices],widget=Select())
-
-    def clean(self):
-        cleaned_data = super().clean()
-        diaaberto_data = cleaned_data['diaaberto']
-        if diaaberto_data:
-            cleaned_data['diaaberto'] = Diaaberto.objects.get(id=diaaberto_data)
-        else:
-            raise ValidationError('Os campos preenchidos estão incorretos!')
-
-    class Meta:
-        model = Transporte
-        exclude = ['id']
-        widgets = {
-            'identificador': TextInput(attrs={'class': 'input'}),
-            'dia': Select(),
-        }
-
-class transporteUniversitarioForm(ModelForm):
-
-    class Meta:
-        model = Transporteuniversitario
-        exclude = ['transporte', 'vagas']
-        widgets = {
-            'capacidade': TextInput(attrs={'class': 'input is-half'})
         }

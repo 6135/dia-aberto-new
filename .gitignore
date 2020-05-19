@@ -3,6 +3,9 @@
 .idea
 .vim
 
+# Script
+script.sh
+
 # Secret Environment Variables
 .env
 gui.env
@@ -10,8 +13,11 @@ gui.env
 # Migrations
 migrations
 
-# Custom Scripts
-custom-scripts
+#DataBase
+diaaberto Session.sql
+
+# Makefile
+makefile 
 
 # Default Python/Django .gitignore created by https://www.gitignore.io
 

@@ -1,12 +1,12 @@
-from django.urls import path, include
-
 from . import views
+from django.urls import path
 
-app_name = 'Notificacoes'
-
+app_name = 'notificacoes'
 
 urlpatterns = [
-
-    path('enviarnotificacao', views.enviar_notificacao_automatica,name='enviar-notificacao-automatica'),
-
-]       
+    path('enviar', views.EnviarNotificacao, name="enviar-notificacao"),
+    path('<int:pk>/', views.DetalhesNotificacao,
+         name="detalhes-notificacao"),
+    path('enviarnotificacao', views.enviar_notificacao_automatica,
+         name='enviar-notificacao-automatica'),
+]

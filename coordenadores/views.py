@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect  
 from .models import *
 from .forms import *
-from inscricoes.models import *
 from configuracao.models import Horario
 from coordenadores.models import Coordenador
 from utilizadores.models import ProfessorUniversitario
@@ -22,18 +21,14 @@ def adicionartarefa(request, id = None):
         form_tarefa=TarefaForm(request.POST, instance=tarefa)
         if form_tarefa.is_valid():
             form_tarefa.save()
-            if request.POST['tipo'] == 'tarefaAuxiliar':        
-                auxiliar_form = TarefaAuxiliarForm(request.POST,instance=TarefaAuxiliar(tarefaid=form_tarefa.instance))
+            if request.POST['tipo'] == 'tarefaAuxiliar':
+                auxiliar_form = TarefaAuxiliarForm(request.POST,initial={'tarefaid':form_tarefa.instance})
                 if auxiliar_form.is_valid():
+                    print('hello')
                     auxiliar_form.save()
                     return redirect('consultarTarefa') 
-            elif request.POST['tipo'] == 'tarefaOutra': 
-                outra_form = TarefaOutraForm(request.POST,instance=TarefaOutra(tarefaid=form_tarefa.instance)) 
-                if outra_form.is_valid():
-                    outra_form.save()
-                    return redirect('consultarTarefa') 
-            else:
-                form_tarefa.instance.delete()      
+                else:
+                    form_tarefa.instance.delete()      
     return render(request=request,
                 template_name='coordenadores/criarTarefa.html',
                 context={'formTarefa':form_tarefa}
@@ -54,7 +49,6 @@ def tipoTarefa(request):
             template = 'coordenadores/tarefaAuxiliar.html'
         elif tipo == 'tarefaAcompanhar':
             form = TarefaAcompanharForm()
-            template = 'coordenadores/tarefaAcompanhar.html'
         elif tipo == 'tarefaOutra':   
             form = TarefaOutraForm()
             template = 'coordenadores/tarefaOutra.html'
@@ -65,7 +59,7 @@ def sessoesAtividade(request):
     sessoes = Sessao.objects.filter(dia=dia)
     default = {
         'key': '',
-        'value': 'Escolha a sessão'
+        'value': '--------'
     }
     options = [{
                     'key':	str(sessao.id),
@@ -82,7 +76,7 @@ def colaboradoresAtividade(request):
     colabs = Colaborador.objects.all()
     default = {
         'key': '',
-        'value': 'Escolha o colaborador'
+        'value': '--------'
     }
     
     options = [{
@@ -97,62 +91,22 @@ def colaboradoresAtividade(request):
             )
 
 def diasAtividade(request):
+    atividadeid = request.POST['atividadeid']
+    sessoes= Sessao.objects.filter(atividadeid=atividadeid)
     default = {
         'key': '',
-        'value': 'Escolha o dia'
+        'value': '--------'
     }
     dias=[]
-    if request.POST['atividadeid'] != '':
-        atividadeid = request.POST.get('atividadeid')
-        atividade = Atividade.objects.get(id=atividadeid)   
-        dias = atividade.get_dias()  
+    for sessao in sessoes:
+        if sessao.dia not in dias:
+            dias.append({'key':str(sessao.dia), 'value':sessao.dia})
+            
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':dias, 'default': default}
             )
 
-def grupoInfo(request):
-    info = Inscricao.objects.get(id=request.POST['grupo_id'])
-    return render(request=request,
-                template_name='coordenadores/grupoInfo.html',
-                context={'info': info}
-            )
-
-def diasGrupo(request):
-    default = {
-        'key': '',
-        'value': 'Escolha o dia'
-    }
-    dias=[]
-    if request.POST['grupo_id'] != '':
-        inscricaoid = request.POST.get('grupo_id')
-        inscricao = Inscricao.objects.get(id=inscricaoid)
-        dias = inscricao.get_dias()
-    return render(request=request,
-                template_name='configuracao/dropdown.html',
-                context={'options':dias, 'default': default}
-            )
-
-def horarioGrupo(request):
-    default = {
-        'key': '',
-        'value': 'Escolha o horário'
-    }
-    horario=[]
-    if request.POST['dia'] != '' and request.POST['grupo_id'] != '':
-        inscricaoid = request.POST.get('grupo_id')
-        inscricao = Inscricao.objects.get(id=inscricaoid)
-        horario = inscricao.get_horarios(request.POST['dia'])
-    return render(request=request,
-                template_name='configuracao/dropdown.html',
-                context={'options':horario, 'default': default}
-            )
-
-def locaisGrupo(request):
-    default = {
-        'key': '',
-        'value': 'Escolha o horário'
-    }
 def filters(request):
     filters=[]
     if request.POST.get('Concluida'):
@@ -175,41 +129,28 @@ def consultartarefa(request):
     tarefas=Tarefa.objects.all()
     tarefasacompanhar= TarefaAcompanhar.objects.all()
     tarefasauxiliar= TarefaAuxiliar.objects.all()
-    colaboradores= Colaborador.objects.all()
     tarefasoutra= TarefaOutra.objects.all()
     if request.method == 'POST' or request.GET.get('searchTarefa'):
-        form_tarefa=TarefaForm(request.POST)
         today=datetime.now(timezone.utc)
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
         filterForm=tarefaFilterForm(request.POST)
         nome=str(request.POST.get('searchTarefa'))
-        tarefas=tarefas.filter(Q(nome__icontains=nome) | Q(colab__utilizadorid__nome__icontains=nome))
+        tarefas=tarefas.filter(Q(nome__icontains=nome) | Q(colaboradorutilizadorid__utilizadorid__nome__icontains=nome))
         tipo=str(request.POST.get('tipo'))
         if tipo != ' ' and tipo != 'None':
             tarefas=tarefas.filter(tipo=tipo)
-        if request.POST.get('Concluida') or request.POST.get('naoConcluida')  or request.POST.get('naoAtribuida'):
+        if request.POST.get('Concluida') or request.POST.get('Nao Concluida')  or request.POST.get('Nao Concluida'):
             print('estado')
             filter=filters(request)
             tarefas=tarefas.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
     else:
-        form_tarefa= TarefaForm()
         filterForm=tarefaFilterForm()
 
     return render(request=request,
 			    template_name="coordenadores/consultartarefa.html",
-                context={"tarefas": tarefas,"tarefasauxiliar": tarefasauxiliar,"tarefasacompanhar": tarefasacompanhar,"tarefasoutra": tarefasoutra,"filter":filterForm, "formtarefa":form_tarefa, "colaboradores": colaboradores}
+                context={"tarefas": tarefas,"tarefasauxiliar": tarefasauxiliar,"tarefasacompanhar": tarefasacompanhar,"tarefasoutra": tarefasoutra,"filter":filterForm}
             )
 
 def eliminartarefa(request,id):
     Tarefa.objects.get(id=id).delete()
     return redirect('consultarTarefa')
-
-
-def atribuircolaborador(request,tarefa):
-    tarefa= Tarefa.objects.get(id=tarefa)
-    colaborador= Colaborador.objects.get(utilizadorid=request.POST['colab'])
-    tarefa.estado= "naoConcluida"
-    tarefa.colab= colaborador
-    tarefa.save()
-    return redirect('consultarTarefa')
-

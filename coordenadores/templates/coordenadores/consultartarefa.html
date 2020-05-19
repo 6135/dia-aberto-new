@@ -66,7 +66,8 @@
                 </ul>
             </div>
             </div>
-        </form>    
+            
+        </form>
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -123,17 +124,11 @@
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>
-                             <th  style="cursor:pointer;width: 200px;" class="pre-expandable">
-                                Operações
-                            </th>
                             <th style="cursor:pointer;width: 200px;" class="pre-expandable">
                             </th>
                             <th style="">
                             </th>
                         </tr>
-
-
-
                     </thead>
                     {% for tarefa in tarefas %}
                     {% if tarefa.tipo == "tarefaAuxiliar" %}
@@ -147,9 +142,9 @@
                                 </a>
                             </td>
                             <td data-label="Dia">{{tarefa.tarefaauxiliar.sessaoid.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horarios">{{tarefa.tarefaauxiliar.sessaoid.horarioid.inicio}} - {{tarefa.tarefaauxiliar.sessaoid.horarioid.fim}}</td>
+                            <td data-label="Horarios">{{tarefa.tarefaauxiliar.sessaoid.horarioid.inicio}} - {{tarefaauxiliar.sessaoid.horarioid.fim}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colab.utilizadorid.nome}}</td>
+                            <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
                             <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
@@ -160,18 +155,13 @@
                                 <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
                             {% endif %}
                             </td>
-                            <td >
-                                <a href="">
-                                    <span class="icon has-text-link">
-                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                    </span>
-                                </a>
+                            <td>
                                 <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                     </span>
                                 </a>
-                            </td>             
+                            </td>      
                         </tr> 
                         <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
                         <td colspan="7">
@@ -188,12 +178,16 @@
                                         </p>
                                         <p>
                                             <strong>Colaborador Atribuido:</strong>
-                                            {{tarefa.colab.utilizadorid.nome}}
+                                            {{tarefa.colaboradorutilizadorid.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Tipo de tarefa:</strong>
                                             {{tarefa.tipo}}
                                         </p>
+                                        <!--<p>
+                                            <strong>Descrição:</strong>
+                                            {{tarefa.descricao}}</div>
+                                        </p>  -->
                                         <p>
                                             <strong>Campus:</strong>
                                             {{tarefa.tarefaauxiliar.sessaoid.atividadeid.espacoid.edificio.campus.nome}}
@@ -208,42 +202,8 @@
                                         </p>
                                          <p>
                                             <strong>Coordenador Responsavel:</strong>
-                                            {{tarefa.coord.utilizador.nome}}
+                                            {{tarefa.coordenadorutilizadorid.utilizadorid.nome}}
                                         </p>
-                                        {% if tarefa.colab == NULL %}
-                                        <form action="{% url 'atribuirColaborador' tarefa.id%}" method='POST'>
-                                        {% csrf_token %}
-                                        <div class="columns">
-                                          <div class="column is-6">
-                                            <div class="field" >
-                                              <label class="label">Atribuir Colaborador:</label>
-                                              <div class="control">
-                                                <div class="select is-fullwidth" >
-                                                    {{formtarefa.colab}}
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="column is-1">
-                                              <div class="field" >
-                                              <label class="label"></label>
-                                              <br>
-                                                <div class="control">
-                                                  <div class="has-text-centered">
-                                                      <button type="submit" id="concluir"  class="button is-success">
-                                                          <span class="icon is-small">
-                                                              <i class="mdi mdi-plus"></i>
-                                                          </span>
-                                                          <span>Atribuir Colaborador</span>
-                                                      </button>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        </div>
-                                        </form>
-                                        {% endif %}
-
                                     </div>
                                 </div>
                             </div>                        
@@ -270,7 +230,7 @@
                             <td data-label="Dia">{{tarefa.tarefaacompanhar.dia|date:'d-m-Y'}}</td>
                             <td data-label="Horarios">{{tarefa.tarefaacompanhar.horario}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colab.utilizadorid.nome}}</td>
+                            <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
                              <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
@@ -281,12 +241,7 @@
                                 <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
                             {% endif %}
                             </td>
-                            <td >
-                                <a href="">
-                                    <span class="icon has-text-link">
-                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                    </span>
-                                </a>
+                             <td>
                                 <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
@@ -305,7 +260,7 @@
                                         </p>
                                         <p>
                                             <strong>Colaborador Atribuido:</strong>
-                                            {{tarefa.colab.utilizadorid.nome}}
+                                            {{tarefa.colaboradorutilizadorid.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Tipo de tarefa:</strong>
@@ -313,53 +268,20 @@
                                         </p>
                                         <p>
                                             <strong>Acompanhar quem:</strong>
-                                            {{tarefa.tarefaacompanhar.inscricao.ano}}º{{tarefa.tarefaacompanhar.inscricao.turma}} - {{tarefa.tarefaacompanhar.inscricao.escola.nome}}
+                            
                                         </p>
                                         <p>
                                             <strong>Origem:</strong>
-                                            {{tarefa.tarefaacompanhar.origem}}
+                                            {{tarefaacompanhar.origem}}
                                         </p>
                                         <p>
                                             <strong>Destino:</strong>
-                                            {{tarefa.tarefaacompanhar.destino}}
+                                            {{tarefaacompanhar.destino}}
                                         </p>
                                          <p>
                                             <strong>Coordenador Responsavel:</strong>
-                                            {{tarefa.coord.utilizador.nome}}
+                                            {{tarefa.coordenadorutilizadorid.utilizadorid.nome}}
                                         </p>
-                                        {% if tarefa.colab == NULL %}
-                                        <form action="{% url 'atribuirColaborador' tarefa.id%}" method='POST'>
-                                        {% csrf_token %}
-                                        <div class="columns">
-                                          <div class="column is-6">
-                                            <div class="field" >
-                                              <label class="label">Atribuir Colaborador:</label>
-                                              <div class="control">
-                                                <div class="select is-fullwidth" >
-                                                    {{formtarefa.colab}}
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="column is-1">
-                                              <div class="field" >
-                                              <label class="label"></label>
-                                              <br>
-                                                <div class="control">
-                                                  <div class="has-text-centered">
-                                                      <button type="submit" id="concluir"  class="button is-success">
-                                                          <span class="icon is-small">
-                                                              <i class="mdi mdi-plus"></i>
-                                                          </span>
-                                                          <span>Atribuir Colaborador</span>
-                                                      </button>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        </div>
-                                        </form>
-                                        {% endif %}
                                     </div>
                                 </div>
                             </div>                        
@@ -368,8 +290,6 @@
                     </tbody>
                     {% endif %}    
                             
-
-
                     {% if tarefa.tipo == "tarefaOutra" %}
                     {% for tarefaoutra in tarefasoutra %}
                     {% if tarefaoutra.tarefaid == tarefa %}
@@ -385,7 +305,7 @@
                             <td data-label="Dia">{{tarefaoutra.dia|date:'d-m-Y'}}</td>
                             <td data-label="Horarios">{{tarefaoutra.horario}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colab.utilizadorid.nome}}</td>
+                            <td data-label="Atribuido a">{{tarefa.colaboradorutilizadorid.utilizadorid.nome}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
                             <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
@@ -396,12 +316,7 @@
                                 <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
                             {% endif %}
                             </td>
-                             <td >
-                                <a href="">
-                                    <span class="icon has-text-link">
-                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                    </span>
-                                </a>
+                             <td>
                                 <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
@@ -420,7 +335,7 @@
                                         </p>
                                         <p>
                                             <strong>Colaborador Atribuido:</strong>
-                                            {{tarefa.colab.utilizadorid.nome}}
+                                            {{tarefa.colaboradorutilizadorid.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Tipo de tarefa:</strong>
@@ -432,41 +347,8 @@
                                         </p>
                                          <p>
                                             <strong>Coordenador Responsavel:</strong>
-                                            {{tarefa.coord.utilizador.nome}}
+                                            {{tarefa.coordenadorutilizadorid.utilizadorid.nome}}
                                         </p>
-                                        {% if tarefa.colab == NULL %}
-                                        <form action="{% url 'atribuirColaborador' tarefa.id%}" method='POST'>
-                                        <div class="columns">
-                                          <div class="column is-6">
-                                            <div class="field" >
-                                              <label class="label">Atribuir Colaborador:</label>
-                                              <div class="control">
-                                                <div class="select is-fullwidth" >
-                                                    {{formtarefa.colab}}
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="column is-1">
-                                              <div class="field" >
-                                              <label class="label"></label>
-                                              <br>
-                                                <div class="control">
-                                                  <div class="has-text-centered">
-                                                      <button type="submit" id="concluir"  class="button is-success">
-                                                          <span class="icon is-small">
-                                                              <i class="mdi mdi-plus"></i>
-                                                          </span>
-                                                          <span>Atribuir Colaborador</span>
-                                                      </button>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        </div>
-                                        {% csrf_token %}
-                                        </form>
-                                        {% endif %}
                                     </div>
                                 </div>
                             </div>                        

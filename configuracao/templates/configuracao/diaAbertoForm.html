@@ -11,7 +11,6 @@
 </nav>
 <div style="padding: 3rem 2vw 1rem">
   <form method="POST" action="">
-    {{is_open}}
     {% csrf_token %}
     {{ form.non_field_errors }}
   <div class="b-steps">
@@ -132,28 +131,6 @@
                   <div class="field">
                     <label class="label">Fim das inscrições</label>
                     {{form.datainscricaoatividadesfim}}
-                  </div>
-                </div>
-              </div>
-              <hr>
-              <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                Almoços
-              </h2>
-              <div class="columns">
-                <div class="column">  
-                  <strong>{{form.precoprofessores.errors}}</strong>            
-                  <div class="field">
-                    <label class="label">Proço Professores</label>
-                    <div class="control">
-                      {{form.precoprofessores}}
-                    </div>
-                  </div>
-                </div>
-                <div class="column">
-                  <strong>{{form.precoalunos.errors}}</strong>
-                  <div class="field">
-                    <label class="label">Preço Alunos</label>
-                    {{form.precoalunos}}
                   </div>
                 </div>
               </div>

@@ -4,7 +4,7 @@
   <ul>
     <li><a href="{% url 'inicio' %}">Início</a></li>
     <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-    {% if  espaco != -1 %}
+    {% if  campu != -1 %}
     <li class="is-active"><a href="" aria-current="page">Alterar Atividade</a></li>
     {% else %}
     <li class="is-active"><a href="" aria-current="page">Propor Atividade</a></li>
@@ -16,21 +16,6 @@
 <div style="padding: 3rem 2vw 1rem">
     <form method="POST" action="">
         <div class="b-steps">
-        <div class="columns is-mobile is-centered">
-            <div class="column is-5 ">
-                <label class="label has-text-info is-centered">Atividade</label>
-            </div>
-            <div class="column is-1 ">
-                <label class="label has-text-info is-centered">Sessoes</label>
-            </div>
-        </div>
-            <div class="columns is-mobile is-centered">
-            <div class="column is-four-fifths">
-            <progress class="progress is-success" value="50" max="100">
-        
-            </progress>
-            </div>
-            </div>
             <section class="step-content">
                 <div class="step-item">
                     <div style="padding: 1rem 2vw 0px">
@@ -130,15 +115,27 @@
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
                                             <select id="campusid" name="campusid">
-                                                {% if espaco != -1 %}
-                                                    <option selected value="{{espaco.edificio.campus.id}}">{{espaco.edificio.campus.nome}}</option>
-                                                {% else %}
-                                                    <option value="">---------</option>
-                                                {% endif %}
+                                                <option selected value="{{campu.id}}">{{campu.nome}}</option>
                                                 {% for c in campus %}
                                                     <option  value="{{c.id}}" >{{c.nome}}</option>
                                                 {% endfor %}
                                             </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="column is-1">
+                                <div class="field" >
+                                <label class="label"></label>
+                                <br>
+                                    <div class="control">
+                                        <div class="has-text-centered">
+                                            <button class="button is-success" name="veredificios" value="veredificios">
+                                                <span class="icon is-small">
+                                                    <i class="mdi mdi-plus"></i>
+                                                </span>
+                                                <span>Ver Edificios</span>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
@@ -150,26 +147,29 @@
                                 <label class="label">Edificio</label>
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
-                                            <select id="edificioid" name="edificioid">
-                                                {% if espaco != -1 %}
-                                                    <option selected value="{{espaco.edificio.id}}">{{espaco.edificio.nome}}</option>
-                                                    {% for edi in edificios %}
-                                                        <option  value="{{edi.id}}" >{{edi.nome}}</option>
-                                                    {% endfor %}
-                                                {% else %}
-                                                    <option value="">---------</option>
-                                                {% endif %}
+                                                <select name="edificioid" onchange="edif()">
+                                                <option selected value="{{edificio.id}}">{{edificio.nome}}</option>
+                                                {% for edi in edificios %}
+                                                    <option value="{{edi.id}}" >{{edi.nome}}</option>
+                                                {% endfor %}
                                             </select>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="column is-2"></div>
-                            <div class="column is-6">
-                                <div class="field">
-                                <label class="label">Materiais Extra Necessarios</label>
+                            <div class="column is-1">
+                                <div class="field" >
+                                <label class="label"></label>
+                                <br>
                                     <div class="control">
-                                    {{materiais.nomematerial}}
+                                        <div class="has-text-centered">
+                                            <button class="button is-success" name="versala" value="Versala">
+                                                <span class="icon is-small">
+                                                    <i class="mdi mdi-plus"></i>
+                                                </span>
+                                                <span>Ver Sala</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -180,15 +180,11 @@
                                 <label class="label">Sala</label>
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
-                                            <select id="espacoid" name="espacoid" required>
-                                               {% if espaco != -1 %}
+                                            <select name="espacoid">
                                                 <option selected value="{{espaco.id}}">{{espaco.nome}}</option>
                                                 {% for esp in espacos %}
-                                                    <option  value="{{esp.id}}" >{{esp.nome}}</option>
+                                                    <option value="{{esp.id}}" >{{esp.nome}}</option>
                                                 {% endfor %}
-                                                {% else %}
-                                                <option value="">---------</option>
-                                                {% endif %}
                                             </select>
                                         </div>
                                     </div>
@@ -200,23 +196,23 @@
                 </div>
             </section>
         </div>
-        <div class="column is-8 is-offset-2">
-          <div class="level">
-            <div class="level-left">
-              <a href="javascript:history.back()" class="button is-outlined" type="button">
-                <span>Cancelar</span>
-              </a>
-            </div>
-            <div class="level-right">
-              <button type="submit" class="button is-large is-success is-outlined is-link">
-                <span>Próximo</span>
-                <span class="icon is-medium">
-                  <i class="mdi mdi-forward mdi-36px"></i>
-                </span>
-              </button>
-            </div>
-          </div>
+    <div class="column is-8 is-offset-2">
+      <div class="level">
+        <div class="level-left">
+          <a href="javascript:history.back()" class="button is-outlined" type="button">
+            <span>Cancelar</span>
+          </a>
         </div>
+        <div class="level-right">
+          <button type="submit" class="button is-large is-success is-outlined is-link">
+            <span>Próximo</span>
+            <span class="icon is-medium">
+              <i class="mdi mdi-forward mdi-36px"></i>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
     {% if form.errors %}
     {% for field in form %}
         {% for error in field.errors %}
@@ -247,42 +243,46 @@
 {% block scripts %}
 
 <script>
-    $("#campusid").change(function()
-    {
-        var valuecampus= $(this).val();
-        $.ajax({
-            url:"{% url 'verEdificios' %}",
-            method: 'POST',
-            data: { 
-                'valuecampus': valuecampus,
-                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(data){
-                $("#edificioid").html(data)
-                $("#espacoid").html('<option value="">---------</option>');
+    function camp(){
+        var edificio= JSON.parse('{{edificios_json|safe}}')
+        var selectcampus=document.getElementById("campusid").value;
+        var selectedificio=document.getElementById("edificioid");
+        var edificios=[]
+        while(selectedificio.length > 0) {
+        selectedificio.remove(selectedificio.lenght-1);
+        }
+        $.each(edificio,function(index,item){
+            if(selectcampus==item.fields.campus){
+                var option= document.createElement("option");
+                option.text=item.fields.nome;
+                selectedificio.add(option);
             }
+        })  
+    }
 
-        })
-
-    })
-
-    $("#edificioid").change(function()
-    {
-        var valueedificio= $(this).val();
-        $.ajax({
-            url:"{% url 'verSalas' %}",
-            method: 'POST',
-            data: { 
-                'valueedificio': valueedificio,
-                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(data){
-                $("#espacoid").html(data)
+    function edif(){
+        var selectedificio=document.getElementById("edificioid").value;
+        console.log(selectedificio);
+        var edificio= JSON.parse('{{edificios_json|safe}}')
+        var sala= JSON.parse('{{espacos_json|safe}}')
+        selectedificio=document.getElementById("edificioid").value;
+    
+        $.each(edificio,function(index,item){
+            if(selectedificio==item.fields.nome){
+                var edificio_id=item.fields.id;
+                console.log(edificio_id);
+                $.each(sala,function(index,item){
+                    if(edificio_id==item.fields.edificio){
+                        
+                    }    
+                })
+                var option= document.createElement("option");
+                option.text=item.fields.nome;
+                selectedificio.add(option);
             }
+        })  
+    }
 
-        })
-
-    })
     
 </script>
 {% endblock scripts %}

@@ -11,21 +11,6 @@
   <form method="POST">
     {% csrf_token %}
   <div class="b-steps">
-  <div class="columns is-mobile is-centered">
-            <div class="column is-5 ">
-                <label class="label has-text-info is-centered">Atividade</label>
-            </div>
-            <div class="column is-1 ">
-                <label class="label has-text-info is-centered">Sessoes</label>
-            </div>
-        </div>
-            <div class="columns is-mobile is-centered">
-            <div class="column is-four-fifths">
-            <progress class="progress is-success" value="100" max="100">
-        
-            </progress>
-            </div>
-            </div>
     <section class="step-content">
         <div class="step-item">
           <div style="padding: 1rem 2vw 0px;">
@@ -68,15 +53,12 @@
                                             <td data-label="Nome">{{sessao.horarioid.inicio}} até  {{sessao.horarioid.fim}}</td>
                                             <td data-label="Submetido a">{{sessao.vagas}}</td>  
                                             <td>
-                                              {% if is_empty %}
-                                              <a  onclick="alert.warning('Não poderá eliminar esta sessao, caso queira eliminar a ultima sessao, adicione outra primeiro. Caso deseja eliminar a atividade carregue em eliminar atividade')"> 
-                                              {% else %}
-                                              <a onclick="alert.render('Tem a certeza que deseja eliminar a sessão?','{% url 'eliminarSessao' sessao.id%}')">
-                                              {% endif %}
+                                                <input type="hidden" id="del" name="variable" value="{% url 'eliminarSessao' sessao.id%}">
+                                               <a onclick="Alert.render()">
                                                     <span class="icon has-text-danger">
                                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                                     </span>
-                                              </a>
+                                                </a>
                                             </td>
                                         </tr>
                                         {% endfor %} 
@@ -92,8 +74,8 @@
                         <label class="label">Dia</label>
                         <div class="control">
                           <div class="select is-fullwidth" >
-                            <select id="diasessao" name="diasessao">
-                              <option value="">---------</option>
+                            <select name="diasessao">
+                              <option selected value="{{sessao}}">{{sessao}}</option>
                               {% for dia in dias %}
                               <option value="{{dia|date:'Y-m-d'}}">{{dia}}</option>
                               {% endfor %}
@@ -102,16 +84,30 @@
                         </div>
                       </div>
                     </div>
-                  </div>  
-                    
+                    <div class="column is-1">
+                      <div class="field" >
+                        <label class="label"></label>
+                        <br>
+                        <div class="control">
+                            <div class="has-text-centered">
+                                <button class="button is-success" name="ver" value="ver">
+                                    <span>Ver os Horarios Disponiveis</span>
+                                </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>        
                     <div class="columns">
                       <div class="column is-2">
                       <div class="field" >
                         <label class="label">Horário</label>
                         <div class="control">
                           <div class="select is-fullwidth" >
-                            <select id="horarioid" name="horarioid">
-                              <option value="">---------</option>
+                            <select name="horarioid">
+                              {% for schedule in horarios %}
+                              <option value="{{schedule.id}}">{{schedule.inicio}} até {{schedule.fim}}</option>
+                              {% endfor %}
                             </select>
                           </div>
                         </div>
@@ -135,26 +131,24 @@
                       </div>
                   </div>
               </div>
+ 
         <hr>
         </div>     
     </section>
     <div class="column is-8 is-offset-2">
       <div class="level">
       <div class="level-left">
-         <button  class="button is-outlined" name="anterior" value="anterior">
-            <span class="icon is-medium">
-              <i class="mdi fa fa-arrow-left mdi-36px"></i>
-            </span>
-            <span>Anterior</span>
+         <button  class="button is-outlined" name="cancelar" value="Cancelar">
+            <span>Cancelar</span>
          </button>
       </div>
       <div class="level-right">
-              <a id="concluir" onclick="alert.render('Tem a certeza que pretende finalizar esta proposta?  (Terá sempre possibilidade de a alterar até ao prazo das propostas terminar)','{% url 'minhasAtividades' %}')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
+            <button id="concluir" onclick="Alert.checkEmptySession()" type="button" class="button is-large is-success is-outlined is-link" name="save" value="Save">
             <span>Finalizar Proposta</span>
             <span class="icon is-medium">
-              <i class="mdi fa fa-check mdi-36px"></i>
+              <i class="mdi mdi-forward mdi-36px"></i>
             </span>
-          </a>
+          </button>
         </div>
       </div>
     </div>
@@ -162,7 +156,38 @@
 </form>
 </div>
 
-{% include 'configuracao/popup.html' %}
+<div id="msg" class="dialog modal">
+  <div class="modal-background"></div>
+  <div class="modal-card animation-content">
+      <section class="modal-card-body is-titleless">
+          <div class="media">
+              <div class="media-content">
+                  <p>Tem a certeza que pretende eliminar esta sessão?</p>
+              </div>
+          </div>
+      </section>
+      <footer class="modal-card-foot">
+          <button onclick="Alert.cancelar()" class="button">Cancelar</button>
+          <button onclick="Alert.confirmar()" class="button is-success">Confirmar</button>
+      </footer>
+  </div>
+</div>
+
+<div id="empty" class="dialog modal">
+  <div class="modal-background"></div>
+  <div class="modal-card animation-content">
+      <section class="modal-card-body is-titleless">
+          <div class="media">
+              <div class="media-content">
+                  <p>Não adicionou nenhuma sessão à atividade.</p>
+              </div>
+          </div>
+      </section>
+      <footer class="modal-card-foot">
+          <button onclick="Alert.ok()" class="button">Ok</button>
+      </footer>
+  </div>
+</div>
 
 <style>
   .label {
@@ -178,30 +203,42 @@
     border-top-right-radius: 6px;
 }
 </style>
-{% endblock content %}
-{% block scripts %}
 <script>
-    $("#diasessao").change(function()
-    {
-        var id= "{{id}}"
-        console.log(id)
-        var valuedia= $(this).val();
-        $.ajax({
-            url:"{% url 'verHorarios'%}",
-            method: 'POST',
-            data: { 
-                'valuedia': valuedia,
-                'id': id,
-                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(data){
-                $("#horarioid").html(data)
-            }
 
-        })
 
-    })    
+
+var Alert= new eliminar();
+function eliminar() {
+    this.render=function(){
+        var msg = document.getElementById("msg")
+        msg.classList.add("is-active");
+    }
+    this.checkEmptySession=function(){
+        var a = document.getElementById("sessao.id");
+        console.log(a);
+        if(a){
+            var x=document.getElementById("concluir");
+            x.type="submit";
+                
+        }else{
+            var msg = document.getElementById("empty")
+            msg.classList.add("is-active"); 
+        }
+    }
+    this.confirmar=function(){
+        var href = document.getElementById("del").value;
+        window.location.href = href;
+    }
+    this.cancelar=function(){
+        var msg = document.getElementById("msg")
+        msg.classList.remove("is-active");
+    }  
+    this.ok=function(){
+        var msg = document.getElementById("empty")
+        msg.classList.remove("is-active");
+    }  
+}
+
 </script>
-{% endblock scripts %}
-
+{% endblock content %}
 

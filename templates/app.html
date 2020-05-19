@@ -1,0 +1,180 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-pt">
+
+<head>
+
+  <title>
+<<<<<<< HEAD
+    Dia Aberto {% block title %} {% endblock title %}
+ 
+=======
+    {% block title %}{% endblock title %} - Dia Aberto
+>>>>>>> 0003c9a21557fcbf51886d37f29397495a6a66f5
+  </title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<<<<<<< HEAD
+  <link rel="stylesheet" href="{% static 'css/bulma.css' %}">
+  <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
+  <link rel="stylesheet" href="https://cdn.materialdesignicons.com/5.0.45/css/materialdesignicons.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <link rel="icon" href="{% static 'img/logo.png' %}"/>
+  
+
+=======
+  <link rel="icon" href="{% static 'img/favicon.ico' %}">
+  <link rel="stylesheet" href="{% static 'css/bulma.css' %}">
+  <link rel="stylesheet" href="{% static 'css/materialdesignicons.min.css' %}">
+>>>>>>> 0003c9a21557fcbf51886d37f29397495a6a66f5
+
+  {% block load %}
+  {% endblock load %}
+
+  <style>
+    body,
+    html {
+      min-height: 100%;
+      background-size: cover;
+      background: linear-gradient(to bottom, #ffffff, #eeeeff) no-repeat fixed center center;
+    }
+
+    * {
+      outline: none;
+    }
+
+    #app {
+      position: relative;
+      min-height: 100vh;
+      padding-bottom: 5rem
+    }
+
+    #top-hero-body {
+      height: 45vh;
+    }
+
+    #page-content {
+      margin: -37vh 5vw 0
+    }
+
+    #page-content .card {
+      min-height: 70vh
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      background-color: #fafafa;
+      padding: 1rem 3rem;
+    }
+  </style>
+
+</head>
+<<<<<<< HEAD
+<style>
+  body,
+  html {
+    min-height: 100%;
+    background-size: cover;
+    background: linear-gradient(to bottom, #ffffff, #eeeeff) no-repeat fixed center center;
+  }
+
+  * {
+    outline: none;
+  }
+
+  #app {
+    position: relative;
+    min-height: 100vh;
+    padding-bottom: 5rem
+  }
+
+  #top-hero-body {
+    height: 45vh;
+  }
+
+  #page-content {
+    margin: -37vh 5vw 0
+  }
+
+  #page-content .card {
+    min-height: 70vh
+  }
+
+
+  .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background-color: #fafafa;
+    padding: 1rem 3rem;
+  }
+</style>
+=======
+>>>>>>> 0003c9a21557fcbf51886d37f29397495a6a66f5
+
+<body>
+
+
+  <div id="app">
+    {% include 'navbarinscricoes.html' %}
+    <div class="hero is-primary is-bold" id="top-hero">
+      <div id="top-hero-body" class="hero-body"></div>
+    </div>
+    <div id="page-content">
+      <div class="card">
+        <div class="card-content">
+          {% block content %}
+          <!-- include the content here-->
+          {% endblock content %}     
+        </div>
+      </div>
+
+    </div>
+    <footer class="footer">
+      <div style="float: left;">
+        (c) 2020
+      </div>
+      <div style="float: right;">
+        Designed by Grupo 9
+      </div>
+      <div style="margin: auto; width: max-content">
+        Dia Aberto
+      </div>
+    </footer>
+  </div>
+<<<<<<< HEAD
+  <footer class="footer">
+    <div style="float: left;">
+      &#169; 2020
+    </div>
+    <div style="float: right;">
+      Designed by Grupo 9
+    </div>
+    <div style="margin: auto; width: max-content">
+      Dia Aberto
+    </div>
+  </footer>
+  </div>
+
+</style>
+  <script defer src="https://use.fontawesome.com/releases/v5.3.1/js/all.js"></script>
+  <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/animated-arrows.js' %}"></script>
+  <script type="text/javascript" src="{% static 'js/js_custom.js' %}"></script>
+{% block scripts %}
+{% endblock scripts %}
+=======
+
+  <script defer src="{% static 'js/fontawesome.js' %}"></script>
+
+  {% block scripts %}
+  {% endblock scripts %}
+
+>>>>>>> 0003c9a21557fcbf51886d37f29397495a6a66f5
+</body>
+
+</html>

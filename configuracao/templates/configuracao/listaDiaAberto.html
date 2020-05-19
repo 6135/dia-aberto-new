@@ -1,7 +1,6 @@
 {% extends 'configuracao/app.html' %}
 {% block content %}
 {% load l10n %}
-
 <div class="columns">
     <div class="column is-3">
         <form method="POST" action="" id='filter'>
@@ -67,6 +66,7 @@
               <li class="is-active"><a href="#" aria-current="page">Dias Abertos</a></li>
             </ul>
           </nav>
+        {{is_open}}
         {% if is_open == True %}
         <input type="hidden" id="novoDia" value="{% url 'novoDia'%}">  
         <a onclick="alert.render('Ainda existe um dia aberto em vigor.\nTem a certeza que deseja criar um novo?','novoDia')" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">     
@@ -79,7 +79,7 @@
             <span>Criar novo Dia Aberto</span>
         </a>   
 
-        <div class="b-table">
+        <div  class="table"></div>
             <div class="table-wrapper">
                 <table id="table01" class="table has-mobile-cards is-hoverable is-fullwidth">
                     <thead>
@@ -122,8 +122,9 @@
                                         </span>
                                     </a>
                                 </div>
-                                <div class="column">               
-                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia Aberto?<br>Atenção, isto irá eliminar todas as atividades e insciçoes associadas!','{% url 'eliminarDia' diaAberto.id %}')">
+                                <div class="column">    
+                                    <input type="hidden" id="del-{{diaAberto.id}}" name="variable" value="{% url 'eliminarDia' diaAberto.id %}">                 
+                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia Aberto?<br>Atenção, isto irá eliminar todas as atividades e insciçoes associadas!','del-{{diaAberto.id}}')">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                                         </span>
@@ -139,98 +140,68 @@
                             <div class="detail-container">
                                 <div class="table"> 
                                     <div class="table-wrapper">
-                                        <table class="table has-mobile-cards is-fullwidth">
+                                        <table class="table has-mobile-cards">
                                             <thead>
-                                                <tr>
-                                                    <th class="th-wrap">Inicio submissao Atividades:</th>
-                                                    <th class="th-wrap">Fim submissao Atividades:</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
                                                 <tr style="border-bottom: 1px solid #ddd">
-                                                    <td data-label='Inicio submissao Atividades:'style="font-weight: normal;">
+                                                    <th class="th-wrap">Inicio submissao Atividades:</th>
+                                                    <th class="th-wrap" style="font-weight: normal;">
                                                         <span>{{diaAberto.datapropostasatividadesincio}}</span>
-                                                    </td>
-                                                    <td data-label='Fim submissao Atividades:'style="font-weight: normal;">
+                                                    </th>
+                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
+                                                    <th class="th-wrap">Fim submissao Atividades:</th>
+                                                    <th class="th-wrap" style="font-weight: normal;">
                                                         <span> {{diaAberto.dataporpostaatividadesfim}} </span>
-                                                    </td>
+                                                    </th>
                                                 </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="table"> 
-                                    <div class="table-wrapper">
-                                        <table class="table has-mobile-cards is-fullwidth">
-                                            <thead>
                                                 <tr style="border-bottom: 1px solid #ddd">
                                                     <th class="th-wrap">Inicio Inscrições:</th>
-                                                    <th class="th-wrap">Fim Inscrições:</th></tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr style="border-bottom: 1px solid #ddd">
-                                                    <td data-label='Inicio Inscrições:' style="font-weight: normal;">
+                                                    <th class="th-wrap" style="font-weight: normal;">
                                                         <span>{{diaAberto.datainscricaoatividadesinicio}}</span>
-                                                    </td>
-
-                                                    <td data-label="Fim Inscrições:" style="font-weight: normal;">
+                                                    </th>
+                                                    <!--<th class="th-wrap">Fim submissao Atividades</th>-->
+                                                    <th class="th-wrap">Fim Inscrições:</th>
+                                                    <th class="th-wrap" style="font-weight: normal;">
                                                         <span> {{diaAberto.datainscricaoatividadesfim}} </span>
-                                                    </td></tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="table"> 
-                                    <div class="table-wrapper">
-                                        <table class="table has-mobile-cards is-fullwidth">
-                                            <thead>
-                                                <tr style="border-bottom: 1px solid #ddd">
-                                                    <th class="th-wrap">Preço Professores:</th>
-                                                    <th class="th-wrap">Preço Alunos:</th>
+                                                    </th>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                <tr style="border-bottom: 1px solid #ddd">
-                                                    <td data-label="Preço Professores:" style="font-weight: normal;">
-                                                        <span>{{diaAberto.precoprofessores}}</span>
-                                                    </td>
-                                                    <td data-label='Preço Alunos:' style="font-weight: normal;">
-                                                        <span> {{diaAberto.precoalunos}} </span>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                                <div class="table"> 
-                                    <div class="table-wrapper">
-                                        <table class="table has-mobile-cards is-fullwidth">
-                                            <tbody>
-                                                <tr style="border-bottom: 1px solid #ddd">
+                                                <tr>
                                                     <th class="th-wrap">Descrição:</th>
-                                                </tr>
-                                            </tbody>
-                                            <tbody>
-                                                <tr style="border-bottom: 1px solid #ddd">
                                                     <td colspan="4">
                                                         <textarea class="textarea" disabled style="resize: none;">{{diaAberto.descricao}}</textarea>
                                                     </td>
                                                 </tr>
-                                            </tbody>
+
                                         </table>
                                     </div>
-                                </div>                                                                                            
+                                </div>
                             </div>
                             <hr>
                         </td>
+                        
                       </tr> 
                     {% endfor %}
                     </tbody>
                 </table>
             </div>
-        </div>
+
     </div>
 </div>
-{% include 'configuracao/popup.html' %}
+<div id="msg" class="dialog modal">
+    <div class="modal-background"></div>
+    <div class="modal-card animation-content">
+        <section class="modal-card-body is-titleless" style="border-top-left-radius: 6px; border-top-right-radius: 6px;">
+            <div class="media">
+                <div class="media-content">
+                    <p id='text-00'></p>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button onclick="alert.cancelar()" class="button">Cancelar</button>
+            <button id='dialog-confirm' onclick="alert.confirmar()" class="button is-success">Confirmar</button>
+        </footer>
+    </div>
+</div>
 
 {% endblock content %}
 {% block scripts %}

@@ -1,93 +1,102 @@
 from django.db import models
 from django.core import validators
 from phonenumber_field.modelfields import PhoneNumberField
-from configuracao.models import *
-from colaboradores.models import *
-from utilizadores.models import *
-from datetime import datetime,time,timedelta
-class Escola(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
-    local = models.CharField(db_column='Local', max_length=255)  # Field name made lowercase.
 
-    class Meta:
-        managed = False
-        db_table = 'Escola'
 
 class Inscricao(models.Model):
-    escola = models.ForeignKey(Escola, models.DO_NOTHING, db_column='escola')
     nalunos = models.IntegerField()
-    ano = models.IntegerField()
-    turma = models.CharField(max_length=255)
-    areacientifica = models.CharField(max_length=255)
-    participante = models.ForeignKey(Participante, models.DO_NOTHING, db_column='participante')
-    diaaberto = models.ForeignKey(Diaaberto, models.DO_NOTHING, db_column='diaaberto')
-    horariochegada = models.TimeField(blank=True, null=True)
-    horariopartida = models.TimeField(blank=True, null=True)
-    localchegada = models.CharField(db_column='Localchegada', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    escola = models.ForeignKey('Escola', models.CASCADE)
+    ano = models.IntegerField(
+        validators=[
+            validators.MinValueValidator(1),
+            validators.MaxValueValidator(12)
+        ]
+    )
+    turma = models.CharField(max_length=1)
+    areacientifica = models.CharField(max_length=64)
+    # TODO: Descomentar quando a gestão de utilizadores estiver pronta
+    # participante = models.ForeignKey(
+    #     'utilizadores.Participante', models.CASCADE)
+    # TODO: Descomentar quando a configuração do Dia Aberto estiver pronta
+    # diaaberto = models.ForeignKey('configuracao.Diaaberto', models.CASCADE)
 
     class Meta:
-        managed = False
         db_table = 'Inscricao'
 
-    def get_dias(self):
-        inscricao_sessoes= Inscricaosessao.objects.filter(inscricao=self)
-        dias=[]
-        for sessao in inscricao_sessoes:
-            if sessao.sessao.dia not in dias:
-                dias.append({'key':str(sessao.sessao.dia), 'value':sessao.sessao.dia})      
-        return dias
 
-    def get_horarios(self,dia):
-        inscricao_sessoes= Inscricaosessao.objects.filter(inscricao=self)
-        horarios=[]
-        for sessao in inscricao_sessoes:
-            if sessao.sessao.horarioid not in horarios:
-                #hora = sessao.sessao.horarioid.inicio.timedelta
-                #minutes =timedelta(minutes=int(sessao.sessao.atividadeid.duracaoesperada))
-                #horario = hora + minutes
-                #print(hora)             
-                horario = sessao.sessao.horarioid.inicio
-                print(horario)
-                duracao = sessao.sessao.atividadeid.duracaoesperada*60
-                print(duracao)
-                td = (datetime.combine(datetime.min,horario) - datetime.min)
-                secondsTotal = td.total_seconds() + duracao
-                time = str(timedelta(seconds=secondsTotal))
-                print(time)
-                horarios.append({'key':sessao.sessao.horarioid.id, 'value':time})
-        print(horarios)
-        return horarios
+class Responsavel(models.Model):
+    inscricao = models.ForeignKey(Inscricao, models.CASCADE)
+    nome = models.CharField(max_length=128)
+    email = models.EmailField(max_length=128)
+    tel = PhoneNumberField()
 
+    class Meta:
+        db_table = 'Responsavel'
+
+
+class Escola(models.Model):
+    nome = models.CharField(max_length=200)
+    local = models.CharField(max_length=128)
+
+    class Meta:
+        db_table = 'Escola'
+
+
+class EscolaPortugal(models.Model):
+    nome = models.CharField(max_length=200)
+
+    class Meta:
+        db_table = 'EscolaPortugal'
+
+
+class Inscricaoprato(models.Model):
+    inscricao = models.ForeignKey(Inscricao, models.CASCADE)
+    # TODO: Descomentar quando a configuração dos pratos estiver pronta
+    # prato = models.ForeignKey('configuracao.Prato', models.CASCADE)
+    campus = models.ForeignKey('configuracao.Campus', models.CASCADE)
+    npessoas = models.IntegerField(
+        validators=[
+            validators.MinValueValidator(1),
+            validators.MaxValueValidator(300),
+        ]
+    )
+
+    class Meta:
+        db_table = 'InscricaoPrato'
+        # TODO: Descomentar quando a configuração dos pratos estiver pronta
+        # unique_together = (('inscricao', 'prato'),)
 
 
 class Inscricaosessao(models.Model):
-    inscricao = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricao')
-    sessao = models.ForeignKey('atividades.Sessao', models.DO_NOTHING, db_column='sessao')
-    nparticipantes = models.IntegerField()
+    inscricao = models.ForeignKey(
+        Inscricao, models.CASCADE)
+    sessao = models.ForeignKey(
+        'atividades.Sessao', models.CASCADE)
+    nparticipantes = models.IntegerField(
+        validators=[
+            validators.MinValueValidator(1),
+            validators.MaxValueValidator(300),
+            # TODO: Adicionar validação de nparticipantes <= vagas na sessão
+        ]
+    )
 
     class Meta:
-        managed = False
-        db_table = 'Inscricaosessao'
+        db_table = 'InscricaoSessao'
+        unique_together = (('inscricao', 'sessao'),)
 
 
 class Inscricaotransporte(models.Model):
-    transporte = models.ForeignKey(Transportehorario, models.DO_NOTHING, db_column='transporte')
-    npassageiros = models.IntegerField()
-    inscricao = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricao')
+    inscricao = models.ForeignKey(
+        Inscricao, models.CASCADE)
+    transporte = models.ForeignKey('configuracao.Transporte', models.CASCADE)
+    npassageiros = models.IntegerField(
+        validators=[
+            validators.MinValueValidator(1),
+            validators.MaxValueValidator(300),
+            # TODO: Adicionar validação de npassageiros <= vagas no transporte
+        ]
+    )
 
     class Meta:
-        managed = False
-        db_table = 'Inscricaotransporte'
-
-
-class Inscricaprato(models.Model):
-    inscricao = models.ForeignKey(Inscricao, models.DO_NOTHING, db_column='inscricao')
-    prato = models.ForeignKey(Prato, models.DO_NOTHING, db_column='prato')
-    campus = models.ForeignKey(Campus, models.DO_NOTHING, db_column='campus')
-    npessoas = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'Inscricaprato'
-
+        db_table = 'InscricaoTransporte'
+        unique_together = (('inscricao', 'transporte'),)

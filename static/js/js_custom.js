@@ -1,55 +1,23 @@
 
 
-// var alert = new eliminar();
-// function eliminar() {
-//     this.render=function(txt,elementId){
-//         var msg = document.getElementById("msg")
-//         document.getElementById('text-00').innerHTML = txt;
-//         document.getElementById('dialog-confirm').setAttribute('data-target',elementId)
-//         msg.classList.add("is-active");
-//     }
-//     this.confirmar=function(){
-//         var elementId = document.getElementById('dialog-confirm').getAttribute('data-target');
-//         var href = document.getElementById(elementId).value;
-//         window.location.href = href;
-//     }
-//     this.cancelar=function(){
-//         var msg = document.getElementById("msg")
-//         msg.classList.remove("is-active");
-//     }   
-// }
-
 var alert = new eliminar();
 function eliminar() {
-    var operationRef_global = null;
-    this.render=function(txt,operationRef = None){
-        operationRef_global = operationRef;
-        var msg = document.getElementById("msg");
+    this.render=function(txt,elementId){
+        var msg = document.getElementById("msg")
         document.getElementById('text-00').innerHTML = txt;
-        document.getElementById('dialog-confirm').style.display = '';
-        document.getElementById('dialog-cancel').style.display = '';
+        document.getElementById('dialog-confirm').setAttribute('data-target',elementId)
         msg.classList.add("is-active");
     }
     this.confirmar=function(){
-        if(operationRef_global != null)
-            window.location.href = operationRef_global
-        else document.getElementById('msg').classList.remove('is-active');
+        var elementId = document.getElementById('dialog-confirm').getAttribute('data-target');
+        var href = document.getElementById(elementId).value;
+        window.location.href = href;
     }
     this.cancelar=function(){
-        var msg = document.getElementById("msg");
-        document.getElementById('text-00').innerHTML = '';
-        operationRef_global = null;
+        var msg = document.getElementById("msg")
         msg.classList.remove("is-active");
-    }
-    this.warning=function(txt){
-        var msg = document.getElementById('msg');
-        document.getElementById('text-00').innerHTML = txt;
-        document.getElementById('dialog-confirm').style.display = '';
-        document.getElementById('dialog-cancel').style.display = 'none';
-        msg.classList.add("is-active");        
     }   
 }
-
 
 var alert = new rejeitar();
 function rejeitar() {

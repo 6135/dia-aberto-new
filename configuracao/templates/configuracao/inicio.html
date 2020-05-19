@@ -1,19 +1,11 @@
 
-{% extends 'app.html' %}
-
-{% block title %}- Página Inicial{% endblock title %}
-
+{% extends 'configuracao/app.html' %}
 {% block content %}
-
-
 {% load static %}
-
-
         <div>
           <div class="section">
             <div class="columns">
               <div class="column is-7">
-
                 <h1 class="title has-text-centered">Nova plataforma</h1>
                 <h1 class="subtitle is-5 has-text-centered">
                   Simples, Intuitivo, Limpo.
@@ -24,7 +16,7 @@
                 </p>
               </div>
               <div class="column is-4">
-                <img alt="Logo" src="{% static '/img/logo-large.png' %}" />
+                <img alt="Logo" src="{% static 'configuracao/imgs/logo-large.png' %}" />
               </div>
             </div>
           </div>
@@ -35,11 +27,11 @@
                   <p>2019 Dia Aberto por <a>Grupo 9</a></p>
                   <small>
                     Contacto de suporte:
-                    <a href="">suporte.dia.aberto@gmail.com</a>
+                    <a href="">suporte.dia.aberto@ualg.pt</a>
                   </small>
                 </div>
                 <div class="column">
-                  <img src="{% static '/img/ualg-logo.png' %}" alt="Dia Aberto" />
+                  <img src="{% static 'configuracao/imgs/ualg-logo.png' %}" alt="Dia Aberto" />
                 </div>
                 <div class="column is-1">
               </div>

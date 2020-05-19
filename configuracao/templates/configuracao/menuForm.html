@@ -21,8 +21,18 @@
               <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
                 Menu
               </h2>
-
               <div class="columns">
+                <div class="column">
+                  <strong>{{form.tipo.errors}}</strong>                
+                  <div class="field">
+                    <label class="label">Tipo</label>
+                    <div class="control">
+                      <span class="select is-fullwidth is-empty">
+                        {{form.tipo}}
+                      </span>
+                    </div>
+                  </div>
+                </div>
                 <div class="column">
                   <strong>{{form.campus.errors}}</strong>
                   <div class="field">
@@ -34,8 +44,31 @@
                     </div>
                   </div>
                 </div>
+              </div>
+              
+              <div class="columns">
 
-                <div class="column "> 
+                <div class="column is-half">
+                <strong>{{form.precoalunos.errors}}</strong>
+                  <div class="field">
+                    <label class="label">Preço Alunos</label>
+                    <div class="control">
+                      {{form.precoalunos}}
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-half">
+                  <strong>{{form.precoprofessores.errors}}</strong>            
+                  <div class="field">
+                    <label class="label">Preço Professores</label>
+                    <div class="control">
+                      {{form.precoprofessores}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column is-half">
                   <strong>{{form.diaaberto.errors}}</strong>
                   <div class="field">
                     <label class="label">Dia Aberto</label>
@@ -46,19 +79,6 @@
                     </div>
                   </div>
                 </div>
-
-                <div class="column "> 
-                  <strong>{{form.dia.errors}}</strong>
-                  <div class="field">
-                    <label class="label">Dia</label>
-                      <div class="control">
-                        <span class="select is-fullwidth is-empty">
-                          {{form.dia}}
-                        </span>
-                    </div>
-                  </div>
-                </div>
-
               </div>
             </div>
             <hr/>
@@ -96,42 +116,3 @@
 }
 </style>
 {% endblock content %}
-{% block scripts %}
-<script>
-
-$( document ).ready(function() {
-  var diaaberto_id = $('#id_diaaberto').val();
-  console.log(diaaberto_id)
-  $.ajax({
-    url: "{% url 'getDias' %}",
-    method: 'POST',
-    data: {
-      'diaaberto_id':diaaberto_id,
-      csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-      'default': '{{form.instance.id}}',
-      'typeForm': 'menu',
-    },
-    success: function(data){
-      $('#id_dia').html(data);
-    }
-  });
-});
-
-$('#id_diaaberto').change(function(){
-  var diaaberto_id = $(this).val();
-  $.ajax({
-    url: "{% url 'getDias' %}",
-    method: 'POST',
-    data: {
-      'diaaberto_id':diaaberto_id,
-      csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-      'typeForm': 'menu',
-    },
-    success: function(data){
-      $('#id_dia').html(data);
-    }
-  });
-})
-
-</script>
-{% endblock scripts %}
