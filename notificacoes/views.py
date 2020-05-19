@@ -5,7 +5,6 @@ from utilizadores.models import *
 from configuracao.models import *
 from coordenadores.models import *
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import *
 from django.contrib.auth import *
 from django.core.mail import send_mail
 from django.conf import settings
