@@ -133,6 +133,15 @@ class Diaaberto(models.Model):
                 ) for d in range(total_dias.days)
             ]
 
+    def days_as_array(self):
+        data_inicio = self.datadiaabertoinicio
+        data_fim = self.datadiaabertofim
+        total_dias= data_fim-data_inicio+timedelta(days=1)
+        return [(
+                    (data_inicio+timedelta(days=d)).date()
+                )  for d in range(total_dias.days)
+            ]
+            
     def __str__(self):
         return str(self.ano)
     class Meta:
@@ -278,6 +287,9 @@ class Horario(models.Model):
             horario = Horario(inicio=inicio,fim=fim).save()
             return horario.id
         return "Err!"
+    
+    def __str__(self):
+        return str(self.inicio) + ' até ' + str(self.fim)
 
     class Meta:
         managed = False

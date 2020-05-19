@@ -11,6 +11,8 @@ from datetime import datetime, date,timezone
 from _datetime import timedelta
 from django.db.models import Q
 from django.core import serializers
+from django.forms.models import modelformset_factory
+from django.forms.widgets import Select
 
 
 
@@ -190,108 +192,124 @@ def eliminarSessao(request,id):
 
 #-------------------- versao sem reload
 
-def proporatividade(request):
+def proporatividade(request, id = None):
     today= datetime.now(timezone.utc) 
-    diaabertopropostas=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    dias_diaaberto = diaaberto.days_as_array()
 
-    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
-    diainicio= diaaberto.datadiaabertoinicio.date()
-    diafim= diaaberto.datadiaabertofim.date()
-    totaldias= diafim-diainicio+timedelta(days=1)
-    dias_diaaberto= []
-    for d in range(totaldias.days):
-        dias_diaaberto.append(diainicio+timedelta(days=d))
+    sessoes = ""
+    SessaoFormSet = SessaoFormset()
+    sessao_form_set = SessaoFormSet(queryset=Sessao.objects.none())
+    material_object_form= MateriaisForm() 
+    activity_object_form= AtividadeForm()
 
-    sessoes= ""
+    if id is not None:
+        pass
+
     if request.method == "POST":
-        
+
+        espaco= Espaco.objects.get(id=request.POST['espacoid'])
         activity_object_form = AtividadeForm(request.POST)
         campus=Campus.objects.all()
         activity_object_form = AtividadeForm(request.POST)
         material_object_form= MateriaisForm(request.POST)
-        if activity_object_form.is_valid():  
-            espacoid=request.POST["espacoid"] 
-            espaco=Espaco.objects.get(id=espacoid)  
-            if "proximo" in request.POST:
-                campusid= espaco.edificio.campus.id
-                campus= Campus.objects.all().exclude(id=campusid)
 
-                edificioid= espaco.edificio.id
-                edificios= Edificio.objects.filter(campus=campusid).exclude(id=edificioid)
+        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizador=5),
+                            professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
+                            estado = "Pendente", diaabertoid = diaaberto,espacoid= espaco,
+                            tema=Tema.objects.get(id=request.POST['tema'])
+                        )
+        activity_object_form = AtividadeForm(request.POST, instance=new_form)
 
-                espacos= Espaco.objects.filter(edificio=edificioid).exclude(id=espaco.id)
-                is_empty = Sessao.objects.filter(atividadeid=-1).count() < 1
-                return render(request,'atividades/testAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(),"materiais": material_object_form, "espaco":espaco,
-                            'horarios': "" , 'sessions_activity':sessoes, 'dias': dias_diaaberto, "id":-1, "style1": "display:none", "style2":"",'espacos':espacos, "edificios": edificios, "campus":campus,
-                            "is_empty": is_empty})
-        else:
-            return render(request,'atividades/testAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(),"materiais": material_object_form,
-                            'horarios': "" , 'sessions_activity':sessoes, 'dias': dias_diaaberto, "id":-1,"style1": "", "style2":"display:none"
-                            })   
-        if "new" in request.POST:
-            print("new")
-            new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizador=5),
-                             professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
-                             estado = "Pendente", diaabertoid = diaabertopropostas,espacoid= Espaco.objects.get(id=espaco.id),
-                             tema=Tema.objects.get(id=request.POST['tema']))
-            activity_object_form = AtividadeForm(request.POST, instance=new_form)
-            activity_object_form.save()
-            idAtividade= Atividade.objects.all().order_by('-id').first()
-            new_material= Materiais(atividadeid=idAtividade)
+        if activity_object_form.is_valid()  and sessao_form_set.is_valid():  
+            atividade_object = activity_object_form.save()  
+            new_material= Materiais(atividadeid=atividade_object)
             material_object_form= MateriaisForm(request.POST, instance= new_material)
+            material_object_form.is_valid()
             material_object_form.save()
-            diasessao=request.POST["diasessao"]
-            #print(diasessao)
-            new_Sessao= Sessao(vagas=Atividade.objects.get(id= idAtividade.id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=idAtividade.id),dia=diasessao)
-            new_Sessao.save()
-            return redirect('inserirSessao', idAtividade.id)
-    else:
-        material_object_form= MateriaisForm() 
-        activity_object_form= AtividadeForm()
-    return render(request,'atividades/testAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(),"materiais": material_object_form,
-                            'horarios': "" , 'sessions_activity':sessoes, 'dias': dias_diaaberto, "id":-1, "style1": "", "style2":"display:none"
-                            })
 
+            instances = sessao_form_set(commit=False)
 
+            for instance in instances:
+                instance.vagas=atividade_object.participantesmaximo
+                instance.ninscritos = 0
+                isntance.atividadeid = atividade_object
+                instance.save()
+            for instance in sessao_form_set.deleted_objects:
+                instance.delete()
+                
+    return render(request= request,
+                template_name='atividades/testAtividade.html',
+                context={'form': activity_object_form,
+                        'campus': Campus.objects.all(),
+                        "materiais": material_object_form,
+                        'horarios': "" , 
+                        'sessions_activity':sessoes, 
+                        'dias': dias_diaaberto, 
+                        'formset': sessao_form_set
+                        #"id":-1,
+                        }
+                    )
+
+def SessaoFormset(extra = 0, minVal = 1):
+    formSets = modelformset_factory(model=Sessao, exclude = ['id','ninscritos','vagas','atividadeid'],widgets={
+			'dia': Select(attrs={'class': 'input dia-sessao'}),
+			'horarioid': Select(attrs={'class': 'input horario-sessao'}),
+		}, extra = extra, min_num = minVal, can_delete=True)
+    return formSets
 
 #---------------original 
     
 
-def inserirsessao(request,id):
-    is_empty = Sessao.objects.filter(atividadeid=id).count() < 2
-    #print(is_empty)
-    today= datetime.now(timezone.utc) 
-    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
-    diainicio= diaaberto.datadiaabertoinicio.date()
-    diafim= diaaberto.datadiaabertofim.date()
-    totaldias= diafim-diainicio+timedelta(days=1)
-    dias_diaaberto= []
-    for d in range(totaldias.days):
-        dias_diaaberto.append(diainicio+timedelta(days=d))
-    horariosindisponiveis= []
-    disp= []
-    if request.method == "POST":
-        atividadeid=Atividade.objects.get(id=id)
-        sessoes=Sessao.objects.all().filter(atividadeid=id)
-        if 'save' in request.POST and len(sessoes)!=0 :
-            return redirect('minhasAtividades')
-        if 'save' in request.POST and len(sessoes)==0:
-            return redirect('inserirSessao', id)
-        if 'anterior' in request.POST :
-            return redirect('alterarAtividade',id)
-        if 'new' in request.POST:
-            diasessao=request.POST["diasessao"]
-            print(diasessao)
-            new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
-            new_Sessao.save()
-            return redirect('inserirSessao', id)
-    return render(request=request,
-                  template_name='atividades/proporAtividadeSessao.html',
-                  context={'horarios': "" , 
-                           'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 
-                           'dias': dias_diaaberto,
-                           'is_empty': is_empty, "id":id})     
+#def inserirsessao(request,id):
+#    is_empty = Sessao.objects.filter(atividadeid=id).count() < 2
+#    #print(is_empty)
+#    today= datetime.now(timezone.utc) 
+#    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
+#    diainicio= diaaberto.datadiaabertoinicio.date()
+#    diafim= diaaberto.datadiaabertofim.date()
+#    totaldias= diafim-diainicio+timedelta(days=1)
+#    dias_diaaberto= []
+#    for d in range(totaldias.days):
+#        dias_diaaberto.append(diainicio+timedelta(days=d))
+#    horariosindisponiveis= []
+#    disp= []
+#    if request.method == "POST":
+#        atividadeid=Atividade.objects.get(id=id)
+#        sessoes=Sessao.objects.all().filter(atividadeid=id)
+#        if 'save' in request.POST and len(sessoes)!=0 :
+#            return redirect('minhasAtividades')
+#        if 'save' in request.POST and len(sessoes)==0:
+#            return redirect('inserirSessao', id)
+#        if 'anterior' in request.POST :
+#            return redirect('alterarAtividade',id)
+#        if 'new' in request.POST:
+#            diasessao=request.POST["diasessao"]
+#            print(diasessao)
+#            new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
+#            new_Sessao.save()
+#            return redirect('inserirSessao', id)
+#    return render(request=request,
+#                  template_name='atividades/proporAtividadeSessao.html',
+#                  context={'horarios': "" , 
+#                           'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 
+#                           'dias': dias_diaaberto,
+#                           'is_empty': is_empty, "id":id})     
 
+
+
+def sessaoRow(request):
+    value = int(request.POST.get('extra'))
+    dias = Diaaberto.objects.get(datapropostasatividadesincio__lte=datetime.now(),dataporpostaatividadesfim__gte=datetime.now()).days_as_array()
+    data = {
+		'form_dia': "form-" + str(value-1) + "-dia",
+		'form_dia': "form-" + str(value-1) + "-dia",
+		'form_horario': "form-" + str(value-1) + "-horarioid",
+		'form_horario': "form-" + str(value-1) + "-horarioid",
+		'form_id': 'form-' + str(value-1) + '-id',
+        'dias': dias,
+	}
+    return render(request=request, template_name='atividades/sessaoRow.html', context=data)
 
 def veredificios(request):
     campus=request.POST["valuecampus"]
@@ -307,20 +325,19 @@ def versalas(request):
     return render(request, template_name="atividades/generic_list_options.html", context={"generic": salas})
 
 def verhorarios(request):
-    print("Hello")
-    disp= []
-    horariosindisponiveis= []
-    diasessao=request.POST["valuedia"]
-    id= request.POST["id"]
-    sessaodia=Sessao.objects.filter(atividadeid=id, dia=diasessao)
-    print(sessaodia)
-    for sessao in sessaodia:
-        horariosindisponiveis.append(sessao.horarioid)
-    for t in Horario.objects.exclude(inicio="12:00", fim="14:00"):
-        if  t not in horariosindisponiveis:
-            disp.append(t)
-    print(disp)
-    return render(request, template_name="atividades/horario_list_options.html", context={"generic": disp})
+    horarios = []
+    default = {
+        'key': '',
+        'value': 'Escolha um horario'
+    }
+    options = [{
+        'key': str(horario.id),
+        'value': str(horario),
+    } for horario in Horario.objects.exclude(inicio="12:00", fim="14:00")]
+
+    return render(request=request, 
+                template_name="configuracao/dropdown.html", 
+                context={"options": options,    "default": default})
 
 
 def validaratividade(request,id, action):

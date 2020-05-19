@@ -6,7 +6,7 @@ urlpatterns = [
     url(r'^minhasatividades/$',views.minhasatividades,name="minhasAtividades"),
     url(r'^atividadadesUOrganica/$',views.atividadescoordenador,name="atividadesUOrganica"),
     path('alteraratividade/<int:id>',views.alterarAtividade,name='alterarAtividade'),
-    path('sessao/<int:id>',views.inserirsessao,name='inserirSessao'),
+    #spath('sessao/<int:id>',views.inserirsessao,name='inserirSessao'),
     path('alteraratividade/<id>',views.alterarAtividade,name='alterarAtividade'),
     path('eliminaratividade/<id>',views.eliminarAtividade,name='eliminarAtividade'),
     path('eliminarsessao/<id>',views.eliminarSessao,name='eliminarSessao'),
@@ -15,4 +15,6 @@ urlpatterns = [
     url(r'^veredificios/$',views.veredificios,name="verEdificios"),
     url(r'^versalas/$',views.versalas,name="verSalas"),
     url(r'^verhorarios/$',views.verhorarios,name="verHorarios"),
+    url(r'^ajaxaddsessaorow/$',views.sessaoRow,name="ajaxAddSessaoRow"),
 ]
+
