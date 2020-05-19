@@ -33,6 +33,18 @@ from notificacoes.models import *
 #     class Meta:
 #         db_table = 'Atividade'
 
+class Anfiteatro(models.Model):
+    # Field name made lowercase.
+    espacoid = models.OneToOneField(
+        Espaco, models.CASCADE, db_column='EspacoID', primary_key=True)
+    # Field name made lowercase.
+    espacoedificio = models.CharField(
+        db_column='EspacoEdificio', max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'Anfiteatro'
+
 
 class Atividade(models.Model):
     # Field name made lowercase.
@@ -84,29 +96,6 @@ class Atividade(models.Model):
         return [(field.name, field.value_to_string(self)) for field in Atividade._meta.fields]
 
 
-class Sessao(models.Model):
-    # Field name made lowercase.
-    id = models.AutoField(db_column='ID', primary_key=True)
-    # Field name made lowercase.
-    horarioid = models.ForeignKey(
-        Horario, models.DO_NOTHING, db_column='HorarioID')
-    # Field name made lowercase.
-    ninscritos = models.IntegerField(db_column='NInscritos')
-    # Field name made lowercase.
-    vagas = models.IntegerField(db_column='Vagas')
-    # Field name made lowercase.
-    atividadeid = models.ForeignKey(
-        Atividade, models.DO_NOTHING, db_column='AtividadeID')
-    # Field name made lowercase.
-    dia = models.DateField(db_column='Dia', blank=True, null=True)
-
-    def timeRange_(self, seperator=' até '):
-        return self.horarioid.inicio.strftime('%H:%M') + str(seperator) + self.horarioid.fim.strftime('%H:%M')
-
-    class Meta:
-        db_table = 'ArLivre'
-
-
 class Materiais(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
@@ -136,6 +125,9 @@ class Sessao(models.Model):
     # Field name made lowercase.
     dia = models.DateField(db_column='Dia', blank=True, null=True)
 
+    def timeRange_(self, seperator=' até '):
+        return self.horarioid.inicio.strftime('%H:%M') + str(seperator) + self.horarioid.fim.strftime('%H:%M')
+
     class Meta:
         db_table = 'Sessao'
 
@@ -148,13 +140,3 @@ class Tema(models.Model):
 
     class Meta:
         db_table = 'ArLivre'
-
-
-class Tema(models.Model):
-    # Field name made lowercase.
-    id = models.AutoField(db_column='ID', primary_key=True)
-    # Field name made lowercase.
-    tema = models.CharField(db_column='Tema', max_length=64)
-
-    class Meta:
-        db_table = 'Tema'

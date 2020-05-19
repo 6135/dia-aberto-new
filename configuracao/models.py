@@ -2,37 +2,6 @@
 from django.db import models
 
 
-class Edificio(models.Model):
-    # Field name made lowercase.
-    id = models.AutoField(db_column='ID', primary_key=True)
-    # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=32)
-    # Field name made lowercase.
-    campus = models.ForeignKey('Campus', models.DO_NOTHING, db_column='Campus')
-
-    class Meta:
-        db_table = 'Edificio'
-
-
-class Espaco(models.Model):
-    # Field name made lowercase.
-    id = models.AutoField(db_column='ID', primary_key=True)
-    # Field name made lowercase.
-    nome = models.CharField(
-        db_column='Nome', max_length=255, blank=True, null=True)
-    # Field name made lowercase.
-    edificio = models.ForeignKey(
-        Edificio, models.DO_NOTHING, db_column='Edificio', blank=True, null=True)
-    # Field name made lowercase.
-    andar = models.CharField(
-        db_column='Andar', max_length=255, blank=True, null=True)
-    # Field name made lowercase.
-    descricao = models.CharField(db_column='Descricao', max_length=255)
-
-    class Meta:
-        db_table = 'Espaco'
-
-
 class Transporte(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
@@ -82,6 +51,7 @@ class Transporteuniversitario(models.Model):
     class Meta:
         db_table = 'TransporteUniversitario'
 
+
 class Diaaberto(models.Model):
     # Field name made lowercase.
     precoalunos = models.FloatField(db_column='PrecoAlunos')
@@ -121,26 +91,27 @@ class Diaaberto(models.Model):
     def days_as_dict(self):
         data_inicio = self.datadiaabertoinicio
         data_fim = self.datadiaabertofim
-        total_dias= data_fim-data_inicio+timedelta(days=1)
+        total_dias = data_fim-data_inicio+timedelta(days=1)
         return [{
-                    'key':	str( (data_inicio+timedelta(days=d)).date()),
-                    'value':	str((data_inicio+timedelta(days=d)).date())
-                } for d in range(total_dias.days)
-            ]
+            'key':	str((data_inicio+timedelta(days=d)).date()),
+            'value':	str((data_inicio+timedelta(days=d)).date())
+        } for d in range(total_dias.days)
+        ]
 
     def days_as_tuples(self):
         data_inicio = self.datadiaabertoinicio
         data_fim = self.datadiaabertofim
-        total_dias= data_fim-data_inicio+timedelta(days=1)
+        total_dias = data_fim-data_inicio+timedelta(days=1)
         return [(
-                    str( (data_inicio+timedelta(days=d)).date()),
-                    str((data_inicio+timedelta(days=d)).date())
-                ) for d in range(total_dias.days)
-            ]
+            str((data_inicio+timedelta(days=d)).date()),
+            str((data_inicio+timedelta(days=d)).date())
+        ) for d in range(total_dias.days)
+        ]
 
     class Meta:
         db_table = 'DiaAberto'
-        
+
+
 class Menu(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
@@ -161,8 +132,9 @@ class Menu(models.Model):
     # Field name made lowercase.
     menu = models.IntegerField(db_column='Menu', blank=True, null=True)
 
-        # Field name made lowercase.
-    campusid = models.ForeignKey('Campus', models.CASCADE, db_column='CampusID')
+    # Field name made lowercase.
+    campusid = models.ForeignKey(
+        'Campus', models.CASCADE, db_column='CampusID')
     # Field name made lowercase.
     horarioinicio = models.DateField(
         db_column='HorarioInicio', blank=True, null=True)
@@ -185,30 +157,9 @@ class Campus(models.Model):
         db_table = 'Campus'
 
 
-class Unidadeorganica(models.Model):
-    # Field name made lowercase.
-    id = models.AutoField(db_column='ID', primary_key=True)
-    # Field name made lowercase.
-    sigla = models.CharField(db_column='Sigla', max_length=255)
-    # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255)
-    # Field name made lowercase.
-    campusid = models.ForeignKey(
-        Campus, models.DO_NOTHING, db_column='CampusID')
-
-    class Meta:
-        db_table = 'UnidadeOrganica'
-
-
 class Prato(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
-<<<<<<< HEAD
-
-=======
-    # Field name made lowercase.
-    nrpratosdisponiveis = models.IntegerField(db_column='NrPratosDisponiveis')
->>>>>>> 0003c9a21557fcbf51886d37f29397495a6a66f5
     # Field name made lowercase.
     prato = models.IntegerField(db_column='Prato')
     # Field name made lowercase.
@@ -220,28 +171,12 @@ class Prato(models.Model):
 
 class Departamento(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
-<<<<<<< HEAD
-
-
-
     sigla = models.CharField(
-        db_column='Sigla', max_length=255, blank=True, null=True)   
-
-=======
-    # Field name made lowercase.
-    atividadeid = models.ForeignKey(
-        'atividades.Atividade', models.CASCADE, db_column='AtividadeID')
-    # Field name made lowercase.
-    unidadeorganicaid = models.ForeignKey(
-        Unidadeorganica, models.CASCADE, db_column='UnidadeOrganicaID')
-    # Field name made lowercase.
->>>>>>> 0003c9a21557fcbf51886d37f29397495a6a66f5
+        db_column='Sigla', max_length=255, blank=True, null=True)
     nome = models.CharField(
         db_column='Nome', max_length=255, blank=True, null=True)
-
-    
     unidadeorganicaid = models.ForeignKey(
-        'Unidadeorganica', models.CASCADE, db_column='UnidadeorganicaID')    
+        'Unidadeorganica', models.CASCADE, db_column='UnidadeorganicaID')
 
     class Meta:
         db_table = 'Departamento'
@@ -254,13 +189,13 @@ class Curso(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
 
     sigla = models.CharField(
-        db_column='Sigla', max_length=255, blank=True, null=True)   
+        db_column='Sigla', max_length=255, blank=True, null=True)
 
     nome = models.CharField(
         db_column='Nome', max_length=255, blank=True, null=True)
 
     unidadeorganicaid = models.ForeignKey(
-        'Unidadeorganica', models.CASCADE, db_column='UnidadeorganicaID')   
+        'Unidadeorganica', models.CASCADE, db_column='UnidadeorganicaID')
 
     class Meta:
         db_table = 'Curso'
@@ -268,22 +203,19 @@ class Curso(models.Model):
     def __str__(self):
         return self.nome
 
+
 class Unidadeorganica(models.Model):
-        
+
     id = models.AutoField(db_column='ID', primary_key=True)
-
     sigla = models.CharField(
-        db_column='Sigla', max_length=255, blank=True, null=False) 
-
+        db_column='Sigla', max_length=255, blank=True, null=False)
     nome = models.CharField(
         db_column='Nome', max_length=255, blank=True, null=False)
-
-
-
     campus = models.ForeignKey('Campus', models.CASCADE)
+
     class Meta:
         db_table = 'UnidadeOrganica'
-    
+
     def __str__(self):
         return self.nome
 
@@ -291,11 +223,7 @@ class Unidadeorganica(models.Model):
 class Sala(models.Model):
     # Field name made lowercase.
     espacoid = models.ForeignKey(
-<<<<<<< HEAD
         'Espaco', models.CASCADE, db_column='EspacoID')
-=======
-        Espaco, models.CASCADE, db_column='EspacoID')
->>>>>>> 0003c9a21557fcbf51886d37f29397495a6a66f5
     # Field name made lowercase.
     espacoedificio = models.CharField(
         db_column='EspacoEdificio', max_length=255)
@@ -330,11 +258,17 @@ class Horario(models.Model):
     class Meta:
         db_table = 'Horario'
 
+
 class Espaco(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
-    nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=True)
-    edificio = models.ForeignKey('Edificio', models.DO_NOTHING, db_column='Edificio', blank=True, null=True)  # Field name made lowercase.
-    andar = models.CharField(db_column='Andar', max_length=255, blank=True, null=True)  # Field name made lowercase.
+    nome = models.CharField(
+        db_column='Nome', max_length=255, blank=True, null=True)
+    # Field name made lowercase.
+    edificio = models.ForeignKey(
+        'Edificio', models.DO_NOTHING, db_column='Edificio', blank=True, null=True)
+    # Field name made lowercase.
+    andar = models.CharField(
+        db_column='Andar', max_length=255, blank=True, null=True)
     descricao = models.CharField(db_column='Descricao', max_length=255)
 
     class Meta:
@@ -342,9 +276,12 @@ class Espaco(models.Model):
 
 
 class Edificio(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=32)  # Field name made lowercase.
-    campus = models.ForeignKey('Campus', models.DO_NOTHING, db_column='Campus')  # Field name made lowercase.
+    # Field name made lowercase.
+    id = models.AutoField(db_column='ID', primary_key=True)
+    # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=32)
+    # Field name made lowercase.
+    campus = models.ForeignKey('Campus', models.DO_NOTHING, db_column='Campus')
 
     class Meta:
         db_table = 'Edificio'
