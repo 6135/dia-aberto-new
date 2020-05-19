@@ -220,24 +220,31 @@ def proporatividade(request, id = None):
                             tema=Tema.objects.get(id=request.POST['tema'])
                         )
         activity_object_form = AtividadeForm(request.POST, instance=new_form)
+        sessao_form_set = SessaoFormSet(request.POST)
 
-        if activity_object_form.is_valid()  and sessao_form_set.is_valid():  
+        if activity_object_form.is_valid() and sessao_form_set.is_valid():  
             atividade_object = activity_object_form.save()  
             new_material= Materiais(atividadeid=atividade_object)
             material_object_form= MateriaisForm(request.POST, instance= new_material)
             material_object_form.is_valid()
             material_object_form.save()
 
-            instances = sessao_form_set(commit=False)
+            instances = sessao_form_set.save(commit=False)
 
             for instance in instances:
                 instance.vagas=atividade_object.participantesmaximo
                 instance.ninscritos = 0
-                isntance.atividadeid = atividade_object
+                instance.atividadeid = atividade_object
                 instance.save()
             for instance in sessao_form_set.deleted_objects:
                 instance.delete()
-                
+
+            return redirect('minhasAtividades')
+        else:
+            for dict in sessao_form_set.errors:
+                for error in dict.values:
+                    print(error)
+
     return render(request= request,
                 template_name='atividades/testAtividade.html',
                 context={'form': activity_object_form,
@@ -259,43 +266,6 @@ def SessaoFormset(extra = 0, minVal = 1):
     return formSets
 
 #---------------original 
-    
-
-#def inserirsessao(request,id):
-#    is_empty = Sessao.objects.filter(atividadeid=id).count() < 2
-#    #print(is_empty)
-#    today= datetime.now(timezone.utc) 
-#    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
-#    diainicio= diaaberto.datadiaabertoinicio.date()
-#    diafim= diaaberto.datadiaabertofim.date()
-#    totaldias= diafim-diainicio+timedelta(days=1)
-#    dias_diaaberto= []
-#    for d in range(totaldias.days):
-#        dias_diaaberto.append(diainicio+timedelta(days=d))
-#    horariosindisponiveis= []
-#    disp= []
-#    if request.method == "POST":
-#        atividadeid=Atividade.objects.get(id=id)
-#        sessoes=Sessao.objects.all().filter(atividadeid=id)
-#        if 'save' in request.POST and len(sessoes)!=0 :
-#            return redirect('minhasAtividades')
-#        if 'save' in request.POST and len(sessoes)==0:
-#            return redirect('inserirSessao', id)
-#        if 'anterior' in request.POST :
-#            return redirect('alterarAtividade',id)
-#        if 'new' in request.POST:
-#            diasessao=request.POST["diasessao"]
-#            print(diasessao)
-#            new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
-#            new_Sessao.save()
-#            return redirect('inserirSessao', id)
-#    return render(request=request,
-#                  template_name='atividades/proporAtividadeSessao.html',
-#                  context={'horarios': "" , 
-#                           'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 
-#                           'dias': dias_diaaberto,
-#                           'is_empty': is_empty, "id":id})     
-
 
 
 def sessaoRow(request):

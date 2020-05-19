@@ -90,3 +90,24 @@ function sortTable(n, isDate) {
     }
   }
 }
+
+function getSchedules(field_id)
+{
+    var id= -1;
+    console.log(id)
+    var valuedia= $('#'+field_id).val();
+    $.ajax({
+        url:"/verhorarios/",
+        method: 'POST',
+        data: { 
+            'valuedia': valuedia,
+            'id': id,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(data){
+            $('#'+field_id).closest('tr').find('.horario-sessao').html(data);
+        }
+
+    })
+
+};    

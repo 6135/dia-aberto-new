@@ -1,5 +1,6 @@
 {% extends 'configuracao/app.html' %}
 {% block content %}
+{% load atividadestags %}
 <form method="POST" action="" id='frm'>
 <div id="id_removed_rows" style="display:none;"></div>
 <div id="proporatividade" style="display: content">
@@ -272,8 +273,14 @@
                                                     {% endfor %}
 													
 													<span class="select is-fullwidth is-empty">
-														<select {{field.html_name}}  {{field.auto_id}} {{field.class}}>
-													</span>
+														<select name="{{field.html_name}}"  id="{{field.auto_id}}" {{field|field_data|safe}} >
+                                                            <option value="">---------</option> 
+                                                            {% if field.name == "dia" %}
+                                                                {% for dia in dias %}
+                                                                    <option value="{{dia|date:'Y-m-d'}}">{{dia}}</option>
+                                                                {% endfor %}
+                                                            {% endif %}
+                                                    </span>
 												</td>
 												
 											{% endif %}
@@ -312,16 +319,12 @@
          </a>
       </div>
       <div class="level-right">
-            {% if is_empty %}
-              <a id="concluir" onclick="alert.warning('Nao existem sessões atribuidas a esta atividade')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
-            {% else %}
-              <a id="concluir" onclick="alert.render('Tem a certeza que pretende finalizar esta proposta?  (Terá sempre possibilidade de a alterar até ao prazo das propostas terminar)','{% url 'minhasAtividades' %}')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
-            {% endif %}
+        <button type="submit" id="concluir" class="button is-large is-success is-outlined is-link">
             <span>Finalizar Proposta</span>
             <span class="icon is-medium">
               <i class="mdi fa fa-check mdi-36px"></i>
             </span>
-          </a>
+        </button>
         </div>
       </div>
     </div>
@@ -329,8 +332,9 @@
     </div>
 </div>
 {% csrf_token %}
-</form>
 {% include 'configuracao/popup.html' %}
+</form>
+
 
 
 <style>
@@ -352,6 +356,7 @@
 {% block scripts %}
 
 <script>
+
 
 $('#toValidate').click(function(e){
     if ($("#frm")[0].checkValidity()) {
@@ -395,7 +400,7 @@ $('#del-row').click(function(e){
 		$('#table01 tr:last').hide();
 		$('#table01 tr:last').appendTo("#id_removed_rows");
 	} else {
-		alert.warning("Não pode eliminar todas as rotas");
+		alert.warning("Não pode eliminar todas as sessoes");
 	}
 })
     $("#campusid").change(function()
@@ -435,27 +440,6 @@ $('#del-row').click(function(e){
 
     })
 
-     $(".dia-sessao").change(function()
-    {
-        var id= "{{id}}"
-        console.log(id)
-        var valuedia= $(this).val();
-        $.ajax({
-            url:"{% url 'verHorarios'%}",
-            method: 'POST',
-            data: { 
-                'valuedia': valuedia,
-                'id': id,
-                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            },
-            success: function(data){
-                console.log(data)
-                $(this).closest('.horario-sessao').html(data);
-            }
-
-        })
-
-    })    
 
     function myFunction() {
     var x = document.getElementById("proporatividade");
