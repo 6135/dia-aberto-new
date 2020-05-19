@@ -1,8 +1,6 @@
 from django import template
 from django.core.exceptions import ObjectDoesNotExist
-from configuracao.forms import *
 from configuracao.models import *
-from configuracao import views
 import json
 
 register = template.Library()
