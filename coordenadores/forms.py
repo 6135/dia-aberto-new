@@ -25,10 +25,12 @@ class TarefaForm(ModelForm):
         nome = Atividade.objects.get(id=self.data.get('atividades')).nome
         if cleaned_data.get('tipo') == 'tarefaAuxiliar':
             self.instance.nome = 'Auxiliar na atividade '+nome
-        elif cleaned_data.get('tipo') == 'tarefaAcompanhar':
-            nome = 'grupo'
-            self.instance.nome = 'Acompanhar o grupo '+nome
-
+        if cleaned_data.get('tipo') == 'tarefaAcompanhar':
+            nome = self.data.get('grupo')
+            self.instance.nome = 'Acompanhar o '+nome
+        elif cleaned_data.get('tipo') == 'tarefaOutra':
+            nome = self.data.get('descricao')
+            self.instance.nome = nome[0:18] + '...'
     class Meta:  
         model = Tarefa 
         exclude = ['coord','id','nome','created_at','estado','created_at']
@@ -77,9 +79,11 @@ class TarefaAcompanharForm(ModelForm):
     class Meta:
         model= TarefaAcompanhar
         exclude = ['tarefaid']
-        widgets = {
-
-            }
+        widgets ={
+            'horario' : Select(attrs={'onchange':'grupoLocal();'}),
+            'origem' : Select(attrs={'onchange':'grupoDestino();'}),
+            'destino' : Select()
+        }
 
 class TarefaOutraForm(ModelForm):
     dia = ChoiceField(choices=get_dias(),widget=Select())
