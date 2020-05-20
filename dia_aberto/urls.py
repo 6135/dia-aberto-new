@@ -26,11 +26,10 @@ urlpatterns = [
     path('inscricoes/', include('inscricoes.urls')),
     path('utilizadores/', include('utilizadores.urls')),
     path('notificacoes/', include('notificacoes.urls')),
-    #path('utilizadores/', include('django.contrib.auth.urls')),
     path('colaboradores/', include('colaboradores.urls')),
-    # path('', include('atividades.urls')),
-    # path('', include('configuracao.urls')),
-    # path('', include('coordenadores.urls')),
+    path('', include('atividades.urls')),
+    path('', include('configuracao.urls')),
+    path('', include('coordenadores.urls')),
 
     path('', views.home, name='home'),
 
