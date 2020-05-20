@@ -1,20 +1,18 @@
 from django.db import models
 from django.core import validators
 from phonenumber_field.modelfields import PhoneNumberField
-from configuracao.models import *
-from colaboradores.models import *
-from utilizadores.models import *
-from atividades.models import *
 from datetime import datetime,time,timedelta
-class Escola(models.Model):
-    id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
-    local = models.CharField(db_column='Local', max_length=255)  # Field name made lowercase.
 
+class Escola(models.Model):
+    nome = models.CharField(max_length=200)
+    local = models.CharField(max_length=128)
+
+    class Meta:
+        db_table = 'Escola'
 
 class Inscricao(models.Model):
     nalunos = models.IntegerField()
-    escola = models.ForeignKey('Escola', models.CASCADE)
+    escola = models.ForeignKey(Escola, models.CASCADE)
     ano = models.IntegerField(
         validators=[
             validators.MinValueValidator(1),
@@ -55,7 +53,7 @@ class Inscricao(models.Model):
         return horarios
 
     def get_origem(self,dia,horario_id):
-        horario = Horario.objects.get(id=horario_id)
+        horario = 'configuracao.Horario'.objects.get(id=horario_id)
         inscricao_sessoes =  Inscricaosessao.objects.filter(inscricao=self).filter(sessao__dia=dia).filter(sessao__horarioid__inicio=horario.inicio)
         origem = []
         for local in inscricao_sessoes:
@@ -63,7 +61,7 @@ class Inscricao(models.Model):
         return origem
     
     def get_destino(self,dia,horario_id):
-        horario = Horario.objects.get(id=horario_id)
+        horario = 'configuracao.Horario'.objects.get(id=horario_id)
         inscricao_sessoes =  Inscricaosessao.objects.filter(inscricao=self).filter(sessao__dia=dia).filter(sessao__horarioid__inicio=horario.fim)
         destino = []
         for local in inscricao_sessoes:
@@ -72,12 +70,14 @@ class Inscricao(models.Model):
         return
 
 
-class Escola(models.Model):
-    nome = models.CharField(max_length=200)
-    local = models.CharField(max_length=128)
+class Responsavel(models.Model):
+    inscricao = models.ForeignKey(Inscricao, models.CASCADE)
+    nome = models.CharField(max_length=128)
+    email = models.EmailField(max_length=128)
+    tel = PhoneNumberField()
 
     class Meta:
-        db_table = 'Escola'
+        db_table = 'Responsavel'
 
 
 class EscolaPortugal(models.Model):

@@ -3,8 +3,7 @@ from .models import *
 from .forms import *
 from inscricoes.models import *
 from configuracao.models import Horario
-from coordenadores.models import Coordenador
-from utilizadores.models import ProfessorUniversitario
+from utilizadores.models import ProfessorUniversitario, Coordenador
 from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
 from django.http import HttpResponseRedirect
 from datetime import datetime, date,timezone

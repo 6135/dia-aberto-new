@@ -5,7 +5,7 @@ from .models import *
 from utilizadores.models import *
 from inscricoes.models import Inscricao, Inscricaosessao, Inscricaotransporte
 from datetime import datetime, timezone,date, time
-from atividades.models import Espaco, Sessao
+from atividades.models import Sessao
 from django.core.serializers import *
 from django.db.models import Count, Q
 import random

@@ -1,13 +1,11 @@
 
 from django.db import models
-from utilizadores.models import Colaborador
-from coordenadores.models import Tarefa
 
 
 class Colaboradorhorario(models.Model):
     # Field name made lowercase.
     colaboradorutilizadorid = models.OneToOneField(
-        Colaborador, models.CASCADE, db_column='ColaboradorUtilizadorID', primary_key=True)
+        'utilizadores.Colaborador', models.CASCADE, db_column='ColaboradorUtilizadorID', primary_key=True)
     # Field name made lowercase.
     horarioid = models.ForeignKey(
         'configuracao.Horario', models.CASCADE, db_column='HorarioID')
