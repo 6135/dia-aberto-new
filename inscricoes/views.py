@@ -26,14 +26,14 @@ from configuracao.models import Campus
 
 class AtividadesAPIView(ListCreateAPIView):
 
-    # class AtividadeFilter(djangofilters.FilterSet):
-    #     nome = djangofilters.CharFilter(
-    #         field_name="nome", lookup_expr='icontains')
-    #     # min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
-    #     # max_price = filters.NumberFilter(field_name="price", lookup_expr='lte')
-    #     class Meta:
-    #         model = Atividade
-    #         fields = '__all__'
+    class AtividadeFilter(djangofilters.FilterSet):
+        nome = djangofilters.CharFilter(
+            field_name="nome", lookup_expr='icontains')
+        # min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
+        # max_price = filters.NumberFilter(field_name="price", lookup_expr='lte')
+        class Meta:
+            model = Atividade
+            fields = '__all__'
 
     class AtividadesPagination(pagination.PageNumberPagination):
         page_size = 1000
@@ -48,7 +48,7 @@ class AtividadesAPIView(ListCreateAPIView):
     queryset = Atividade.objects.all()
     serializer_class = serializers.AtividadeSerializer
     pagination_class = AtividadesPagination
-    # filterset_class = AtividadeFilter
+    filterset_class = AtividadeFilter
 
 
 class EscolasAPIView(ListCreateAPIView):
