@@ -107,7 +107,13 @@ class menusFilterForm(Form):
 class transporteForm(ModelForm):
     dia_aberto = Diaaberto.objects.filter(datadiaabertoinicio__gte=datetime.now(timezone.utc)).order_by('datadiaabertoinicio').first()
     #diaaberto = ChoiceField(choices=[('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices],widget=Select())
-    dia = ChoiceField(choices=dia_aberto.days_as_tuples())
+    dia_choices = []
+    if dia_aberto is None:
+        dia_choices = [('','')]
+    else:
+        dia_choices = dia_aberto.days_as_tuples()
+   
+    dia = ChoiceField(choices=dia_choices)
     def clean(self):
         cleaned_data = super().clean()
         self.instance.diaaberto = self.dia_aberto
