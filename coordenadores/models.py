@@ -6,30 +6,26 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from configuracao.models import *
-from colaboradores.models import *
-from atividades.models import *
-from inscricoes.models import *
 
-class Coordenador(models.Model):
-    # Field name made lowercase.
-    utilizador = models.OneToOneField(
-        'utilizadores.Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
-    # Field name made lowercase.
-    gabinete = models.CharField(
-        db_column='Gabinete', max_length=255, blank=True, null=True)
-    unidadeorganicaid = models.ForeignKey('configuracao.Unidadeorganica', models.CASCADE, db_column='unidadeOrganicaID')  # Field name made lowercase.
+# class Coordenador(models.Model):
+#     # Field name made lowercase.
+#     utilizador = models.OneToOneField(
+#         'utilizadores.Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
+#     # Field name made lowercase.
+#     gabinete = models.CharField(
+#         db_column='Gabinete', max_length=255, blank=True, null=True)
+#     unidadeorganicaid = models.ForeignKey('configuracao.Unidadeorganica', models.CASCADE, db_column='unidadeOrganicaID')  # Field name made lowercase.
  
-    class Meta:
-        db_table = 'Coordenador'
+#     class Meta:
+#         db_table = 'Coordenador'
 
 
 class Tarefa(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
     estado = models.CharField(max_length=64)
-    coord = models.ForeignKey(Coordenador, models.DO_NOTHING, db_column='CoordenadorUtilizadorID',null=True)  # Field name made lowercase.
-    colab = models.ForeignKey(Colaborador, models.DO_NOTHING, db_column='ColaboradorUtilizadorID',null=True,blank=True)  # Field name made lowercase.
+    coord = models.ForeignKey('utilizadores.Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID',null=True)  # Field name made lowercase.
+    colab = models.ForeignKey('utilizadores.Colaborador', models.DO_NOTHING, db_column='ColaboradorUtilizadorID',null=True,blank=True)  # Field name made lowercase.
     tipo = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -39,7 +35,7 @@ class Tarefa(models.Model):
 
 class TarefaAcompanhar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
-    inscricao = models.ForeignKey(Inscricao, models.CASCADE, db_column='inscricao')
+    inscricao = models.ForeignKey('inscricoes.Inscricao', models.CASCADE, db_column='inscricao')
     origem = models.CharField(max_length=255, db_column='origem', blank=False, null=False)
     destino = models.CharField(max_length=255, db_column='destino', blank=False, null=False)
     horario = models.TimeField(blank=False, null=False)

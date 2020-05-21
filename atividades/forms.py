@@ -1,7 +1,7 @@
 from django.forms import * 
-from .models import Atividade, Sessao,Materiais,Horario,Espaco,Tema,Departamento
+from .models import Atividade, Sessao,Materiais,Tema
 from datetime import datetime
-from configuracao.models import Campus
+from configuracao.models import Campus, Horario, Espaco, Departamento
 
 
 def get_choices_time():
