@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from utilizadores.forms import EmailValidationOnForgotPassword
-
 from utilizadores import views
 
 urlpatterns = [
