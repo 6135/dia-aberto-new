@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sessoes Records</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'atividades/css/style.css' %}" />
+</head>
+
+<body>
+    <table class="table table-striped table-bordered table-sm">
+        <thead class="thead-dark">
+            <tr>
+                <th>Atividade ID</th>
+                <th>Nome</th>
+                <th>Descricao</th>
+                <th>Capacidade maxima</th>
+                <th>Duracao</th>
+                <th>Publico alvo</th>
+                <th>Coordenador utilizador id</th>
+                <th>Professor universitario utilizador id</th>
+                <th>Numero de colaboradores necessario</th>
+                <th>Data de submissao</th>
+                <th>Estado</th>
+                <th>Tipo</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for Atividade in Atividades %}
+            <tr>
+                <td>{{ Atividade.id }}</td>
+                <td>{{ Atividade.nome }}</td>
+                <td>{{ Atividade.descricao }}</td>
+                <td>{{ Atividade.capacidademaxima }}</td>
+                <td>{{ Atividade.duracao }}</td>
+                <td>{{ Atividade.publicoalvo }}</td>
+                <td>{{ Atividade.coordenadorutilizadorid }}</td>
+                <td>{{ Atividade.professoruniversitarioutilizadorid }}</td>
+                <td>{{ Atividade.nrcolaboradoresnecessario }}</td>
+                <td>{{ Atividade.datasubmissao }}</td>
+                <td>{{ Atividade.estado }}</td>
+                <td>{{ Atividade.tipo }}</td>
+                <td>
+                    <a href="/edit/{{ Atividade.id }}"><span class="glyphicon glyphicon-pencil">Edit</span></a>
+                    <a href="/delete/{{ Atividade.id }}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <center><a href="/emp" class="btn btn-primary">Add New Record</a></center>
+</body>
+
+</html>

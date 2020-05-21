@@ -15,7 +15,7 @@ cd ~/Documentos/Universidade/LES
 2. Clonar o projeto do github
 
 ```SH
-git clone https://github.com/tiagonuneslx/dia-aberto.git
+git clone https://github.com/6135/dia-aberto-new/tree/master/dia_aberto
 ```
 
 3. Entrar na pasta do projeto
@@ -98,6 +98,8 @@ Para ligar a uma base de dados MySQL local, por exemplo, o .env pode ser:
 DEBUG=on
 DATABASE_URL=mysql://user:password@localhost:3306/db
 SECRET_KEY=q1^j3mv#y9-n&^*j)-rd3@lqqu@jv49p_99$mefzljeuz#fra3
+EMAIL_HOST_USER=suporte.dia.aberto@gmail.com
+EMAIL_HOST_PASSWORD=password # Pedir ao Barrocas
 ```
 
 ## Comandos fundamentais
@@ -165,18 +167,24 @@ python manage.py inspectdb tabela1 tabela2 > nome_da_app/models.py
 
 ## Dependências
 
-| Dependência              | Descrição / (Dependência Pai) |
-| ------------------------ | ----------------------------- |
-| pip                      | Gestor de Pacotes (Python)    |
-| setuptools               | Ferramentas (Python)          |
-| Django                   | Web Framework                 |
-| sqlparse                 | (Django)                      |
-| pytz                     | (Django)                      |
-| asgiref                  | (Django)                      |
-| mysqlclient              | Conector de Python a MySQL    |
-| django-environ           | Suporte de .env               |
-| autopep8                 | Python Formatter              |
-| pycodestyle              | (autopep8)                    |
-| django-phonenumber-field | PhoneNumberField              |
-| phonenumbers             | (django-phonenumber-field)    |
-| Babel                    | (django-phonenumber-field)    |
+| Dependência              | Descrição / (Dependência Pai)         |
+| ------------------------ | ------------------------------------- |
+| pip                      | Gestor de Pacotes (Python)            |
+| setuptools               | Ferramentas (Python)                  |
+| Django                   | Web Framework                         |
+| sqlparse                 | (Django)                              |
+| pytz                     | (Django)                              |
+| asgiref                  | (Django)                              |
+| mysqlclient              | Conector de Python a MySQL            |
+| autopep8                 | Python Formatter                      |
+| pycodestyle              | (autopep8)                            |
+| django-environ           | Suporte de .env                       |
+| django-filter            | Django Filters                        |
+| django-formtools         | SessionWizard e outras Formtools      |
+| pyquery                  | (django-formtools)                    |
+| cssselect                | (pyquery)                             |
+| lxml                     | (pyquery)                             |
+| django-phonenumber-field | PhoneNumberField                      |
+| phonenumbers             | (django-phonenumber-field)            |
+| Babel                    | (django-phonenumber-field)            |
+| django-tables2           | Filtros/Sorting/Pagination de tabelas |

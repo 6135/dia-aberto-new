@@ -3,8 +3,7 @@ from .models import *
 from .forms import *
 from inscricoes.models import *
 from configuracao.models import Horario
-from coordenadores.models import Coordenador
-from utilizadores.models import ProfessorUniversitario
+from utilizadores.models import ProfessorUniversitario, Coordenador
 from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
 from django.http import HttpResponseRedirect
 from datetime import datetime, date,timezone
@@ -31,6 +30,12 @@ def adicionartarefa(request, id = None):
                 outra_form = TarefaOutraForm(request.POST,instance=TarefaOutra(tarefaid=form_tarefa.instance)) 
                 if outra_form.is_valid():
                     outra_form.save()
+                    return redirect('consultarTarefa') 
+            elif request.POST['tipo'] == 'tarefaAcompanhar': 
+                acompanhar_form = TarefaAcompanharForm(request.POST,instance=TarefaAcompanhar(tarefaid=form_tarefa.instance)) 
+                print(acompanhar_form.errors)
+                if acompanhar_form.is_valid():
+                    acompanhar_form.save()
                     return redirect('consultarTarefa') 
             else:
                 form_tarefa.instance.delete()      
@@ -151,14 +156,33 @@ def horarioGrupo(request):
 def locaisOrigem(request):
     default = {
         'key': '',
-        'value': 'Escolha o horário'
+        'value': 'Escolha o local de encontro'
     }
+    if request.POST['sessao_id']:
+        origens = []
+        inscricaoid = request.POST.get('grupo_id')
+        inscricao = Inscricao.objects.get(id=inscricaoid)
+        origens =  inscricao.get_origem(request.POST['dia'],request.POST['sessao_id'])
+    return render(request=request,
+                template_name='configuracao/dropdown.html',
+                context={'options':origens, 'default': default}
+            )  
 
 def locaisDestino(request):
     default = {
         'key': '',
         'value': 'Escolha o horário'
     }
+    if request.method == 'POST':
+        destinos = []
+        inscricaoid = request.POST.get('grupo_id')
+        inscricao = Inscricao.objects.get(id=inscricaoid)
+        destinos =  inscricao.get_destino(request.POST['dia'],request.POST['sessao_id'])
+    return render(request=request,
+                template_name='configuracao/dropdown.html',
+                context={'options':destinos, 'default': default}
+            )  
+
 def filters(request):
     filters=[]
     if request.POST.get('Concluida'):

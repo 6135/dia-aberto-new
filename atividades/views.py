@@ -3,8 +3,7 @@ from .forms import AtividadeForm , MateriaisForm, atividadesFilterForm, CampusFo
 from .models import *
 from configuracao.models import Horario
 from .models import Atividade, Sessao, Tema, Materiais
-from coordenadores.models import Coordenador
-from utilizadores.models import ProfessorUniversitario
+from utilizadores.models import ProfessorUniversitario, Coordenador
 from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
 from django.http import HttpResponseRedirect
 from datetime import datetime, date,timezone

@@ -1,0 +1,84 @@
+{% extends 'app.html' %}
+
+{% block title %}Enviar Notificação{% endblock title %}
+
+{% block content %}
+<div>
+    <nav aria-label="breadcrumbs" class="breadcrumb">
+        <ul>
+            <li><a href="/">Início</a></li>
+            <li><a href="/">Notificações</a></li>
+            <li class="is-active"><a href="/inscricao">Enviar Notificação</a></li>
+        </ul>
+    </nav>
+    <div style="padding: 3rem 2vw 1rem;">
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Destinatário(s)</label>
+            </div>
+            <div class="field-body">
+                <div class="field has-addons">
+                    <p class="control">
+                        <span class="select">
+                            <select>
+                                <option>Qualquer Papel</option>
+                                <option>Administrador</option>
+                                <option>Colaborador</option>
+                                <option>Coordenador</option>
+                                <option>Participante</option>
+                                <option>Prof. Universitário</option>
+                            </select>
+                        </span>
+                    </p>
+                    <div class="control is-expanded">
+                        <input class="input" type="text" placeholder="Insira o destinatário...">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Título</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <input class="input" type="text" placeholder="Insira o título...">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Mensagem</label>
+            </div>
+            <div class="field-body">
+                <div class="field">
+                    <div class="control">
+                        <textarea class="textarea" placeholder="Insira a mensagem..."></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label">
+                <!-- Left empty for spacing -->
+            </div>
+            <div class="field-body">
+                <div class="field is-grouped">
+                    <p class="control">
+                        <a class="button is-primary">
+                            Enviar Notificação
+                        </a>
+                    </p>
+                    <p class="control">
+                        <a class="button is-light">
+                            Cancelar
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

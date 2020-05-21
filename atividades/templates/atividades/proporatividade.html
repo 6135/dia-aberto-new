@@ -1,0 +1,225 @@
+{% extends 'configuracao/app.html' %}
+{% block content %}
+<nav class="breadcrumb" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="{% url 'inicio' %}">Início</a></li>
+    <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
+    <li class="is-active"><a href="{% url 'inserirAtividade' %}" aria-current="page">Propor Atividade</a></li>
+  </ul>
+</nav>
+<div style="padding: 3rem 2vw 1rem">
+  <form method="POST">
+    {% csrf_token %}
+  <div class="b-steps">
+    <section class="step-content">
+        <div class="step-item">
+            <div style="padding: 1rem 2vw 0px">
+              <hr />
+              <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+                Informação de atividade
+              </h2>
+              
+              <div class="columns">
+                <div class="column">
+                
+                  <div class="field">
+                    <label class="label">Nome da Atividade</label>
+                    <div class="control">
+                      {{form.nome}}
+                    </div>
+                  </div>
+                </div>
+                <div class="column ">
+                  <div class="field">
+                    <label class="label">Tipo de Atividade</label>
+                    <div class="control is-expanded">
+                      <div class="select is-fullwidth">
+                        {{form.tipo}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column is-half">
+                  <div class="field">
+                    <label class="label">Público Alvo</label>
+                      <div class="control">
+                        <div class="select is-fullwidth">
+                            {{form.publicoalvo}}
+                        </div>
+                      </div>
+                  </div>
+                </div>
+                <div class="column">
+                  <div class="field" >
+                    <label class="label">Tema da Atividade:</label>
+                    <div class="control">
+                      <div class="select is-fullwidth" >
+                        <select name="tema">
+                          {% for t in theme %}
+                            <option value="{{t.id}}">{{t.tema}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div> 
+                </div>               
+              </div>
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Descrição</label>
+                    <div class="control">
+                      {{form.descricao}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Duração Esperada da Atividade</label>
+                    <div class="control">
+                      <div class="select is-fullwidth">
+                        {{form.duracaoesperada}}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="column is-half">
+                  <div class="field">
+                    <label class="label">Colaboradores Necessarios:</label>
+                      <div class="control">
+                        {{form.nrcolaboradoresnecessario}}
+                       </div>
+                  </div>
+                </div>
+              </div>
+              <div class="columns">
+                <div class="column">
+                  <div class="field">
+                    <label class="label">Numero Maximo de Participantes</label>
+                       <div class="control">
+                        {{form.participantesmaximo}}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="column">
+                  <div class="field" >
+                    <label class="label">Espaço:</label>
+                    <div class="control">
+                      <div class="select is-fullwidth" >
+                        <select name="idespaco">
+                          {% for esp in espaco %}
+                            <option value="{{esp.id}}">{{esp.edificio}} {{esp.nome}}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>              
+              <div class="columns">
+                <div class="column is-half">
+                  <div class="field">
+                    <label class="label">Material Extra Necessario</label>
+                      <div class="control">
+                      {{mat.nomematerial}}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <hr/>
+          </div>
+        </div>
+        
+    </section>
+    <div class="column is-8 is-offset-2">
+      <div class="level">
+        <div class="level-left">
+          <button class="button is-outlined" type="reset">
+            <span>Cancelar</span>
+          </button>
+        </div>
+        <div class="level-right">
+          <button class="button is-large is-success is-outlined is-link" type="submit">
+            <span>Inserir Sessao</span>
+            <span class="icon is-medium">
+              <i class="mdi mdi-forward mdi-36px"></i>
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    {% if form.errors %}
+    {% for field in form %}
+        {% for error in field.errors %}
+            <div class="alert alert-danger">
+                <strong>{{field.label|escape}}{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="alert alert-danger">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+    {% csrf_token %}
+</form>
+  </div>
+</div>
+<style>
+  .label {
+  font-weight: normal;
+  }
+.b-steps .steps .step-items .step-item .step-details .step-title {
+  font-size: 1rem;
+}
+</style>
+<script>
+function forward() {
+    var stepItem = document.getElementsByClassName("step-item");
+    var button = document.getElementById("forwardB");
+    for(var i=0; i < stepItem.length; i++){
+        if(!stepItem[1].style.display)
+            button.type='submit'
+        else if(stepItem[i].style.display)
+            stepItem[i].removeAttribute("style")
+        else
+            stepItem[i].style.display= 'none'
+    }
+}
+
+function backward(){
+    var stepItem = document.getElementsByClassName("step-item")
+    var button = document.getElementById("backwardB");
+    for(var i=0; i < stepItem.length; i++){
+        if(!stepItem[0].style.display)
+            button.href='javascript:history.back()'
+        if(!stepItem[1].style.display)
+             button.href=''
+        if(stepItem[i].style.display)
+            stepItem[i].removeAttribute("style")
+        else
+            stepItem[i].style.display= 'none'
+    }
+}
+
+/*var i=0;
+var original = document.getElementById('sessao');
+function duplicate(){
+    var clone = original.cloneNode(true);
+    clone.id = "sessao"+ ++i;
+    document.getElementById('sessoes').appendChild(clone);
+}
+
+function removeSession(){
+    var session = document.getElementById('sessao'+i);
+    session.parentNode.removeChild(session);
+    i--;
+}*/
+</script>
+{% endblock content %}

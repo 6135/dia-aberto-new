@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pt">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Index</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'atividades/css/style.css' %}" />
+</head>
+
+<body>
+  <form method="POST" class="post-form" action="/atividade">
+    {% csrf_token %}
+    <div class="container">
+      <br>
+      <div class="form-group row">
+        <label class="col-sm-1 col-form-label"></label>
+        <div class="col-sm-4">
+          <h3>Enter Details</h3>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Atividade Id:</label>
+        <div class="col-sm-4">
+          {{ form.id }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Nome:</label>
+        <div class="col-sm-4">
+          {{ form.nome }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Descricao:</label>
+        <div class="col-sm-4">
+          {{ form.descricao }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Capacidade maxima:</label>
+        <div class="col-sm-4">
+          {{ form.capacidademaxima }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Duracao:</label>
+        <div class="col-sm-4">
+          {{ form.duracao }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Publico alvo:</label>
+        <div class="col-sm-4">
+          {{ form.publicoalvo }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Coordenador utilizador ID:</label>
+        <div class="col-sm-4">
+          {{ form.coordenadorutilizadorid }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Professor universitario utilizador ID:</label>
+        <div class="col-sm-4">
+          {{ form.professoruniversitarioutilizadorid }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Numero de colaboradores necessario:</label>
+        <div class="col-sm-4">
+          {{ form.nrcolaboradoresnecessario }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Data de submissao:</label>
+        <div class="col-sm-4">
+          {{ form.datasubmissao }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Estado:</label>
+        <div class="col-sm-4">
+          {{ form.estado }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Tipo:</label>
+        <div class="col-sm-4">
+          {{ form.tipo }}
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-1 col-form-label"></label>
+        <div class="col-sm-4">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</body>
+
+</html>
