@@ -1,17 +1,21 @@
 from django.forms import * 
 from .models import *
 from atividades.models import Atividade,Sessao
-from colaboradores.models import Colaborador
-from configuracao.models import Diaaberto
+from utilizadores.models import Colaborador
+from configuracao.models import Departamento, Diaaberto
 from datetime import datetime,timezone
+from inscricoes.models import Inscricao
 
 def get_dias():
-    today= datetime.now(timezone.utc) 
-    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
-    diainicio= diaaberto.datadiaabertoinicio.date()
-    diafim= diaaberto.datadiaabertofim.date()
-    totaldias= diafim-diainicio+timedelta(days=1)
-    return [(diainicio+timedelta(days=d),diainicio+timedelta(days=d))for d in range(totaldias.days)]
+    try:
+        today= datetime.now(timezone.utc) 
+        diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
+        diainicio= diaaberto.datadiaabertoinicio.date()
+        diafim= diaaberto.datadiaabertofim.date()
+        totaldias= diafim-diainicio+timedelta(days=1)
+        return [(diainicio+timedelta(days=d),diainicio+timedelta(days=d))for d in range(totaldias.days)]
+    except:
+        return []
 
 class CustomTimeWidget(TimeInput):
 

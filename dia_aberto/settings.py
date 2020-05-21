@@ -18,7 +18,16 @@ environ.Env.read_env()  # reading .env file
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# STATIC_ROOT is for deployment
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+# STATICFILES_DIRS is for development
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+STATIC_URL = '/static/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
@@ -33,11 +42,23 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['dia-aberto.streamonion.com','77.68.24.178','localhost','127.0.0.1']
 
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 30
+}
 
 # Application definition
 
 INSTALLED_APPS = [
-    'atividades.apps.AtividadesConfig',
+    'atividades',
     'colaboradores',
     'configuracao',
     'coordenadores',
@@ -45,6 +66,10 @@ INSTALLED_APPS = [
     'notificacoes',
     'utilizadores',
     'phonenumber_field',
+    'formtools',
+    'rest_framework',
+    'django_filters',
+    "django_tables2",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -52,6 +77,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -68,7 +95,7 @@ ROOT_URLCONF = 'dia_aberto.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [(os.path.join(BASE_DIR, 'templates')), ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -144,5 +171,3 @@ DATETIME_INPUT_FORMAT = [
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
-
-STATIC_URL = '/static/'

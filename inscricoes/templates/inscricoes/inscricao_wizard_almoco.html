@@ -1,0 +1,173 @@
+{% extends 'app.html' %}
+{% load static %}
+
+{% block load %}
+<link rel="stylesheet" href="{% static 'css/buefy.css' %}">
+{{ wizard.form.media }}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/vue-dev.js' %}"></script>
+<script src="{% static 'js/jquery.js' %}"></script>
+<script src="{% static 'js/buefy/components/numberinput/index.min.js' %}"></script>
+<script src="{% static 'js/buefy/components/field/index.min.js' %}"></script>
+
+<script>
+    window.onpageshow = function (event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    };
+
+    new Vue({
+        el: '#vue-app',
+        delimiters: ['[[', ']]'],
+        data() {
+            return {
+                npessoas: {{ form.npessoas.value|default_if_none:'0' }}
+            }
+        },
+    });
+
+    $(function () {
+        $("form input").keypress(function (e) {
+            if ((e.which && e.which == 13) || (e.keyCode && e.keyCode == 13)) {
+                $('button[type=submit]').click();
+                return false;
+            } else {
+                return true;
+            }
+        });
+    });
+</script>
+{% endblock scripts %}
+
+{% block title %}Inscrição{% endblock title %}
+
+{% block content %}
+<div>
+    <nav aria-label="breadcrumbs" class="breadcrumb">
+        <ul>
+            <li><a href="/" class="router-link-active">Início</a></li>
+            <li class="is-active"><a href="/inscricao" class="router-link-exact-active router-link-active">Minha
+                    Inscrição</a></li>
+        </ul>
+    </nav>
+    <div style="padding: 3rem 2vw 1rem;">
+        <div class="steps is-success">
+            <div class="step-item is-success is-completed">
+                <div class="step-marker">
+                    <span class="icon">
+                        <i class="mdi mdi-account"></i>
+                    </span>
+                </div>
+                <div class="step-details">
+                    <p class="step-title">Responsáveis</p>
+                </div>
+            </div>
+            <div class="step-item is-success is-completed">
+                <div class="step-marker">
+                    <span class="icon">
+                        <i class="mdi mdi-school"></i>
+                    </span>
+                </div>
+                <div class="step-details">
+                    <p class="step-title">Escola</p>
+                </div>
+            </div>
+            <div class="step-item is-success is-completed">
+                <div class="step-marker">
+                    <span class="icon">
+                        <i class="mdi mdi-train-car"></i>
+                    </span>
+                </div>
+                <div class="step-details">
+                    <p class="step-title">Transporte</p>
+                </div>
+            </div>
+            <div class="step-item is-success is-active">
+                <div class="step-marker">
+                    <span class="icon">
+                        <i class="mdi mdi-food-apple"></i>
+                    </span>
+                </div>
+                <div class="step-details">
+                    <p class="step-title">Almoço</p>
+                </div>
+            </div>
+            <div class="step-item is-success">
+                <div class="step-marker">
+                    <span class="icon">
+                        <i class="mdi mdi-calendar-check"></i>
+                    </span>
+                </div>
+                <div class="step-details">
+                    <p class="step-title">Sessões</p>
+                </div>
+            </div>
+            <div class="step-item is-success">
+                <div class="step-marker">
+                    <span class="icon">
+                        <i class="mdi mdi-check"></i>
+                    </span>
+                </div>
+                <div class="step-details">
+                    <p class="step-title">Submissão</p>
+                </div>
+            </div>
+        </div>
+        <hr />
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ wizard.management_form }}
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+                Informação de Almoço
+            </h2>
+            <div class="columns">
+                <div class="column is-3">
+                    <div class="field">
+                        <label for="{{ form.campus.id_for_label }}" class="label">{{ form.campus.label }}</label>
+                        <div class="control">
+                            <div class="select is-primary is-fullwidth">
+                                {{ form.campus }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <!--{% for select in form.campus %}
+                {{ select.tag }}
+            {% endfor %}-->
+                <div class="column">
+                    <div id="vue-app">
+                        <div class="field">
+                            <label for="{{ form.npessoas.id_for_label }}" class="label">Número de pessoas</label>
+                            <b-numberinput v-model="npessoas" controls-position="compact" min="0" name="almoco-npessoas" style="width: 30%"/>
+                        </div>
+                        {{ form.npessoas.errors }}
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="column is-8 is-offset-2">
+                <div class="level">
+                    <div class="level-left">
+                        {% if wizard.steps.prev %}
+                        <button class="button is-outlined" formnovalidate="formnovalidate" name="wizard_goto_step"
+                            value="{{ wizard.steps.prev }}">
+                            <span class=" icon is-small"><i class="mdi mdi-chevron-left"></i></span>
+                            <span>Anterior</span>
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div class="level-right">
+                        <button type="submit" class="button is-success is-outlined">
+                            <span>Próximo</span>
+                            <span class="icon is-medium"><i class="mdi mdi-forward mdi-36px"></i></span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock content %}

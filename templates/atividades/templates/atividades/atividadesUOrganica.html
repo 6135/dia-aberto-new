@@ -1,0 +1,320 @@
+{% extends 'configuracao/app.html' %}
+{% block content %}
+
+<div class="columns">
+       <div class="column is-3">
+        <form method="POST" action="" id='filter'>
+            {% csrf_token %}
+            <div>
+            <div class="menu">
+                <p class="menu-label">Filtros Atividades</p>
+                <ul class="menu-list">
+                <li>
+                    <div class="field">
+                        <div class="control is-expanded">
+                            <div class="select is-fullwidth">
+                                {{filter.departamentos}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control is-expanded">
+                            <div class="select is-fullwidth">
+                                {{filter.tipo}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Estado:</label>
+                    </div>
+                    <ul>
+                        <div class="field" style="padding-left: 1rem;">
+                            <label class="checkbox">
+                                    {{filter.Aceite}}
+                                    Aceite
+                            </label>
+                        </div>
+                        <div class="field" style="padding-left: 1rem;">
+                            <label class="checkbox">
+                                    {{filter.Pendente}}
+                                    Pendente
+                            </label>
+                        </div>
+                        <div class="field" style="padding-left: 1rem;">
+                            <label class="checkbox">
+                                    {{filter.Recusada}}
+                                    Recusada
+                            </label>
+                        </div>
+                    </ul>
+                </li>
+                <li></li>
+                <div class="field" >
+                    <label class="checkbox">
+                            {{filter.diaAbertoAtual}}
+                            Atividades do Dia Aberto Atual
+                    </label>
+                </div>
+                <div class="field">
+                    <div class="control has-icons-left is-clearfix">
+                        {{filter.searchAtividade}}
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="field">
+                    <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
+                        <span class="icon is-left">
+                            <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                        </span>
+                        <span>Limpar pesquisa</span>
+                    </button>
+                    <button type="Submit" class="button is-success is-outlined">
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                        <span>Pesquisar</span>
+                    </button>
+                </div>
+                </ul>
+            </div>
+            </div>
+            
+        </form>
+    </div>
+    <div class="column">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="#">Início</a></li>
+              <li class="is-active"><a href="#" aria-current="page">Atividades</a></li>
+            </ul>
+          </nav>
+        <div class="table">
+            <div class="table-wrapper">
+                <table class="table has-mobile-cards is-hoverable is-fullwidth" id="table01">
+                    <thead>
+                        <tr>
+                            <th width="40px"></th>
+                            <th  onclick="sortTable(1,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
+                                Nome
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>
+                            <th onclick="sortTable(4,false)" style="cursor:pointer;" class="pre-expandable">
+                                Criador
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>
+                            <th onclick="sortTable(2,true)" style="cursor:pointer;width: 400px;" class="pre-expandable">
+                                Submetido a
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>
+                            <th onclick="sortTable(3,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
+                                Estado
+                                <span class="icon-expandable-180 is-small">
+                                    <i class="mdi mdi-menu-up"></i>
+                                </span>
+                            </th>
+                            <th style="">
+                            </th>
+                        </tr>
+                    </thead>
+                    {% for atividade in atividades %}
+                    <tbody id="{{atividade}}">      
+                        <tr draggable="false">
+                            <td class="chevron-cell">
+                                <a class="detailbutton" role="button" onclick="displayDetails({{atividade.id}})" atividade="{{atividade.id}}">
+                                    <span class="icon-expandable">
+                                        <i class="mdi mdi-chevron-right mdi-24px"></i>
+                                    </span>
+                                </a>
+                            </td>
+                            <td data-label="Nome">{{atividade.nome}} </td>
+                            <td data-label="Criador">{{atividade.professoruniversitarioutilizadorid.utilizadorid.nome}} </td> 
+                            <td data-label="Submetido a" date-value="{{atividade.dataalteracao|date:'Y-m-d H:i'}}">{{atividade.dataalteracao}}</td>
+                            {% if atividade.estado == "Pendente"%}
+                            <td data-label="Estado">
+                                <span class="tag text is-warning" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
+                            </td>
+                            {% elif atividade.estado == "Recusada" %}
+                            <td data-label="Estado">
+                                <span class="tag text is-danger" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
+                            </td>
+                            {% elif atividade.estado == "Aceite"%}
+                            <td data-label="Estado">
+                                <span class="tag text is-success" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
+                            </td>
+                            {% endif %}
+                            <td ></td>       
+                        </tr> 
+                        <tr class="detail" style="display:none;" id='Details{{atividade.id}}'>
+                        <td colspan="7">
+                            <div class="detail-container">
+                                <div class="content"> 
+                                    <div style="font-size: 15px">
+                                        <p>
+                                            <strong>Nome:</strong>
+                                            {{atividade.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Professor:</strong>
+                                            {{atividade.professoruniversitarioutilizadorid.utilizadorid.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Data de submissão:</strong>
+                                            {{atividade.dataalteracao}}
+                                        </p>
+                                        <p>
+                                            <strong>Estado de submissão:</strong>
+                                            {{atividade.estado}}
+                                        </p>
+                                        <p>
+                                            <strong>Tipo de Atividade:</strong>
+                                            {{atividade.tipo}}
+                                        </p>
+                                        <p>
+                                            <strong>Descrição:</strong>
+                                            {{atividade.descricao}}
+                                        </p>  
+                                        <p>
+                                            <strong>Materiais:</strong>
+                                            {% for mat in materiais %}
+                                                {% if mat.atividadeid == atividade %}
+                                                    {% if mat.nomematerial != Null %}
+                                                        {{mat.nomematerial}}
+                                                    {% else %}
+                                                        --------
+                                                    {% endif %}
+                                                {% endif %}
+                                            {% endfor %}
+                                        </p>
+                                        <p>
+                                            <strong>Campus:</strong>
+                                            {{atividade.espacoid.edificio.campus.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Edificio:</strong>
+                                            {{atividade.espacoid.edificio.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Sala:</strong>
+                                            {{atividade.espacoid.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Departamento:</strong>
+                                            {{atividade.professoruniversitarioutilizadorid.departamento.nome}}
+                                        </p>
+                                        <p>
+                                            <strong>Sessões:</strong>
+                                        </p>
+                                        <div class="table-wrapper">
+                                            <table class="table has-mobile-cards">
+                                                <thead> 
+                                                    <tr>
+                                                        <th><div class="th-wrap">Dia</div></th>
+                                                        <th><div class="th-wrap" style="width:150px">Hora</div></th>
+                                                        <th><div class="th-wrap" style="width:150px">Vagas</div></th>
+                                                    </tr>
+                                                </thead>
+                                                {% for  sessao in  sessoes%}
+                                                    {% if  sessao.atividadeid.id == atividade.id %}
+                                                        <tbody>
+                                                            <tr >
+                                                                <td data-label="Dia">{{sessao.dia}}</td>
+                                                                <td data-label="Hora">{{sessao.horarioid.inicio}} até {{sessao.horarioid.fim}}</td>
+                                                                <td data-label="Vagas">{{sessao.vagas}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </table>
+                                            {% if atividade.estado != "Aceite" %}
+                                            <p class="has-text-danger">
+                                                {% for conf in conflitos %}
+                                                {% if atividade.id == conf.atividade1.id  %}
+                                                    <span class="icon is-left has-text-danger">
+                                                        <i class="fas fa-exclamation-triangle"></i>
+                                                    </span>
+                                                    <strong class="has-text-danger">Conflitos nos horarios com a atividade:</strong>
+                                                    {{conf.atividade2.nome}}
+                                                    <br>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </p>
+                                            {% endif %}
+                                        </div>
+                                        {% if  atividade.estado == 'Pendente' %}
+                                            <div style="margin-top:13px">
+                                                <a type="button" href="{% url 'validarAtividade' atividade.id 1%}" class="validatebutton button is-success" style="margin-right: 10px;" ><span class="icon is-small"><i class="mdi mdi-check"></i></span><span>Aceitar</span></a>
+                                                <a type="button" href="{% url 'validarAtividade' atividade.id 0%}" class="validatebutton button is-danger"><span class="icon is-small"><i class="mdi mdi-delete"></i></span> <span>Rejeitar</span></a>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>                        
+                        </td>                
+                      </tr>
+                    </tbody>         
+                    {% endfor %}
+                </table>
+            </div>
+    </div>
+</div>
+<div id="msg" class="dialog modal">
+    <div class="modal-background"></div>
+    <div class="modal-card animation-content">
+        <section class="modal-card-body is-titleless" style="border-top-left-radius: 6px; border-top-right-radius: 6px;">
+            <div class="media">
+                <div class="media-content">
+                    <p id='text-00'></p>
+                </div>
+            </div>
+        </section>
+        <footer class="modal-card-foot">
+            <button onclick="alert.cancelar()" class="button" id='dialog-cancel'>Cancelar</button>
+            <button onclick="alert.confirmar()" class="button is-success" id='dialog-confirm'>Confirmar</button>
+        </footer>
+    </div>
+</div>
+<style>
+.dialog .modal-card .modal-card-body.is-titleless {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+}
+
+tr.detail{
+    padding:1rem;
+}
+.table tr.detail{
+    -webkit-box-shadow:inset 0 1px 3px #dbdbdb;
+    box-shadow:inset 0 1px 3px #dbdbdb;
+    background:#fafafa
+}
+</style>
+{% endblock content %}
+{% block scripts%}
+<script>
+/*$('.validatebutton').click(function(){
+    var action= $(this).attr("action");
+    var id= $(this).attr("id");
+    console.log({{form.searchAtividade.value}});
+    $.ajax(
+        {
+            type:"GET",
+            url: "",
+            data:{
+                searchAtividade:form.searchAtividade.value,
+                Aceite:form.Aceite.value,
+                Recusada:form.Recusada.value,
+                Pendente:form.Pendente.value,
+                diaAbertoAtual:form.diaAbertoAtual.value
+            }
+    })
+});*/
+</script>
+{% endblock scripts%}
