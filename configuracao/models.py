@@ -6,8 +6,10 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
-from _datetime import timedelta
 from django.core import validators
+import time
+from time import mktime
+from datetime import datetime,timedelta
 class Transporte(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
@@ -97,8 +99,9 @@ class Diaaberto(models.Model):
     datadiaabertoinicio = models.DateTimeField(db_column='DataDiaAbertoInicio')
     # Field name made lowercase.
     datadiaabertofim = models.DateTimeField(db_column='DataDiaAbertoFim')
+    # Field name made lowercase.
     datainscricaoatividadesinicio = models.DateTimeField(
-        db_column='DataInscricaoAtividadesInicio')  # Field name made lowercase.
+        db_column='DataInscricaoAtividadesInicio')  
     # Field name made lowercase.
     datainscricaoatividadesfim = models.DateTimeField(
         db_column='DataInscricaoAtividadesFim')
@@ -111,6 +114,24 @@ class Diaaberto(models.Model):
     # Field name made lowercase.
     administradorutilizadorid = models.ForeignKey(
         'utilizadores.Administrador', models.CASCADE, db_column='AdministradorUtilizadorID')
+    # Field name made lowercase.
+    escalasessoes = models.TimeField(db_column='EscalaSessoes')
+
+    def session_times(self):
+        start_time  = self.datadiaabertoinicio.time()
+        end_time = self.datadiaabertofim.time()
+        start_time_as_seconds = (start_time.hour * 60 + start_time.minute) * 60
+        end_time_as_seconds = (end_time.hour * 60 + end_time.minute) * 60
+        time_lunch_end = 50400
+        return [
+            (time.strftime('%H:%M', time.gmtime(start_time_as_seconds + (n*self.escalasessoes.minute*60))))
+                for n in range(int((43200 - start_time_as_seconds)/(self.escalasessoes.minute*60))+1)
+        ] + [
+            (time.strftime('%H:%M', time.gmtime(time_lunch_end + (n*self.escalasessoes.minute*60))))
+                for n in range(int((end_time_as_seconds - time_lunch_end)/(self.escalasessoes.minute*60))+1)
+        ]
+
+
 
     def days_as_dict(self):
         data_inicio = self.datadiaabertoinicio
