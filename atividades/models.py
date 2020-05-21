@@ -87,11 +87,11 @@ class Materiais(models.Model):
 
 class Sessao(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    horarioid = models.ForeignKey('configuracao.Horario', models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
     ninscritos = models.IntegerField(db_column='NInscritos')  # Field name made lowercase.
     vagas = models.IntegerField(db_column='Vagas')  # Field name made lowercase.
     atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
     dia = models.DateField(db_column='Dia', blank=True, null=True)  # Field name made lowercase.
+    horarioid = models.ForeignKey('configuracao.Horario', models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
     def timeRange_(self, seperator = ' até '):
         return self.horarioid.inicio.strftime('%H:%M') + str(seperator) + self.horarioid.fim.strftime('%H:%M')
         

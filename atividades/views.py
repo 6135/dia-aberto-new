@@ -195,7 +195,8 @@ def proporatividade(request, id = None):
     today= datetime.now(timezone.utc) 
     diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
     dias_diaaberto = diaaberto.days_as_array()
-
+    logged_prof = ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id)
+    
     sessoes = ""
     SessaoFormSet = SessaoFormset()
     sessao_form_set = SessaoFormSet(queryset=Sessao.objects.none())
@@ -212,9 +213,9 @@ def proporatividade(request, id = None):
         campus=Campus.objects.all()
         activity_object_form = AtividadeForm(request.POST)
         material_object_form= MateriaisForm(request.POST)
-
-        new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizador=5),
-                            professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
+        
+        new_form = Atividade(
+                            professoruniversitarioutilizadorid = logged_prof,
                             estado = "Pendente", diaabertoid = diaaberto,espacoid= espaco,
                             tema=Tema.objects.get(id=request.POST['tema'])
                         )
