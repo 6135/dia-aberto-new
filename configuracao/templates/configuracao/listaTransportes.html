@@ -4,17 +4,16 @@
 {% load transporte_extra %}
 <div class="columns">
     <div class="column is-3">
-        {% comment 'filters' %}
         <form method="POST" action="" id='filter'>
             {% csrf_token %}
             <div>
             <div class="menu">
-                <p class="menu-label">Filtros Menu</p>
+                <p class="menu-label">Filtros Transporte</p>
                 <ul class="menu-list">
                 <div class="field">
                     <!---->
                     <div class="control has-icons-left is-clearfix">
-                        {{form.searchAno}}
+                        <input type="text" name="searchId" placeholder="Identificador" class="input"  value=""> 
                         <span class="icon is-left">
                             <i class="mdi mdi-magnify mdi-24px"></i>
                         </span>
@@ -22,23 +21,29 @@
                     <!---->
                 </div>
                 <div class="field">
-                    <label class="checkbox">
-                        {{form.penha}}
-                        Penha
-                    </label>
+                    <!---->
+                    <div class="select is-fullwidth">
+                        <select id="filter_from">
+                            <option value="">De</option>
+                            <option value="fromGambelas">De Gambelas</option>
+                            <option value="fromPenha">De Penha</option>
+                            <option value="fromTerminal">De Terminal</option>
+                        </select>
+                    </div>
+                    <!---->
                 </div>
                 <div class="field">
-                    <label class="checkbox">
-                        {{form.gambelas}}
-                            Gambelas
-                    </label>
-                </div>
-                <div class="field">
-                    <label class="checkbox">
-                        {{form.portimao}}
-                            Portimao
-                    </label>
-                </div>
+                    <!---->
+                    <div class="select is-fullwidth">
+                        <select id="filter_to">
+                            <option value="">Para</option>
+                            <option value="toGambelas">Para Gambelas</option>
+                            <option value="toPenha">Para Penha</option>
+                            <option value="toTerminal">Para Terminal</option>
+                        </select>
+                    </div>
+                    <!---->
+                </div>                
                 <div class="field">
                     <button type="submit" onClick="resetForm()" class="button is-danger is-outlined">
                         <span class="icon is-left">
@@ -57,7 +62,6 @@
             </div>
             </div>
         </form>
-        {% endcomment %}
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -72,7 +76,7 @@
             </span>
             <span>Criar Transporte</span>
         </a>   
-
+    <form method="POST">
         <div class="table">
             <div class="table-wrapper">
                 <table id="table01" class="table has-mobile-cards is-hoverable is-fullwidth">
@@ -119,7 +123,7 @@
                     <tr draggable="false">
                         <td class="chevron-cell">
                             <a role="button" onclick="displayDetails({{horarioTra.id}})">
-                                <span class="icon-expandable">
+                                <span class="">
                                     <i class="mdi mdi-chevron-right mdi-24px"></i>
                                 </span>
                             </a>
@@ -169,42 +173,11 @@
                         </td>                     
                       </tr> 
                         
-                      <tr class="detail" style="display: none" id='Details{{horarioTra.id}}'>
-                      {% comment 'details' %}
-                      <td colspan="5">
-                        <div class="detail-container">
-                            <div class="table"> 
-                                <div class="table-wrapper">
-                                    <table class="table has-mobile-cards">
-                                        <thead id='tabble-details{{menu.id}}'>
-                                            {% for prato in menu.pratos_ %}
-                                            <tr style="border-bottom: 1px solid #ddd">
-                                                <th class="th-wrap">Tipo:</th>
-                                                <th class="th-wrap" style="font-weight: normal;">
-                                                    <span>{{prato.tipo}}</span>
-                                                </th>
-                                                <th class="th-wrap">Prato:</th>
-                                                <th class="th-wrap" style="font-weight: normal;">
-                                                    <span>{{prato.prato}}</span>
-                                                </th>
-                                                <th class="th-wrap"># Pratos:</th>
-                                                <th class="th-wrap" style="font-weight: normal;">
-                                                    <span>{{prato.nrpratosdisponiveis}}</span>
-                                                </th>
-                                            </tr>
-                                            {% endfor %}
-                                        </thead>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </td>
-                    {% endcomment %}
-                      </tr>
                     
                     {% endfor %}
                     </tbody>
                 </table>
+    </form>
             </div>
         </div>
 

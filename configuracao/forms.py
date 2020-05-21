@@ -1,7 +1,7 @@
 from django.forms import *
 from .models import *
 from datetime import datetime
-from _datetime import timedelta
+from _datetime import timedelta, timezone
 from coordenadores.forms import CustomTimeWidget
     
 class DateTimeWidget(DateTimeInput):
@@ -105,20 +105,16 @@ class menusFilterForm(Form):
 
 
 class transporteForm(ModelForm):
-    dia_choices = Diaaberto.objects.all()
-    diaaberto = ChoiceField(choices=[('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices],widget=Select())
-
+    dia_aberto = Diaaberto.objects.filter(datadiaabertoinicio__gte=datetime.now(timezone.utc)).order_by('datadiaabertoinicio').first()
+    #diaaberto = ChoiceField(choices=[('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices],widget=Select())
+    dia = ChoiceField(choices=dia_aberto.days_as_tuples())
     def clean(self):
         cleaned_data = super().clean()
-        diaaberto_data = cleaned_data['diaaberto']
-        if diaaberto_data:
-            cleaned_data['diaaberto'] = Diaaberto.objects.get(id=diaaberto_data)
-        else:
-            raise ValidationError('Os campos preenchidos estão incorretos!')
+        self.instance.diaaberto = self.dia_aberto
 
     class Meta:
         model = Transporte
-        exclude = ['id']
+        exclude = ['id','diaaberto']
         widgets = {
             'identificador': TextInput(attrs={'class': 'input'}),
             'dia': Select(),
