@@ -58,10 +58,18 @@ def viewDays(request):
 
 	list_diaaberto = Diaaberto.objects.all()	#Obtain all days
 
-	earliest = Diaaberto.objects.all().order_by('ano').first()	#Obtain some constants
+	earliest = Diaaberto.objects.all().order_by('ano').first()#Obtain some constants
 	latest = Diaaberto.objects.all().order_by('ano').last()
-	current = Diaaberto.objects.get(ano=datetime.now().year)
-	is_open =(current.datadiaabertofim > datetime.now(timezone.utc))
+	current = Diaaberto.objects.filter(ano=datetime.now().year).first()
+	is_open=False
+	latest_year = 9999
+	earliest_year = 0
+	if earliest is not None: 
+		if current is not None:
+			is_open = (current.datadiaabertofim > datetime.now(timezone.utc))
+		latest_year = latest.ano
+		earliest_year = earliest.ano
+	
 
 	filterRes = orderBy(request, list_diaaberto)		#Filter/order
 	list_diaaberto = filterRes['list_diaaberto']
@@ -71,17 +79,18 @@ def viewDays(request):
 
 	return render(request=request,
 				  template_name='configuracao/listaDiaAberto.html',
-				  context = {'form':formFilter, 'diaabertos': list_diaaberto, 'earliest': (earliest.ano),
-							'latest': (latest.ano), 'is_open': is_open, 'current': current,
+				  context = {'form':formFilter, 'diaabertos': list_diaaberto, 'earliest': earliest_year,
+							'latest': latest_year, 'is_open': is_open, 'current': current,
 							}
 					)
 
 def newDay(request, id=None):
+	logged_admin = Administrador.objects.get(utilizador_ptr_id = request.user.id)
 
 	if id is None:
-		dia_aberto = Diaaberto(administradorutilizadorid=Administrador.objects.get(id='1'))
+		dia_aberto = Diaaberto(administradorutilizadorid=logged_admin)
 	else:
-		dia_aberto = Diaaberto.objects.get(id=id,administradorutilizadorid=1)
+		dia_aberto = Diaaberto.objects.get(id=id,administradorutilizadorid=logged_admin)
 
 	dia_aberto_form = diaAbertoSettingsForm(instance=dia_aberto)
 
