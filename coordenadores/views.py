@@ -172,7 +172,7 @@ def locaisOrigem(request):
 def locaisDestino(request):
     default = {
         'key': '',
-        'value': 'Escolha o horário'
+        'value': 'Escolha o local de destino'
     }
     if request.method == 'POST':
         destinos = []
