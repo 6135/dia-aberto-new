@@ -54,6 +54,7 @@ def viewDays(request):
 		return redirect('utilizadores/login')
 	elif Administrador.objects.get(utilizador_ptr_id = request.user.id) is None:
 		return redirect('You need to be an admin')
+	u = Utilizador.objects.get(user_ptr_id=request.user.id).firstProfile()
 	if request.method == 'POST':
 		formFilter = diaAbertoFilterForm(request.POST)
 	else:
@@ -84,6 +85,7 @@ def viewDays(request):
 				  template_name='configuracao/listaDiaAberto.html',
 				  context = {'form':formFilter, 'diaabertos': list_diaaberto, 'earliest': earliest_year,
 							'latest': latest_year, 'is_open': is_open, 'current': current,
+							'u': u,
 							}
 					)
 
