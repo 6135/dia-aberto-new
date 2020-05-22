@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from . import views
 urlpatterns = [
-    path("",views.homepage,name="inicio"),
+    #path("",views.homepage,name="inicio"),
     path('admin', views.homepage, name='adminpage'),
     #-diaAberto
     path('diasabertos', views.viewDays, name='diasAbertos'),
