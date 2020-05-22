@@ -329,7 +329,7 @@ class Curso(models.Model):
         db_column='Nome', max_length=255, blank=True, null=True)
 
     unidadeorganicaid = models.ForeignKey(
-        'Unidadeorganica', models.CASCADE, db_column='UnidadeorganicaID')
+        'Unidadeorganica', models.CASCADE, db_column='Unidadeorganica')
 
     def __str__(self):
         return self.nome
