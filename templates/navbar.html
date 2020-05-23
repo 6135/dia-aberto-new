@@ -159,19 +159,19 @@
 
                 
                 
-                  {% if u == 'Participante'%}
+                  {% if request.user|has_group:'Participante'%}
                   <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
                 <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br>A sua <b>incrição</b> será apagada permanentemente.','del')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
-                    {% elif u == 'Colaborador'%}
+                    {% elif request.user|has_group:'Colaborador'%}
                     <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
                 <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br>As suas <b>tarefas</b> deixarão de lhe estar atribuidas.','del')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
-                    {% elif u == 'ProfessorUniversitario'%}
+                    {% elif request.user|has_group:'ProfessorUniversitario'%}
                     <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
                 <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br>As suas <b>atividades</b> serão apagadas permanentemente.','del')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
-                    {% elif u == 'Coordenador'%}
+                    {% elif request.user|has_group:'Coordenador'%}
                     <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
                 <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br> As <b>atividades dos departamentos</b> pelo qual está responsável serão apagadas permanentemente.<br><br>As <b>tarefas dos colaboradores</b> pelo qual está responsável serão apagadas permanentemente.','del')"role="listitem" tabindex="0" class="dropdown-item is-disabled"> 
-                    {% elif u == 'Administrador'%}
+                    {% elif request.user|has_group:'Administrador'%}
                     <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
                     {% if user|apagar_admin:user.id %}
                     <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
