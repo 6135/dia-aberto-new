@@ -74,7 +74,8 @@
       <div class="navbar-item">
       {% if user.is_authenticated %}
         <div class="dropdown is-bottom-left is-mobile-modal">
-
+          
+          <div onclick="notificacoes()">
           <div role="button" class="dropdown-trigger">
             <span role="button">
               <div type="button" data-badge="0" class="button has-badge-rounded has-badge-warning is-text"
@@ -87,6 +88,176 @@
               </div>
             </span>
           </div>
+</div>
+        
+        <div id="ver_notificacoes" class="modal">
+          <div class="modal-background"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Notificações</p>
+              
+              <button onclick="notificacoes()" class="delete" aria-label="close"></button>
+              
+            </header>
+            <section class="modal-card-body">
+             <nav class="panel">
+
+
+  <p class="panel-tabs">
+    <a class="is-active">Todas</a>
+    <a>Novas</a>
+    <a>Anteriores</a>
+  </p>
+  <a class="panel-block is-active">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    bulma
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    marksheet
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    minireset.css
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    jgthms.github.io
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-code-branch" aria-hidden="true"></i>
+    </span>
+    daniellowtw/infboard
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-code-branch" aria-hidden="true"></i>
+    </span>
+    mojs
+  </a>
+<a class="panel-block is-active">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    bulma
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    marksheet
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    minireset.css
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    jgthms.github.io
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-code-branch" aria-hidden="true"></i>
+    </span>
+    daniellowtw/infboard
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-code-branch" aria-hidden="true"></i>
+    </span>
+    mojs
+  </a>
+  <a class="panel-block is-active">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    bulma
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    marksheet
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    minireset.css
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    jgthms.github.io
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-code-branch" aria-hidden="true"></i>
+    </span>
+    daniellowtw/infboard
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-code-branch" aria-hidden="true"></i>
+    </span>
+    mojs
+  </a>
+  <a class="panel-block is-active">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    bulma
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    marksheet
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    minireset.css
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-book" aria-hidden="true"></i>
+    </span>
+    jgthms.github.io
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-code-branch" aria-hidden="true"></i>
+    </span>
+    daniellowtw/infboard
+  </a>
+  <a class="panel-block">
+    <span class="panel-icon">
+      <i class="fas fa-code-branch" aria-hidden="true"></i>
+    </span>
+    mojs
+  </a>
+
+</nav>
+            </section>
+          </div>
+        </div>
+
           <a href="{% url 'notificacoes:enviar-notificacao' %}">
           <div role="button" class="dropdown-trigger">
             <span role="button">
@@ -314,6 +485,19 @@ function definicoes() {
     x.className = "dropdown is-right";
   }
 }
+
+function notificacoes() {
+  var x = document.getElementById("ver_notificacoes");
+  if (x.className === "modal") {
+    x.className = "modal is-active";
+  } else {
+    x.className = "modal";
+  }
+
+}
+
 </script>
+
+
 
 {% endblock scripts %}
