@@ -1,14 +1,13 @@
-{% extends 'configuracao/app.html' %}
+{% extends 'app.html' %}
 {% block content %}
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><a href="{% url 'inicio' %}">Início</a></li>
+    <li><a href="{% url 'home' %}">Início</a></li>
     <li><a href="{% url 'minhasAtividades' %}">Tarefas</a></li>
     <li class="is-active"><a href="">Adicionar Tarefa</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
-  <div class="steps">
     <form method="POST" action="">
       {% csrf_token %}
       <nav class="steps is-success"> 
@@ -27,34 +26,30 @@
           </li> 
         </ul>
       </nav>        
-      <section class="step-content">           
-        <div class="step-item">
-                    <div style="padding: 1rem 2vw 0px;">
-                        <hr>
-                        <div class="column is-offset-3 is-6">
-                            <div class="block">
-                                <div class="field">
-                                    <label class="label">Tipo de tarefa: </label>
-                                </div>
-                                <div class="control">
-                                    {{formTarefa.tipo}}
-                                </div>
-                            </div>
-                            <div id="tipoTarefa">         
-                            </div>   
-                            <div class="field" style="padding-top:10px">
-                                <label class="label">Colaborador</label>
-                                <div class="control">
-                                    <div class="select is-fullwidth">
-                                      {{formTarefa.colab}}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
+        <div style="padding: 1rem 2vw 0px;">
+            <hr>
+            <div class="column is-offset-3 is-6">
+                <div class="block">
+                    <div class="field">
+                        <label class="label">Tipo de tarefa: </label>
                     </div>
+                    <div class="control">
+                        {{formTarefa.tipo}}
+                    </div>
+                </div>
+                <div id="tipoTarefa">         
+                </div>   
+                <div class="field" style="padding-top:10px">
+                    <label class="label">Colaborador</label>
+                    <div class="control">
+                        <div class="select is-fullwidth">
+                          {{formTarefa.colab}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr>
         </div>
-      </section>
       <div class="column is-8 is-offset-2">
                 <div class="level">
                   <div class="level-left">
@@ -68,7 +63,6 @@
                     </button>
                   </div>
                 </div>
-      </div>
       </form>
   </div>
 </div>
