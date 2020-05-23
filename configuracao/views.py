@@ -12,7 +12,6 @@ import random
 from _datetime import timedelta
 import json
 from pip._vendor import requests
-from django.core import serializers
 
 # Create your views here.
 
@@ -51,6 +50,11 @@ def showBy(request, list_diaaberto):
 
 def viewDays(request):
 
+	if not request.user.is_authenticated:
+		return redirect('utilizadores/login')
+	elif Administrador.objects.get(utilizador_ptr_id = request.user.id) is None:
+		return redirect('You need to be an admin')
+	u = Utilizador.objects.get(user_ptr_id=request.user.id).firstProfile()
 	if request.method == 'POST':
 		formFilter = diaAbertoFilterForm(request.POST)
 	else:
@@ -81,16 +85,20 @@ def viewDays(request):
 				  template_name='configuracao/listaDiaAberto.html',
 				  context = {'form':formFilter, 'diaabertos': list_diaaberto, 'earliest': earliest_year,
 							'latest': latest_year, 'is_open': is_open, 'current': current,
+							'u': u,
 							}
 					)
 
 def newDay(request, id=None):
+
 	logged_admin = Administrador.objects.get(utilizador_ptr_id = request.user.id)
 
 	if id is None:
 		dia_aberto = Diaaberto(administradorutilizadorid=logged_admin)
 	else:
 		dia_aberto = Diaaberto.objects.get(id=id,administradorutilizadorid=logged_admin)
+		print('stuff')
+		print(dia_aberto.session_times())
 
 	dia_aberto_form = diaAbertoSettingsForm(instance=dia_aberto)
 

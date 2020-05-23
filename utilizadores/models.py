@@ -30,6 +30,8 @@ class Utilizador(User):
             type+=', '+string
         return type
 
+    def firstProfile(self):
+        return self.getProfiles().split(' ')[0]
     class Meta:
         db_table = 'Utilizador'
 
