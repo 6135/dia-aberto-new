@@ -3,6 +3,7 @@ from django.db import models
 
 class Notificacao(models.Model):
     titulo = models.CharField(max_length=255)
+    lida = models.BooleanField(db_column="Lida")
     descricao = models.CharField(max_length=255)
     criadoem = models.DateTimeField(auto_now_add=True)
     recetor = models.ForeignKey(
