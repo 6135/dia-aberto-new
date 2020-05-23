@@ -39,7 +39,7 @@
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
         Utilizadores
       </a> 
-      <a href="/minhasatividades" class="navbar-item">
+      <a href="{% url 'consultarTarefa' %}" class="navbar-item">
         Tarefas
       </a>
     {% elif request.user|has_group:'Administrador'%}

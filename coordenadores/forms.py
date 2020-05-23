@@ -61,12 +61,12 @@ class TarefaForm(ModelForm):
 
     def __init__(self,*args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['colab'].queryset =  Colaborador.objects.filter().order_by('utilizadorid__nome')
+        self.fields['colab'].queryset =  Colaborador.objects.filter().order_by('utilizador_ptr_id__user_ptr_id__first_name')
 
         if 'sessaoid' in self.data:
             try:
                 sessoes_id = int(self.data.get('sessaoid'))
-                self.fields['colab'].queryset = Colaborador.objects.filter().order_by('utilizadorid__nome')
+                self.fields['colab'].queryset = Colaborador.objects.filter().order_by('utilizador_ptr_id__user_ptr_id__first_name')
             except (ValueError, TypeError):
                 pass  # invalid input from the client; ignore and fallback to empty City queryset
         elif self.instance.pk:
