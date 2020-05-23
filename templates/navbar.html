@@ -43,24 +43,21 @@
         Tarefas
       </a>
     {% elif request.user|has_group:'Administrador'%}
-      <a href="/minhasatividades" class="navbar-item">
-        Atividades
+      <a href="{% url 'configuracao:diasAbertos' %}" class="navbar-item">
+        Dias Abertos
       </a> 
-      <a href="/minhasatividades" class="navbar-item">
-        Inscrições
-      </a> 
-      <a href="/minhasatividades" class="navbar-item">
+      <a href="{% url 'configuracao:verTransportes' %}" class="navbar-item">
         Transportes
       </a> 
-      <a href="/minhasatividades" class="navbar-item">
+      <a href="" class="navbar-item">
+        Inscrições
+      </a> 
+      <a href="{% url 'configuracao:verMenus' %}" class="navbar-item">
         Almoços
       </a>  
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
         Utilizadores
       </a> 
-      <a href="/minhasatividades" class="navbar-item">
-        Configuração do Dia Aberto
-      </a>
 
     {% else %}
     <a href="" class="navbar-item">

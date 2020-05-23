@@ -12,6 +12,7 @@ import random
 from _datetime import timedelta
 import json
 from pip._vendor import requests
+from django.core import serializers
 
 # Create your views here.
 
@@ -47,14 +48,13 @@ def showBy(request, list_diaaberto):
 		elif request.POST['showBy'] == '3':
 			list_diaaberto = list_diaaberto.filter(datainscricaoatividadesfim__gte=today)
 	return list_diaaberto
-
+	
 def viewDays(request):
 
 	if not request.user.is_authenticated:
 		return redirect('utilizadores/login')
 	elif Administrador.objects.get(utilizador_ptr_id = request.user.id) is None:
 		return redirect('You need to be an admin')
-	u = Utilizador.objects.get(user_ptr_id=request.user.id).firstProfile()
 	if request.method == 'POST':
 		formFilter = diaAbertoFilterForm(request.POST)
 	else:
@@ -62,7 +62,7 @@ def viewDays(request):
 
 	list_diaaberto = Diaaberto.objects.all()	#Obtain all days
 
-	earliest = Diaaberto.objects.all().order_by('ano').first()#Obtain some constants
+	earliest = Diaaberto.objects.all().order_by('ano').first()	#Obtain some constants
 	latest = Diaaberto.objects.all().order_by('ano').last()
 	current = Diaaberto.objects.filter(ano=datetime.now().year).first()
 	is_open=False
@@ -85,7 +85,6 @@ def viewDays(request):
 				  template_name='configuracao/listaDiaAberto.html',
 				  context = {'form':formFilter, 'diaabertos': list_diaaberto, 'earliest': earliest_year,
 							'latest': latest_year, 'is_open': is_open, 'current': current,
-							'u': u,
 							}
 					)
 
@@ -97,7 +96,6 @@ def newDay(request, id=None):
 		dia_aberto = Diaaberto(administradorutilizadorid=logged_admin)
 	else:
 		dia_aberto = Diaaberto.objects.get(id=id,administradorutilizadorid=logged_admin)
-		print('stuff')
 		print(dia_aberto.session_times())
 
 	dia_aberto_form = diaAbertoSettingsForm(instance=dia_aberto)
@@ -108,7 +106,7 @@ def newDay(request, id=None):
 
 		if dia_aberto_form.is_valid():
 			dia_aberto_form.save()
-			return redirect('diasAbertos')
+			return redirect('configuracao:diasAbertos')
 
 	return render(request=request,
 				template_name = 'configuracao/diaAbertoForm.html',
@@ -117,17 +115,9 @@ def newDay(request, id=None):
 def delDay(request, id=None):
 
 	if id is not None:
-		dia_aberto = Diaaberto.objects.filter(id=id,administradorutilizadorid=1)
+		dia_aberto = Diaaberto.objects.filter(id=id)
 		dia_aberto.delete()
-	return redirect('diasAbertos')
-
-def view_days_as_json(request):
-	dias = Edificio.objects.all()
-	dias_as_json = serializers.serialize('json',list(dias))
-	return render(request=request,
-				  template_name='configuracao/blank.html',
-				  context = {'dias_as_json': dias_as_json}
-				)
+	return redirect('configuracao:diasAbertos')
 
 def filterMenus(request, menus):
 	if request.method == 'POST':

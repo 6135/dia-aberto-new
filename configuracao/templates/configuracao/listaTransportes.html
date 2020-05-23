@@ -1,4 +1,4 @@
-{% extends 'configuracao/app.html' %}
+{% extends 'app.html' %}
 {% block content %}
 {% load l10n %}
 {% load transporte_extra %}
@@ -70,7 +70,7 @@
               <li class="is-active"><a href="#" aria-current="page">Transportes</a></li>
             </ul>
           </nav>
-        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'criarTransporte'%}">     
+        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'configuracao:criarTransporte'%}">     
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
@@ -146,7 +146,7 @@
                         <td data-label="Operações">
                             <div class="columns">
                                 <div class="column is-1">  
-                                    <a id='assign' href="{% url 'atribuirTransporte' horarioTra.id %}">
+                                    <a id='assign' href="{% url 'configuracao:atribuirTransporte' horarioTra.id %}">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-bus-school mdi-24px"></i>
                                         </span>
@@ -154,7 +154,7 @@
                                 </div>
                                 &nbsp;
                                 <div class="column is-1">  
-                                    <a id='edit' href="{% url 'editarTransporte' horarioTra.transporte.id%}">
+                                    <a id='edit' href="{% url 'configuracao:editarTransporte' horarioTra.transporte.id%}">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                                         </span>
@@ -162,7 +162,7 @@
                                 </div>
                                 &nbsp;
                                 <div class="column is-1">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Transporte?','{% url 'eliminarTransporte' horarioTra.id %}')">
+                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Transporte?','{% url 'configuracao:eliminarTransporte' horarioTra.id %}')">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                                         </span>
