@@ -17,11 +17,11 @@ from . import serializers
 from utilizadores.forms import ParticipanteForm
 from django.http.request import HttpRequest
 from django.views.generic import CreateView, DetailView, TemplateView, ListView
-from atividades.models import Sessao, Atividade
-from .tables import InscricoesTable
-from django_tables2 import RequestConfig, SingleTableView
+from atividades.models import Sessao, Atividade 
+from .tables import InscricoesTable, DepartamentoTable, DiaAbertoTable
+from django_tables2 import RequestConfig, SingleTableView, MultiTableMixin
 from datetime import timezone
-from configuracao.models import Campus
+from configuracao.models import Campus, Departamento, Diaaberto
 
 
 class AtividadesAPIView(ListCreateAPIView):
@@ -150,188 +150,9 @@ class InscricaoWizard(SessionWizardView):
         return HttpResponse('<h1>Done!</h1>')
 
 
-class ConsultarInscricaoResponsaveis(DetailView):
-    model = Inscricao
-    template_name = 'inscricoes/consultar_inscricao_responsaveis.html'
-
-    def detail(request, inscricao_id):
-        q = Inscricao.objects.filter(slug=inscricao_id)
-        all_inscricoes = Inscricao.objects.all()
-        all_inscricoescoletivas = Inscricaocoletiva.objects.all()
-        qcoletivo = Inscricaocoletiva.objects.filter(slug=inscricao_id)
-        qindividual = Inscricaoindividual.objects.filter(slug=inscricao_id)
-        all_inscricoesindividuais = Inscricaoindividual.objects.all()
-        qescola = EscolaForm.objects.filter(slug=inscricao_id)
-        all_escolas = EscolaForm.objects.all()
-        qparticipante = ParticipanteForm.objects.filter(slug=inscricao_id)
-        all_participantes = ParticipanteForm.objects.all()
-        qatividade = Atividade.objects.filter(slug=inscricao_id)
-        all_atividades = Atividade.objects.all()
-        qmenu = Inscricaoprato.objects.filter(slug=inscricao_id)
-        all_menus = Inscricaoprato.objects.all()
-
-        if q.exists():
-            q = q.first()
-        else:
-            return HttpResponse('<h1>Page not found</h1>')
-
-        if qcoletivo.exists():
-            qcoletivo = qcoletivo.first()
-        else:
-            return HttpResponse('<h1>Page not found</h1>')
-
-        if qindividual.exists():
-            qindividual = qindividual.first()
-        else:
-            return HttpResponse('<h1>Page not found</h1>')
-
-        context = {
-            'inscricao': q,
-            'inscricoes': all_inscricoes,
-            'inscricaocoletiva': qcoletivo,
-            'inscricoescoletivas': all_inscricoescoletivas,
-            'inscricaoindividual': qindividual,
-            'inscricoesindividuais': all_inscricoesindividuais,
-            'escola': qescola,
-            'escolas': all_escolas,
-            'participante': qparticipante,
-            'participantes': all_participantes,
-            'atividade': qatividade,
-            'atividades': all_atividades,
-            'menu': qmenu,
-            'menus': all_menus
-        }
-
-        return render(request, 'inscricoes/consultar_inscricao_responsaveis.html', context)
 
 
-class ConsultarInscricaoEscola(DetailView):
-    model = Escola
-    template_name = 'inscricoes/consultar_inscricao_escola.html'
 
-    def detail(request, inscricao_id):
-        q = Inscricao.objects.filter(slug=inscricao_id)
-        all_inscricoes = Inscricao.objects.all()
-        all_inscricoescoletivas = Inscricaocoletiva.objects.all()
-        qcoletivo = Inscricaocoletiva.objects.filter(slug=inscricao_id)
-        qindividual = Inscricaoindividual.objects.filter(slug=inscricao_id)
-        all_inscricoesindividuais = Inscricaoindividual.objects.all()
-        qescola = EscolaForm.objects.filter(slug=inscricao_id)
-        all_escolas = EscolaForm.objects.all()
-        qparticipante = ParticipanteForm.objects.filter(slug=inscricao_id)
-        all_participantes = ParticipanteForm.objects.all()
-        qatividade = Atividade.objects.filter(slug=inscricao_id)
-        all_atividades = Atividade.objects.all()
-        qmenu = Inscricaoprato.objects.filter(slug=inscricao_id)
-        all_menus = Inscricaoprato.objects.all()
-
-        context = {
-            'inscricao': q,
-            'inscricoes': all_inscricoes,
-            'inscricaocoletiva': qcoletivo,
-            'inscricoescoletivas': all_inscricoescoletivas,
-            'inscricaoindividual': qindividual,
-            'inscricoesindividuais': all_inscricoesindividuais,
-            'escola': qescola,
-            'escolas': all_escolas,
-            'participante': qparticipante,
-            'participantes': all_participantes,
-            'atividade': qatividade,
-            'atividades': all_atividades,
-            'menu': qmenu,
-            'menus': all_menus
-        }
-
-        return render(request, 'inscricoes/consultar_inscricao_escola.html', context)
-
-    def escola(request):
-        inscricoes = Inscricao.objects.filter(
-            writingdate__lte=timezone.now()).order_by('writingdate')
-        locais = Escola.objects.all()
-        return render(request, 'inscricoes/consultar_inscricao_escola.html', {'inscricoes': inscricoes, 'locais': locais})
-
-    def transporte(request):
-        return render(request, 'inscricoes/consultar_inscricao_transporte.html')
-
-    def almoço(request):
-        return render(request, 'inscricoes/consultar_inscricao_almoço.html')
-
-    def sessoes(request):
-        return render(request, 'inscricoes/consultar_inscricao_sessao.html')
-
-
-def ConsultarInscricoesAntigo(request: HttpRequest):
-    pass
-
-
-def detail(request, inscricao_id):
-    q = Inscricao.objects.filter(slug=inscricao_id)
-    all_inscricoes = Inscricao.objects.all()
-    all_inscricoescoletivas = Inscricaocoletiva.objects.all()
-    qcoletivo = Inscricaocoletiva.objects.filter(slug=inscricao_id)
-    qindividual = Inscricaoindividual.objects.filter(slug=inscricao_id)
-    all_inscricoesindividuais = Inscricaoindividual.objects.all()
-    qescola = EscolaForm.objects.filter(slug=inscricao_id)
-    all_escolas = EscolaForm.objects.all()
-    qparticipante = ParticipanteForm.objects.filter(slug=inscricao_id)
-    all_participantes = ParticipanteForm.objects.all()
-    qatividade = Atividade.objects.filter(sluge=inscricao_id)
-    all_atividades = Atividade.objects.all()
-
-    if q.exists():
-        q = q.first()
-    else:
-        return HttpResponse('<h1>Page not found</h1>')
-
-    if qcoletivo.exists():
-        qcoletivo = qcoletivo.first()
-    else:
-        return HttpResponse('<h1>Page not found</h1>')
-
-    if qindividual.exists():
-        qindividual = qindividual.first()
-    else:
-        return HttpResponse('<h1>Page not found</h1>')
-
-    context = {
-        'inscricao': q,
-        'inscricoes': all_inscricoes,
-        'inscricaocoletiva': qcoletivo,
-        'inscricoescoletivas': all_inscricoescoletivas,
-        'inscricaoindividual': qindividual,
-        'inscricoesindividuais': all_inscricoesindividuais,
-        'escola': qescola,
-        'escolas': all_escolas,
-        'participante': qparticipante,
-        'participantes': all_participantes,
-        'atividade': qatividade,
-        'atividades': all_atividades
-    }
-
-    return render(request, 'inscricoes/consultar_inscricao.html', context)
-
-
-class ConsultarInscricao(DetailView):
-    model = Inscricao
-    template_name = 'inscricoes/consultar_inscricao.html'
-
-
-def ConsultarInscricoes(request: HttpRequest):
-
-    all_inscricoes = Inscricao.objects.all()
-    all_transports = Inscricaotransporte.objects.all()
-    all_plates = Inscricaoprato.objects.all()
-
-    # obj = Inscricao.objects.get(id = 1)
-    # obj2 = Inscricaotransporte.objects.get(id=1)
-    # obj3 = Inscricaocoletiva.objects.get(id=1)
-    context = {
-        'inscricoes': all_inscricoes,
-        'transportes': all_transports,
-        'almoços': all_plates
-    }
-
-    return render(request, "inscricoes/consultar_inscricoes.html", context)
 
 
 class ConsultarInscricaoIndividual(TemplateView):
@@ -369,18 +190,16 @@ def AlterarInscricao(request, inscricao_id):
     return render(request, "inscricoes/alterar_inscricao.html", {'form': form})
 
 
-class ConsultarInscricoesListView(SingleTableView):
+class ConsultarInscricoesListView(MultiTableMixin, TemplateView):
     model = Inscricao
     table_class = InscricoesTable
     template_name = 'inscricoes/consultar_inscricoes.html'
+    qs = Inscricao.objects.all()
+    qs2 = Departamento.objects.all()
+    qs3 = Diaaberto.objects.all()
 
-
-def tabela(request):
-    table = InscricoesTable(Inscricao.objects.all())
-    RequestConfig(request).configure(table)
-
-# def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['escolas'] = Escola.objects.all()
-#         context['inscricoes'] = Inscricao.objects.all()
-#         return context
+    tables = [
+        InscricoesTable(qs),
+        DepartamentoTable(qs2),
+        DiaAbertoTable(qs3)
+    ]
