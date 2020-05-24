@@ -67,6 +67,7 @@ INSTALLED_APPS = [
     'utilizadores',
     'phonenumber_field',
     'formtools',
+    'notifications',
     'rest_framework',
     'django_filters',
     "django_tables2",
@@ -77,6 +78,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 ]
+
+NOTIFICATIONS_NOTIFICATION_MODEL = 'notificacoes.Notificacao'
+
 
 DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
 
