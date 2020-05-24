@@ -18,6 +18,7 @@ from django.urls import path, include
 from django.contrib.auth import views as auth_views
 from utilizadores.forms import EmailValidationOnForgotPassword
 from utilizadores import views
+import notifications.urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -48,4 +49,6 @@ urlpatterns = [
     path('utilizadores/reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),
 
          name='password_reset_complete'),
+
+    path('inbox/notifications/', include("notifications.urls", namespace='notifications')),
 ]
