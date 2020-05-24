@@ -3,6 +3,7 @@ import django_filters.rest_framework as djangofilters
 from rest_framework import filters, pagination
 from rest_framework.generics import ListCreateAPIView
 from inscricoes.models import Escola, EscolaPortugal, Responsavel
+from utilizadores.models import Participante
 from formtools.wizard.views import SessionWizardView
 from django.http import HttpResponse, JsonResponse
 import json
@@ -21,7 +22,8 @@ from atividades.models import Sessao, Atividade
 from .tables import InscricoesTable
 from django_tables2 import RequestConfig, SingleTableView
 from datetime import timezone
-from configuracao.models import Campus
+from configuracao.models import Campus, Departamento, Unidadeorganica
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class AtividadesAPIView(ListCreateAPIView):
@@ -29,8 +31,13 @@ class AtividadesAPIView(ListCreateAPIView):
     class AtividadeFilter(djangofilters.FilterSet):
         nome = djangofilters.CharFilter(
             field_name="nome", lookup_expr='icontains')
+        campus_id = djangofilters.NumberFilter(
+            field_name="espacoid__edificio__campus__id")
+        unidade_organica_id = djangofilters.NumberFilter(
+            field_name="espacoid__edificio__campus__id")
         # min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
         # max_price = filters.NumberFilter(field_name="price", lookup_expr='lte')
+
         class Meta:
             model = Atividade
             fields = '__all__'
@@ -107,9 +114,13 @@ class InscricaoWizard(SessionWizardView):
         ('submissao', forms.SubmissaoForm),
     ]
 
-    # instance_dict = {
-    #     'responsaveis': Responsavel.objects.get(pk=1)
-    # }
+    def dispatch(self, request, *args, **kwargs):
+        participante = Participante.objects.filter(
+            utilizador_ptr_id=request.user.id).first()
+        self.instance_dict = {
+            'responsaveis': Responsavel(nome=participante.username, email=participante.email, tel=participante.contacto)
+        }
+        return super(InscricaoWizard, self).dispatch(request, *args, **kwargs)
 
     def get_form_step_data(self, form):
         # print(f"DATA: {form.data}")
@@ -120,12 +131,12 @@ class InscricaoWizard(SessionWizardView):
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
         if self.steps.current == 'sessoes':
-            # context.update({'campus': json.dumps(Campus.objects.all().map(c => c.nome))})
+            # context.update({'campus': })
             context.update({
-                'campus': json.dumps(["Gambelas", "Penha"]),
-                'unidades_organicas': json.dumps(["AA", "BB", "CC", "DD", "EE"]),
-                'departamentos': json.dumps(["aa", "bb", "cc", "dd", "ee"]),
-                'temas': json.dumps(["Tema A", "Tema B", "Tema C"]),
+                'campus': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Campus.objects.all()))),
+                'unidades_organicas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Unidadeorganica.objects.all()))),
+                'departamentos': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Departamento.objects.all()))),
+                'tipos': json.dumps(list(map(lambda x: x[0], Atividade.tipos))),
             })
         return context
 

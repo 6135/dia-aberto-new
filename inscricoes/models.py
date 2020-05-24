@@ -1,7 +1,8 @@
 from django.db import models
 from django.core import validators
 from phonenumber_field.modelfields import PhoneNumberField
-from datetime import datetime,time,timedelta
+from datetime import datetime, time, timedelta
+
 
 class Escola(models.Model):
     nome = models.CharField(max_length=200)
@@ -9,6 +10,7 @@ class Escola(models.Model):
 
     class Meta:
         db_table = 'Escola'
+
 
 class Inscricao(models.Model):
     nalunos = models.IntegerField()
@@ -31,41 +33,46 @@ class Inscricao(models.Model):
         db_table = 'Inscricao'
 
     def get_dias(self):
-        inscricao_sessoes= Inscricaosessao.objects.filter(inscricao=self)
-        dias=[]
+        inscricao_sessoes = Inscricaosessao.objects.filter(inscricao=self)
+        dias = []
         for sessao in inscricao_sessoes:
             if sessao.sessao.dia not in dias:
-                dias.append({'key':str(sessao.sessao.dia), 'value':sessao.sessao.dia})      
+                dias.append({'key': str(sessao.sessao.dia),
+                             'value': sessao.sessao.dia})
         return dias
-
-
-    def get_horarios(self,dia):
-        inscricao_sessoes = Inscricaosessao.objects.filter(inscricao=self).filter(sessao__dia=dia)
+    def get_horarios(self, dia):
+        inscricao_sessoes = Inscricaosessao.objects.filter(
+            inscricao=self).filter(sessao__dia=dia)
         horarios = []
         for sessao in inscricao_sessoes:
-            if sessao.sessao.horarioid not in horarios:             
+            if sessao.sessao.horarioid not in horarios:
                 horario = sessao.sessao.horarioid.inicio
                 duracao = sessao.sessao.atividadeid.duracaoesperada*60
-                td = (datetime.combine(datetime.min,horario) - datetime.min)
+                td = (datetime.combine(datetime.min, horario) - datetime.min)
                 secondsTotal = td.total_seconds() + duracao
                 time = str(timedelta(seconds=secondsTotal))
-                horarios.append({'key':sessao.sessao.horarioid.id, 'value':time})
+                horarios.append(
+                    {'key': sessao.sessao.horarioid.id, 'value': time})
         return horarios
 
-    def get_origem(self,dia,horario_id):
+    def get_origem(self, dia, horario_id):
         horario = 'configuracao.Horario'.objects.get(id=horario_id)
-        inscricao_sessoes =  Inscricaosessao.objects.filter(inscricao=self).filter(sessao__dia=dia).filter(sessao__horarioid__inicio=horario.inicio)
+        inscricao_sessoes = Inscricaosessao.objects.filter(inscricao=self).filter(
+            sessao__dia=dia).filter(sessao__horarioid__inicio=horario.inicio)
         origem = []
         for local in inscricao_sessoes:
-            origem.append({'key':local.sessao.atividadeid.espacoid.nome,'value':local.sessao.atividadeid.espacoid.nome})
+            origem.append({'key': local.sessao.atividadeid.espacoid.nome,
+                           'value': local.sessao.atividadeid.espacoid.nome})
         return origem
-    
-    def get_destino(self,dia,horario_id):
+
+    def get_destino(self, dia, horario_id):
         horario = 'configuracao.Horario'.objects.get(id=horario_id)
-        inscricao_sessoes =  Inscricaosessao.objects.filter(inscricao=self).filter(sessao__dia=dia).filter(sessao__horarioid__inicio=horario.fim)
+        inscricao_sessoes = Inscricaosessao.objects.filter(inscricao=self).filter(
+            sessao__dia=dia).filter(sessao__horarioid__inicio=horario.fim)
         destino = []
         for local in inscricao_sessoes:
-            destino.append({'key':local.sessao.atividadeid.espacoid.id,'value':local.sessao.atividadeid.espacoid.nome})
+            destino.append({'key': local.sessao.atividadeid.espacoid.id,
+                            'value': local.sessao.atividadeid.espacoid.nome})
         return destino
         return
 
