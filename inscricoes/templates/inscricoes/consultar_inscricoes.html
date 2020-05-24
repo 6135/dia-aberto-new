@@ -1,60 +1,66 @@
 {% extends 'app.html' %}
-{% block title %}Consultar Inscrição{% endblock title %}
-
 {% block content %}
+{% load django_tables2 %}
+<div class="columns">
+    <div class="column is-2">
+        <form method="GET" id='filter'>
+            {% csrf_token %}
+            <div>
+                <div class="menu">
+                    <p class="menu-label">Filtros Inscrições</p>
+                    {{filter.form}}
+                    <ul class="menu-list">
+                        <li>
+                            <div class="field">
+                                <div class="control is-expanded">
+                                    <div class="select is-fullwidth">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control has-icons-left is-clearfix">
+                                    <span class="icon is-left">
+                                    </span>
+                                </div>
+                            </div>
 
-        <div>
-                <nav aria-label="breadcrumbs" class="breadcrumb">
-                    <ul>
-                        <li><a href="/" class="router-link-active">Início</a></li>
-                        <li class="is-active"><a href="/inscricao" class="router-link-exact-active router-link-active">Inscrições</a></li>           
-                                 </ul>
-                </nav>
-     
-        {% csrf_token %}
-       
-<p>Filtrar por:</p>
-
-<form action="PageObjects" method="post">
-        <b>Departamento</b>
-         <select id="departamento">
-          <option value="departamento">FCT</option>
-          <option value="departamento">FCHS</option>
-
-
-        </select>
-</form>
-
-<form action="PageObjects" method="post">
-        <b>Hora</b>
-        <select id="hora">
-         <option value="hora">09:00</option>
-         <option value="hora">10:00</option>
-         <option value="hora">10:30</option>
-       </select>
-</form>
+                        </li>
+                        <li></li>
+                        <div class="field">
+                            <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
+                                <span class="icon is-left">
+                                    <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                                </span>
+                                <span>Limpar</span>
+                            </button>
+                            <button type="submit" class="button is-success is-outlined">
+                                <span class="icon is-left">
+                                    <i class="mdi mdi-magnify mdi-24px"></i>
+                                </span>
+                                <span>Pesquisar</span>
+                            </button>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="column">
 
 
-<form action="PageObjects" method="post">
-        <b>Área Científica</b>
-        <select id="hora">
-         <option value="hora">Matemática</option>
-         <option value="hora">Ciências</option>
-         <option value="hora">Economia</option>
-       </select>
-</form>
+        <div class="table" id="firstTable">
+            <table style="float: left " class="table is-hoverable">
 
-<form action="PageObjects" method="post">
-        <b>Tipo</b>
-        <select id="hora">
-         <option value="hora">Atividades Experimentais</option>
-         <option value="hora">Demonstrações</option>
-         <option value="hora">Atividades investigativas</option>
-       </select>
-</form>
-        
-        {% load django_tables2 %}
-        {% render_table table %}
+                {% render_table table %}
+                </td>
+                </tr>
+            </table>
+        </div>
 
+        {% include 'popup.html' %}
+        <style>
+            .firstTable {
+                font-color: #00003f;
+            }
+        </style>
         {% endblock content %}
-</div>
