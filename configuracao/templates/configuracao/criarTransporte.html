@@ -4,8 +4,8 @@
 {% block content %}
 <nav class="breadcrumb" aria-label="breadcrumbs">
 	<ul>
-	<li><a href="{% url 'inicio' %}">Início</a></li>
-	<li><a href="{% url 'adminpage' %}">Administrador</a></li>
+	<li><a href="{% url 'home' %}">Início</a></li>
+	<li><a href="{% url 'configuracao:verTransportes' %}">Administrador</a></li>
 	<li class="is-active"><a href="" aria-current="page">Criar Transporte</a></li>
 	</ul>
 </nav>
@@ -132,7 +132,7 @@
 	<div class="column is-8 is-offset-2">
 		<div class="level">
 		<div class="level-left">
-			<a class="button is-outlined" type="button" href="{% url 'verTransportes' %}">
+			<a class="button is-large is-outlined" type="button" href="{% url 'configuracao:verTransportes' %}">
 			<span>Cancelar</span>
 			</a>
 		</div>
@@ -166,7 +166,7 @@
 	value = Number(value) + Number('1');
 	document.getElementById("id_form-TOTAL_FORMS").value = value;
 	$.ajax({
-		url: "{% url 'ajaxAddHorarioRow' %}",
+		url: "{% url 'configuracao:ajaxAddHorarioRow' %}",
 		method: "POST",
 		data: {
 			'extra': value,
@@ -199,7 +199,7 @@ $('#del-row').click(function(e){
 $( document ).ready(function() {
 	var diaaberto_id = $('#id_diaaberto').val();
 	$.ajax({
-	url: "{% url 'getDias' %}",
+	url: "{% url 'configuracao:getDias' %}",
 	method: 'POST',
 	data: {
 		'diaaberto_id':diaaberto_id,
@@ -216,7 +216,7 @@ $( document ).ready(function() {
 $('#id_diaaberto').change(function(){
 	var diaaberto_id = $(this).val();
 	$.ajax({
-	url: "{% url 'getDias' %}",
+	url: "{% url 'configuracao:getDias' %}",
 	method: 'POST',
 	data: {
 		'diaaberto_id': diaaberto_id,

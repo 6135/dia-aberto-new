@@ -4,9 +4,9 @@
 {% block content %}
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><a href="{% url 'inicio' %}">Início</a></li>
-    <li><a href="{% url 'adminpage' %}">Administrador</a></li>
-    <li class="is-active"><a href="" aria-current="page">Configuracao do Dia Aberto</a></li>
+    <li><a href="{% url 'home' %}">Início</a></li>
+    <li><a href="">Administrador</a></li>
+    <li class="is-active"><a href="" aria-current="page">Menus</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
@@ -103,7 +103,7 @@ $( document ).ready(function() {
   var diaaberto_id = $('#id_diaaberto').val();
   console.log(diaaberto_id)
   $.ajax({
-    url: "{% url 'getDias' %}",
+    url: "{% url 'configuracao:getDias' %}",
     method: 'POST',
     data: {
       'diaaberto_id':diaaberto_id,
@@ -120,7 +120,7 @@ $( document ).ready(function() {
 $('#id_diaaberto').change(function(){
   var diaaberto_id = $(this).val();
   $.ajax({
-    url: "{% url 'getDias' %}",
+    url: "{% url 'configuracao:getDias' %}",
     method: 'POST',
     data: {
       'diaaberto_id':diaaberto_id,
