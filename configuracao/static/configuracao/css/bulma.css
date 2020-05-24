@@ -9354,6 +9354,7 @@ label.panel-block:hover {
 }
 
 .footer {
+  position: relative !important; 
   background-color: #fafafa;
   padding: 1rem 3rem;
 }

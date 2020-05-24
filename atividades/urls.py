@@ -2,6 +2,8 @@ from django.urls import path
 from django.conf.urls import url
 from . import views
 
+app_name = 'atividades'
+
 urlpatterns = [
     url(r'^minhasatividades/$',views.minhasatividades,name="minhasAtividades"),
     url(r'^atividadadesUOrganica/$',views.atividadescoordenador,name="atividadesUOrganica"),
