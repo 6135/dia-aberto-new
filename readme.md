@@ -21,7 +21,7 @@ git clone https://github.com/6135/dia-aberto-new/tree/master/dia_aberto
 3. Entrar na pasta do projeto
 
 ```SH
-cd dia-aberto
+cd dia-aberto-new
 ```
 
 4. Criar o ambiente do projeto (venv)
