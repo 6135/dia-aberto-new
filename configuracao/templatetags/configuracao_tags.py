@@ -8,6 +8,13 @@ import json
 register = template.Library()
 
 @register.filter
+def force_required(value):
+    value_str = str(value)
+    value_str = value_str[:-1] + ' required>'
+    print(value_str)
+    return value_str
+
+@register.filter
 def transport_type(value):
     tipo = 'Transporte Universitario'
     try:
