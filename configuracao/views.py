@@ -53,8 +53,8 @@ def viewDays(request):
 
 	if not request.user.is_authenticated:
 		return redirect('utilizadores:login')
-	elif Administrador.objects.get(utilizador_ptr_id = request.user.id) is None:
-		return redirect('You need to be an admin')
+	elif not Administrador.objects.filter(utilizador_ptr_id = request.user.id).exists():
+		return redirect('home')
 	if request.method == 'POST':
 		formFilter = diaAbertoFilterForm(request.POST)
 	else:
