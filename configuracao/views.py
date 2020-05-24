@@ -16,6 +16,18 @@ from django.core import serializers
 
 # Create your views here.
 
+def user_check(request, user_profile = Administrador):
+	if not request.user.is_authenticated:
+		return redirect('utilizadores:login')
+	elif not user_profile.objects.filter(utilizador_ptr_id = request.user.id).exists():
+		return render(request=request,
+					template_name='mensagem.html',
+					context={
+						'tipo':'error',
+						'm':'Não tem permissões para aceder a esta pagina!'
+					})
+	return None
+
 def homepage(request):
 	return render(request=request,
 				  template_name="configuracao/inicio.html",)
@@ -51,10 +63,9 @@ def showBy(request, list_diaaberto):
 	
 def viewDays(request):
 
-	if not request.user.is_authenticated:
-		return redirect('utilizadores:login')
-	elif not Administrador.objects.filter(utilizador_ptr_id = request.user.id).exists():
-		return redirect('home')
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	if request.method == 'POST':
 		formFilter = diaAbertoFilterForm(request.POST)
 	else:
@@ -90,6 +101,9 @@ def viewDays(request):
 
 def newDay(request, id=None):
 
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	logged_admin = Administrador.objects.get(utilizador_ptr_id = request.user.id)
 
 	if id is None:
@@ -113,6 +127,9 @@ def newDay(request, id=None):
 				context = {'form': dia_aberto_form})
 
 def delDay(request, id=None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
 
 	if id is not None:
 		dia_aberto = Diaaberto.objects.filter(id=id)
@@ -139,6 +156,10 @@ def filterMenus(request, menus):
 
 
 def viewMenus(request):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	form = menusFilterForm(request.POST)
 	menus = Menu.objects.all()
 	menus = filterMenus(request,menus)
@@ -148,6 +169,10 @@ def viewMenus(request):
 				)
 
 def newMenu(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	menu_object = Menu()
 	if id is not None:
 		menu_object = Menu.objects.get(id=id)
@@ -165,12 +190,20 @@ def newMenu(request, id = None):
 				)
 
 def delMenu(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	menu=Menu.objects.get(id=id)
 	menu.delete()
 	return redirect('configuracao:verMenus')
 
 
 def newPrato(request, id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	pratos = Prato.objects.filter(menuid=Menu.objects.get(id=id))
 	has_one = pratos.count() > 0
 	prato_object = Prato(menuid=Menu.objects.get(id=id))
@@ -201,6 +234,10 @@ def menuPratoFormset(extra = 0, minVal = 1):
 	return formSets
 
 def delPrato(request, id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	prato=Prato.objects.get(id=id)
 	menuid=prato.menuid.id
 	prato.delete()
@@ -237,6 +274,10 @@ def getDias(request):
 
 
 def verTransportes(request):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	form = []
 	transporte = Transportehorario.objects.all()
 	return render(request = request,
@@ -244,6 +285,10 @@ def verTransportes(request):
 				  context={'form': form, 'horariosTra': transporte})
 
 def criarTransporte(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	#vars
 	transport_by_default = Transporte()
 	transport_universitario_default = Transporteuniversitario(transporte=transport_by_default)
@@ -311,12 +356,19 @@ def newHorarioRow(request):
 
 
 def eliminarTransporte(request, id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	Transportehorario.objects.get(id=id).delete()
 	return redirect('configuracao:verTransportes')
 
 
 
 def atribuirTransporte(request, id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
 
 	class ChegadaPartida:
 		def __init__(self, id,nparticipantes,local,horario, check):
@@ -380,6 +432,10 @@ def atribuirTransporte(request, id):
 				  context={'transporte': transportehorario,  "inscricoestransporte": inscricaotransporte, "vagas": transportevagas, 'chegadapartida': dadoschepart})
 
 def eliminarAtribuicao(request, id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	transportehorario=Inscricaotransporte.objects.get(id=id).transporte.id
 	print(transportehorario)
 	Inscricaotransporte.objects.get(id=id).delete()
