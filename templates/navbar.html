@@ -105,22 +105,78 @@
 
 
   <p class="panel-tabs">
-    <a class="is-active">Todas</a>
-    <a>Novas</a>
-    <a>Anteriores</a>
+    <a  class="tablinks is-active" onclick="openNotificacoes(event, 'Todas')" >Todas</a>
+    <a  class="tablinks" onclick="openNotificacoes(event, 'Novas')" >Novas</a>
+    <a  class="tablinks" onclick="openNotificacoes(event, 'Anteriores')" >Anteriores</a>
   </p>
+<div id="Todas" style="display:block" class="tabcontent">
+Todas
+{% for notificacao in request.user|get_notificacoes:"Todas" %}
+ <a class="panel-block">
 
-  <a class="panel-block">
-
-
+{% if notificacao.lida == False %}
 <span class="icon has-text-info">
   <i class="fas fa-info-circle"></i>
+  </span>
+{% else %}
+<span class="icon has-text-success">
+  <i class="fas fa-check-square"></i>
 </span>
+  {% endif %}
+
     <p>
-    
+    notificacao.titulo
     </p>
   </a>
-  
+
+{%endfor%} 
+</div>  
+<div id="Novas" style="display:none" class="tabcontent">
+Novas
+{% for notificacao in request.user|get_notificacoes:"False" %}
+ <a class="panel-block">
+
+{% if notificacao.lida == False %}
+<span class="icon has-text-info">
+  <i class="fas fa-info-circle"></i>
+  </span>
+{% else %}
+<span class="icon has-text-success">
+  <i class="fas fa-check-square"></i>
+</span>
+  {% endif %}
+
+    <p>
+    notificacao.titulo
+    </p>
+  </a>
+
+{%endfor%} 
+</div>  
+<div id="Anteriores" style="display:none" class="tabcontent">
+Antigas
+{% for notificacao in request.user|get_notificacoes:"True" %}
+ <a class="panel-block">
+
+{% if notificacao.lida == False %}
+<span class="icon has-text-info">
+  <i class="fas fa-info-circle"></i>
+  </span>
+{% else %}
+<span class="icon has-text-success">
+  <i class="fas fa-check-square"></i>
+</span>
+  {% endif %}
+
+    <p>
+    notificacao.titulo
+    </p>
+  </a>
+
+{%endfor%} 
+</div>  
+
+
 
 
 </nav>
@@ -363,9 +419,21 @@ function notificacoes() {
   } else {
     x.className = "modal";
   }
-
 }
 
+function openNotificacoes(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
 </script>
 
 
