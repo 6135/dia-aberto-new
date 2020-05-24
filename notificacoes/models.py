@@ -14,7 +14,6 @@ class Notificacao(AbstractNotification):
 
 
 
-
 class EmissorMensagem(models.Model):
     mensagem = models.ForeignKey(
         Notificacao, models.CASCADE)
@@ -34,3 +33,18 @@ class RecetorMensagem(models.Model):
 
     class Meta:
         db_table = 'RecetorMensagem'
+
+
+
+
+
+class NotificacaoRecebida(models.Model):
+    notificacao = models.ForeignKey(
+        Notificacao, models.CASCADE)
+    emissor = models.ForeignKey(
+        'utilizadores.Utilizador', models.CASCADE)
+    recetor = models.ForeignKey(
+        'utilizadores.Utilizador', models.CASCADE)
+
+    class Meta:
+        db_table = 'NotificacaoRecebida'
