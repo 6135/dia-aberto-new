@@ -35,16 +35,3 @@ class RecetorMensagem(models.Model):
         db_table = 'RecetorMensagem'
 
 
-
-
-
-class NotificacaoRecebida(models.Model):
-    notificacao = models.ForeignKey(
-        Notificacao, models.CASCADE)
-    emissor = models.ForeignKey(
-        'utilizadores.Utilizador', models.CASCADE)
-    recetor = models.ForeignKey(
-        'utilizadores.Utilizador', models.CASCADE)
-
-    class Meta:
-        db_table = 'NotificacaoRecebida'
