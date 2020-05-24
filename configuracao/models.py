@@ -113,7 +113,7 @@ class Diaaberto(models.Model):
         db_column='DataPorpostaAtividadesFim')
     # Field name made lowercase.
     administradorutilizadorid = models.ForeignKey(
-        'utilizadores.Administrador', models.CASCADE, db_column='AdministradorUtilizadorID')
+        'utilizadores.Administrador', models.SET_NULL, db_column='AdministradorUtilizadorID',null=True)
     # Field name made lowercase.
     escalasessoes = models.TimeField(db_column='EscalaSessoes')
 
@@ -341,7 +341,7 @@ class Curso(models.Model):
         db_column='Nome', max_length=255, blank=True, null=True)
 
     unidadeorganicaid = models.ForeignKey(
-        'Unidadeorganica', models.CASCADE, db_column='UnidadeorganicaID')
+        'Unidadeorganica', models.CASCADE, db_column='Unidadeorganica')
 
     def __str__(self):
         return self.nome

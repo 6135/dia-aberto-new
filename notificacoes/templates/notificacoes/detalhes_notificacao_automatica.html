@@ -1,0 +1,97 @@
+
+{% extends 'app.html' %}
+
+{% block title %}- Detalhes Notificação{% endblock title %}
+
+{% block content %}
+<div>
+
+    <div style="padding: 3rem 2vw 1rem;">
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Título</label>
+            </div>
+            <div class="field-body">
+                <div class="field has-addons">
+                    <p class="control has-background-light" style="padding: 10px 30px">
+                        {{notificacao.titulo}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Mensagem</label>
+            </div>
+            <div class="field-body">
+                <div class="field has-addons has-background-light">
+                    <p class="control" style="padding: 10px 30px">
+                        {{notificacao.descricao}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Data de envio</label>
+            </div>
+            <div class="field-body">
+                <div class="field has-addons">
+                    <p class="control" style="padding: 6px 10px">
+                        {{notificacao.criadoem}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Remetente</label>
+            </div>
+            <div class="field-body">
+                <div class="field has-addons">
+                    <p class="control" style="padding: 6px 10px">
+                        <a href="">{{recetor.first_name}}</a> <smal>{{recetor.email}}</smal>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal">
+            <div class="field-label is-normal">
+                <label class="label">Destinatário</label>
+            </div>
+            <div class="field-body">
+                <div class="field has-addons">
+                    <p class="control" style="padding: 6px 10px">
+                        <a href="">{{recetor.first_name}}</a> (Prof. Universitário)
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="field is-horizontal" style="margin-top: 17px">
+            <div class="field-label">
+                <!-- Left empty for spacing -->
+            </div>
+            <div class="field-body">
+                <div class="field is-grouped">
+                    <p class="control">
+                        <a class="button is-danger is-outlined">
+                            <span class="icon is-small">
+                                <i class="fas fa-trash"></i>
+                            </span>
+                            <span>Apagar Notificação</span>
+                        </a>
+                    </p>
+                    <p class="control">
+                        <a class="button">
+                            <span>Responder</span>
+                            <span class="icon is-small">
+                                <i class="fas fa-reply"></i>
+                            </span>
+                        </a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

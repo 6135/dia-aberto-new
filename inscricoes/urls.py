@@ -13,7 +13,7 @@ urlpatterns = [
     path('api/atividades', views.AtividadesAPIView.as_view(), name="api-atividades"),
     path('api/escolas', views.EscolasAPIView.as_view(), name="api-escolas"),
     path('inscricaowizard', views.InscricaoWizard.as_view(),
-         name='criar-inscricao-wizard'),
+         name='criar-inscricao'),
     path('alterar/<int:pk>', views.AlterarInscricaoWizard.as_view(),
          name='alterar-inscricao-wizard'),
     path('alterarinscricao', AlterarInscricao, name='alterar-inscricao'),

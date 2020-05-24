@@ -12,6 +12,7 @@ import random
 from _datetime import timedelta
 import json
 from pip._vendor import requests
+from django.core import serializers
 
 # Create your views here.
 
@@ -47,13 +48,13 @@ def showBy(request, list_diaaberto):
 		elif request.POST['showBy'] == '3':
 			list_diaaberto = list_diaaberto.filter(datainscricaoatividadesfim__gte=today)
 	return list_diaaberto
-
+	
 def viewDays(request):
 
 	if not request.user.is_authenticated:
-		return redirect('utilizadores/login')
-	elif Administrador.objects.get(utilizador_ptr_id = request.user.id) is None:
-		return redirect('You need to be an admin')
+		return redirect('utilizadores:login')
+	elif not Administrador.objects.filter(utilizador_ptr_id = request.user.id).exists():
+		return redirect('home')
 	if request.method == 'POST':
 		formFilter = diaAbertoFilterForm(request.POST)
 	else:
@@ -61,7 +62,7 @@ def viewDays(request):
 
 	list_diaaberto = Diaaberto.objects.all()	#Obtain all days
 
-	earliest = Diaaberto.objects.all().order_by('ano').first()#Obtain some constants
+	earliest = Diaaberto.objects.all().order_by('ano').first()	#Obtain some constants
 	latest = Diaaberto.objects.all().order_by('ano').last()
 	current = Diaaberto.objects.filter(ano=datetime.now().year).first()
 	is_open=False
@@ -95,7 +96,6 @@ def newDay(request, id=None):
 		dia_aberto = Diaaberto(administradorutilizadorid=logged_admin)
 	else:
 		dia_aberto = Diaaberto.objects.get(id=id,administradorutilizadorid=logged_admin)
-		print('stuff')
 		print(dia_aberto.session_times())
 
 	dia_aberto_form = diaAbertoSettingsForm(instance=dia_aberto)
@@ -106,7 +106,7 @@ def newDay(request, id=None):
 
 		if dia_aberto_form.is_valid():
 			dia_aberto_form.save()
-			return redirect('diasAbertos')
+			return redirect('configuracao:diasAbertos')
 
 	return render(request=request,
 				template_name = 'configuracao/diaAbertoForm.html',
@@ -115,17 +115,9 @@ def newDay(request, id=None):
 def delDay(request, id=None):
 
 	if id is not None:
-		dia_aberto = Diaaberto.objects.filter(id=id,administradorutilizadorid=1)
+		dia_aberto = Diaaberto.objects.filter(id=id)
 		dia_aberto.delete()
-	return redirect('diasAbertos')
-
-def view_days_as_json(request):
-	dias = Edificio.objects.all()
-	dias_as_json = serializers.serialize('json',list(dias))
-	return render(request=request,
-				  template_name='configuracao/blank.html',
-				  context = {'dias_as_json': dias_as_json}
-				)
+	return redirect('configuracao:diasAbertos')
 
 def filterMenus(request, menus):
 	if request.method == 'POST':
@@ -165,7 +157,7 @@ def newMenu(request, id = None):
 		menu_form = menuForm(request.POST,instance=menu_object)
 		if menu_form.is_valid():
 			menu_form_object = menu_form.save()
-			return redirect('novoPrato', menu_form_object.id)
+			return redirect('configuracao:novoPrato', menu_form_object.id)
 
 	return render(request=request,
 				  template_name='configuracao/menuForm.html',
@@ -175,7 +167,7 @@ def newMenu(request, id = None):
 def delMenu(request, id = None):
 	menu=Menu.objects.get(id=id)
 	menu.delete()
-	return redirect('verMenus')
+	return redirect('configuracao:verMenus')
 
 
 def newPrato(request, id):
@@ -188,9 +180,9 @@ def newPrato(request, id):
 		if prato_form.is_valid():
 			prato_form.save()
 			if 'save' in request.POST:
-				return redirect('verMenus')
+				return redirect('configuracao:verMenus')
 			else:
-				return redirect('novoPrato',id)
+				return redirect('configuracao:novoPrato',id)
 	return render(request=request,
 				  template_name='configuracao/pratoForm.html',
 				  context = {'form': prato_form,
@@ -199,11 +191,20 @@ def newPrato(request, id):
 							}
 				)
 
+def menuPratoFormset(extra = 0, minVal = 1):
+	formSets = modelformset_factory(model=Transportehorario, exclude = ['transporte','id'],widgets={
+			'origem': Select(attrs={'class': 'input'}),
+			'chegada': Select(attrs={'class': 'input'}),
+			'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
+			'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
+		}, extra = extra, min_num = minVal, can_delete=True)
+	return formSets
+
 def delPrato(request, id):
 	prato=Prato.objects.get(id=id)
 	menuid=prato.menuid.id
 	prato.delete()
-	return redirect('novoPrato',menuid)
+	return redirect('configuracao:novoPrato',menuid)
 
 
 def getDias(request):
@@ -234,8 +235,6 @@ def getDias(request):
 				  context={'options':options, 'default': default}
 				)
 
-#def sourceView(request):
-#	return redirect('https://github.com/6135/dia-aberto')
 
 def verTransportes(request):
 	form = []
@@ -279,7 +278,7 @@ def criarTransporte(request, id = None):
 			for instance in horario_form_set.deleted_objects:
 				instance.delete()
 
-			return redirect('verTransportes')
+			return redirect('configuracao:verTransportes')
 		print(form_transport.errors)
 		print(form_universitario.errors)
 		print(horario_form_set.errors)
@@ -313,7 +312,7 @@ def newHorarioRow(request):
 
 def eliminarTransporte(request, id):
 	Transportehorario.objects.get(id=id).delete()
-	return redirect('verTransportes')
+	return redirect('configuracao:verTransportes')
 
 
 
@@ -374,7 +373,7 @@ def atribuirTransporte(request, id):
 			grupo= Inscricao.objects.get(id=gruposid)
 			new_inscricaotransporte= Inscricaotransporte(transporte=transportehorario, npassageiros=grupo.nalunos, inscricao= grupo)
 			new_inscricaotransporte.save()
-			return redirect('atribuirTransporte', id)
+			return redirect('configuracao:atribuirTransporte', id)
 
 	return render(request = request,
 				  template_name='configuracao/atribuirTransporte.html',
@@ -384,4 +383,4 @@ def eliminarAtribuicao(request, id):
 	transportehorario=Inscricaotransporte.objects.get(id=id).transporte.id
 	print(transportehorario)
 	Inscricaotransporte.objects.get(id=id).delete()
-	return redirect('atribuirTransporte', transportehorario)
+	return redirect('configuracao:atribuirTransporte', transportehorario)

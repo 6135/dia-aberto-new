@@ -1,4 +1,4 @@
-{% extends 'configuracao/app.html' %}
+{% extends 'app.html' %}
 {% block content %}
 {% load l10n %}
 
@@ -68,10 +68,10 @@
             </ul>
           </nav>
         {% if is_open == True %}
-        <input type="hidden" id="novoDia" value="{% url 'novoDia'%}">  
+        <input type="hidden" id="novoDia" value="{% url 'configuracao:novoDia'%}">  
         <a onclick="alert.render('Ainda existe um dia aberto em vigor.\nTem a certeza que deseja criar um novo?','novoDia')" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">     
         {% else %}
-        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'novoDia'%}">     
+        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'configuracao:novoDia'%}">     
         {% endif %}
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
@@ -116,14 +116,14 @@
                             <div class="columns">
                                 
                                 <div class="column">  
-                                    <a id='edit' href="{% url 'editarDia' diaAberto.id %}">
+                                    <a id='edit' href="{% url 'configuracao:editarDia' diaAberto.id %}">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                                         </span>
                                     </a>
                                 </div>
                                 <div class="column">               
-                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia Aberto?<br>Atenção, isto irá eliminar todas as atividades e insciçoes associadas!','{% url 'eliminarDia' diaAberto.id %}')">
+                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia Aberto?<br>Atenção, isto irá eliminar todas as atividades e insciçoes associadas!','{% url 'configuracao:eliminarDia' diaAberto.id %}')">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                                         </span>
