@@ -19,8 +19,8 @@
     <div class="navbar-start">
 
     {% if request.user|has_group:'Participante' %}
-    <a href="/minhasatividades" class="navbar-item">
-      Minhas Atividades
+    <a href="{% url 'inscricoes:criar-inscricao' %}" class="navbar-item">
+      Minha Inscrição
     </a>
     {% elif request.user|has_group:'Colaborador'%}
     <a href="{% url 'colaboradores:consultar-tarefas' %}" class="navbar-item">
