@@ -76,7 +76,13 @@ class Atividade(models.Model):
             if sessao.dia not in dias:
                 dias.append(sessao.dia)
         return dias
+    
+    #def get_campus(self):
+    #    return str(self.espacoid.edificio.campus)
 
+    #def get_uo(self):
+    #    return str(self.professoruniversitarioutilizadorid.faculdade)
+    
 class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
