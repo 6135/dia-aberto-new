@@ -3,69 +3,64 @@
 {% load django_tables2 %}
 <div class="columns">
     <div class="column is-2">
-     <form method="POST" action="" id='filter'>
-         {% csrf_token %}
-         <div>
-         <div class="menu">
-             <p class="menu-label">Filtros Inscrições</p>
-             <ul class="menu-list">
-             <li>
-                 <div class="field">
-                     <div class="control is-expanded">
-                         <div class="select is-fullwidth">
-                             {{filter.tipo}}
-                         </div>
-                     </div>
-                 </div>
-                 <div class="field">
-                 <div class="control has-icons-left is-clearfix">
-                     {{filter.searchTarefa}}
-                     <span class="icon is-left">
-                     </span>
-                 </div>
-             </div>
-                
-                
-             </li>
-             <li></li>
-             <div class="field">
-                 <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
-                     <span class="icon is-left">
-                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                     </span>
-                     <span >Limpar</span>
-                 </button>
-                 <button type="Submit" class="button is-success is-outlined">
-                     <span class="icon is-left">
-                         <i class="mdi mdi-magnify mdi-24px"></i>
-                     </span>
-                     <span>Pesquisar</span>
-                 </button>
-             </div>
-             </ul>
-         </div>
-         </div>
-     </form>    
- </div>
-<div class="columns">
-    
-        {% for table in tables %}
+        <form method="GET" id='filter'>
+            {% csrf_token %}
+            <div>
+                <div class="menu">
+                    <p class="menu-label">Filtros Inscrições</p>
+                    {{filter.form}}
+                    <ul class="menu-list">
+                        <li>
+                            <div class="field">
+                                <div class="control is-expanded">
+                                    <div class="select is-fullwidth">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="control has-icons-left is-clearfix">
+                                    <span class="icon is-left">
+                                    </span>
+                                </div>
+                            </div>
+
+                        </li>
+                        <li></li>
+                        <div class="field">
+                            <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
+                                <span class="icon is-left">
+                                    <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                                </span>
+                                <span>Limpar</span>
+                            </button>
+                            <button type="submit" class="button is-success is-outlined">
+                                <span class="icon is-left">
+                                    <i class="mdi mdi-magnify mdi-24px"></i>
+                                </span>
+                                <span>Pesquisar</span>
+                            </button>
+                        </div>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="column">
+
+
         <div class="table" id="firstTable">
-                <table style="float: left ">
-                    
+            <table style="float: left " class="table is-hoverable">
+
                 {% render_table table %}
-                {% endfor %}  </td></tr>  
-</table>
-</div>  
- 
+                </td>
+                </tr>
+            </table>
+        </div>
 
-
-
-{% include 'popup.html' %}
-<style>
-.firstTable{
-    font-color: #00003f;
-}
-
-</style>
-{% endblock content %}
+        {% include 'popup.html' %}
+        <style>
+            .firstTable {
+                font-color: #00003f;
+            }
+        </style>
+        {% endblock content %}

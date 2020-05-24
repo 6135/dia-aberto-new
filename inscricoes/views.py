@@ -19,10 +19,11 @@ from django.http.request import HttpRequest
 from django.views.generic import CreateView, DetailView, TemplateView, ListView
 from atividades.models import Sessao, Atividade 
 from .tables import InscricoesTable, DepartamentoTable, DiaAbertoTable
-from django_tables2 import RequestConfig, SingleTableView, MultiTableMixin
+from django_tables2 import RequestConfig, SingleTableView, MultiTableMixin, SingleTableMixin
 from datetime import timezone
 from configuracao.models import Campus, Departamento, Diaaberto
-
+from .filters import InscricaoFilter
+from django_filters.views import FilterView
 
 class AtividadesAPIView(ListCreateAPIView):
 
@@ -151,10 +152,6 @@ class InscricaoWizard(SessionWizardView):
 
 
 
-
-
-
-
 class ConsultarInscricaoIndividual(TemplateView):
 
     template_name = 'inscricoes/consultar_inscricao.html'
@@ -190,16 +187,11 @@ def AlterarInscricao(request, inscricao_id):
     return render(request, "inscricoes/alterar_inscricao.html", {'form': form})
 
 
-class ConsultarInscricoesListView(MultiTableMixin, TemplateView):
+class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     model = Inscricao
     table_class = InscricoesTable
     template_name = 'inscricoes/consultar_inscricoes.html'
-    qs = Inscricao.objects.all()
-    qs2 = Departamento.objects.all()
-    qs3 = Diaaberto.objects.all()
+    
+    filterset_class = InscricaoFilter
 
-    tables = [
-        InscricoesTable(qs),
-        DepartamentoTable(qs2),
-        DiaAbertoTable(qs3)
-    ]
+    

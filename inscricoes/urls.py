@@ -21,7 +21,7 @@ urlpatterns = [
     # url('consultar-inscricao-transporte',  ConsultarInscricaoResponsaveis.transporte, name="transporte"),
     # url('consultar-inscricao-almoço',  ConsultarInscricaoResponsaveis.almoço, name="almoço"),
     # url('consultar-inscricao-sessao',  ConsultarInscricaoResponsaveis.sessoes, name="sessao"),
-    path("tabela/", ConsultarInscricoesListView.as_view()),
+    path("tabela/", ConsultarInscricoesListView.as_view(), name="consultar-inscricoes"),
     # url('<int:pk>', ConsultarInscricaoEscola.as_view(), name='consultar-inscricao-escola'),
     # path('consultarinscricoes', ConsultarInscricoes, name='consultar-inscricoes'),
 
