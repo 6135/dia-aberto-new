@@ -113,7 +113,7 @@ class Diaaberto(models.Model):
         db_column='DataPorpostaAtividadesFim')
     # Field name made lowercase.
     administradorutilizadorid = models.ForeignKey(
-        'utilizadores.Administrador', models.CASCADE, db_column='AdministradorUtilizadorID')
+        'utilizadores.Administrador', models.SET_NULL, db_column='AdministradorUtilizadorID',null=True)
     # Field name made lowercase.
     escalasessoes = models.TimeField(db_column='EscalaSessoes')
 

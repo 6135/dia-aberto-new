@@ -1,10 +1,10 @@
-{% extends 'configuracao/app.html' %}
+{% extends 'app.html' %}
 {% block content %}
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><a href="{% url 'inicio' %}">Início</a></li>
-    <li><a href="{% url 'verMenus' %}">Menus</a></li>
-    <li class="is-active"><a href="{% url 'novoMenu' %}" aria-current="page"> Inserir Prato</a></li>
+    <li><a href="{% url 'home' %}">Início</a></li>
+    <li><a href="{% url 'configuracao:verMenus' %}">Menus</a></li>
+    <li class="is-active"><a href="{% url 'configuracao:novoMenu' %}" aria-current="page"> Inserir Prato</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
@@ -55,7 +55,7 @@
                         <td data-label="Prato">{{prato.prato}}</td>
                         <td data-label="# Pratos Disponiveis">{{prato.nrpratosdisponiveis}}</td>
                         <td>
-                          <a onclick="alert.render('Tem a certeza que deseja eliminar este prato?','{% url 'eliminarPrato' prato.id%}')">
+                          <a onclick="alert.render('Tem a certeza que deseja eliminar este prato?','{% url 'configuracao:eliminarPrato' prato.id%}')">
                             <span class="icon has-text-danger">
                               <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                             </span>
@@ -123,13 +123,13 @@
     <div class="column is-8 is-offset-2">
       <div class="level">
       <div class="level-left">
-         <a class="button is-large is-outlined" name="cancelar" value="Cancelar" href={% url 'verMenus' %}>
+         <a class="button is-large is-outlined" name="cancelar" value="Cancelar" href={% url 'configuracao:verMenus' %}>
             <span>Cancelar</span>
          </a>
       </div>
       <div class="level-right">
       {% if has_one %}
-        <a id="concluir" class="button is-large is-success is-outlined is-link" name="save" value="save" href={% url 'verMenus' %}>
+        <a id="concluir" class="button is-large is-success is-outlined is-link" name="save" value="save" href={% url 'configuracao:verMenus' %}>
           <span>Finalizar</span>
           <span class="icon is-medium">
             <i class="mdi mdi-forward mdi-36px"></i>

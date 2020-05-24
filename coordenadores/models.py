@@ -7,19 +7,6 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 
-# class Coordenador(models.Model):
-#     # Field name made lowercase.
-#     utilizador = models.OneToOneField(
-#         'utilizadores.Utilizador', models.CASCADE, db_column='UtilizadorID', primary_key=True)
-#     # Field name made lowercase.
-#     gabinete = models.CharField(
-#         db_column='Gabinete', max_length=255, blank=True, null=True)
-#     unidadeorganicaid = models.ForeignKey('configuracao.Unidadeorganica', models.CASCADE, db_column='unidadeOrganicaID')  # Field name made lowercase.
- 
-#     class Meta:
-#         db_table = 'Coordenador'
-
-
 class Tarefa(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.

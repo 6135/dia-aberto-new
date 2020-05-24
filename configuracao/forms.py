@@ -42,7 +42,8 @@ class diaAbertoSettingsForm(ModelForm):
             'datainscricaoatividadesfim': DateTimeWidget(hours='23', minutes='55'),
             'descricao': Textarea(attrs={'class':'textarea'}),
             'precoalunos': NumberInput(attrs={'class':'input', 'step': '0.01','min': '0'}),
-            'precoprofessores': NumberInput(attrs={'class':'input','step': '0.01','min': '0'})
+            'precoprofessores': NumberInput(attrs={'class':'input','step': '0.01','min': '0'}),
+            'escalasessoes': TimeInput(attrs={'class':'input','step': '00:05','min': '00:05', 'max':'01:00','value':'00:05','type':'time'})
         }
     
 class diaAbertoFilterForm(Form):

@@ -1,9 +1,11 @@
 from django.contrib import admin
 from django.urls import path
 from . import views
+
+app_name = 'configuracao'
+
 urlpatterns = [
-    #path("",views.homepage,name="inicio"),
-    path('admin', views.homepage, name='adminpage'),
+
     #-diaAberto
     path('diasabertos', views.viewDays, name='diasAbertos'),
     path('editardia/<int:id>', views.newDay, name='editarDia'),

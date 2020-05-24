@@ -27,27 +27,18 @@ urlpatterns = [
     path('utilizadores/', include('utilizadores.urls')),
     path('notificacoes/', include('notificacoes.urls')),
     path('colaboradores/', include('colaboradores.urls')),
-    path('', include('atividades.urls')),
-    path('', include('configuracao.urls')),
-    path('', include('coordenadores.urls')),
+    path('configuracao/', include('configuracao.urls')),
+    path('coordenadores/', include('coordenadores.urls')),
 
     path('', views.home, name='home'),
 
     path('utilizadores/password_reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_done.html'),
          name='password_reset_done'),
-
-
-
     path('utilizadores/reset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(
         template_name='registration/password_reset_confirm.html'), name='password_reset_confirm'),
-
     path('utilizadores/password_reset/', auth_views.PasswordResetView.as_view(
         form_class=EmailValidationOnForgotPassword), name='password_reset'),
-
-
-
     path('utilizadores/reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),
-
          name='password_reset_complete'),
 
     path('inbox/notifications/', include("notifications.urls", namespace='notifications')),
