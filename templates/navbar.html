@@ -110,10 +110,9 @@
     <a  class="tablinks" onclick="openNotificacoes(event, 'Anteriores')" >Anteriores</a>
   </p>
 <div id="Todas" style="display:block" class="tabcontent">
-Todas
-{% for notificacao in request.user|get_notificacoes:"Todas" %}
- <a class="panel-block">
 
+{% for notificacao in request.user|get_notificacoes:"Todas" %}
+ <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}" class="panel-block">
 {% if notificacao.lida == False %}
 <span class="icon has-text-info">
   <i class="fas fa-info-circle"></i>
@@ -124,18 +123,18 @@ Todas
 </span>
   {% endif %}
 
-    <p>
-    notificacao.titulo
-    </p>
+
+      <p><strong>{{notificacao.titulo}}</strong></p>
+
   </a>
 
 {%endfor%} 
 </div>  
-<div id="Novas" style="display:none" class="tabcontent">
-Novas
-{% for notificacao in request.user|get_notificacoes:"False" %}
- <a class="panel-block">
 
+
+<div id="Novas" style="display:none" class="tabcontent">
+{% for notificacao in request.user|get_notificacoes:"False" %}
+  <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}" class="panel-block">
 {% if notificacao.lida == False %}
 <span class="icon has-text-info">
   <i class="fas fa-info-circle"></i>
@@ -146,18 +145,16 @@ Novas
 </span>
   {% endif %}
 
-    <p>
-    notificacao.titulo
-    </p>
+
+      <p><strong>{{notificacao.titulo}}</strong></p>
+
   </a>
 
 {%endfor%} 
 </div>  
 <div id="Anteriores" style="display:none" class="tabcontent">
-Antigas
 {% for notificacao in request.user|get_notificacoes:"True" %}
- <a class="panel-block">
-
+ <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}" class="panel-block">
 {% if notificacao.lida == False %}
 <span class="icon has-text-info">
   <i class="fas fa-info-circle"></i>
@@ -168,9 +165,9 @@ Antigas
 </span>
   {% endif %}
 
-    <p>
-    notificacao.titulo
-    </p>
+
+      <p><strong>{{notificacao.titulo}}</strong></p>
+
   </a>
 
 {%endfor%} 
