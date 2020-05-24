@@ -17,7 +17,7 @@ class Notificacao(AbstractNotification):
 class MensagemRecebida(models.Model):
     mensagem = models.ForeignKey(
         Notificacao, models.CASCADE)
-        
+
     class Meta:
         db_table = 'MensagemRecebida'
 
