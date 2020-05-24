@@ -186,9 +186,7 @@ class Prato(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
-    nrpratosdisponiveis = models.IntegerField(db_column='NrPratosDisponiveis')
-    # Field name made lowercase.
-    prato = models.CharField(db_column='Prato',max_length=255)
+    prato = models.CharField(db_column='Prato',max_length=255, blank=False, null=False)
     # Field name made lowercase.
     tipos = {
         ('Carne',"Carne"),
@@ -197,7 +195,11 @@ class Prato(models.Model):
         ('Sobremesa', 'Sobremesa'),
     }
     tipo = models.CharField(
-         default='Carne', choices=tipos,db_column='Tipo', max_length=255, blank=False, null=False)
+        choices=tipos,db_column='Tipo', max_length=255, blank=True, null=False)
+    # Field name made lowercase.
+    nrpratosdisponiveis = models.IntegerField(db_column='NrPratosDisponiveis',blank=False, null=False)
+
+
     # Field name made lowercase.
     menuid = models.ForeignKey(Menu, models.CASCADE, db_column='MenuID')
 

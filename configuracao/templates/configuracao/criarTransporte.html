@@ -2,6 +2,7 @@
 {% extends 'app.html' %}
 {% load static %}
 {% block content %}
+{% load configuracao_tags %}
 <nav class="breadcrumb" aria-label="breadcrumbs">
 	<ul>
 	<li><a href="{% url 'home' %}">Início</a></li>
@@ -12,142 +13,133 @@
 <div style="padding: 3rem 2vw 1rem">
 	<form method="POST" action="">
 		<div id="id_removed_rows" style="display:none;"></div>
-	{% csrf_token %}
-	{{ form.non_field_errors }}
-	<div class="b-steps">
-	<section class="step-content">
-		<div class="step-item">
-			<div style="padding: 1rem 2vw 0px">
+		{% csrf_token %}
+		{{ form.non_field_errors }}
+		<div class="b-steps">
+			<section class="step-content">
+				<div class="step-item">
+					<div style="padding: 1rem 2vw 0px">
 
-				<hr>
-				<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-				Transporte
-				</h2>
+						<hr>
+						<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+						Transporte
+						</h2>
 
-				<div class="columns">
-				<div class="column">
-					<strong>{{form_t.identificador.errors}}</strong>
-					<div class="field">
-					<label class="label">Identificador</label>
-					<div class="control">
-						<span class="is-fullwidth is-empty">
-						{{form_t.identificador}}
-						</span>
-					</div>
-					</div>
-				</div>
-				<div class="column">
-					<strong>{{form_uni.capacidade.errors}}</strong>
-					<div class="field">
-					<label class="label">Capacidade</label>
-					<div class="control">
-						<span class="is-fullwidth is-empty">
-						{{form_uni.capacidade}}
-						</span>
-					</div>
-					</div>
-				</div>
-
-				<div class="column">
-					<strong>{{form_t.dia.errors}}</strong>
-					<div class="field">
-						<label class="label">Dia</label>
-						<div class="select is-fullwidth is-empty">
-						<span class="is-fullwidth is-empty">
-							{{form_t.dia}}
-						</span>
+						<div class="columns">
+							<div class="column">
+								<strong>{{form_t.identificador.errors}}</strong>
+								<div class="field">
+								<label class="label">Identificador</label>
+								<div class="control">
+									<span class="is-fullwidth is-empty">
+									{{form_t.identificador}}
+									</span>
+								</div>
+								</div>
+							</div>
+							<div class="column">
+								<strong>{{form_uni.capacidade.errors}}</strong>
+								<div class="field">
+								<label class="label">Capacidade</label>
+								<div class="control">
+									<span class="is-fullwidth is-empty">
+									{{form_uni.capacidade}}
+									</span>
+								</div>
+								</div>
+							</div>
+							<div class="column">
+								<strong>{{form_t.dia.errors}}</strong>
+								<div class="field">
+									<label class="label">Dia</label>
+									<div class="select is-fullwidth is-empty">
+									<span class="is-fullwidth is-empty">
+										{{form_t.dia}}
+									</span>
+									</div>
+								</div>
+							</div>
 						</div>
-						</div>
-					</div>
-
-				</div>
-					<hr>
-				<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-					Transporte Horario
-				</h2>
-					<div class='table'>
-						<div class='table-wrapper'>
-							{{formset.management_form}}
-							<table class="table has-mobile-cards is-hoverable is-fullwidth" id='table01'>
-								<thead>
-									<tr>
-										<th style="cursor: pointer">Origem</th>
-										<th style="cursor: pointer">Chegada</th>
-										<th style="cursor: pointer">Hora Partida</th>
-										<th style="cursor: pointer">Hora Chegada</th>
-									</tr>
-								</thead>
-								<tbody id='tableBody-01'>
-								{% for form in formset %}
-								{{form.non_field_errors}}
-
-									<tr>
-										{{form.id}}
-										{% for field in form.visible_fields  %}
-											{% if field.name != "DELETE" %}
-												{% for error in field.errors %}
-													<div class="alert alert-danger">
-														<strong>{{field.label|escape}} {{ error|escape }}</strong>
-													</div>
-												{% endfor %}
-												
-													<td data-label="{{field.label}}">
-														{% if field.label == "Origem" or field.label == "Chegada" %}
-															<span class="select is-fullwidth is-empty">
-																{{field}}
-															</span>
-														{% else %}
-															{{field}}
-														{% endif %}
-													</td>
-												
-											{% endif %}
-										{% endfor %}
-									</tr>
-								{% endfor %}
-
-								</tbody>
-								
-							</table>
-							<a role="button" type="button" class="button" id="add-more-rows">
-								<span>Adicionar Linha</span>
-							<span class="icon is-small">
-								<i class="mdi mdi-plus mdi-24px"></i>
-							</span>
-						</a>
-						<a id="del-row" role="button" type="button" class="button">
-							<span>Remover Linha</span>
+						<hr>
+						<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Transporte Horario</h2>
+						<div class='table'>
+							<div class='table-wrapper'>
+								{{formset.management_form}}
+								<table class="table has-mobile-cards is-hoverable is-fullwidth" id='table01'>
+									<thead>
+										<tr>
+											<th style="cursor: pointer">Origem</th>
+											<th style="cursor: pointer">Chegada</th>
+											<th style="cursor: pointer">Hora Partida</th>
+											<th style="cursor: pointer">Hora Chegada</th>
+										</tr>
+									</thead>
+									<tbody id='tableBody-01'>
+									{% for form in formset %}
+									{{form.non_field_errors}}
+										<tr>
+											{{form.id}}
+											{% for field in form.visible_fields  %}
+												{% if field.name != "DELETE" %}
+													{% for error in field.errors %}
+														<div class="alert alert-danger">
+															<strong>{{field.label|escape}} {{ error|escape }}</strong>
+														</div>
+													{% endfor %}
+													
+														<td data-label="{{field.label}}">
+															{% if field.label == "Origem" or field.label == "Chegada" %}
+																<span class="select is-fullwidth is-empty" required>
+																	{{field}}
+																</span>
+															{% else %}
+																{{field|force_required|safe}}
+															{% endif %}
+														</td>
+													
+												{% endif %}
+											{% endfor %}
+										</tr>
+									{% endfor %}
+									</tbody>
+								</table>
+								<a role="button" type="button" class="button" id="add-more-rows">
+									<span>Adicionar Linha</span>
 								<span class="icon is-small">
-									 <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+									<i class="mdi mdi-plus mdi-24px"></i>
 								</span>
 							</a>
+							<a id="del-row" role="button" type="button" class="button">
+								<span>Remover Linha</span>
+									<span class="icon is-small">
+										<i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+									</span>
+								</a>
+							</div>
 						</div>
 					</div>
-			</div>
-			<hr>
-			</div>
+					<hr>
+					<div class="column is-8 is-offset-2">
+						<div class="level">
+							<div class="level-left">
+								<a class="button is-large is-outlined" type="button" href="{% url 'configuracao:verTransportes' %}">
+								<span>Cancelar</span>
+								</a>
+							</div>
+							<div class="level-right">
+								<button class="button is-large is-success is-outlined is-link" type="submit">
+								<span>Continuar</span>
+								<span class="icon is-medium">
+									<i class="mdi mdi-forward mdi-36px"></i>
+								</span>
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
 		</div>
-		</div>
-	</section>
-	<div class="column is-8 is-offset-2">
-		<div class="level">
-		<div class="level-left">
-			<a class="button is-large is-outlined" type="button" href="{% url 'configuracao:verTransportes' %}">
-			<span>Cancelar</span>
-			</a>
-		</div>
-		<div class="level-right">
-			<button class="button is-large is-success is-outlined is-link" type="submit">
-			<span>Continuar</span>
-			<span class="icon is-medium">
-				<i class="mdi mdi-forward mdi-36px"></i>
-			</span>
-			</button>
-		</div>
-		</div>
-	</div>
-	</div>
-</form>
+	</form>
 </div>
 {% include 'configuracao/popup.html' %}
 <style>

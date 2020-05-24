@@ -173,20 +173,31 @@ def newMenu(request, id = None):
 	user_check_var = user_check(request=request, user_profile=Administrador)
 	if user_check_var is not None: return user_check_var
 
+	PratoFormSet = menuPratoFormset()
+	prato_form_set = PratoFormSet(queryset=Prato.objects.none())
 	menu_object = Menu()
+
 	if id is not None:
 		menu_object = Menu.objects.get(id=id)
+		prato_form_set = PratoFormSet(queryset=Prato.objects.filter(menuid=menu_object))
 	menu_form = menuForm(instance=menu_object)
 
 	if request.method == 'POST':
 		menu_form = menuForm(request.POST,instance=menu_object)
-		if menu_form.is_valid():
-			menu_form_object = menu_form.save()
-			return redirect('configuracao:novoPrato', menu_form_object.id)
+		prato_form_set = PratoFormSet(request.POST)
+		if menu_form.is_valid() and prato_form_set.is_valid():
+			menu_object = menu_form.save()
+			instances = prato_form_set.save(commit=False)
 
+			for instance in instances:
+				instance.menuid = menu_object
+				instance.save()
+			for instance in prato_form_set.deleted_objects:
+				instance.delete()
+			return redirect('configuracao:verMenus')
 	return render(request=request,
 				  template_name='configuracao/menuForm.html',
-				  context = {'form': menu_form}
+				  context = {'form': menu_form, 'formset': prato_form_set}
 				)
 
 def delMenu(request, id = None):
@@ -198,38 +209,13 @@ def delMenu(request, id = None):
 	menu.delete()
 	return redirect('configuracao:verMenus')
 
-
-def newPrato(request, id):
-
-	user_check_var = user_check(request=request, user_profile=Administrador)
-	if user_check_var is not None: return user_check_var
-
-	pratos = Prato.objects.filter(menuid=Menu.objects.get(id=id))
-	has_one = pratos.count() > 0
-	prato_object = Prato(menuid=Menu.objects.get(id=id))
-	prato_form=pratosForm(instance=prato_object)
-	if request.method == 'POST':
-		prato_form=pratosForm(request.POST,instance=prato_object)
-		if prato_form.is_valid():
-			prato_form.save()
-			if 'save' in request.POST:
-				return redirect('configuracao:verMenus')
-			else:
-				return redirect('configuracao:novoPrato',id)
-	return render(request=request,
-				  template_name='configuracao/pratoForm.html',
-				  context = {'form': prato_form,
-							  'pratos': pratos,
-							'has_one': has_one,
-							}
-				)
-
 def menuPratoFormset(extra = 0, minVal = 1):
-	formSets = modelformset_factory(model=Transportehorario, exclude = ['transporte','id'],widgets={
-			'origem': Select(attrs={'class': 'input'}),
-			'chegada': Select(attrs={'class': 'input'}),
-			'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
-			'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
+	formSets = modelformset_factory(model=Prato, exclude = ['id','menuid'],widgets={
+			'tipo': Select(attrs={'class': 'input'}),
+			'prato': TextInput(attrs={'class': 'input'}),
+			'nrpratosdisponiveis': NumberInput(attrs={'class': 'input', 'min':'1','style':'width: 30%'}),
+		},labels={
+			'nrpratosdisponiveis': '# Pratos'
 		}, extra = extra, min_num = minVal, can_delete=True)
 	return formSets
 
@@ -243,6 +229,15 @@ def delPrato(request, id):
 	prato.delete()
 	return redirect('configuracao:novoPrato',menuid)
 
+def newPratoRow(request):
+	value = int(request.POST.get('extra'))
+	data = {
+		'form_tipo': "form-" + str(value-1) + "-tipo",
+		'form_prato': "form-" + str(value-1) + "-prato",
+		'form_num': "form-" + str(value-1) + "-nrpratosdisponiveis",
+		'form_id': 'form-' + str(value-1) + '-id',
+	}
+	return render(request=request, template_name='configuracao/menuPratoRow.html', context=data)
 
 def getDias(request):
 	options = []
@@ -362,7 +357,6 @@ def eliminarTransporte(request, id):
 
 	Transportehorario.objects.get(id=id).delete()
 	return redirect('configuracao:verTransportes')
-
 
 
 def atribuirTransporte(request, id):

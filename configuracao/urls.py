@@ -18,8 +18,6 @@ urlpatterns = [
     path('delmenu/<int:id>', views.delMenu, name='eliminarMenu'),
     path('editarmenu/<int:id>',views.newMenu, name='editarMenu'),
     path('novomenu', views.newMenu, name='novoMenu'),
-    path('adicionarprato/<int:id>', views.newPrato, name='novoPrato'),
-    path('delprato/<int:id>', views.delPrato, name='eliminarPrato'),
     #-Transporte
     path('transportes', views.verTransportes, name='verTransportes'),
     path('criartransporte', views.criarTransporte, name='criarTransporte'),
@@ -32,5 +30,6 @@ urlpatterns = [
     #ajax ----------
     path('ajax/getDias', views.getDias, name='getDias'),
     path('ajax/addHorarioRow', views.newHorarioRow, name='ajaxAddHorarioRow'),
+    path('ajax/addPratoRow', views.newPratoRow, name='ajaxAddPratoRow'),
 
 ]
