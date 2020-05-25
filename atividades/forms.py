@@ -46,9 +46,14 @@ class AtividadeForm(ModelForm):
 
 
 class SessaoForm(ModelForm):
+    horarioid=CharField(widget=Select(attrs={'class':'input horario-sessao'}))   
+
     class Meta:
         model = Sessao
-        fields = ["dia"]
+        exclude = ['id','ninscritos','vagas','atividadeid','horarioid']
+        widgets={
+			'dia': Select(attrs={'class': 'input dia-sessao'}),
+        }
         
 
 class MateriaisForm(ModelForm):

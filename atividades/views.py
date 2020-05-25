@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.core import serializers
 from django.forms.models import modelformset_factory
 from django.forms.widgets import Select
+from atividades.forms import SessaoForm
 
 
 
@@ -247,19 +248,28 @@ def proporatividade(request, id = None):
 
             instances = sessao_form_set.save(commit=False)
 
-            for instance in instances:
-                instance.vagas=atividade_object.participantesmaximo
-                instance.ninscritos = 0
-                instance.atividadeid = atividade_object
-                instance.save()
+            for form in sessao_form_set.forms:
+                form.instance.vagas=atividade_object.participantesmaximo
+                form.instance.ninscritos = 0
+                form.instance.atividadeid = atividade_object
+
+                horario_cleaned = form.cleaned_data['horarioid']
+
+                end_time = datetime(year=1970, month=1, day=1,hour=int(horario_cleaned.split(':')[0]), minute=int(horario_cleaned.split(':')[1]), second=00)\
+                         + timedelta(minutes=atividade_object.duracaoesperada)
+
+                horario_object = Horario.objects.filter(inicio=horario_cleaned, fim = str(end_time.time())).first()
+                if horario_object is None:
+                    horario_object = Horario(inicio=horario_cleaned, fim = str(end_time.time()))
+                    horario_object.save()
+                
+                form.instance.horarioid = horario_object
+                form.save()
+            
             for instance in sessao_form_set.deleted_objects:
                 instance.delete()
 
-            return redirect('minhasAtividades')
-        else:
-            for dict in sessao_form_set.errors:
-                for error in dict.values:
-                    print(error)
+            return redirect('atividades:minhasAtividades')
 
     return render(request= request,
                 template_name='atividades/testAtividade.html',
@@ -275,10 +285,11 @@ def proporatividade(request, id = None):
                     )
 
 def SessaoFormset(extra = 0, minVal = 1):
-    formSets = modelformset_factory(model=Sessao, exclude = ['id','ninscritos','vagas','atividadeid'],widgets={
-			'dia': Select(attrs={'class': 'input dia-sessao'}),
-			'horarioid': Select(attrs={'class': 'input horario-sessao'}),
-		}, extra = extra, min_num = minVal, can_delete=True)
+    formSets = modelformset_factory(model=Sessao,
+                                form=SessaoForm,
+		                        extra = extra, 
+                                min_num = minVal, 
+                                can_delete=True)
     return formSets
 
 #---------------original 

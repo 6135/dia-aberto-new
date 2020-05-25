@@ -9,7 +9,7 @@ register = template.Library()
 
 @register.filter
 def field_data(value):
-    classes = 'class="' + value.field.widget.attrs['class'] + '"'
+    classes = 'class="' + str(value.field.widget.attrs.get('class')) + '"'
     result = str(classes)
     if value.name == 'dia':
         result += ' onchange="getSchedules(\'' + str(value.auto_id) + '\')"'
