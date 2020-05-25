@@ -2,10 +2,18 @@ from django import template
 from django.core.exceptions import ObjectDoesNotExist
 from configuracao.forms import *
 from configuracao.models import *
+from atividades.models import Atividade
 from configuracao import views
 import json
 
 register = template.Library()
+@register.filter
+def get_atividades_count(value):
+    return Atividade.objects.filter(tema=value).count()
+
+@register.filter
+def get_salas_count(value):
+    return Espaco.objects.filter(edificio=value).count()
 
 @register.filter
 def force_required(value):

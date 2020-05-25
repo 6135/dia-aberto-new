@@ -1,5 +1,6 @@
 from django.forms import *
 from .models import *
+from atividades.models import *
 from datetime import datetime
 from _datetime import timedelta, timezone
 from coordenadores.forms import CustomTimeWidget
@@ -104,6 +105,12 @@ class menusFilterForm(Form):
     gambelas=BooleanField(widget=CheckboxInput(),required=False)
     portimao=BooleanField(widget=CheckboxInput(),required=False)
 
+class transporteFilterForm(Form):
+    searchId = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Ano'}), required=False)
+    filter_from = ChoiceField(choices = [(None,'De'),('Gambelas','De Gambelas'),('Penha','De Penha'),('Terminal','De Terminal')],
+                            widget=Select(),required=False)
+    filter_to = ChoiceField(choices = [(None,'Para'),('Gambelas','Para Gambelas'),('Penha','Para Penha'),('Terminal','Para Terminal')],
+                            widget=Select(),required=False)
 
 class transporteForm(ModelForm):
     dia_aberto = Diaaberto.objects.filter(datadiaabertoinicio__gte=datetime.now(timezone.utc)).order_by('datadiaabertoinicio').first()
@@ -134,4 +141,33 @@ class transporteUniversitarioForm(ModelForm):
         exclude = ['transporte', 'vagas']
         widgets = {
             'capacidade': TextInput(attrs={'class': 'input is-half'})
+        }
+
+class EdificioForm(ModelForm):
+    
+    class Meta:
+        model = Edificio
+        exclude = ['id']
+        widgets = {
+            'nome': TextInput(attrs={'class':'input'}),
+        }
+
+class EspacoForm(ModelForm):
+
+    class Meta:
+        model = Espaco
+        exclude = ['id','edificio']
+        widgets = {
+            'nome': TextInput(attrs={'class':'input'}),
+            'andar': NumberInput(attrs={'class':'input', 'max':'200'}),
+            'descricao': TextInput(attrs={'class':'input'}),
+        }
+
+class TemaForm(ModelForm):
+
+    class Meta:
+        model = Tema
+        exclude = ['id']
+        widgets = {
+            'tema': TextInput(attrs={'class':'input'}),
         }

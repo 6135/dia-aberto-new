@@ -13,7 +13,7 @@
                 <div class="field">
                     <!---->
                     <div class="control has-icons-left is-clearfix">
-                        <input type="text" name="searchId" placeholder="Identificador" class="input"  value=""> 
+                        {{form.searchId}}
                         <span class="icon is-left">
                             <i class="mdi mdi-magnify mdi-24px"></i>
                         </span>
@@ -23,24 +23,14 @@
                 <div class="field">
                     <!---->
                     <div class="select is-fullwidth">
-                        <select id="filter_from">
-                            <option value="">De</option>
-                            <option value="fromGambelas">De Gambelas</option>
-                            <option value="fromPenha">De Penha</option>
-                            <option value="fromTerminal">De Terminal</option>
-                        </select>
+                        {{form.filter_from}}
                     </div>
                     <!---->
                 </div>
                 <div class="field">
                     <!---->
                     <div class="select is-fullwidth">
-                        <select id="filter_to">
-                            <option value="">Para</option>
-                            <option value="toGambelas">Para Gambelas</option>
-                            <option value="toPenha">Para Penha</option>
-                            <option value="toTerminal">Para Terminal</option>
-                        </select>
+                        {{form.filter_to}}
                     </div>
                     <!---->
                 </div>                
@@ -77,7 +67,7 @@
             <span>Criar Transporte</span>
         </a>   
     <form method="POST">
-        <div class="table">
+        <div class="b-table">
             <div class="table-wrapper">
                 <table id="table01" class="table has-mobile-cards is-hoverable is-fullwidth">
                     <thead>
@@ -96,7 +86,7 @@
                                 </span>                                
                             </th>
                             <th onclick="sortTable(3,false)" style=" cursor: pointer;" class="pre-expandable">
-                                Origem - Destino
+                                Rota
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
@@ -108,12 +98,12 @@
                                 </span>
                             </th>
                             <th onclick="sortTable(5,false)" style=" cursor: pointer;" class="pre-expandable">
-                                Vagas/Capacidade
+                                Capacidade
                                 <span class="icon-expandable-180 is-small">
                                     <i class="mdi mdi-menu-up"></i>
                                 </span>
                             </th>                            
-                            <th style="width: 40px">
+                            <th>
                                 Operações
                             </th>                            
                         </tr>
@@ -168,7 +158,6 @@
                                         </span>
                                     </a> 
                                 </div>
-                                &nbsp;
                             </div> 
                         </td>                     
                       </tr> 
@@ -183,7 +172,7 @@
 
     </div>
 </div>
-{% include 'configuracao/popup.html' %}
+
 {% endblock content %}
 {% block scripts %}
 {% endblock scripts %}
