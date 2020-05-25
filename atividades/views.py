@@ -34,7 +34,9 @@ def filters(request):
 
 def minhasatividades(request):
     
-    atividades=Atividade.objects.all()
+    user_check_var = user_check(request=request, user_profile=ProfessorUniversitario)
+    if user_check_var is not None: return user_check_var
+    atividades=Atividade.objects.filter(professoruniversitarioutilizadorid=ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id))
     sessoes=Sessao.objects.all()
     materiais= Materiais.objects.all()
     if request.method == 'POST' or request.GET.get('searchAtividade'):
@@ -62,28 +64,25 @@ class Conflito:
         
 
 def atividadescoordenador(request):
-    atividades=Atividade.objects.all()
+    user_check_var = user_check(request=request, user_profile=Coordenador)
+    if user_check_var is not None: return user_check_var
+    atividades=Atividade.objects.filter(professoruniversitarioutilizadorid__faculdade_id=Coordenador.objects.get(utilizador_ptr_id = request.user.id).faculdade)
     sessoes=Sessao.objects.all()
     materiais= Materiais.objects.all()
     conflito2= []
-    for atividade1 in atividades:
-        for atividade2 in atividades:
-            if atividade1.id!=atividade2.id:
-                if atividade1.espacoid== atividade2.espacoid:
-                    sessao1= Sessao.objects.filter(atividadeid=atividade1)
-                    sessao2= Sessao.objects.filter(atividadeid=atividade2)
-                    sessao1horario= []
-                    sessao2horario= []
-                    for s1 in sessao1:
-                        sessao1horario.append(s1.horarioid) 
-                    for s2 in sessao2:
-                        sessao2horario.append(s2.horarioid)
-                    for horario1 in sessao1horario:
-                        if horario1 in sessao2horario:
-                            C1=Conflito(atividade1,atividade2)
-                            conflito2.append(C1)
-    for c in conflito2:
-        print(c.atividade1)                
+    for sessao1 in sessoes:
+        for sessao2 in sessoes:
+            if sessao1.id!=sessao2.id and sessao1.atividadeid!= sessao2.atividadeid and sessao1.atividadeid.espacoid == sessao2.atividadeid.espacoid and sessao1.dia == sessao2.dia:     
+                    hora1inicio=sessao1.horarioid.inicio.hour*60+sessao1.horarioid.inicio.minute
+                    hora1fim=sessao1.horarioid.fim.hour*60+sessao1.horarioid.fim.minute
+                    hora2inicio=sessao2.horarioid.inicio.hour*60+sessao2.horarioid.inicio.minute
+                    hora2fim=sessao2.horarioid.fim.hour*60+sessao2.horarioid.fim.minute
+                    if hora1inicio<=hora2inicio < hora1fim or hora1inicio< hora2fim <= hora1fim:
+                        C1=Conflito(sessao1.atividadeid,sessao2.atividadeid)
+                        conflito2.append(C1)
+    conflito2= list(dict.fromkeys(conflito2))
+    #for c in conflito2:
+    #    print(c.atividade1)                
     if request.method == 'POST' or request.GET.get('searchAtividade'):
         today=datetime.now(timezone.utc)
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
@@ -111,6 +110,11 @@ def atividadescoordenador(request):
             context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm})
 
 def alterarAtividade(request,id):
+    user_check_var = user_check(request=request, user_profile=ProfessorUniversitario)
+    if user_check_var is not None: return user_check_var
+    activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
+    if activity_object.professoruniversitarioutilizadorid != ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
+        return redirect("home")
     #------atividade a alterar----
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
@@ -140,7 +144,7 @@ def alterarAtividade(request,id):
                 activity_object_formed.dataalteracao = datetime.now()
                 activity_object_formed.save()
                 materiais_object_form.save()
-                return redirect('inserirSessao',id)          
+                return redirect('atividades:inserirSessao',id)          
     return render(request=request,
                     template_name='atividades/proporAtividadeAtividade.html',
                     context={'form': activity_object_form, 'espaco':espaco,'espacos':espacos, "edificios": edificios, "campus":campus, "materiais":materiais_object_form}
@@ -189,13 +193,30 @@ def eliminarSessao(request,id):
 
 #-------------------- versao sem reload
 
+def user_check(request, user_profile = ProfessorUniversitario):
+    if not request.user.is_authenticated:
+        return redirect('utilizadores:login')
+    elif not user_profile.objects.filter(utilizador_ptr_id = request.user.id).exists():
+        return render(request=request,
+                    template_name='mensagem.html',
+                    context={
+                        'tipo':'error',
+                        'm':'Não tem permissões para aceder a esta pagina!'
+                    })
+    return None
+
+
 def proporatividade(request):
+
+    user_check_var = user_check(request=request, user_profile=ProfessorUniversitario)
+    if user_check_var is not None: return user_check_var
+
     today= datetime.now(timezone.utc) 
     diaabertopropostas=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
 
-    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
-    diainicio= diaaberto.datadiaabertoinicio.date()
-    diafim= diaaberto.datadiaabertofim.date()
+    
+    diainicio= diaabertopropostas.datadiaabertoinicio.date()
+    diafim= diaabertopropostas.datadiaabertofim.date()
     totaldias= diafim-diainicio+timedelta(days=1)
     dias_diaaberto= []
     for d in range(totaldias.days):
@@ -229,8 +250,7 @@ def proporatividade(request):
                             })   
         if "new" in request.POST:
             print("new")
-            new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizador=5),
-                             professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
+            new_form = Atividade(professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id),
                              estado = "Pendente", diaabertoid = diaabertopropostas,espacoid= Espaco.objects.get(id=espaco.id),
                              tema=Tema.objects.get(id=request.POST['tema']))
             activity_object_form = AtividadeForm(request.POST, instance=new_form)
@@ -243,7 +263,7 @@ def proporatividade(request):
             #print(diasessao)
             new_Sessao= Sessao(vagas=Atividade.objects.get(id= idAtividade.id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=idAtividade.id),dia=diasessao)
             new_Sessao.save()
-            return redirect('inserirSessao', idAtividade.id)
+            return redirect('atividades:inserirSessao', idAtividade.id)
     else:
         material_object_form= MateriaisForm() 
         activity_object_form= AtividadeForm()
@@ -260,7 +280,7 @@ def inserirsessao(request,id):
     is_empty = Sessao.objects.filter(atividadeid=id).count() < 2
     #print(is_empty)
     today= datetime.now(timezone.utc) 
-    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
+    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
     diainicio= diaaberto.datadiaabertoinicio.date()
     diafim= diaaberto.datadiaabertofim.date()
     totaldias= diafim-diainicio+timedelta(days=1)
@@ -273,17 +293,17 @@ def inserirsessao(request,id):
         atividadeid=Atividade.objects.get(id=id)
         sessoes=Sessao.objects.all().filter(atividadeid=id)
         if 'save' in request.POST and len(sessoes)!=0 :
-            return redirect('minhasAtividades')
+            return redirect('atividades:minhasAtividades')
         if 'save' in request.POST and len(sessoes)==0:
-            return redirect('inserirSessao', id)
+            return redirect('atividades:inserirSessao', id)
         if 'anterior' in request.POST :
-            return redirect('alterarAtividade',id)
+            return redirect('atividades:alterarAtividade',id)
         if 'new' in request.POST:
             diasessao=request.POST["diasessao"]
             print(diasessao)
             new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
             new_Sessao.save()
-            return redirect('inserirSessao', id)
+            return redirect('atividades:inserirSessao', id)
     return render(request=request,
                   template_name='atividades/proporAtividadeSessao.html',
                   context={'horarios': "" , 
