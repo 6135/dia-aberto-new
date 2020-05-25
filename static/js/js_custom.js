@@ -136,7 +136,8 @@ function getSchedules(field_id)
         success: function(data){
             $('#'+field_id).closest('tr').find('.horario-sessao').html(data);
             horarioindisponivel.forEach(function(item,index){
-                var stringId = 'id_form-' + field_id.split('-')[1] + '-horarioid' + 'option[value=\'' + item +'\']';
+                var stringId = 'id_form-' + field_id.split('-')[1] + '-horarioid ' + 'option[value=\'' + item +'\']';
+                console.log(stringId)
                 $('#'+stringId).remove();
             })
         }
