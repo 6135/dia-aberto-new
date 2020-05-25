@@ -78,7 +78,7 @@
         <div class="b-table is-fullwidth">
             <div class="table-container is-fullwidth">
             
-                <table class="table is-relative is-fullwidth" id="table01">
+                <table class="table has-mobile-cards is-relative is-fullwidth" id="table01">
                     <thead>
                         <tr>
                             <th></th>
@@ -154,9 +154,8 @@
                                 </div> 
                                 {% endif %}
                                 {% if user.valido != 'Rejeitado'%}
-                                <div class="column"  data-tooltip="Rejeitar">    
-                                    <input type="hidden" id="rej-{{user.id}}" name="variable" value="{% url 'utilizadores:rejeitar' user.first_name user.id %}">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende rejeitar este utilizador?','rej-{{user.id}}')">           
+                                <div class="column"  data-tooltip="Rejeitar">                 
+                                    <a onclick="alert.render('Tem a certeza que pretende rejeitar este utilizador?','{% url 'utilizadores:rejeitar' user.first_name user.id %}">           
                                             <span class="icon has-text-danger">
                                                 <i class="fas fa-ban"></i>
                                             </span>
@@ -186,31 +185,26 @@
 
                                 <div class="column"  data-tooltip="Apagar">  
                 {% if user|has_group:"Participante" %}
-                 <input type="hidden" id="del-{{user.id}}" name="variable" value="{% url 'utilizadores:apagar-utilizador' user.id %}"> 
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente.','del-{{user.id}}')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente.','{% url 'utilizadores:apagar-utilizador' user.id %}')">
                    {% elif user|has_group:"Colaborador" %}
-                    <input type="hidden" id="del-{{user.id}}" name="variable" value="{% url 'utilizadores:apagar-utilizador' user.id %}"> 
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>As <b>tarefas</b> atribuídas a este colaborador serão apagadas permanentemente.','del-{{user.id}}')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>As <b>tarefas</b> atribuídas a este colaborador serão apagadas permanentemente.','{% url 'utilizadores:apagar-utilizador' user.id %}')">
                    {% elif user|has_group:"ProfessorUniversitario" %}
-                    <input type="hidden" id="del-{{user.id}}" name="variable" value="{% url 'utilizadores:apagar-utilizador' user.id %}"> 
-                   <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>As <b>atividades</b> pelo qual este professor está responsável serão apagadas permanentemente.','del-{{user.id}}')">
+                   <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>As <b>atividades</b> pelo qual este professor está responsável serão apagadas permanentemente.','{% url 'utilizadores:apagar-utilizador' user.id %}')">
                     {% elif user|has_group:"Coordenador" %}
                     {% if user|apagar_admin:user.id %}
-                     <input type="hidden" id="del-{{user.id}}" name="variable" value="{% url 'utilizadores:apagar-utilizador' user.id %}"> 
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br> As <b>atividades dos departamentos</b> pelo qual este coordenador está responsável serão apagadas permanentemente.<br><br>As <b>tarefas dos colaboradores</b> pelo qual este coordenador está responsável serão apagadas permanentemente.','del-{{user.id}}')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br> As <b>atividades dos departamentos</b> pelo qual este coordenador está responsável serão apagadas permanentemente.<br><br>As <b>tarefas dos colaboradores</b> pelo qual este coordenador está responsável serão apagadas permanentemente.','{% url 'utilizadores:apagar-utilizador' user.id %}'')">
                      {% else %}
                     
-                  <a onclick="alerta.render('Não pode apagar este coordenador porque é o unico que existe.','del-{{user.id}}')">  
+                  <a onclick="alert.warning('Não pode apagar este coordenador porque é o unico que existe.')">  
                     {% endif %}
                   
                   {% elif user|has_group:"Administrador" %} 
                    {% if user|apagar_admin:user.id %}
-                  <input type="hidden" id="del-{{user.id}}" name="variable" value="{% url 'utilizadores:apagar-utilizador' user.id %}">
                 
-                   <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente.','del-{{user.id}}')">
+                   <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente.','{% url 'utilizadores:apagar-utilizador' user.id %}')">
                     {% else %}
                     
-                  <a onclick="alerta.render('Não pode apagar este administrador porque é o unico que existe.','del-{{user.id}}')">  
+                  <a onclick="alert.warning('Não pode apagar este administrador porque é o unico que existe.')">  
                     {% endif %}
                     {% endif %}
 
@@ -312,49 +306,6 @@
     </div>
 </div>
 
-
-
-
-
-
-
-<div id="msg" class="dialog modal ">
-    <div class="modal-background"></div>
-    <div class="modal-card animation-content">
-        <section class="modal-card-body is-titleless" style="border-top-left-radius: 6px; border-top-right-radius: 6px;">
-            <div class="media">
-                <div class="media-content">
-                    <p id='text-00'></p>
-                </div>
-            </div>
-        </section>
-        
-        <footer class="modal-card-foot">
-            <button onclick="alert.cancelar()" class="button">Cancelar</button>
-            <button id='dialog-confirm' onclick="alert.confirmar()" class="button is-success">Confirmar</button>
-        </footer>
-    </div>
-</div>
-
-
-
-
-<div id="msg-iniciar" class="dialog modal ">
-    <div class="modal-background"></div>
-    <div class="modal-card animation-content">
-        <section class="modal-card-body is-titleless" style="border-top-left-radius: 6px; border-top-right-radius: 6px;">
-            <div class="media">
-                <div class="media-content">
-                    <p id='text1'></p>
-                </div>
-            </div>
-        </section>
-        
-        <footer class="modal-card-foot">
-            <button onclick="alerta.cancelar()" class="button">Cancelar</button>
-        </footer>
-    </div>
-</div>
 
 
 {% comment  %}

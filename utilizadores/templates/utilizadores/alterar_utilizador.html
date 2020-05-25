@@ -243,18 +243,17 @@
                 {% endif %}
                     <div style="margin-top:2%;text-align:center;position:center;">
                     <button type="button" value="Voltar" class="button is-outlined" style="margin-right:5%" onclick="history.back();">Voltar</button>
-                
-                <input type="hidden" id="alterar_meu_perfil-{{id}}" name="variable" value="{% url 'utilizadores:mudar-perfil-escolha'%}">   
+                  
                 {% if perfil == "Participante" %} 
-                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil a sua <b>incrição</b> será apagada permanentemente.','alterar_meu_perfil-{{id}}')">
+                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil a sua <b>incrição</b> será apagada permanentemente.','{% url 'utilizadores:mudar-perfil-escolha'%}')">
                    {% elif perfil == "Colaborador" %} 
-                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil as <b>tarefas</b> que lhe estão atribuídas serão apagadas permanentemente.','alterar_meu_perfil-{{id}}')">
+                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil as <b>tarefas</b> que lhe estão atribuídas serão apagadas permanentemente.','{% url 'utilizadores:mudar-perfil-escolha'%}')">
                    {% elif perfil == "Professor Universitario" %} 
-                   <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil as suas <b>atividades</b> serão apagadas permanentemente.','alterar_meu_perfil-{{id}}')">
+                   <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil as suas <b>atividades</b> serão apagadas permanentemente.','{% url 'utilizadores:mudar-perfil-escolha'%}')">
                     {% elif  perfil == "Coordenador" %} 
-                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil as <b>atividades dos departamentos</b> pelo qual está responsável serão apagadas permanentemente.<br><br>As <b>tarefas dos colaboradores</b> pelo qual está responsável serão apagadas permanentemente.','alterar_meu_perfil-{{id}}')">
+                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil as <b>atividades dos departamentos</b> pelo qual está responsável serão apagadas permanentemente.<br><br>As <b>tarefas dos colaboradores</b> pelo qual está responsável serão apagadas permanentemente.','{% url 'utilizadores:mudar-perfil-escolha'%}')">
                   {% elif  perfil == "Administrador" %} 
-                 <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil todas as suas <b>informações</b> serão apagadas frequentemente incluindo os <b>dados de configuração</b> do dia aberto pelo qual está responsável.','alterar_meu_perfil-{{id}}')">  
+                 <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil todas as suas <b>informações</b> serão apagadas frequentemente incluindo os <b>dados de configuração</b> do dia aberto pelo qual está responsável.','{% url 'utilizadores:mudar-perfil-escolha'%}')">  
                  {% endif %}
                   <button type="button" class="button is-link is-outlined" style="margin-right:5%" >Escolher outro perfil</button>
                   </a>
