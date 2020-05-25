@@ -25,7 +25,7 @@ class TarefaAcompanhar(models.Model):
     inscricao = models.ForeignKey('inscricoes.Inscricao', models.CASCADE, db_column='inscricao')
     origem = models.CharField(max_length=255, db_column='origem', blank=False, null=False)
     destino = models.CharField(max_length=255, db_column='destino', blank=False, null=False)
-    horario = models.TimeField(blank=False, null=False)
+    horario = models.ForeignKey('configuracao.Horario',models.DO_NOTHING,db_column='horario')
     dia = models.DateField()
     
     class Meta:

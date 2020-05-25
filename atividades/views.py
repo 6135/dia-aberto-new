@@ -191,9 +191,8 @@ def eliminarSessao(request,id):
 
 def proporatividade(request):
     today= datetime.now(timezone.utc) 
-    diaabertopropostas=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
 
-    diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
     diainicio= diaaberto.datadiaabertoinicio.date()
     diafim= diaaberto.datadiaabertofim.date()
     totaldias= diafim-diainicio+timedelta(days=1)
@@ -231,7 +230,7 @@ def proporatividade(request):
             print("new")
             new_form = Atividade(coordenadorutilizadorid = Coordenador.objects.get(utilizador=5),
                              professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizadorid=2),
-                             estado = "Pendente", diaabertoid = diaabertopropostas,espacoid= Espaco.objects.get(id=espaco.id),
+                             estado = "Pendente", diaabertoid = diaaberto,espacoid= Espaco.objects.get(id=espaco.id),
                              tema=Tema.objects.get(id=request.POST['tema']))
             activity_object_form = AtividadeForm(request.POST, instance=new_form)
             activity_object_form.save()

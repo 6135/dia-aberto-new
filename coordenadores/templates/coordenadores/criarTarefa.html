@@ -136,11 +136,13 @@
 
     function sessoesSelect(){
       var dia = document.getElementById("id_dias").value; 
+      var atividadeId = document.getElementById("id_atividades").value; 
       $.ajax({                       
         url: "{% url 'sessoesAtividade' %}", 
         method: 'POST',             
         data: {
             'dia': dia,
+            'atividadeid':atividadeId,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
@@ -166,7 +168,7 @@
 /*-------------------->EndAuxiliarAtividade<-----------------*/
 /*-------------------->Acompanhar Grupo<---------------------*/
     function grupoInfo(){
-      var grupo_id = document.getElementById("id_grupo").value;; 
+      var grupo_id = document.getElementById("id_inscricao").value;; 
       $.ajax({                       
         url: "{% url 'grupoInfo' %}", 
         method: 'POST',             
@@ -181,7 +183,7 @@
     }
 
     function diasGrupo(){
-      var grupo_id = document.getElementById("id_grupo").value; 
+      var grupo_id = document.getElementById("id_inscricao").value; 
       $.ajax({                       
         url: "{% url 'diasGrupo' %}", 
         method: 'POST',             
@@ -190,14 +192,14 @@
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
-          $("#id_dias").html(data);           
+          $("#id_dia").html(data);           
         }
       });
     }
 
     function grupoHorario(){
-      var dia = document.getElementById("id_dias").value;
-      var grupo_id = document.getElementById("id_grupo").value; 
+      var dia = document.getElementById("id_dia").value;
+      var grupo_id = document.getElementById("id_inscricao").value; 
       $.ajax({                       
         url: "{% url 'horarioGrupo' %}", 
         method: 'POST',             
@@ -213,8 +215,8 @@
     }
 
     function grupoLocal(){
-      var dia = document.getElementById("id_dias").value;
-      var grupo_id = document.getElementById("id_grupo").value; 
+      var dia = document.getElementById("id_dia").value;
+      var grupo_id = document.getElementById("id_inscricao").value; 
       var sessao_id = document.getElementById("id_horario").value;
       $.ajax({                       
         url: "{% url 'locaisOrigem' %}", 
@@ -232,8 +234,8 @@
     }
 
     function grupoDestino(){
-      var dia = document.getElementById("id_dias").value;
-      var grupo_id = document.getElementById("id_grupo").value; 
+      var dia = document.getElementById("id_dia").value;
+      var grupo_id = document.getElementById("id_inscricao").value; 
       var sessao_id = document.getElementById("id_horario").value;
       $.ajax({                       
         url: "{% url 'locaisDestino' %}", 

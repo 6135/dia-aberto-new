@@ -1,10 +1,10 @@
-{% extends 'configuracao/app.html' %}
+{% extends 'app.html' %}
 {% block content %}
 <form method="POST" action="">
 <div id="proporatividade" style="{{style1}}">
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><a href="{% url 'inicio' %}">Início</a></li>
+    <li><a href="{% url 'home' %}">Início</a></li>
     <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
     <li class="is-active"><a href="" aria-current="page">Propor Atividade</a></li>
   </ul>
