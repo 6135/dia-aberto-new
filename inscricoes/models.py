@@ -11,6 +11,9 @@ class Escola(models.Model):
     class Meta:
         db_table = 'Escola'
 
+    def __str__(self):
+        return self.nome
+
 
 class Inscricao(models.Model):
     nalunos = models.IntegerField()
@@ -40,6 +43,7 @@ class Inscricao(models.Model):
                 dias.append({'key': str(sessao.sessao.dia),
                              'value': sessao.sessao.dia})
         return dias
+
     def get_horarios(self, dia):
         inscricao_sessoes = Inscricaosessao.objects.filter(
             inscricao=self).filter(sessao__dia=dia)

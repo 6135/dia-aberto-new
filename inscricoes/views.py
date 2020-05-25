@@ -203,3 +203,7 @@ class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     template_name = 'inscricoes/consultar_inscricoes.html'
 
     filterset_class = InscricaoFilter
+
+    table_pagination = {
+        'per_page': 10
+    }
