@@ -155,7 +155,7 @@
                                 {% endif %}
                                 {% if user.valido != 'Rejeitado'%}
                                 <div class="column"  data-tooltip="Rejeitar">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende rejeitar este utilizador?','{% url 'utilizadores:rejeitar' user.first_name user.id %}">           
+                                    <a onclick="alert.render('Tem a certeza que pretende rejeitar este utilizador?','{% url 'utilizadores:rejeitar' user.first_name user.id %}')">
                                             <span class="icon has-text-danger">
                                                 <i class="fas fa-ban"></i>
                                             </span>
