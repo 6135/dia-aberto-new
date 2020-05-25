@@ -233,17 +233,16 @@
                     <button type="button" value="Voltar" class="button is-outlined" style="margin-right:5%" onclick="voltar()">Voltar</button>
                 
                 
-                <input type="hidden" id="alterar-{{id}}" name="variable" value="{% url 'utilizadores:mudar-perfil-escolha-admin' id %}">   
                 {% if perfil == "Participante" %} 
-                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil deste participante a sua <b>incrição</b> será apagada permanentemente.','alterar-{{id}}')">
+                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil deste participante a sua <b>incrição</b> será apagada permanentemente.','{% url 'utilizadores:mudar-perfil-escolha-admin' id %}')">
                    {% elif perfil == "Colaborador" %} 
-                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil deste colaborador as suas <b>tarefas</b> deixarão de lhe estar atribuidas.','alterar-{{id}}')">
+                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil deste colaborador as suas <b>tarefas</b> deixarão de lhe estar atribuidas.','{% url 'utilizadores:mudar-perfil-escolha-admin' id %}')">
                    {% elif perfil == "Professor Universitario" %} 
-                   <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil deste professor universitário as suas <b>atividades</b> serão apagadas permanentemente.','alterar-{{id}}')">
+                   <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil deste professor universitário as suas <b>atividades</b> serão apagadas permanentemente.','{% url 'utilizadores:mudar-perfil-escolha-admin' id %}')">
                     {% elif  perfil == "Coordenador" %} 
-                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil deste coordenador as <b>atividades dos departamentos</b> pelo qual está responsável serão apagadas permanentemente.<br><br>As <b>tarefas dos colaboradores</b> pelo qual este coordenador está responsável serão apagadas permanentemente.','alterar-{{id}}')">
+                <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil deste coordenador as <b>atividades dos departamentos</b> pelo qual está responsável serão apagadas permanentemente.<br><br>As <b>tarefas dos colaboradores</b> pelo qual este coordenador está responsável serão apagadas permanentemente.','{% url 'utilizadores:mudar-perfil-escolha-admin' id %}')">
                   {% elif  perfil == "Administrador" %} 
-                 <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil deste administrador todas as suas <b>informações</b> serão apagadas frequentemente incluindo os <b>dados de configuração</b> do dia aberto pelo qual este administrador está responsável.','alterar-{{id}}')">  
+                 <a onclick="alert.render('<b>Atenção!</b><br><br>Ao alterar o perfil deste administrador todas as suas <b>informações</b> serão apagadas frequentemente incluindo os <b>dados de configuração</b> do dia aberto pelo qual este administrador está responsável.','{% url 'utilizadores:mudar-perfil-escolha-admin' id %}')">  
                  {% endif %}
                     <button type="button"  class="button is-link is-outlined" style="margin-right:5%" >Escolher outro perfil</button>
                     </a>

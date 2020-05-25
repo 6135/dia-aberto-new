@@ -1,25 +1,32 @@
 from django.db import models
 
+from notifications.base.models import AbstractNotification
 
-class Notificacao(models.Model):
+
+
+class Notificacao(AbstractNotification):
     titulo = models.CharField(max_length=255)
     descricao = models.CharField(max_length=255)
-    criadoem = models.DateTimeField(auto_now_add=True)
-    recetor = models.ForeignKey(
-            'utilizadores.Utilizador', models.CASCADE)
-    class Meta:
+    tipo = models.CharField(max_length=255)
+    class Meta(AbstractNotification.Meta):
+        abstract = False
         db_table = 'Notificacao'
 
 
 
-class NotificacaoAutomatica(Notificacao):
-    sigla = models.CharField(max_length=255)
-    class Meta:
-        db_table = 'NotificacaoAutomatica'
+class MensagemRecebida(models.Model):
+    mensagem = models.ForeignKey(
+        Notificacao, models.CASCADE)
 
-class Mensagem(Notificacao):
-    emissor = models.ForeignKey(
-            'utilizadores.Utilizador', models.CASCADE)
     class Meta:
-        db_table = 'Mensagem'
+        db_table = 'MensagemRecebida'
+
+
+
+class MensagemEnviada(models.Model):
+    mensagem = models.ForeignKey(
+        Notificacao, models.CASCADE)
+
+    class Meta:
+        db_table = 'MensagemEnviada'
 

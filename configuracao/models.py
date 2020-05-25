@@ -36,8 +36,6 @@ class Transportehorario(models.Model):
     # Field name made lowercase.
     chegada = models.CharField(db_column='Chegada', max_length=32, blank=True, null=False, choices=choices)
     # Field name made lowercase.
-    #horario = models.ForeignKey(
-    #    'Horario', models.CASCADE, db_column='Horario')
 
     horaPartida = models.TimeField(db_column="HoraPartida", blank=False, null=False)
     horaChegada = models.TimeField(db_column="HoraChegada", blank=False, null=False)
@@ -186,9 +184,7 @@ class Prato(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
-    nrpratosdisponiveis = models.IntegerField(db_column='NrPratosDisponiveis')
-    # Field name made lowercase.
-    prato = models.CharField(db_column='Prato',max_length=255)
+    prato = models.CharField(db_column='Prato',max_length=255, blank=False, null=False)
     # Field name made lowercase.
     tipos = {
         ('Carne',"Carne"),
@@ -197,7 +193,11 @@ class Prato(models.Model):
         ('Sobremesa', 'Sobremesa'),
     }
     tipo = models.CharField(
-         default='Carne', choices=tipos,db_column='Tipo', max_length=255, blank=False, null=False)
+        choices=tipos,db_column='Tipo', max_length=255, blank=True, null=False)
+    # Field name made lowercase.
+    nrpratosdisponiveis = models.IntegerField(db_column='NrPratosDisponiveis',blank=False, null=False)
+
+
     # Field name made lowercase.
     menuid = models.ForeignKey(Menu, models.CASCADE, db_column='MenuID')
 
@@ -209,10 +209,10 @@ class Prato(models.Model):
 
 class Espaco(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    edificio = models.ForeignKey('Edificio', models.DO_NOTHING, db_column='Edificio', blank=True, null=True)  # Field name made lowercase.
-    andar = models.CharField(db_column='Andar', max_length=255, blank=True, null=True)  # Field name made lowercase.
-    descricao = models.CharField(db_column='Descricao', max_length=255)  # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=False)  # Field name made lowercase.
+    edificio = models.ForeignKey('Edificio', models.DO_NOTHING, db_column='Edificio', blank=True, null=False)  # Field name made lowercase.
+    andar = models.CharField(db_column='Andar', max_length=255, blank=True, null=False)  # Field name made lowercase.
+    descricao = models.CharField(db_column='Descricao', max_length=255, blank=True, null = True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -221,9 +221,11 @@ class Espaco(models.Model):
 
 class Edificio(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-    nome = models.CharField(db_column='Nome', max_length=32)  # Field name made lowercase.
-    campus = models.ForeignKey('Campus', models.DO_NOTHING, db_column='Campus')  # Field name made lowercase.
+    nome = models.CharField(db_column='Nome', max_length=64)  # Field name made lowercase.
+    campus = models.ForeignKey('Campus', models.DO_NOTHING, db_column='Campus', blank=True, null=False)  # Field name made lowercase.
 
+    def espacos_(self):
+        return Espaco.objects.filter(edificio=self)
     class Meta:
         managed = False
         db_table = 'Edificio'
@@ -233,6 +235,8 @@ class Campus(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=True)  # Field name made lowercase.
 
+    def __str__(self):
+        return self.nome
     class Meta:
         managed = False
         db_table = 'Campus'

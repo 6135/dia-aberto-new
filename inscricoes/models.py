@@ -11,6 +11,7 @@ class Escola(models.Model):
     class Meta:
         db_table = 'Escola'
 
+
 class Inscricao(models.Model):
     nalunos = models.IntegerField()
     escola = models.ForeignKey(Escola, models.CASCADE)
@@ -43,10 +44,10 @@ class Inscricao(models.Model):
         horarios = []
         horarios.append({'key':inscricao_sessoes.first().sessao.horarioid.id, 'value':inscricao_sessoes.first().sessao.horarioid.inicio})
         for sessao in inscricao_sessoes:
-            if sessao.sessao.horarioid not in horarios:             
+            if sessao.sessao.horarioid not in horarios:
                 horario = sessao.sessao.horarioid.inicio
                 duracao = sessao.sessao.atividadeid.duracaoesperada*60
-                td = (datetime.combine(datetime.min,horario) - datetime.min)
+                td = (datetime.combine(datetime.min, horario) - datetime.min)
                 secondsTotal = td.total_seconds() + duracao
                 time = datetime.strptime(str(timedelta(seconds=secondsTotal)),"%H:%M:%S")
                 horarios.append({'key':sessao.sessao.horarioid.id, 'value':time.strftime("%H:%M")})

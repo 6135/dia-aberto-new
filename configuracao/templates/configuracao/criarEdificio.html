@@ -6,8 +6,7 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
 	<ul>
 	<li><a href="{% url 'home' %}">Início</a></li>
-	<li><a href="{% url 'configuracao:verTransportes' %}">Administrador</a></li>
-	<li class="is-active"><a href="" aria-current="page">Criar Transporte</a></li>
+	<li><a href="{% url 'configuracao:verEdificios' %}">Edificios</a></li>
 	</ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
@@ -19,59 +18,41 @@
 			<section class="step-content">
 				<div class="step-item">
 					<div style="padding: 1rem 2vw 0px">
-
-						<hr>
-						<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-						Transporte
-						</h2>
+						<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Edificio</h2>
 
 						<div class="columns">
-							<div class="column">
-								<strong>{{form_t.identificador.errors}}</strong>
+							<div class="column is-half">
+								<strong>{{form.nome.errors}}</strong>
 								<div class="field">
-								<label class="label">Identificador</label>
-								<div class="control">
-									<span class="is-fullwidth is-empty">
-									{{form_t.identificador}}
-									</span>
-								</div>
-								</div>
-							</div>
-							<div class="column">
-								<strong>{{form_uni.capacidade.errors}}</strong>
-								<div class="field">
-								<label class="label">Capacidade</label>
-								<div class="control">
-									<span class="is-fullwidth is-empty">
-									{{form_uni.capacidade}}
-									</span>
-								</div>
-								</div>
-							</div>
-							<div class="column">
-								<strong>{{form_t.dia.errors}}</strong>
-								<div class="field">
-									<label class="label">Dia</label>
-									<div class="select is-fullwidth is-empty">
-									<span class="is-fullwidth is-empty">
-										{{form_t.dia}}
-									</span>
+									<label class="label">Nome</label>
+									<div class="control">
+										{{form.nome}}
 									</div>
+								</div>
+							</div>
+							<div class="column is-one-quarter">
+								<strong>{{form.campus.errors}}</strong>
+								<div class="field">
+								<label class="label">Campus</label>
+								<div class="control">
+									<span class="select is-fullwidth is-empty">
+										{{form.campus}}
+									</span>
+								</div>
 								</div>
 							</div>
 						</div>
 						<hr>
-						<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Transporte Horario</h2>
+						<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Espaços</h2>
 						<div class='table'>
 							<div class='table-wrapper'>
 								{{formset.management_form}}
 								<table class="table has-mobile-cards is-hoverable is-fullwidth" id='table01'>
 									<thead>
 										<tr>
-											<th style="cursor: pointer">Origem</th>
-											<th style="cursor: pointer">Chegada</th>
-											<th style="cursor: pointer">Hora Partida</th>
-											<th style="cursor: pointer">Hora Chegada</th>
+											<th style="cursor: pointer; width: 20%">Nome</th>
+											<th style="cursor: pointer; width: 20%" >Andar</th>
+											<th style="cursor: pointer">Descrição</th>
 										</tr>
 									</thead>
 									<tbody id='tableBody-01'>
@@ -88,12 +69,10 @@
 													{% endfor %}
 													
 														<td data-label="{{field.label}}">
-															{% if field.label == "Origem" or field.label == "Chegada" %}
-																<span class="select is-fullwidth is-empty" required>
-																	{{field}}
-																</span>
-															{% else %}
+															{% if field.label != "Descricao" %}
 																{{field|force_required|safe}}
+															{% else %}
+																{{field}}
 															{% endif %}
 														</td>
 													
@@ -122,7 +101,7 @@
 					<div class="column is-8 is-offset-2">
 						<div class="level">
 							<div class="level-left">
-								<a class="button is-large is-outlined" type="button" href="{% url 'configuracao:verTransportes' %}">
+								<a class="button is-large is-outlined" type="button" href="{% url 'configuracao:verEdificios' %}">
 								<span>Cancelar</span>
 								</a>
 							</div>
@@ -158,7 +137,7 @@
 	value = Number(value) + Number('1');
 	document.getElementById("id_form-TOTAL_FORMS").value = value;
 	$.ajax({
-		url: "{% url 'configuracao:ajaxAddHorarioRow' %}",
+		url: "{% url 'configuracao:ajaxAddEspacoRow' %}",
 		method: "POST",
 		data: {
 			'extra': value,
@@ -186,39 +165,6 @@ $('#del-row').click(function(e){
 	} else {
 		alert.warning("Não pode eliminar todas as rotas");
 	}
-})
-
-$( document ).ready(function() {
-	var diaaberto_id = $('#id_diaaberto').val();
-	$.ajax({
-	url: "{% url 'configuracao:getDias' %}",
-	method: 'POST',
-	data: {
-		'diaaberto_id':diaaberto_id,
-		csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-		'default': '{{form_t.instance.id}}',
-		'typeForm': 'transporte',
-	},
-	success: function(data){
-		$('#id_dia').html(data);
-	}
-	});
-});
-
-$('#id_diaaberto').change(function(){
-	var diaaberto_id = $(this).val();
-	$.ajax({
-	url: "{% url 'configuracao:getDias' %}",
-	method: 'POST',
-	data: {
-		'diaaberto_id': diaaberto_id,
-		csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-		'typeForm': 'transporte',
-	},
-	success: function(data){
-		$('#id_dia').html(data);
-	}
-	});
 })
 </script>
 {% endblock scripts %}

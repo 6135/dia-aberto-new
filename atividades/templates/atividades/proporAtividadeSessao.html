@@ -2,9 +2,9 @@
 {% block content %}
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><a href="{% url 'inicio' %}">Início</a></li>
-    <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-    <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page"> Inserir Sessão</a></li>
+    <li><a href="{% url 'home' %}">Início</a></li>
+    <li><a href="{% url 'atividades:minhasAtividades' %}">Minhas Atividades</a></li>
+    <li class="is-active"><a href="{% url 'atividades:proporAtividade' %}" aria-current="page"> Inserir Sessão</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
@@ -71,7 +71,7 @@
                                               {% if is_empty %}
                                               <a  onclick="alert.warning('Não poderá eliminar esta sessao, caso queira eliminar a ultima sessao, adicione outra primeiro. Caso deseja eliminar a atividade carregue em eliminar atividade')"> 
                                               {% else %}
-                                              <a onclick="alert.render('Tem a certeza que deseja eliminar a sessão?','{% url 'eliminarSessao' sessao.id%}')">
+                                              <a onclick="alert.render('Tem a certeza que deseja eliminar a sessão?','{% url 'atividades:eliminarSessao' sessao.id%}')">
                                               {% endif %}
                                                     <span class="icon has-text-danger">
                                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
@@ -149,7 +149,7 @@
          </button>
       </div>
       <div class="level-right">
-              <a id="concluir" onclick="alert.render('Tem a certeza que pretende finalizar esta proposta?  (Terá sempre possibilidade de a alterar até ao prazo das propostas terminar)','{% url 'minhasAtividades' %}')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
+              <a id="concluir" onclick="alert.render('Tem a certeza que pretende finalizar esta proposta?  (Terá sempre possibilidade de a alterar até ao prazo das propostas terminar)','{% url 'atividades:minhasAtividades' %}')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
             <span>Finalizar Proposta</span>
             <span class="icon is-medium">
               <i class="mdi fa fa-check mdi-36px"></i>
@@ -162,7 +162,6 @@
 </form>
 </div>
 
-{% include 'configuracao/popup.html' %}
 
 <style>
   .label {
@@ -187,7 +186,7 @@
         console.log(id)
         var valuedia= $(this).val();
         $.ajax({
-            url:"{% url 'verHorarios'%}",
+            url:"{% url 'atividades:verHorarios'%}",
             method: 'POST',
             data: { 
                 'valuedia': valuedia,

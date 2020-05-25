@@ -75,7 +75,7 @@
               <li class="is-active"><a href="#" aria-current="page">Minhas Atividades</a></li>
             </ul>
           </nav>
-        <a href="{% url 'proporAtividade' %}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
+        <a href="{% url 'atividades:proporAtividade' %}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
@@ -137,7 +137,7 @@
                             </td>
                             {% endif %}
                             <td >
-                                <a href="{% url 'alterarAtividade' atividade.id %}">
+                                <a href="{% url 'atividades:alterarAtividade' atividade.id %}">
                                     <span class="icon has-text-link">
                                         <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                                     </span>
@@ -145,7 +145,7 @@
                                 
                             </td>
                             <td>
-                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta atividade?','{% url 'eliminarAtividade' atividade.id %}')">
+                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta atividade?','{% url 'atividades:eliminarAtividade' atividade.id %}')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                     </span>
@@ -160,10 +160,6 @@
                                         <p>
                                             <strong>Nome:</strong>
                                             {{atividade.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Professor:</strong>
-                                            {{atividade.professoruniversitarioutilizadorid.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Data de submissão:</strong>
@@ -246,7 +242,6 @@
             </div>
     </div>
 </div>
-{% include 'configuracao/popup.html' %}
 <style>
 .dialog .modal-card .modal-card-body.is-titleless {
     border-top-left-radius: 6px;

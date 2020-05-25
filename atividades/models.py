@@ -71,6 +71,9 @@ class Atividade(models.Model):
         dias = [sessao.dia for sessao in sessoes]
         return [dia for dia in set(dias)]
 
+    #def get_uo(self):
+    #    return str(self.professoruniversitarioutilizadorid.faculdade)
+    
 class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.

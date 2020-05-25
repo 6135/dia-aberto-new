@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import environ
+from django.conf import settings
 
 env = environ.Env()
 environ.Env.read_env()  # reading .env file
@@ -67,6 +68,7 @@ INSTALLED_APPS = [
     'utilizadores',
     'phonenumber_field',
     'formtools',
+    'notifications',
     'rest_framework',
     'django_filters',
     "django_tables2",
@@ -78,7 +80,31 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
+NOTIFICATIONS_NOTIFICATION_MODEL = 'notificacoes.Notificacao'
+
+
+
+
+
+CONFIG_DEFAULTS = {
+    'PAGINATE_BY': 20,
+    'USE_JSONFIELD': False,
+    'SOFT_DELETE': False,
+    'NUM_TO_FETCH': 10,
+}
+
+
+def get_config():
+    user_config = getattr(settings, 'DJANGO_NOTIFICATIONS_CONFIG', {})
+
+    config = CONFIG_DEFAULTS.copy()
+    config.update(user_config)
+
+    return config
+
+
+
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap.html"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

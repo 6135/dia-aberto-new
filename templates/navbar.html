@@ -1,5 +1,6 @@
 {% load static %}
 {% load poll_extras %}
+{% load notificacoes_extras %}
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <a class="navbar-item logo" href="{% url 'home' %}">
@@ -18,8 +19,8 @@
     <div class="navbar-start">
 
     {% if request.user|has_group:'Participante' %}
-    <a href="/minhasatividades" class="navbar-item">
-      Minhas Atividades
+    <a href="{% url 'inscricoes:criar-inscricao' %}" class="navbar-item">
+      Minha Inscrição
     </a>
     {% elif request.user|has_group:'Colaborador'%}
     <a href="{% url 'colaboradores:consultar-tarefas' %}" class="navbar-item">
@@ -49,7 +50,7 @@
       <a href="{% url 'configuracao:verTransportes' %}" class="navbar-item">
         Transportes
       </a> 
-      <a href="" class="navbar-item">
+      <a href="{% url 'inscricoes:consultar-inscricoes' %}" class="navbar-item">
         Inscrições
       </a> 
       <a href="{% url 'configuracao:verMenus' %}" class="navbar-item">
@@ -58,7 +59,12 @@
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
         Utilizadores
       </a> 
-
+      <a href="{% url 'configuracao:verEdificios' %}" class="navbar-item">
+        Edificios e Espaços
+      </a> 
+      <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">
+        Temas
+      </a> 
     {% else %}
     <a href="" class="navbar-item">
 
@@ -71,6 +77,8 @@
       <div class="navbar-item">
       {% if user.is_authenticated %}
         <div class="dropdown is-bottom-left is-mobile-modal">
+          
+          <div onclick="notificacoes()">
           <div role="button" class="dropdown-trigger">
             <span role="button">
               <div type="button" data-badge="0" class="button has-badge-rounded has-badge-warning is-text"
@@ -83,15 +91,140 @@
               </div>
             </span>
           </div>
-          <div class="background" style="display:none" aria-hidden="true"></div>
-          <div class="dropdown-menu" style="display:none" aria-hidden="true">
-            <div role="menu" class="dropdown-content">
-              <div role="menuitem" tabindex="0" class="dropdown-item">
-                <strong>test</strong>
+</div>
+        
+        <div id="ver_notificacoes" class="modal">
+          <div class="modal-background"></div>
+          <div class="modal-card">
+            <header class="modal-card-head">
+              <p class="modal-card-title">Notificações</p>
+              
+              <button onclick="notificacoes()" class="delete" aria-label="close"></button>
+              
+            </header>
+            <section class="modal-card-body">
+             <nav class="panel">
+
+
+  <p class="panel-tabs">
+    <a  class="tablinks is-active" onclick="openNotificacoes(event, 'Todas')" >Todas</a>
+    <a  class="tablinks" onclick="openNotificacoes(event, 'Novas')" >Novas</a>
+    <a  class="tablinks" onclick="openNotificacoes(event, 'Anteriores')" >Anteriores</a>
+  </p>
+<div id="Todas" style="display:block" class="tabcontent">
+
+{% for notificacao in request.user|get_notificacoes:"Todas" %}
+ <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}" class="panel-block">
+{% if notificacao.lida == False %}
+<span class="icon has-text-info">
+  <i class="fas fa-info-circle"></i>
+  </span>
+{% else %}
+<span class="icon has-text-success">
+  <i class="fas fa-check-square"></i>
+</span>
+  {% endif %}
+
+
+      <p><strong>{{notificacao.titulo}}</strong></p>
+
+  </a>
+
+{%endfor%} 
+</div>  
+
+
+<div id="Novas" style="display:none" class="tabcontent">
+{% for notificacao in request.user|get_notificacoes:"False" %}
+  <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}" class="panel-block">
+{% if notificacao.lida == False %}
+<span class="icon has-text-info">
+  <i class="fas fa-info-circle"></i>
+  </span>
+{% else %}
+<span class="icon has-text-success">
+  <i class="fas fa-check-square"></i>
+</span>
+  {% endif %}
+
+
+      <p><strong>{{notificacao.titulo}}</strong></p>
+
+  </a>
+
+{%endfor%} 
+</div>  
+<div id="Anteriores" style="display:none" class="tabcontent">
+{% for notificacao in request.user|get_notificacoes:"True" %}
+ <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}" class="panel-block">
+{% if notificacao.lida == False %}
+<span class="icon has-text-info">
+  <i class="fas fa-info-circle"></i>
+  </span>
+{% else %}
+<span class="icon has-text-success">
+  <i class="fas fa-check-square"></i>
+</span>
+  {% endif %}
+
+
+      <p><strong>{{notificacao.titulo}}</strong></p>
+
+  </a>
+
+{%endfor%} 
+</div>  
+
+
+
+
+</nav>
+            </section>
+          </div>
+        </div>
+
+        <div class="dropdown is-right" onclick="event.currentTarget.classList.toggle('is-active')">
+          <div class="dropdown-trigger">
+            <span role="button" aria-haspopup="true" aria-controls="dropdown-menu6">
+              <div type="button" data-badge="0" class="button has-badge-rounded has-badge-warning is-text"
+                style="margin-right: 0.9rem">
+                <span>
+                  <span class="icon">
+                    <i class="mdi mdi-message mdi-24px"></i>
+                  </span>
+                </span>
+              </div>
+            </span>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu6" role="menu" style="min-width: 23rem">
+            <div class="dropdown-content">
+              <div class="dropdown-item">
+                Mensagem 1
+              </div>
+              <hr class="dropdown-divider">
+              <div class="dropdown-item">
+                Mensagem 2
+              </div>
+              <hr class="dropdown-divider">
+              <div class="dropdown-item">
+                Mensagem 3
+              </div>
+              <hr class="dropdown-divider">
+              <div class="dropdown-item level">
+                <div class="level-left">
+                  <span class="icon">
+                    <i class="mdi mdi-message-text"></i>
+                  </span>
+                  <a href={% url 'notificacoes:enviar-notificacao' %}>Nova mensagem</a>
+                </div>
+                <div class="level-right">
+                  <small><a href={% url 'notificacoes:enviar-notificacao' %}>Ver todas as mensagens</a></small>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
         <div onclick="definicoes()">
         <div id="dropdown_definicoes" class="dropdown is-right">
           <div role="button" class="dropdown-trigger">
@@ -156,26 +289,20 @@
 
                 
                 
-                  {% if u == 'Participante'%}
-                  <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
-                <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br>A sua <b>incrição</b> será apagada permanentemente.','del')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
-                    {% elif u == 'Colaborador'%}
-                    <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
-                <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br>As suas <b>tarefas</b> deixarão de lhe estar atribuidas.','del')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
-                    {% elif u == 'ProfessorUniversitario'%}
-                    <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
-                <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br>As suas <b>atividades</b> serão apagadas permanentemente.','del')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
-                    {% elif u == 'Coordenador'%}
-                    <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
-                <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br> As <b>atividades dos departamentos</b> pelo qual está responsável serão apagadas permanentemente.<br><br>As <b>tarefas dos colaboradores</b> pelo qual está responsável serão apagadas permanentemente.','del')"role="listitem" tabindex="0" class="dropdown-item is-disabled"> 
-                    {% elif u == 'Administrador'%}
-                    <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
+                  {% if request.user|has_group:'Participante'%}
+                <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br>A sua <b>incrição</b> será apagada permanentemente.','{% url 'utilizadores:apagar-conta'%}')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
+                    {% elif request.user|has_group:'Colaborador'%}
+                <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br>As suas <b>tarefas</b> deixarão de lhe estar atribuidas.','{% url 'utilizadores:apagar-conta'%}')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
+                    {% elif request.user|has_group:'ProfessorUniversitario'%}
+                <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br>As suas <b>atividades</b> serão apagadas permanentemente.','{% url 'utilizadores:apagar-conta'%}')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
+                    {% elif request.user|has_group:'Coordenador'%}
+                <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br> As <b>atividades dos departamentos</b> pelo qual está responsável serão apagadas permanentemente.<br><br>As <b>tarefas dos colaboradores</b> pelo qual está responsável serão apagadas permanentemente.','{% url 'utilizadores:apagar-conta'%}')"role="listitem" tabindex="0" class="dropdown-item is-disabled"> 
+                    {% elif request.user|has_group:'Administrador'%}
                     {% if user|apagar_admin:user.id %}
-                    <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}"> 
-                <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br>Todas as suas <b>informações</b> serão apagadas permanentemente incluindo os <b>dados de configuração</b> do dia aberto pelo qual está responsável.','del')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar a sua conta?<br><br><b>Atenção!</b><br><br>Todas as suas <b>informações</b> serão apagadas permanentemente incluindo os <b>dados de configuração</b> do dia aberto pelo qual está responsável.','{% url 'utilizadores:apagar-conta'%}')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
                     {% else %}
                     
-                  <a onclick="alerta.render('Não pode apagar o seu perfil porque é o unico administrador do dia aberto neste momento.','del')"role="listitem" tabindex="0" class="dropdown-item is-disabled">   
+                  <a onclick="alert.warning('Não pode apagar o seu perfil porque é o unico administrador do dia aberto neste momento.')"role="listitem" tabindex="0" class="dropdown-item is-disabled">   
                     {% endif %}
                     {% endif %}
                     {% comment %} <input type="hidden" id="del" name="variable" value="{% url 'utilizadores:apagar-conta'%}">  {% endcomment %}
@@ -238,62 +365,9 @@
 </nav>
 
 
-
-<div id="msg-iniciar" class="dialog modal ">
-    <div class="modal-background"></div>
-    <div class="modal-card animation-content">
-        <section class="modal-card-body is-titleless" style="border-top-left-radius: 6px; border-top-right-radius: 6px;">
-            <div class="media">
-                <div class="media-content">
-                    <p id='text1'></p>
-                </div>
-            </div>
-        </section>
-        
-        <footer class="modal-card-foot">
-            <button onclick="alerta.cancelar()" class="button">Cancelar</button>
-        </footer>
-    </div>
-</div>
-
-
-
-<div id="msg" class="dialog modal ">
-    <div class="modal-background"></div>
-    <div class="modal-card animation-content">
-        <section class="modal-card-body is-titleless" style="border-top-left-radius: 6px; border-top-right-radius: 6px;">
-            <div class="media">
-                <div class="media-content">
-                    <p id='text-00'></p>
-                </div>
-            </div>
-        </section>
-        
-        <footer class="modal-card-foot">
-            <button onclick="alert.cancelar()" class="button">Cancelar</button>
-            <button id='dialog-confirm' onclick="alert.confirmar()" class="button is-success">Confirmar</button>
-        </footer>
-    </div>
-</div>
-
 {% block scripts %}
 <script>
 
-var msg = document.getElementById("msg-iniciar")
-var alerta = new Alerta(msg);
-function Alerta(msg) {
-    this.msg=msg
-    this.render=function(txt,elementId){
-        document.getElementById('text1').innerHTML = txt;
-        document.getElementById('dialog-confirm').setAttribute('data-target',elementId)
-        msg.classList.add("is-active");
-    }
-
-    this.cancelar=function(){
-        var msg = document.getElementById("msg-iniciar")
-        msg.classList.remove("is-active");
-    }   
-}
 
 
 function definicoes() {
@@ -304,6 +378,31 @@ function definicoes() {
     x.className = "dropdown is-right";
   }
 }
+
+function notificacoes() {
+  var x = document.getElementById("ver_notificacoes");
+  if (x.className === "modal") {
+    x.className = "modal is-active";
+  } else {
+    x.className = "modal";
+  }
+}
+
+function openNotificacoes(evt, cityName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" is-active", "");
+  }
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
 </script>
+
+
 
 {% endblock scripts %}

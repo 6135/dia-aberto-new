@@ -74,54 +74,54 @@
                 Tabela de Atribuição
               </h2>
                <div class="table ">
-                            <div class="table-wrapper">
-                                <table class="table has-mobile-cards is-hoverable">
-                                    <thead>
-                                        <tr>
-                                            <th  style="width: 300px;">
-                                                <div class="th-wrap">
-                                                     Grupo
-                                                    <span class="icon is-small">
-                                                        <i class="mdi mdi-menu-up"></i>
-                                                    </span>
-                                                </div>
-                                            </th>
-                                            <th  style="width: 300px;">
-                                                <div class="th-wrap">
-                                                     Nº Pessoas
-                                                    <span class="icon is-small">
-                                                        <i class="mdi mdi-menu-up"></i>
-                                                    </span>
-                                                </div>
-                                            </th>
-                                            <th  style="width: 300px;">
-                                                <div class="th-wrap">
-                                                     Operação
-                                                    <span class="icon is-small">
-                                                        <i class="mdi mdi-menu-up"></i>
-                                                    </span>
-                                                </div>
-                                            </th>
-                                            <th style=""></th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>    
-                                        {% for insctransporte in inscricoestransporte %} 
-                                        <tr id="sessao.id" draggable="false">
-                                            <td data-label="Grupo">{{insctransporte.inscricao.id}}</td>
-                                            <td data-label="Npassageiros">{{insctransporte.npassageiros}}</td>  
-                                            <td>
-                                              <a onclick="alert.render('Tem a certeza que deseja eliminar este grupo?','{% url 'eliminarAtribuicao' insctransporte.id %}')">
-                                                    <span class="icon has-text-danger">
-                                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                                                    </span>
-                                              </a>
-                                            </td>
-                                        </tr>
-                                        {% endfor %} 
-                                    </tbody>
-                                </table>
-                            </div>
+                  <div class="table-wrapper">
+                      <table class="table has-mobile-cards is-hoverable">
+                          <thead>
+                              <tr>
+                                  <th  style="width: 300px;">
+                                      <div class="th-wrap">
+                                           Grupo
+                                          <span class="icon is-small">
+                                              <i class="mdi mdi-menu-up"></i>
+                                          </span>
+                                      </div>
+                                  </th>
+                                  <th  style="width: 300px;">
+                                      <div class="th-wrap">
+                                           Nº Pessoas
+                                          <span class="icon is-small">
+                                              <i class="mdi mdi-menu-up"></i>
+                                          </span>
+                                      </div>
+                                  </th>
+                                  <th  style="width: 300px;">
+                                      <div class="th-wrap">
+                                           Operação
+                                          <span class="icon is-small">
+                                              <i class="mdi mdi-menu-up"></i>
+                                          </span>
+                                      </div>
+                                  </th>
+                                  <th style=""></th>
+                              </tr>
+                          </thead>
+                          <tbody>    
+                              {% for insctransporte in inscricoestransporte %} 
+                              <tr id="sessao.id" draggable="false">
+                                  <td data-label="Grupo">{{insctransporte.inscricao.id}}</td>
+                                  <td data-label="Npassageiros">{{insctransporte.npassageiros}}</td>  
+                                  <td>
+                                    <a onclick="alert.render('Tem a certeza que deseja eliminar este grupo?','{% url 'eliminarAtribuicao' insctransporte.id %}')">
+                                          <span class="icon has-text-danger">
+                                              <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                                          </span>
+                                    </a>
+                                  </td>
+                              </tr>
+                              {% endfor %} 
+                          </tbody>
+                      </table>
+                  </div>
                         </div>
                         <hr/>
 				<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
@@ -189,7 +189,6 @@
 </form>
 </div>
 
-{% include 'configuracao/popup.html' %}
 <style>
   .label {
   font-weight: normal;
