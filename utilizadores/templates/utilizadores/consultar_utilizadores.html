@@ -155,7 +155,7 @@
                                 {% endif %}
                                 {% if user.valido != 'Rejeitado'%}
                                 <div class="column"  data-tooltip="Rejeitar">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende rejeitar este utilizador?','{% url 'utilizadores:rejeitar' user.first_name user.id %}">           
+                                    <a onclick="alert.render('Tem a certeza que pretende rejeitar este utilizador?','{% url 'utilizadores:rejeitar' user.first_name user.id %}')">
                                             <span class="icon has-text-danger">
                                                 <i class="fas fa-ban"></i>
                                             </span>
@@ -351,6 +351,27 @@ Numeracao das paginas
 {% comment  %}
 Fim da enumeracao das paginas
 {% endcomment %}
+
+
+<script>
+
+var msg = document.getElementById("msg-iniciar")
+var alerta = new Alerta(msg);
+function Alerta(msg) {
+    this.msg=msg
+    this.render=function(txt,elementId){
+        document.getElementById('text1').innerHTML = txt;
+        document.getElementById('dialog-confirm').setAttribute('data-target',elementId)
+        msg.classList.add("is-active");
+    }
+
+    this.cancelar=function(){
+        var msg = document.getElementById("msg-iniciar")
+        msg.classList.remove("is-active");
+    }   
+}
+
+</script>
 
 <style>
   .footer {
