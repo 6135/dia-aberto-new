@@ -212,7 +212,7 @@ def proporatividade(request):
     if user_check_var is not None: return user_check_var
 
     today= datetime.now(timezone.utc) 
-    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    diaabertopropostas=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
 
     
     diainicio= diaabertopropostas.datadiaabertoinicio.date()
