@@ -118,15 +118,14 @@ register = template.Library()
 
 @register.filter(name='get_notificacoes') 
 def get_notificacoes(user, filtro):
-    if request.user.is_authenticated:    
-        user = get_user(request)
+    if user.is_authenticated:    
         if filtro == "Todas":
-            return Notificacao.objects.filter(lida=False)  
+            return user.notifications.unread()  
         elif filtro == "False":
-            return Notificacao.objects.filter(lida=False)
+            return user.notifications.unread()
         else:
-            return Notificacao.objects.filter(lida=True)  
-        user.notifications.unread()
+            return user.notifications.unread()  
+        
     else:
         return None
 
