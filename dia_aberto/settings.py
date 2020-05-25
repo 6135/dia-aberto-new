@@ -82,7 +82,7 @@ INSTALLED_APPS = [
 NOTIFICATIONS_NOTIFICATION_MODEL = 'notificacoes.Notificacao'
 
 
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap.html"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
