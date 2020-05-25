@@ -63,11 +63,8 @@ class Atividade(models.Model):
     
     def get_dias(self):
         sessoes= Sessao.objects.filter(atividadeid=self)
-        dias=[]
-        for sessao in sessoes:
-            if sessao.dia not in dias:
-                dias.append({'key':str(sessao.dia), 'value':sessao.dia})
-        return dias
+        dias = [sessao.dia for sessao in sessoes]
+        return [dia for dia in set(dias)]
 
     def get_dias_list(self):
         sessoes= Sessao.objects.filter(atividadeid=self)

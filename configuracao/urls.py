@@ -26,10 +26,20 @@ urlpatterns = [
     path('eliminaratribuicao/<int:id>', views.eliminarAtribuicao, name='eliminarAtribuicao'),
     path('eliminartransporte/<int:id>', views.eliminarTransporte, name='eliminarTransporte'),
     #-Utility
+    path('edificios', views.verEdificios, name='verEdificios'),
+    path('adicionaredificio', views.configurarEdificio, name='adicionarEdificio'),
+    path('editaredificio/<int:id>', views.configurarEdificio, name='editarEdificio'),
+    path('eliminaredificio/<int:id>', views.eliminarEdificio,name='eliminarEdificio'),
+
+    path('temas', views.verTemas, name='verTemas'),
+    path('adicionarTema', views.configurarTema, name='adicionarTema'),
+    path('editarTema/<int:id>', views.configurarTema, name='editarTema'),
+    path('eliminarTema/<int:id>', views.eliminarTema,name='eliminarTema'),
 
     #ajax ----------
     path('ajax/getDias', views.getDias, name='getDias'),
     path('ajax/addHorarioRow', views.newHorarioRow, name='ajaxAddHorarioRow'),
     path('ajax/addPratoRow', views.newPratoRow, name='ajaxAddPratoRow'),
+    path('ajax/addEspacoRow', views.newEspacoRow, name='ajaxAddEspacoRow'),
 
 ]
