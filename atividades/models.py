@@ -60,22 +60,16 @@ class Atividade(models.Model):
 
     def get_fields(self):
         return [(field.name, field.value_to_string(self)) for field in Atividade._meta.fields]
-    
+
     def get_dias(self):
         sessoes= Sessao.objects.filter(atividadeid=self)
-        dias=[]
-        for sessao in sessoes:
-            if sessao.dia not in dias:
-                dias.append({'key':str(sessao.dia), 'value':sessao.dia})
-        return dias
-
+        dias = [sessao.dia for sessao in sessoes]
+        return [{'key':str(dia), 'value': dia} for dia in set(dias)]
+        
     def get_dias_list(self):
         sessoes= Sessao.objects.filter(atividadeid=self)
-        dias=[]
-        for sessao in sessoes:
-            if sessao.dia not in dias:
-                dias.append(sessao.dia)
-        return dias
+        dias = [sessao.dia for sessao in sessoes]
+        return [dia for dia in set(dias)]
 
 class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
