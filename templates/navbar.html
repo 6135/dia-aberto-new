@@ -27,7 +27,7 @@
       Minhas Tarefas
     </a> 
     {% elif request.user|has_group:'ProfessorUniversitario'%}
-    <a href="/minhasatividades" class="navbar-item">
+    <a href="{% url 'atividades:minhasAtividades' %}" class="navbar-item">
       Minhas Atividades
     </a>   
     {% elif request.user|has_group:'Coordenador'%}

@@ -16,6 +16,19 @@ from django.forms.widgets import Select
 
 
 #-------------Diogo----------------------
+
+def user_check(request, user_profile = ProfessorUniversitario):
+    if not request.user.is_authenticated:
+        return redirect('utilizadores:login')
+    elif not user_profile.objects.filter(utilizador_ptr_id = request.user.id).exists():
+        return render(request=request,
+                    template_name='mensagem.html',
+                    context={
+                        'tipo':'error',
+                        'm':'Não tem permissões para aceder a esta pagina!'
+                    })
+    return None
+
 def filters(request):
     filters=[]
     if request.POST.get('Aceite'):
@@ -195,8 +208,11 @@ def proporatividade(request, id = None):
     today= datetime.now(timezone.utc) 
     diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
     dias_diaaberto = diaaberto.days_as_array()
+
+    user_check_var = user_check(request=request, user_profile=ProfessorUniversitario)
+    if user_check_var is not None: return user_check_var
+
     logged_prof = ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id)
-    
     sessoes = ""
     SessaoFormSet = SessaoFormset()
     sessao_form_set = SessaoFormSet(queryset=Sessao.objects.none())
@@ -295,15 +311,19 @@ def versalas(request):
     return render(request, template_name="atividades/generic_list_options.html", context={"generic": salas})
 
 def verhorarios(request):
-    horarios = []
+    horarios=[]
+    #horarioindisponivel = request.POST['horarioindisponivel[]']
+    #print(horarioindisponivel)
+    today = datetime.now(timezone.utc)
+
     default = {
         'key': '',
         'value': 'Escolha um horario'
     }
     options = [{
-        'key': str(horario.id),
-        'value': str(horario),
-    } for horario in Horario.objects.exclude(inicio="12:00", fim="14:00")]
+        'key': str(session_time),
+        'value': str(session_time),
+    } for session_time in Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today).session_times()]
 
     return render(request=request, 
                 template_name="configuracao/dropdown.html", 

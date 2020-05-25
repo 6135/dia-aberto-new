@@ -125,7 +125,7 @@ class Diaaberto(models.Model):
         time_lunch_end = 50400
         return [
             (time.strftime('%H:%M', time.gmtime(start_time_as_seconds + (n*self.escalasessoes.minute*60))))
-                for n in range(int((43200 - start_time_as_seconds)/(self.escalasessoes.minute*60))+1)
+                for n in range(int((43200 - start_time_as_seconds)/(self.escalasessoes.minute*60)))
         ] + [
             (time.strftime('%H:%M', time.gmtime(time_lunch_end + (n*self.escalasessoes.minute*60))))
                 for n in range(int((end_time_as_seconds - time_lunch_end)/(self.escalasessoes.minute*60))+1)

@@ -1,4 +1,4 @@
-{% extends 'configuracao/app.html' %}
+{% extends 'app.html' %}
 {% block content %}
 {% load atividadestags %}
 <form method="POST" action="" id='frm'>
@@ -6,8 +6,8 @@
 <div id="proporatividade" style="display: content">
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><a href="{% url 'inicio' %}">Início</a></li>
-    <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
+    <li><a href="{% url 'home' %}">Início</a></li>
+    <li><a href="{% url 'atividades:minhasAtividades' %}">Minhas Atividades</a></li>
     <li class="is-active"><a href="" aria-current="page">Propor Atividade</a></li>
   </ul>
 </nav>
@@ -220,9 +220,9 @@
 <div id="inserirsessao"  style="display: none">
     <nav class="breadcrumb" aria-label="breadcrumbs">
     <ul>
-        <li><a href="{% url 'inicio' %}">Início</a></li>
-        <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-        <li class="is-active"><a href="{% url 'proporAtividade' %}" aria-current="page"> Inserir Sessão</a></li>
+        <li><a href="{% url 'home' %}">Início</a></li>
+        <li><a href="{% url 'atividades:minhasAtividades' %}">Minhas Atividades</a></li>
+        <li class="is-active"><a href="{% url 'atividades:proporAtividade' %}" aria-current="page"> Inserir Sessão</a></li>
     </ul>
     </nav>
     <div style="padding: 3rem 2vw 1rem">
@@ -374,7 +374,7 @@ $('#toValidate').click(function(e){
 	value = Number(value) + Number('1');
 	document.getElementById("id_form-TOTAL_FORMS").value = value;
 	$.ajax({
-		url: "{% url 'ajaxAddSessaoRow' %}",
+		url: "{% url 'atividades:ajaxAddSessaoRow' %}",
 		method: "POST",
 		data: {
 			'extra': value,
@@ -407,7 +407,7 @@ $('#del-row').click(function(e){
     {
         var valuecampus= $(this).val();
         $.ajax({
-            url:"{% url 'verEdificios' %}",
+            url:"{% url 'atividades:verEdificios' %}",
             method: 'POST',
             data: { 
                 'valuecampus': valuecampus,
@@ -426,7 +426,7 @@ $('#del-row').click(function(e){
     {
         var valueedificio= $(this).val();
         $.ajax({
-            url:"{% url 'verSalas' %}",
+            url:"{% url 'atividades:verSalas' %}",
             method: 'POST',
             data: { 
                 'valueedificio': valueedificio,
@@ -439,8 +439,7 @@ $('#del-row').click(function(e){
         })
 
     })
-
-
+    
     function myFunction() {
     var x = document.getElementById("proporatividade");
     var x2 = document.getElementById("inserirsessao");
