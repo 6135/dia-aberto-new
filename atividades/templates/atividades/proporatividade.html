@@ -1,10 +1,10 @@
-{% extends 'configuracao/app.html' %}
+{% extends 'app.html' %}
 {% block content %}
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><a href="{% url 'inicio' %}">Início</a></li>
-    <li><a href="{% url 'minhasAtividades' %}">Minhas Atividades</a></li>
-    <li class="is-active"><a href="{% url 'inserirAtividade' %}" aria-current="page">Propor Atividade</a></li>
+    <li><a href="{% url 'home' %}">Início</a></li>
+    <li><a href="{% url 'atividades:minhasAtividades' %}">Minhas Atividades</a></li>
+    <li class="is-active"><a href="{% url 'atividades:inserirAtividade' %}" aria-current="page">Propor Atividade</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">

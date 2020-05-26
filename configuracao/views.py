@@ -4,6 +4,7 @@ from .forms import *
 from .models import *
 from utilizadores.models import *
 from inscricoes.models import Inscricao, Inscricaosessao, Inscricaotransporte
+from atividades.models import Tema
 from datetime import datetime, timezone,date, time
 from atividades.models import Sessao
 from django.core.serializers import *
@@ -15,6 +16,18 @@ from pip._vendor import requests
 from django.core import serializers
 
 # Create your views here.
+
+def user_check(request, user_profile = Administrador):
+	if not request.user.is_authenticated:
+		return redirect('utilizadores:login')
+	elif not user_profile.objects.filter(utilizador_ptr_id = request.user.id).exists():
+		return render(request=request,
+					template_name='mensagem.html',
+					context={
+						'tipo':'error',
+						'm':'Não tem permissões para aceder a esta pagina!'
+					})
+	return None
 
 def homepage(request):
 	return render(request=request,
@@ -51,10 +64,9 @@ def showBy(request, list_diaaberto):
 	
 def viewDays(request):
 
-	if not request.user.is_authenticated:
-		return redirect('utilizadores:login')
-	elif not Administrador.objects.filter(utilizador_ptr_id = request.user.id).exists():
-		return redirect('home')
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	if request.method == 'POST':
 		formFilter = diaAbertoFilterForm(request.POST)
 	else:
@@ -90,6 +102,9 @@ def viewDays(request):
 
 def newDay(request, id=None):
 
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	logged_admin = Administrador.objects.get(utilizador_ptr_id = request.user.id)
 
 	if id is None:
@@ -113,6 +128,9 @@ def newDay(request, id=None):
 				context = {'form': dia_aberto_form})
 
 def delDay(request, id=None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
 
 	if id is not None:
 		dia_aberto = Diaaberto.objects.filter(id=id)
@@ -139,6 +157,10 @@ def filterMenus(request, menus):
 
 
 def viewMenus(request):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	form = menusFilterForm(request.POST)
 	menus = Menu.objects.all()
 	menus = filterMenus(request,menus)
@@ -148,64 +170,75 @@ def viewMenus(request):
 				)
 
 def newMenu(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	PratoFormSet = menuPratoFormset()
+	prato_form_set = PratoFormSet(queryset=Prato.objects.none())
 	menu_object = Menu()
+
 	if id is not None:
 		menu_object = Menu.objects.get(id=id)
+		prato_form_set = PratoFormSet(queryset=Prato.objects.filter(menuid=menu_object))
 	menu_form = menuForm(instance=menu_object)
 
 	if request.method == 'POST':
 		menu_form = menuForm(request.POST,instance=menu_object)
-		if menu_form.is_valid():
-			menu_form_object = menu_form.save()
-			return redirect('configuracao:novoPrato', menu_form_object.id)
+		prato_form_set = PratoFormSet(request.POST)
+		if menu_form.is_valid() and prato_form_set.is_valid():
+			menu_object = menu_form.save()
+			instances = prato_form_set.save(commit=False)
 
+			for instance in instances:
+				instance.menuid = menu_object
+				instance.save()
+			for instance in prato_form_set.deleted_objects:
+				instance.delete()
+			return redirect('configuracao:verMenus')
 	return render(request=request,
 				  template_name='configuracao/menuForm.html',
-				  context = {'form': menu_form}
+				  context = {'form': menu_form, 'formset': prato_form_set}
 				)
 
 def delMenu(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	menu=Menu.objects.get(id=id)
 	menu.delete()
 	return redirect('configuracao:verMenus')
 
-
-def newPrato(request, id):
-	pratos = Prato.objects.filter(menuid=Menu.objects.get(id=id))
-	has_one = pratos.count() > 0
-	prato_object = Prato(menuid=Menu.objects.get(id=id))
-	prato_form=pratosForm(instance=prato_object)
-	if request.method == 'POST':
-		prato_form=pratosForm(request.POST,instance=prato_object)
-		if prato_form.is_valid():
-			prato_form.save()
-			if 'save' in request.POST:
-				return redirect('configuracao:verMenus')
-			else:
-				return redirect('configuracao:novoPrato',id)
-	return render(request=request,
-				  template_name='configuracao/pratoForm.html',
-				  context = {'form': prato_form,
-							  'pratos': pratos,
-							'has_one': has_one,
-							}
-				)
-
 def menuPratoFormset(extra = 0, minVal = 1):
-	formSets = modelformset_factory(model=Transportehorario, exclude = ['transporte','id'],widgets={
-			'origem': Select(attrs={'class': 'input'}),
-			'chegada': Select(attrs={'class': 'input'}),
-			'horaPartida': CustomTimeWidget(attrs={'class': 'input'}),
-			'horaChegada': CustomTimeWidget(attrs={'class': 'input'}),
+	formSets = modelformset_factory(model=Prato, exclude = ['id','menuid'],widgets={
+			'tipo': Select(attrs={'class': 'input'}),
+			'prato': TextInput(attrs={'class': 'input'}),
+			'nrpratosdisponiveis': NumberInput(attrs={'class': 'input', 'min':'1','style':'width: 30%'}),
+		},labels={
+			'nrpratosdisponiveis': '# Pratos'
 		}, extra = extra, min_num = minVal, can_delete=True)
 	return formSets
 
 def delPrato(request, id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	prato=Prato.objects.get(id=id)
 	menuid=prato.menuid.id
 	prato.delete()
 	return redirect('configuracao:novoPrato',menuid)
 
+def newPratoRow(request):
+	value = int(request.POST.get('extra'))
+	data = {
+		'form_tipo': "form-" + str(value-1) + "-tipo",
+		'form_prato': "form-" + str(value-1) + "-prato",
+		'form_num': "form-" + str(value-1) + "-nrpratosdisponiveis",
+		'form_id': 'form-' + str(value-1) + '-id',
+	}
+	return render(request=request, template_name='configuracao/menuPratoRow.html', context=data)
 
 def getDias(request):
 	options = []
@@ -235,15 +268,35 @@ def getDias(request):
 				  context={'options':options, 'default': default}
 				)
 
+def filtrarTransportes(request, transportes):
+	search_specific = None
+	if request.method == 'POST':
+		search_specific = request.POST.get('searchId')
+		if search_specific != '':
+			transportes = transportes.filter(transporte__identificador = search_specific)
+		if request.POST.get('filter_to') != '':
+			transportes = transportes.filter(chegada = request.POST.get('filter_to'))
+		if  request.POST.get('filter_from') != '':
+			transportes = transportes.filter(origem = request.POST.get('filter_from'))
+	return transportes
 
 def verTransportes(request):
-	form = []
-	transporte = Transportehorario.objects.all()
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	form = transporteFilterForm(request.POST)
+	transportes = filtrarTransportes(request = request,transportes = Transportehorario.objects.all())
+
 	return render(request = request,
 				  template_name='configuracao/listaTransportes.html',
-				  context={'form': form, 'horariosTra': transporte})
+				  context={'horariosTra': transportes, 'form': form})
 
 def criarTransporte(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	#vars
 	transport_by_default = Transporte()
 	transport_universitario_default = Transporteuniversitario(transporte=transport_by_default)
@@ -311,12 +364,18 @@ def newHorarioRow(request):
 
 
 def eliminarTransporte(request, id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	Transportehorario.objects.get(id=id).delete()
 	return redirect('configuracao:verTransportes')
 
 
-
 def atribuirTransporte(request, id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
 
 	class ChegadaPartida:
 		def __init__(self, id,nparticipantes,local,horario, check):
@@ -380,7 +439,117 @@ def atribuirTransporte(request, id):
 				  context={'transporte': transportehorario,  "inscricoestransporte": inscricaotransporte, "vagas": transportevagas, 'chegadapartida': dadoschepart})
 
 def eliminarAtribuicao(request, id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
 	transportehorario=Inscricaotransporte.objects.get(id=id).transporte.id
 	print(transportehorario)
 	Inscricaotransporte.objects.get(id=id).delete()
 	return redirect('configuracao:atribuirTransporte', transportehorario)
+
+def verEdificios(request):
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	edificios = Edificio.objects.all()
+
+	return render(request=request,
+				template_name='configuracao/listaEdificios.html',
+				context={'edificios': edificios})
+
+def configurarEdificio(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	espacoFormSet = modelformset_factory(model=Espaco, form=EspacoForm,extra=0, min_num = 1, can_delete=True)
+	formSet = espacoFormSet(queryset=Espaco.objects.none())
+	edificio = Edificio()
+
+	if id is not None:
+		edificio = Edificio.objects.get(id=id)
+		formSet = espacoFormSet(queryset=Espaco.objects.filter(edificio=edificio))
+	edificioForm = EdificioForm(instance=edificio)
+
+
+	if request.method == 'POST':
+		edificioForm = EdificioForm(data=request.POST,instance=edificio)
+		formSet = espacoFormSet(request.POST)
+		if edificioForm.is_valid() and formSet.is_valid():
+			print("valid")
+			edificio = edificioForm.save()
+
+			instances = formSet.save(commit=False)
+
+			for instance in instances:
+				instance.edificio=edificio
+				instance.save()
+
+			for instance in formSet.deleted_objects:
+				instance.delete()
+
+			return redirect('configuracao:verEdificios')
+
+	return	render(request=request,
+				template_name='configuracao/criarEdificio.html',
+				context={'form':edificioForm,
+						'formset':formSet})
+
+def newEspacoRow(request):
+	value = int(request.POST.get('extra'))
+	data = {
+		'form_nome': "form-" + str(value-1) + "-nome",
+		'form_espaco': "form-" + str(value-1) + "-espaco",
+		'form_descricao': "form-" + str(value-1) + "-descricao",
+		'form_id': 'form-' + str(value-1) + '-id',
+	}
+	return render(request=request, template_name='configuracao/edificioEspacoRow.html', context=data)
+
+def eliminarEdificio(request,id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	Edificio.objects.get(id=id).delete()
+	return redirect('configuracao:verEdificios')
+
+def verTemas(request):
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	temas = Tema.objects.all()
+
+	return render(request=request,
+				template_name='configuracao/listaTemas.html',
+				context={'temas': temas})
+
+def configurarTema(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	tema = Tema()
+
+	if id is not None:
+		tema = Tema.objects.get(id=id)
+	temaForm = TemaForm(instance=tema)
+
+
+	if request.method == 'POST':
+		temaForm = TemaForm(data=request.POST,instance=tema)
+		if temaForm.is_valid():
+			tema = temaForm.save()
+			return redirect('configuracao:verTemas')
+
+	return	render(request=request,
+				template_name='configuracao/criarTema.html',
+				context={'form':temaForm})
+
+def eliminarTema(request,id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	Tema.objects.get(id=id).delete()
+	return redirect('configuracao:verTemas')

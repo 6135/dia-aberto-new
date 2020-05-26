@@ -1,4 +1,4 @@
-{% extends 'configuracao/app.html' %}
+{% extends 'app.html' %}
 {% block content %}
 
 <div class="columns">
@@ -135,7 +135,7 @@
                                 </a>
                             </td>
                             <td data-label="Nome">{{atividade.nome}} </td>
-                            <td data-label="Criador">{{atividade.professoruniversitarioutilizadorid.utilizadorid.nome}} </td> 
+                            <td data-label="Criador">{{atividade.professoruniversitarioutilizadorid.first_name}} {{atividade.professoruniversitarioutilizadorid.last_name}} </td> 
                             <td data-label="Submetido a" date-value="{{atividade.dataalteracao|date:'Y-m-d H:i'}}">{{atividade.dataalteracao}}</td>
                             {% if atividade.estado == "Pendente"%}
                             <td data-label="Estado">
@@ -163,7 +163,7 @@
                                         </p>
                                         <p>
                                             <strong>Professor:</strong>
-                                            {{atividade.professoruniversitarioutilizadorid.utilizadorid.nome}}
+                                            {{atividade.professoruniversitarioutilizadorid.first_name}} {{atividade.professoruniversitarioutilizadorid.last_name}}
                                         </p>
                                         <p>
                                             <strong>Data de submissão:</strong>
@@ -250,8 +250,8 @@
                                         </div>
                                         {% if  atividade.estado == 'Pendente' %}
                                             <div style="margin-top:13px">
-                                                <a type="button" href="{% url 'validarAtividade' atividade.id 1%}" class="validatebutton button is-success" style="margin-right: 10px;" ><span class="icon is-small"><i class="mdi mdi-check"></i></span><span>Aceitar</span></a>
-                                                <a type="button" href="{% url 'validarAtividade' atividade.id 0%}" class="validatebutton button is-danger"><span class="icon is-small"><i class="mdi mdi-delete"></i></span> <span>Rejeitar</span></a>
+                                                <a type="button" href="{% url 'atividades:validarAtividade' atividade.id 1%}" class="validatebutton button is-success" style="margin-right: 10px;" ><span class="icon is-small"><i class="mdi mdi-check"></i></span><span>Aceitar</span></a>
+                                                <a type="button" href="{% url 'atividades:validarAtividade' atividade.id 0%}" class="validatebutton button is-danger"><span class="icon is-small"><i class="mdi mdi-delete"></i></span> <span>Rejeitar</span></a>
                                             </div>
                                         {% endif %}
                                     </div>
