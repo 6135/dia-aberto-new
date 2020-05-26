@@ -1,20 +1,24 @@
 
 {% extends 'app.html' %}
 
-{% block title %}- Detalhes Notificação{% endblock title %}
+{% block title %}- Detalhes{% endblock title %}
 
 {% block content %}
 <div>
 
+<div class="columns">
+<div class="column is-3">
+</div>
+<div class="column">
     <div style="padding: 3rem 2vw 1rem;">
         <div class="field is-horizontal">
             <div class="field-label is-normal">
                 <label class="label">Título</label>
             </div>
             <div class="field-body">
-                <div class="field has-addons">
+                <div class="field has-addons has-background-light">
                     <p class="control has-background-light" style="padding: 10px 30px">
-                        {{notificacao.titulo}}
+                        {{notificacao.verb}}
                     </p>
                 </div>
             </div>
@@ -25,32 +29,32 @@
             </div>
             <div class="field-body">
                 <div class="field has-addons has-background-light">
-                    <p class="control" style="padding: 10px 30px">
-                        {{notificacao.descricao}}
+                    <p class="control has-background-light" style="padding: 10px 30px">
+                        {{notificacao.description}}
                     </p>
                 </div>
             </div>
         </div>
         <div class="field is-horizontal">
             <div class="field-label is-normal">
-                <label class="label">Data de envio</label>
+                <label class="label">Data de Envio</label>
             </div>
             <div class="field-body">
-                <div class="field has-addons">
-                    <p class="control" style="padding: 6px 10px">
-                        {{notificacao.criadoem}}
+                <div class="field has-addons has-background-light">
+                    <p class="control has-background-light" style="padding: 10px 30px">
+                        {{notificacao.timestamp}}
                     </p>
                 </div>
             </div>
         </div>
         <div class="field is-horizontal">
             <div class="field-label is-normal">
-                <label class="label">Remetente</label>
+                <label class="label">Remetente </label>
             </div>
             <div class="field-body">
-                <div class="field has-addons">
-                    <p class="control" style="padding: 6px 10px">
-                        <a href="">{{recetor.first_name}}</a> <smal>{{recetor.email}}</smal>
+                <div class="field has-addons has-background-light">
+                    <p class="control has-background-light" style="padding: 10px 30px">
+                        {{notificacao.actor_object_id}}
                     </p>
                 </div>
             </div>
@@ -60,38 +64,67 @@
                 <label class="label">Destinatário</label>
             </div>
             <div class="field-body">
-                <div class="field has-addons">
-                    <p class="control" style="padding: 6px 10px">
-                        <a href="">{{recetor.first_name}}</a> (Prof. Universitário)
+                <div class="field has-addons has-background-light">
+                    <p class="control has-background-light" style="padding: 10px 30px">
+                        {{notificacao.recipient_id}}
                     </p>
                 </div>
             </div>
         </div>
-        <div class="field is-horizontal" style="margin-top: 17px">
-            <div class="field-label">
-                <!-- Left empty for spacing -->
-            </div>
-            <div class="field-body">
-                <div class="field is-grouped">
-                    <p class="control">
-                        <a class="button is-danger is-outlined">
-                            <span class="icon is-small">
-                                <i class="fas fa-trash"></i>
-                            </span>
-                            <span>Apagar Notificação</span>
-                        </a>
-                    </p>
-                    <p class="control">
-                        <a class="button">
-                            <span>Responder</span>
-                            <span class="icon is-small">
-                                <i class="fas fa-reply"></i>
-                            </span>
-                        </a>
-                    </p>
-                </div>
-            </div>
+
+        <div class="columns">
+        <div class="column is-4">
         </div>
+        <div class="column">
+                <div class="field is-horizontal" style="margin-top: 17px">
+
+                    <div class="field-body">
+                        <div class="field is-grouped">
+                            {% if notificacao.tipo == "Solicitação" %}
+                            <p class="control">
+                                <a class="button is-success is-outlined">
+                                    <span class="icon has-text-success">
+                                    <i class="fas fa-check-square"></i>
+                                    </span>
+                                    <span>Confirmar</span>
+                                </a>
+                            </p>
+                            <p class="control">
+                                <a class="button is-danger is-outlined">
+                            <span class="icon has-text-danger">
+                            <i class="fas fa-ban"></i>
+                            </span>
+                                    <span>Rejeitar</span>
+                                </a>
+                            </p>
+                            {% else %}
+                            <p class="control">
+                                <a class="button is-danger is-outlined">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-trash"></i>
+                                    </span>
+                                    <span>Apagar Notificação</span>
+                                </a>
+                            </p>
+                            {% endif %}
+                            <p class="control">
+                                <a class="button">
+                                    <span>Enviar Mensagem</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-reply"></i>
+                                    </span>
+                                </a>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+        </div>        
+        <div class="column is-4">
+        </div>
+        </div>
+    </div>
+    </div>
+    <div class="column is-3">
     </div>
 </div>
 {% endblock content %}
