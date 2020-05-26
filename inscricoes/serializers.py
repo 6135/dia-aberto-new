@@ -1,4 +1,3 @@
-from inscricoes.models import EscolaPortugal
 from atividades.models import Atividade, Sessao
 from configuracao.models import Horario
 from rest_framework import serializers
@@ -23,10 +22,4 @@ class AtividadeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Atividade
-        fields = '__all__'
-
-
-class EscolaSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EscolaPortugal
         fields = '__all__'

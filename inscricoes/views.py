@@ -3,7 +3,7 @@ from atividades.models import Atividade, Sessao
 import django_filters.rest_framework as djangofilters
 from rest_framework import filters, pagination
 from rest_framework.generics import ListCreateAPIView
-from inscricoes.models import Escola, EscolaPortugal, Responsavel
+from inscricoes.models import Escola, Responsavel
 from utilizadores.models import Participante
 from formtools.wizard.views import SessionWizardView
 from django.http import HttpResponse, JsonResponse
@@ -57,14 +57,6 @@ class AtividadesAPIView(ListCreateAPIView):
     serializer_class = serializers.AtividadeSerializer
     pagination_class = AtividadesPagination
     filterset_class = AtividadeFilter
-
-
-class EscolasAPIView(ListCreateAPIView):
-    search_fields = ['nome']
-    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
-    queryset = EscolaPortugal.objects.all()
-    serializer_class = serializers.EscolaSerializer
-    ordering = 'nome'
 
 
 class AlterarInscricaoWizard(SessionWizardView):
@@ -131,13 +123,17 @@ class InscricaoWizard(SessionWizardView):
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
-        if self.steps.current == 'sessoes':
-            # context.update({'campus': })
+        if self.steps.current == 'escola':
+            context.update({
+                'escolas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Escola.objects.all())))
+            })
+        elif self.steps.current == 'sessoes':
             context.update({
                 'campus': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Campus.objects.all()))),
                 'unidades_organicas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Unidadeorganica.objects.all()))),
                 'departamentos': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Departamento.objects.all()))),
                 'tipos': json.dumps(list(map(lambda x: x[0], Atividade.tipos))),
+                'nalunos': self.get_cleaned_data_for_step('escola')['nalunos'],
             })
         return context
 
@@ -187,17 +183,6 @@ class ConsultarInscricaoIndividual(TemplateView):
 
         args = {'form': form, 'text': text}
         return render(request, "inscricoes/consultar_inscricao.html", args)
-
-
-def AlterarInscricao(request, inscricao_id):
-    inscricoes = get_object_or_404(Inscricao, id=inscricao_id)
-    form = InscricaoColetivaForm(request.POST or None, instance=inscricoes)
-
-    if request.method == 'POST':
-        if form.is_valid():
-            form.save()
-
-    return render(request, "inscricoes/alterar_inscricao.html", {'form': form})
 
 
 class ConsultarInscricoesListView(SingleTableMixin, FilterView):

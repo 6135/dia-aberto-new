@@ -91,13 +91,6 @@ class Responsavel(models.Model):
         db_table = 'Responsavel'
 
 
-class EscolaPortugal(models.Model):
-    nome = models.CharField(max_length=200)
-
-    class Meta:
-        db_table = 'EscolaPortugal'
-
-
 class Inscricaoprato(models.Model):
     inscricao = models.ForeignKey(Inscricao, models.CASCADE)
     # TODO: Descomentar quando a configuração dos pratos estiver pronta
