@@ -34,6 +34,8 @@ def DetalhesNotificacao(request, pk):
 
 def detalhes_notificacao_automatica(request, id):
     notificacao = Notificacao.objects.get(id=id)
+    notificacao.unread = False
+    notificacao.save()
     if notificacao == None:
         return redirect("utilizadores:mensagem",5)
     return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
