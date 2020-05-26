@@ -69,7 +69,6 @@ def diasAtividade(request):
         atividadeid = request.POST.get('atividadeid')
         atividade = Atividade.objects.get(id=atividadeid)   
         dias = atividade.get_dias()  
-        print(dias)
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':dias, 'default': default}
@@ -215,7 +214,6 @@ def consultartarefa(request):
         if tipo != ' ' and tipo != 'None':
             tarefas=tarefas.filter(tipo=tipo)
         if request.POST.get('Concluida') or request.POST.get('naoConcluida')  or request.POST.get('naoAtribuida'):
-            print('estado')
             filter=filters(request)
             tarefas=tarefas.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
     else:
