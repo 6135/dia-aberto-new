@@ -16,7 +16,6 @@
   <link rel="stylesheet" href="{% static 'css/mystyle.css' %}">
   <link rel="stylesheet" href="{% static 'css/materialdesignicons.min.css' %}">
   <link rel="stylesheet" href="{% static 'css/responsive-tables.css' %}">
-  <link rel="stylesheet" href="{% static 'css/animated-arrows.css' %}">
   <link rel="icon" href="{% static 'img/logo.png' %}" />
 
   {% block load %}
@@ -53,6 +52,7 @@
     }
 
     .footer {
+      position: absolute;
       bottom: 0;
       width: 100%;
       background-color: #fafafa;
@@ -63,7 +63,6 @@
 
 <body>
   <div id="app">
-    {% include 'popup.html'  %}
     {% include 'navbar.html' %}
     <div class="hero is-primary is-bold" id="top-hero">
       <div id="top-hero-body" class="hero-body"></div>

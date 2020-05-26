@@ -81,14 +81,21 @@
           <div onclick="notificacoes()">
           <div role="button" class="dropdown-trigger">
             <span role="button">
+          
               <div type="button" data-badge="0" class="button has-badge-rounded has-badge-warning is-text"
                 style="margin-right: 0.9rem">
-                <span>
+                <span> 
                   <span class="icon">
                     <i class="mdi mdi-bell mdi-24px"></i>
+                    {% if request.user|nr_notificacoes > 0 %}
+                    <span class="tag is-link is-light">{{request.user|nr_notificacoes}}</span>
+                    {% endif %}
                   </span>
+                  
                 </span>
+                
               </div>
+              
             </span>
           </div>
 </div>
@@ -115,13 +122,21 @@
 
 {% for notificacao in request.user|get_notificacoes:"Todas" %}
  <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}" class="panel-block">
-{% if notificacao.lida == False %}
+{% if notificacao.level == "info" %}
 <span class="icon has-text-info">
   <i class="fas fa-info-circle"></i>
   </span>
-{% else %}
+{% elif notificacao.level == "sucess" %}
 <span class="icon has-text-success">
   <i class="fas fa-check-square"></i>
+</span>
+{% elif notificacao.level == "warning" %}
+<span class="icon has-text-warning">
+  <i class="fas fa-exclamation-triangle"></i>
+</span>
+{% elif notificacao.level == "error" %}
+<span class="icon has-text-danger">
+  <i class="fas fa-ban"></i>
 </span>
   {% endif %}
 
@@ -137,13 +152,21 @@
 <div id="Novas" style="display:none" class="tabcontent">
 {% for notificacao in request.user|get_notificacoes:"False" %}
   <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}" class="panel-block">
-{% if notificacao.lida == False %}
+{% if notificacao.level == "info" %}
 <span class="icon has-text-info">
   <i class="fas fa-info-circle"></i>
   </span>
-{% else %}
+{% elif notificacao.level == "sucess" %}
 <span class="icon has-text-success">
   <i class="fas fa-check-square"></i>
+</span>
+{% elif notificacao.level == "warning" %}
+<span class="icon has-text-warning">
+  <i class="fas fa-exclamation-triangle"></i>
+</span>
+{% elif notificacao.level == "error" %}
+<span class="icon has-text-danger">
+  <i class="fas fa-ban"></i>
 </span>
   {% endif %}
 
@@ -157,13 +180,21 @@
 <div id="Anteriores" style="display:none" class="tabcontent">
 {% for notificacao in request.user|get_notificacoes:"True" %}
  <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}" class="panel-block">
-{% if notificacao.lida == False %}
+{% if notificacao.level == "info" %}
 <span class="icon has-text-info">
   <i class="fas fa-info-circle"></i>
   </span>
-{% else %}
+{% elif notificacao.level == "sucess" %}
 <span class="icon has-text-success">
   <i class="fas fa-check-square"></i>
+</span>
+{% elif notificacao.level == "warning" %}
+<span class="icon has-text-warning">
+  <i class="fas fa-exclamation-triangle"></i>
+</span>
+{% elif notificacao.level == "error" %}
+<span class="icon has-text-danger">
+  <i class="fas fa-ban"></i>
 </span>
   {% endif %}
 
@@ -259,7 +290,7 @@
                   <span class="icon" >
                     <i class="mdi mdi-bell-circle mdi-24px" ></i> 
                   </span>
-
+                
                 <strong>Gerir notificações</strong>
                 
                 

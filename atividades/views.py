@@ -151,14 +151,20 @@ def alterarAtividade(request,id):
                     )
 
 def eliminarAtividade(request,id):
-    Atividade.objects.get(id=id).delete() #Dupla (sessao,atividade)
-    return HttpResponseRedirect('/minhasatividades')
+    user_check_var = user_check(request=request, user_profile=ProfessorUniversitario)
+    if user_check_var is not None: return user_check_var
+    prof=Atividade.objects.get(id=id).professoruniversitarioutilizadorid
+    if prof == ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
+        Atividade.objects.get(id=id).delete() #Dupla (sessao,atividade)
+    return redirect('atividades:minhasAtividades')
+    
+
 
 
 def eliminarSessao(request,id):
     atividadeid=Sessao.objects.get(id=id).atividadeid.id
     Sessao.objects.get(id=id).delete()
-    return redirect('inserirSessao',atividadeid)
+    return redirect('atividades:inserirSessao',atividadeid)
 #-----------------EndDiogo------------------
 
 
@@ -212,7 +218,7 @@ def proporatividade(request):
     if user_check_var is not None: return user_check_var
 
     today= datetime.now(timezone.utc) 
-    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    diaabertopropostas=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
 
     
     diainicio= diaabertopropostas.datadiaabertoinicio.date()

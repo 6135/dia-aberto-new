@@ -2,13 +2,15 @@ from django import template
 from utilizadores.models import *
 from notificacoes.models import *
 
-
-
 from distutils.version import StrictVersion  # pylint: disable=no-name-in-module,import-error
 
 from django import get_version
 from django.template import Library
 from django.utils.html import format_html
+
+
+from notifications.signals import notify
+
 
 try:
     from django.urls import reverse
@@ -16,6 +18,8 @@ except ImportError:
     from django.core.urlresolvers import reverse  # pylint: disable=no-name-in-module,import-error
 
 register = Library()
+
+
 
 
 def notifications_unread(context):
@@ -120,13 +124,23 @@ register = template.Library()
 def get_notificacoes(user, filtro):
     if user.is_authenticated:    
         if filtro == "Todas":
-            return user.notifications.unread()  
+            return user.notifications.all() 
         elif filtro == "False":
             return user.notifications.unread()
         else:
-            return user.notifications.unread()  
+            return user.notifications.read()  
         
     else:
         return None
 
+@register.filter(name='enviar_notificacao') 
+def enviar_notificacao(user, recipient):
+    
+    return True
 
+
+@register.filter(name='nr_notificacoes') 
+def nr_notificacoes(user):
+    if not user:
+        return 0
+    return user.notifications.unread().count()
