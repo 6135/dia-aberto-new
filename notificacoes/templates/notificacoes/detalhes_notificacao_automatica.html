@@ -8,7 +8,13 @@
 {% load poll_extras %}
 {% load notificacoes_extras %}
 <div>
-
+    <nav aria-label="breadcrumbs" class="breadcrumb">
+        <ul>
+            <li><a href="/">Início</a></li>
+            <li><a href="/">Notificações</a></li>
+            <li class="is-active"><a href="/inscricao">Detalhes</a></li>
+        </ul>
+    </nav>
 <div class="columns">
 <div class="column is-3">
 </div>
@@ -136,7 +142,7 @@
 
                             {% endif %}
                             <p class="control">
-                                <a class="button">
+                                <a href="{% url 'notificacoes:enviar-notificacao' %}" class="button">
                                     <span>Enviar Mensagem</span>
                                     <span class="icon is-small">
                                         <i class="fas fa-reply"></i>

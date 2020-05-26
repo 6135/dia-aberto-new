@@ -18,7 +18,7 @@ from django.utils import timezone
 
 
 def EnviarNotificacao(request):
-    return render(request, 'notifications/enviar_notificacao.html')
+    return render(request, 'notificacoes/enviar_notificacao.html')
 
 
 def DetalhesNotificacao(request, pk):
