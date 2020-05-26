@@ -159,7 +159,10 @@ class InscricaoWizard(SessionWizardView):
         almoco.inscricao = inscricao
         responsaveis.save()
         almoco.save()
-        return HttpResponse('<h1>Done!</h1>')
+        return render(self.request, 'inscricoes/mensagem.html', {
+            'tipo': 'success',
+            'm': "Inscrição bem sucedida!",
+        })
 
 
 class ConsultarInscricaoIndividual(TemplateView):

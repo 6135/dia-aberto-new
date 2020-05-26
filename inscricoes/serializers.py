@@ -19,7 +19,7 @@ class SessaoSerializer(serializers.ModelSerializer):
 
 
 class AtividadeSerializer(serializers.ModelSerializer):
-    sessoes = SessaoSerializer(many=True, read_only=True)
+    sessao_set = SessaoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Atividade

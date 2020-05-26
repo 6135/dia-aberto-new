@@ -114,9 +114,6 @@
                         }
                         this.total = currentTotal;
                         atividades.results.forEach(atividade => {
-                            //for (sessao of atividade.sessoes)
-                            //    if(!this.inscritos.hasOwnProperty(sessao.id))
-                            //        this.inscritos[sessao.id] = 0;
                             this.atividades.push(atividade);
                         });
                         this.loading = false;
@@ -402,7 +399,7 @@
                                             <p>[[ props.row.descricao ]]</p>
                                             {% comment %} <p><strong>Responsável:</strong> [[ props.row.creator ]]</p>
                                             {% endcomment %}
-                                            <b-table :data="props.row.sessoes" sort-icon="false"
+                                            <b-table :data="props.row.sessao_set" sort-icon="false"
                                                 default-sort="horario.inicio">
                                                 <template slot-scope="session_props">
                                                     <b-table-column field="horario.inicio" label="Horário" sortable>
