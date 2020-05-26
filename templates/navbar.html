@@ -1,6 +1,7 @@
 {% load static %}
 {% load poll_extras %}
 {% load notificacoes_extras %}
+{% load inscricoes_extras %}
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <a class="navbar-item logo" href="{% url 'home' %}">
@@ -19,9 +20,15 @@
     <div class="navbar-start">
 
     {% if request.user|has_group:'Participante' %}
-    <a href="{% url 'inscricoes:criar-inscricao' %}" class="navbar-item">
+    {% if request.user|inscrito %}
+    <a href="{% url 'inscricoes:alterar-inscricao' request.user|inscricao %}" class="navbar-item">
       Minha Inscrição
     </a>
+    {% else %}
+    <a href="{% url 'inscricoes:criar-inscricao' %}" class="navbar-item">
+      Criar Inscrição
+    </a>
+    {% endif %}
     {% elif request.user|has_group:'Colaborador'%}
     <a href="{% url 'colaboradores:consultar-tarefas' %}" class="navbar-item">
       Minhas Tarefas
