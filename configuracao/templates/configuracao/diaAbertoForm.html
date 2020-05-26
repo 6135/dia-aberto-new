@@ -160,7 +160,7 @@
                   <div class="field">
                     <label class="label">Duração das sessões</label>
                     <div class="control">
-                      {{form.escalasessoes}}
+                      <input type="time" name="escalasessoes" value="{{form.escalasessoes.value}}" class="input" step="00:05" min="00:05" max="01:00" required id="id_escalasessoes">
                     </div>
                   </div>
                 </div>
@@ -169,7 +169,7 @@
             <div class="column is-8 is-offset-2">
               <div class="level">
                 <div class="level-left">
-                  <a class="button is-large is-outlined" type="button" href="javascript:history.back();">
+                  <a class="button is-large is-outlined" type="button" href="{% url 'configuracao:diasAbertos' %}">
                     <span>Cancelar</span>
                   </a>
                 </div>
