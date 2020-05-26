@@ -4,7 +4,7 @@ from atividades.models import Atividade,Sessao
 from utilizadores.models import Colaborador,Coordenador
 from configuracao.models import Departamento, Diaaberto, Horario
 from datetime import datetime,timezone,timedelta
-from inscricoes.models import Inscricao
+from inscricoes.models import Inscricao,Inscricaosessao
 
 def get_dias():
     try:
@@ -48,7 +48,7 @@ class TarefaForm(ModelForm):
             self.instance.nome = 'Auxiliar na atividade '+nome
         if cleaned_data.get('tipo') == 'tarefaAcompanhar':
             nome = self.data.get('inscricao')
-            self.instance.nome = 'Acompanhar o '+nome
+            self.instance.nome = 'Acompanhar o Grupo '+nome
         elif cleaned_data.get('tipo') == 'tarefaOutra':
             nome = self.data.get('descricao')
             self.instance.nome = nome[0:18] + '...'
@@ -61,7 +61,8 @@ class TarefaForm(ModelForm):
 
     def __init__(self,user,*args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['colab'].queryset =  Colaborador.objects.filter().order_by('utilizador_ptr_id__user_ptr_id__first_name')
+        coordenador = Coordenador.objects.get(user_ptr_id=user)
+        self.fields['colab'].queryset =  Colaborador.objects.filter(faculdade = coordenador.faculdade).order_by('utilizador_ptr_id__user_ptr_id__first_name')
         self.instance.coord = Coordenador.objects.get(utilizador_ptr_id__user_ptr_id=user)
 
         if 'sessaoid' in self.data:
@@ -92,7 +93,6 @@ class TarefaAuxiliarForm(ModelForm):
             try:
                 dia = self.data.get('dias')
                 self.fields['sessaoid'].queryset = Sessao.objects.filter(dia=dia)
-                print(self.fields['sessaoid'].queryset)
             except (ValueError, TypeError):
                 pass  
         elif self.instance.pk:
@@ -115,21 +115,6 @@ class TarefaAcompanharForm(ModelForm):
     def clean(self):
         cleaned_data=super().clean()
         self.instance.inscricao = Inscricao.objects.get(id=cleaned_data['inscricao']) 
-    
-    def __init__(self,*args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['horario'].queryset = Horario.objects.none()
-        if 'dia' in self.data:
-            try:
-                dia = self.data.get('dia')
-                inscricao = Inscricao.objects.get(id=self.data.get('inscricao'))
-                print(self.fields['horario'].queryset)
-                self.fields['horario'].queryset = Horario.objects.filter(id=self.data.get('horario'))
-            except (ValueError, TypeError):
-                pass  # invalid input from the client; ignore and fallback to empty City queryset
-        elif self.instance.pk:
-            self.fields['horario'].queryset = Horario.objects.none()
-
         
 class TarefaOutraForm(ModelForm):
     dia = ChoiceField(choices=[('','Escolha o dia')]+get_dias(),widget=Select())
@@ -141,7 +126,7 @@ class TarefaOutraForm(ModelForm):
             'descricao' : Textarea(attrs={'class':'textarea'}),
             'horario' : CustomTimeWidget(attrs={'class':'input'})
             }           
-    
+   
 
 class tarefaFilterForm(Form):
     searchTarefa = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Pesquisa'}), required=False)

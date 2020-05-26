@@ -79,6 +79,7 @@
                 tipos: JSON.parse("{{tipos|escapejs}}"),
                 maisFiltrosAtividade: false,
                 maisFiltrosSessao: false,
+                nalunos: {{nalunos}},
             }
         },
         methods: {
@@ -114,9 +115,6 @@
                         }
                         this.total = currentTotal;
                         atividades.results.forEach(atividade => {
-                            //for (sessao of atividade.sessoes)
-                            //    if(!this.inscritos.hasOwnProperty(sessao.id))
-                            //        this.inscritos[sessao.id] = 0;
                             this.atividades.push(atividade);
                         });
                         this.loading = false;
@@ -402,7 +400,7 @@
                                             <p>[[ props.row.descricao ]]</p>
                                             {% comment %} <p><strong>Responsável:</strong> [[ props.row.creator ]]</p>
                                             {% endcomment %}
-                                            <b-table :data="props.row.sessoes" sort-icon="false"
+                                            <b-table :data="props.row.sessao_set" sort-icon="false"
                                                 default-sort="horario.inicio">
                                                 <template slot-scope="session_props">
                                                     <b-table-column field="horario.inicio" label="Horário" sortable>
@@ -420,7 +418,7 @@
                                                             <b-numberinput class="no-margin-bottom"
                                                                 style="width: 10rem; margin-bottom: 0"
                                                                 controls-position="compact" min="0"
-                                                                :max="session_props.row.vagas"
+                                                                :max="Math.min(session_props.row.vagas, nalunos)"
                                                                 v-model="inscritos[session_props.row.id]"
                                                                 @input="mudarInscritos(props.row, session_props.row)" />
                                                         </b-field>
@@ -447,7 +445,7 @@
                         <b-table-column label="Inscritos">
                             <b-field>
                                 <b-numberinput v-model="inscritos[props.row.sessao.id]" min="0"
-                                    :max="props.row.sessao.vagas" style="width: 10rem" controls-position="compact"
+                                    :max="Math.min(props.row.sessao.vagas, nalunos)" style="width: 10rem" controls-position="compact"
                                     @blur="mudarInscritos(props.row.atividade, props.row.sessao)" />
                             </b-field>
                         </b-table-column>
