@@ -137,3 +137,10 @@ def get_notificacoes(user, filtro):
 def enviar_notificacao(user, recipient):
     
     return True
+
+
+@register.filter(name='nr_notificacoes') 
+def nr_notificacoes(user):
+    if not user:
+        return 0
+    return user.notifications.unread().count()
