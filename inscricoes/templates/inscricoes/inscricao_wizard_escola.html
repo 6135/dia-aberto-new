@@ -30,20 +30,14 @@
         delimiters: ['[[', ']]'],
         data() {
             return {
+                all_escolas: JSON.parse("{{escolas|escapejs}}"),
                 escolas: [],
-                escola: "{{ form.nome_escola.value|default_if_none:'' }}"
+                escola: "{{ form.nome_escola.value|default_if_none:'' }}",
             }
         },
         methods: {
-            fetchEscolas(input) {
-                axios.get("{% url 'inscricoes:api-escolas' %}?search=" + escape(escapeHtmlEntities(input)))
-                    .then(response => (
-                        this.escolas = response.data.results.map(
-                            escola => (
-                                escola.nome = htmlDecode(escola.nome)
-                            )
-                        )
-                    ))
+            filterEscolas(input) {
+                this.escolas = this.all_escolas.filter(escola => escola.nome.toLowerCase().includes(input.toLowerCase())).slice(0, 30);
             },
         }
     });
@@ -150,7 +144,7 @@
                     <div class="field">
                         <label for="{{ form.nome_escola.id_for_label }}" class="label">Nome da Escola</label>
                         <div class="controlis-clearfix" id="vue-app">
-                            <b-autocomplete v-model="escola" :data="escolas" field="nome" @typing="fetchEscolas"
+                            <b-autocomplete v-model="escola" :data="escolas" field="nome" @typing="filterEscolas"
                                 required name="escola-nome_escola">
                             </b-autocomplete>
                         </div>

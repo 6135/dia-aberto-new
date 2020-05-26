@@ -41,7 +41,8 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['dia-aberto.streamonion.com','77.68.24.178','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['dia-aberto.streamonion.com',
+                 '77.68.24.178', 'localhost', '127.0.0.1']
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -82,9 +83,7 @@ INSTALLED_APPS = [
 
 NOTIFICATIONS_NOTIFICATION_MODEL = 'notificacoes.Notificacao'
 
-
-
-
+DJANGO_TABLES2_TEMPLATE = "bulma-table.html"
 
 CONFIG_DEFAULTS = {
     'PAGINATE_BY': 20,

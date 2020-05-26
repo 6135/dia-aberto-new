@@ -11,6 +11,9 @@ class Escola(models.Model):
     class Meta:
         db_table = 'Escola'
 
+    def __str__(self):
+        return self.nome
+
 
 class Inscricao(models.Model):
     nalunos = models.IntegerField()
@@ -81,13 +84,6 @@ class Responsavel(models.Model):
 
     class Meta:
         db_table = 'Responsavel'
-
-
-class EscolaPortugal(models.Model):
-    nome = models.CharField(max_length=200)
-
-    class Meta:
-        db_table = 'EscolaPortugal'
 
 
 class Inscricaoprato(models.Model):
