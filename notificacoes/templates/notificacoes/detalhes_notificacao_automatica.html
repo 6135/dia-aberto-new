@@ -4,6 +4,9 @@
 {% block title %}- Detalhes{% endblock title %}
 
 {% block content %}
+
+{% load poll_extras %}
+{% load notificacoes_extras %}
 <div>
 
 <div class="columns">
@@ -54,7 +57,8 @@
             <div class="field-body">
                 <div class="field has-addons has-background-light">
                     <p class="control has-background-light" style="padding: 10px 30px">
-                        {{notificacao.actor_object_id}}
+                        {{notificacao.actor_object_id|get_user_name}}  {% if notificacao.actor_object_id|get_user_type != 0 %}<small>({{notificacao.actor_object_id|get_user_type}})</small>{% endif %}
+
                     </p>
                 </div>
             </div>
@@ -66,21 +70,39 @@
             <div class="field-body">
                 <div class="field has-addons has-background-light">
                     <p class="control has-background-light" style="padding: 10px 30px">
-                        {{notificacao.recipient_id}}
+                        {{notificacao.recipient_id|get_user_name}} 
                     </p>
                 </div>
             </div>
         </div>
 
-        <div class="columns">
-        <div class="column is-4">
-        </div>
+        <div class="columns is-mobile is-centered">
+        <div class="column is-narrow">
         <div class="column">
                 <div class="field is-horizontal" style="margin-top: 17px">
-
+                    <div class="field-label">
+                        <!-- Left empty for spacing -->
+                    </div>
+                    <div class="field-label">
+                        <!-- Left empty for spacing -->
+                    </div>
+                    <div class="field-label">
+                        <!-- Left empty for spacing -->
+                    </div>
                     <div class="field-body">
                         <div class="field is-grouped">
                             {% if notificacao.tipo == "Solicitação" %}
+
+                            
+                            <p class="control">
+                                <a class="button">
+                                    <span>Ver Detalhes</span>
+                                    <span class="icon is-small">
+                                        <i class="fas fa-plus"></i>
+                                    </span>
+                                </a>
+                            </p>
+
                             <p class="control">
                                 <a class="button is-success is-outlined">
                                     <span class="icon has-text-success">
@@ -97,6 +119,9 @@
                                     <span>Rejeitar</span>
                                 </a>
                             </p>
+
+
+
                             {% else %}
                             <p class="control">
                                 <a class="button is-danger is-outlined">
@@ -106,6 +131,7 @@
                                     <span>Apagar Notificação</span>
                                 </a>
                             </p>
+
                             {% endif %}
                             <p class="control">
                                 <a class="button">
@@ -119,9 +145,8 @@
                     </div>
                 </div>
         </div>        
-        <div class="column is-4">
-        </div>
-        </div>
+        </div> 
+        </div> 
     </div>
     </div>
     <div class="column is-3">
