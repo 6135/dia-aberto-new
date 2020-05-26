@@ -112,7 +112,8 @@
                                 </a>
                             </p>
                             <p class="control">
-                                <a class="button is-danger is-outlined">
+                             <a class="button is-danger is-outlined" onclick="alert.render('Tem a certeza que pretende rejeitar este pedido?','{% url 'notificacoes:enviar-notificacao-automatica' notificacao.id %}')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
+
                             <span class="icon has-text-danger">
                             <i class="fas fa-ban"></i>
                             </span>
@@ -124,7 +125,8 @@
 
                             {% else %}
                             <p class="control">
-                                <a class="button is-danger is-outlined">
+                             <a class="button is-danger is-outlined" onclick="alert.render('Tem a certeza que pretende apagar esta notificação?','{% url 'notificacoes:apagar-notificacao-automatica' notificacao.id %}')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
+                  
                                     <span class="icon is-small">
                                         <i class="fas fa-trash"></i>
                                     </span>

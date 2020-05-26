@@ -30,6 +30,18 @@ def DetalhesNotificacao(request, pk):
     })
 
 
+# Apagar uma notificação automática
+
+def apagar_notificacao_automatica(request, id):
+    notificacao = Notificacao.objects.get(id=id)
+    notificacao.deleted = True
+    notificacao.save()
+    if notificacao == None:
+        return redirect("utilizadores:mensagem",5)
+    return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
+        'notificacao': notificacao
+    })
+
 # Ver detalhes de uma notificação automática
 
 def detalhes_notificacao_automatica(request, id):
