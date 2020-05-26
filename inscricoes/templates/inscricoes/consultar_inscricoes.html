@@ -1,66 +1,66 @@
 {% extends 'app.html' %}
-{% block content %}
 {% load django_tables2 %}
-<div class="columns">
-    <div class="column is-2">
-        <form method="GET" id='filter'>
-            {% csrf_token %}
-            <div>
-                <div class="menu">
-                    <p class="menu-label">Filtros Inscrições</p>
-                    {{filter.form}}
-                    <ul class="menu-list">
-                        <li>
-                            <div class="field">
-                                <div class="control is-expanded">
-                                    <div class="select is-fullwidth">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="field">
-                                <div class="control has-icons-left is-clearfix">
-                                    <span class="icon is-left">
-                                    </span>
-                                </div>
-                            </div>
 
-                        </li>
-                        <li></li>
-                        <div class="field">
-                            <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
-                                <span class="icon is-left">
-                                    <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                                </span>
-                                <span>Limpar</span>
-                            </button>
-                            <button type="submit" class="button is-success is-outlined">
-                                <span class="icon is-left">
-                                    <i class="mdi mdi-magnify mdi-24px"></i>
-                                </span>
-                                <span>Pesquisar</span>
-                            </button>
-                        </div>
-                    </ul>
-                </div>
+{% block title %}- Consultar Inscrições
+{% endblock title %}
+
+{% block content %}
+
+<div class="columns">
+    <div class="column is-3">
+        <div class="menu">
+            <div class="menu-label">
+                Filtros Inscrições
             </div>
-        </form>
+            <div class="menu-list content">
+                <form method="get">
+                    <div class="field">
+                        <div class="control">
+                            <input class="input" name="{{ filter.form.nalunos.name }}"
+                                value="{{ filter.form.nalunos.value }}" type="number" placeholder="Nº alunos">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <div class="select is-fullwidth">
+                                <select>
+                                    <option value="">Qualquer escola</option>
+                                    {% for value, escola in filter.form.fields.escola.choices %}
+                                    {% if value != "" %}
+                                    <option value="{{ value }}">{{ escola }}</option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input class="input" name="{{ filter.form.areacientifica.name }}"
+                                value="{{ filter.form.areacientifica.value|default_if_none:'' }}" type="text"
+                                placeholder="Área Científica">
+                        </div>
+                    </div>
+                    <div class="field is-grouped">
+                        <p class="control is-expanded">
+                            <input class="button is-light is-fullwidth" type="reset" value="Limpar">
+                        </p>
+                        <p class="control is-expanded">
+                            <input class="button is-primary is-fullwidth" type="submit" value="Pesquisar">
+                        </p>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
     <div class="column">
-
-
-        <div class="table" id="firstTable">
-            <table style="float: left " class="table is-hoverable">
-
-                {% render_table table %}
-                </td>
-                </tr>
-            </table>
-        </div>
-
-        {% include 'popup.html' %}
-        <style>
-            .firstTable {
-                font-color: #00003f;
-            }
-        </style>
-        {% endblock content %}
+        <nav aria-label="breadcrumbs" class="breadcrumb">
+            <ul>
+                <li><a href="/">Início</a></li>
+                <li class="is-active"><a href="{% url 'inscricoes:consultar-inscricoes' %}">Inscrições</a></li>
+            </ul>
+        </nav>
+        {% render_table table %}
+    </div>
+</div>
+{% endblock content %}
