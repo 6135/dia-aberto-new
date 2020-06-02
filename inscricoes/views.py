@@ -212,5 +212,5 @@ class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     filterset_class = InscricaoFilter
 
     table_pagination = {
-        'per_page': 10
+        'per_page': 4
     }
