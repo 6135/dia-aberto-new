@@ -15,7 +15,5 @@ urlpatterns = [
          name='enviar-notificacao-automatica'),
     path('detalhesnotificacao/<int:id>', views.detalhes_notificacao_automatica,
          name='detalhes-notificacao-automatica'),
-    path('apagarnotificacao/<int:id>', views.apagar_notificacao_automatica,
-         name='apagar-notificacao-automatica'),
          
 ]

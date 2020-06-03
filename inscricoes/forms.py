@@ -19,7 +19,7 @@ class InscricaoForm(forms.ModelForm):
 
     class Meta:
         model = models.Inscricao
-        exclude = ('escola', "ninscricao", 'participante')
+        exclude = ('escola', "ninscricao")
 
     def save(self, commit=True):
         self.instance.escola = models.Escola.objects.get_or_create(
