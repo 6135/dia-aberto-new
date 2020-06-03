@@ -74,11 +74,11 @@ class AlterarInscricaoWizard(SessionWizardView):
         inscricao = Inscricao.objects.get(pk=pk)
         escola = inscricao.escola
         self.instance_dict = {
-            'responsaveis': Responsavel.objects.get(inscricao__pk=pk)
+            'responsaveis': Responsavel.objects.get(inscricao__pk=pk),
         }
         self.initial_dict = {
             'escola': {
-                'nome': escola.nome,
+                'nome_escola': escola.nome,
                 'local': escola.local,
                 'ano': inscricao.ano,
                 'turma': "A",
@@ -87,6 +87,22 @@ class AlterarInscricaoWizard(SessionWizardView):
             }
         }
         return super(AlterarInscricaoWizard, self).dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, form, **kwargs):
+        context = super().get_context_data(form=form, **kwargs)
+        if self.steps.current == 'escola':
+            context.update({
+                'escolas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Escola.objects.all())))
+            })
+        elif self.steps.current == 'sessoes':
+            context.update({
+                'campus': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Campus.objects.all()))),
+                'unidades_organicas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Unidadeorganica.objects.all()))),
+                'departamentos': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Departamento.objects.all()))),
+                'tipos': json.dumps(list(map(lambda x: x[0], Atividade.tipos))),
+                'nalunos': self.get_cleaned_data_for_step('escola')['nalunos'],
+            })
+        return context
 
     def get_template_names(self):
         return [f'inscricoes/inscricao_wizard_{self.steps.current}.html']
@@ -145,7 +161,10 @@ class InscricaoWizard(SessionWizardView):
         sessoes = json.loads(form_dict['sessoes'].cleaned_data['sessoes'])
         responsaveis = form_dict['responsaveis'].save(commit=False)
         almoco = form_dict['almoco'].save(commit=False)
-        inscricao = form_dict['escola'].save()
+        inscricao = form_dict['escola'].save(commit=False)
+        inscricao.participante = Participante.objects.filter(
+            utilizador_ptr_id=self.request.user.id).first()
+        inscricao.save()
         for sessaoid in sessoes:
             if sessoes[sessaoid] > 0:
                 inscricao_sessao = models.Inscricaosessao(sessao=Sessao.objects.get(

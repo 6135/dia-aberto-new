@@ -1,7 +1,7 @@
 from django import template
 from utilizadores.models import Utilizador, ProfessorUniversitario, Participante, Colaborador, Coordenador, Administrador
-
-
+from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
 register = template.Library()
 
 @register.filter(name='get_due_date_string')
@@ -18,6 +18,37 @@ def get_due_date_string(value):
     elif delta.days > 1:
         return "In %s days" % delta.days
 
+
+@register.filter(name='get_user_name') 
+def get_user_name(id):
+    try:
+        user = User.objects.get(id=id)
+        nome = user.first_name+" "+user.last_name
+        return nome  
+    except :
+        return "Esta notificação foi gerada automáticamente"
+
+
+@register.filter(name='get_user_type') 
+def get_user_type(id):
+    try:
+        user = User.objects.get(id=id)
+
+        if user.groups.filter(name="Participante").exists():
+            result = "Participante"  
+        elif user.groups.filter(name="ProfessorUniversitario").exists():
+            result =  "Professor Universitário"   
+        elif user.groups.filter(name="Colaborador").exists():
+            result =  "Colaborador"
+        elif user.groups.filter(name="Coordenador").exists():
+            result =  "Coordenador" 
+        elif user.groups.filter(name="Administrador").exists():
+            result =  "Administrador"  
+        else: 
+            result = ""
+        return result
+    except :
+        return 0             
 
 @register.filter(name='has_group') 
 def has_group(user, group_name):
