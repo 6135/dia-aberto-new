@@ -26,9 +26,8 @@ class Inscricao(models.Model):
     )
     turma = models.CharField(max_length=1)
     areacientifica = models.CharField(max_length=64)
-    # TODO: Descomentar quando a gestão de utilizadores estiver pronta
-    # participante = models.ForeignKey(
-    #     'utilizadores.Participante', models.CASCADE)
+    participante = models.ForeignKey(
+        'utilizadores.Participante', models.CASCADE)
     # TODO: Descomentar quando a configuração do Dia Aberto estiver pronta
     # diaaberto = models.ForeignKey('configuracao.Diaaberto', models.CASCADE)
 
