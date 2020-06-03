@@ -4,6 +4,7 @@ from .forms import *
 from .models import *
 from utilizadores.models import *
 from inscricoes.models import Inscricao, Inscricaosessao, Inscricaotransporte
+from atividades.models import Tema
 from datetime import datetime, timezone,date, time
 from atividades.models import Sessao
 from django.core.serializers import *
@@ -267,17 +268,29 @@ def getDias(request):
 				  context={'options':options, 'default': default}
 				)
 
+def filtrarTransportes(request, transportes):
+	search_specific = None
+	if request.method == 'POST':
+		search_specific = request.POST.get('searchId')
+		if search_specific != '':
+			transportes = transportes.filter(transporte__identificador = search_specific)
+		if request.POST.get('filter_to') != '':
+			transportes = transportes.filter(chegada = request.POST.get('filter_to'))
+		if  request.POST.get('filter_from') != '':
+			transportes = transportes.filter(origem = request.POST.get('filter_from'))
+	return transportes
 
 def verTransportes(request):
 
 	user_check_var = user_check(request=request, user_profile=Administrador)
 	if user_check_var is not None: return user_check_var
 
-	form = []
-	transporte = Transportehorario.objects.all()
+	form = transporteFilterForm(request.POST)
+	transportes = filtrarTransportes(request = request,transportes = Transportehorario.objects.all())
+
 	return render(request = request,
 				  template_name='configuracao/listaTransportes.html',
-				  context={'form': form, 'horariosTra': transporte})
+				  context={'horariosTra': transportes, 'form': form})
 
 def criarTransporte(request, id = None):
 
@@ -434,3 +447,109 @@ def eliminarAtribuicao(request, id):
 	print(transportehorario)
 	Inscricaotransporte.objects.get(id=id).delete()
 	return redirect('configuracao:atribuirTransporte', transportehorario)
+
+def verEdificios(request):
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	edificios = Edificio.objects.all()
+
+	return render(request=request,
+				template_name='configuracao/listaEdificios.html',
+				context={'edificios': edificios})
+
+def configurarEdificio(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	espacoFormSet = modelformset_factory(model=Espaco, form=EspacoForm,extra=0, min_num = 1, can_delete=True)
+	formSet = espacoFormSet(queryset=Espaco.objects.none())
+	edificio = Edificio()
+
+	if id is not None:
+		edificio = Edificio.objects.get(id=id)
+		formSet = espacoFormSet(queryset=Espaco.objects.filter(edificio=edificio))
+	edificioForm = EdificioForm(instance=edificio)
+
+
+	if request.method == 'POST':
+		edificioForm = EdificioForm(data=request.POST,instance=edificio)
+		formSet = espacoFormSet(request.POST)
+		if edificioForm.is_valid() and formSet.is_valid():
+			print("valid")
+			edificio = edificioForm.save()
+
+			instances = formSet.save(commit=False)
+
+			for instance in instances:
+				instance.edificio=edificio
+				instance.save()
+
+			for instance in formSet.deleted_objects:
+				instance.delete()
+
+			return redirect('configuracao:verEdificios')
+
+	return	render(request=request,
+				template_name='configuracao/criarEdificio.html',
+				context={'form':edificioForm,
+						'formset':formSet})
+
+def newEspacoRow(request):
+	value = int(request.POST.get('extra'))
+	data = {
+		'form_nome': "form-" + str(value-1) + "-nome",
+		'form_espaco': "form-" + str(value-1) + "-espaco",
+		'form_descricao': "form-" + str(value-1) + "-descricao",
+		'form_id': 'form-' + str(value-1) + '-id',
+	}
+	return render(request=request, template_name='configuracao/edificioEspacoRow.html', context=data)
+
+def eliminarEdificio(request,id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	Edificio.objects.get(id=id).delete()
+	return redirect('configuracao:verEdificios')
+
+def verTemas(request):
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	temas = Tema.objects.all()
+
+	return render(request=request,
+				template_name='configuracao/listaTemas.html',
+				context={'temas': temas})
+
+def configurarTema(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	tema = Tema()
+
+	if id is not None:
+		tema = Tema.objects.get(id=id)
+	temaForm = TemaForm(instance=tema)
+
+
+	if request.method == 'POST':
+		temaForm = TemaForm(data=request.POST,instance=tema)
+		if temaForm.is_valid():
+			tema = temaForm.save()
+			return redirect('configuracao:verTemas')
+
+	return	render(request=request,
+				template_name='configuracao/criarTema.html',
+				context={'form':temaForm})
+
+def eliminarTema(request,id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	Tema.objects.get(id=id).delete()
+	return redirect('configuracao:verTemas')

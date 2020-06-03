@@ -54,6 +54,7 @@ function displayDetails(idForDetails){
 }
 
 function sortTable(n, isDate) {
+  console.log('sort')
   var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
   table = document.getElementById("table01");
   switching = true;

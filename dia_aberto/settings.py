@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import os
 import environ
+from django.conf import settings
 
 env = environ.Env()
 environ.Env.read_env()  # reading .env file
@@ -40,7 +41,8 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = ['dia-aberto.streamonion.com','77.68.24.178','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['dia-aberto.streamonion.com',
+                 '77.68.24.178', 'localhost', '127.0.0.1']
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -81,8 +83,27 @@ INSTALLED_APPS = [
 
 NOTIFICATIONS_NOTIFICATION_MODEL = 'notificacoes.Notificacao'
 
+DJANGO_TABLES2_TEMPLATE = "bulma-table.html"
 
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap4.html"
+CONFIG_DEFAULTS = {
+    'PAGINATE_BY': 20,
+    'USE_JSONFIELD': False,
+    'SOFT_DELETE': False,
+    'NUM_TO_FETCH': 10,
+}
+
+
+def get_config():
+    user_config = getattr(settings, 'DJANGO_NOTIFICATIONS_CONFIG', {})
+
+    config = CONFIG_DEFAULTS.copy()
+    config.update(user_config)
+
+    return config
+
+
+
+DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap.html"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

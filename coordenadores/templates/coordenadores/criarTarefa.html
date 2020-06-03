@@ -3,30 +3,30 @@
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
     <li><a href="{% url 'home' %}">Início</a></li>
-    <li><a href="{% url 'minhasAtividades' %}">Tarefas</a></li>
+    <li><a href="{% url 'atividades:minhasAtividades' %}">Tarefas</a></li>
     <li class="is-active"><a href="">Adicionar Tarefa</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
     <form method="POST" action="">
       {% csrf_token %}
-      <nav class="steps is-success"> 
-        <ul class="step-items">
-          <li class="step-item is-success is-active">
-            <a class="step-link">
-              <div class="step-marker">
-                <span class="icon">
-                  <i class="mdi mdi-account-details mdi-24px"></i>
-                </span>
-              </div>
-              <div class="step-details">
-                <span class="step-title">Adicionar Tarefa</span>
-              </div>
-            </a>
-          </li> 
-        </ul>
+      <nav class="steps is-success">
+        <div class="step-item is-completed is-success is-active"> 
+        </div>
+        <div class="step-item is-completed is-success">
+          <div class="step-marker">
+              <span class="icon">
+                <i class="mdi mdi-account-details mdi-24px"></i>
+              </span>
+          </div>
+          <div class="step-details">
+              <p class="step-title">Adicionar Tarefa</p>
+          </div>
+        </div>
+        <div class="step-item is-completed is-success is-active"> 
+        </div>
       </nav>        
-        <div style="padding: 1rem 2vw 0px;">
+      <div style="padding: 1rem 2vw 0px;">
             <hr>
             <div class="column is-offset-3 is-6">
                 <div class="block">
@@ -49,7 +49,7 @@
                 </div>
             </div>
             <hr>
-        </div>
+      </div>
       <div class="column is-8 is-offset-2">
                 <div class="level">
                   <div class="level-left">
@@ -63,9 +63,10 @@
                     </button>
                   </div>
                 </div>
-      </form>
+      </div>
+    </form>
   </div>
-</div>
+
 
 
 <style>
@@ -135,11 +136,13 @@
 
     function sessoesSelect(){
       var dia = document.getElementById("id_dias").value; 
+      var atividadeId = document.getElementById("id_atividades").value; 
       $.ajax({                       
         url: "{% url 'sessoesAtividade' %}", 
         method: 'POST',             
         data: {
             'dia': dia,
+            'atividadeid':atividadeId,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
@@ -165,7 +168,7 @@
 /*-------------------->EndAuxiliarAtividade<-----------------*/
 /*-------------------->Acompanhar Grupo<---------------------*/
     function grupoInfo(){
-      var grupo_id = document.getElementById("id_grupo").value;; 
+      var grupo_id = document.getElementById("id_inscricao").value;; 
       $.ajax({                       
         url: "{% url 'grupoInfo' %}", 
         method: 'POST',             
@@ -180,7 +183,7 @@
     }
 
     function diasGrupo(){
-      var grupo_id = document.getElementById("id_grupo").value; 
+      var grupo_id = document.getElementById("id_inscricao").value; 
       $.ajax({                       
         url: "{% url 'diasGrupo' %}", 
         method: 'POST',             
@@ -189,14 +192,14 @@
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
-          $("#id_dias").html(data);           
+          $("#id_dia").html(data);           
         }
       });
     }
 
     function grupoHorario(){
-      var dia = document.getElementById("id_dias").value;
-      var grupo_id = document.getElementById("id_grupo").value; 
+      var dia = document.getElementById("id_dia").value;
+      var grupo_id = document.getElementById("id_inscricao").value; 
       $.ajax({                       
         url: "{% url 'horarioGrupo' %}", 
         method: 'POST',             
@@ -212,8 +215,8 @@
     }
 
     function grupoLocal(){
-      var dia = document.getElementById("id_dias").value;
-      var grupo_id = document.getElementById("id_grupo").value; 
+      var dia = document.getElementById("id_dia").value;
+      var grupo_id = document.getElementById("id_inscricao").value; 
       var sessao_id = document.getElementById("id_horario").value;
       $.ajax({                       
         url: "{% url 'locaisOrigem' %}", 
@@ -231,8 +234,8 @@
     }
 
     function grupoDestino(){
-      var dia = document.getElementById("id_dias").value;
-      var grupo_id = document.getElementById("id_grupo").value; 
+      var dia = document.getElementById("id_dia").value;
+      var grupo_id = document.getElementById("id_inscricao").value; 
       var sessao_id = document.getElementById("id_horario").value;
       $.ajax({                       
         url: "{% url 'locaisDestino' %}", 

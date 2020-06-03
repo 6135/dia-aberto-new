@@ -65,18 +65,21 @@
                 page: 1,
                 perPage: 10,
                 filtros: {
+                    tipo: null,
+                    nome: null,
+                },
+                filtros_id: {
                     campus: null,
                     unidade_organica: null,
                     departamento: null,
-                    tema: null,
-                    nome: null,
                 },
                 campus: JSON.parse("{{campus|escapejs}}"),
                 unidades_organicas: JSON.parse("{{unidades_organicas|escapejs}}"),
                 departamentos: JSON.parse("{{departamentos|escapejs}}"),
-                temas: JSON.parse("{{temas|escapejs}}"),
+                tipos: JSON.parse("{{tipos|escapejs}}"),
                 maisFiltrosAtividade: false,
                 maisFiltrosSessao: false,
+                nalunos: {{nalunos}},
             }
         },
         methods: {
@@ -87,9 +90,15 @@
                     `page_size=${this.perPage}`
                 ].join('&');
 
+                // Filtrar por string (e.g. Nome da Atividade)
                 for (filtro in this.filtros)
                     if (this.filtros[filtro])
                         params += `&${filtro}=${this.filtros[filtro]}`;
+
+                // Filtrar por id (e.g. Campus)
+                for (filtro in this.filtros_id)
+                    if (this.filtros_id[filtro])
+                        params += `&${filtro}_id=${this.filtros_id[filtro].id}`;
 
                 const url = `{% url 'inscricoes:api-atividades' %}?${params}`;
 
@@ -106,9 +115,6 @@
                         }
                         this.total = currentTotal;
                         atividades.results.forEach(atividade => {
-                            //for (sessao of atividade.sessoes)
-                            //    if(!this.inscritos.hasOwnProperty(sessao.id))
-                            //        this.inscritos[sessao.id] = 0;
                             this.atividades.push(atividade);
                         });
                         this.loading = false;
@@ -266,51 +272,56 @@
                             <b-menu style="margin-bottom: 1rem">
                                 <b-menu-list label="Filtros Atividade">
                                     <b-field>
-                                        <b-select id="campus" placeholder="Campus" expanded  icon="magnify"
-                                        v-model="filtros['campus']" @input="value => {if(value == 'Qualquer') { filtros['campus'] = ''; jQuery('select#campus').parent().addClass('is-empty'); } else jQuery('select#campus').parent().removeClass('is-empty'); this.loadAsyncData();}">
+                                        <b-select id="campus" placeholder="Campus" expanded icon="magnify"
+                                            v-model="filtros_id['campus']"
+                                            @input="value => {if(value == 'Qualquer') { filtros_id['campus'] = ''; jQuery('select#campus').parent().addClass('is-empty'); } else jQuery('select#campus').parent().removeClass('is-empty'); this.loadAsyncData();}">
                                             <option disabled="disabled" value="" hidden="hidden">
                                                 Campus
                                             </option>
                                             <option>Qualquer</option>
                                             <option v-for="(opcao, index) in campus" :value="opcao" :key="index">
-                                                [[ opcao ]]
+                                                [[ opcao.nome ]]
                                             </option>
                                         </b-select>
                                     </b-field>
                                     <b-field>
-                                        <b-select id="unidade-organica" placeholder="Unidade Orgânica" expanded icon="magnify"
-                                        v-model="filtros['unidade_organica']" @input="value => {if(value == 'Qualquer') {filtros['unidade_organica'] = ''; jQuery('select#unidade-organica').parent().addClass('is-empty'); } else jQuery('select#unidade-organica').parent().removeClass('is-empty'); this.loadAsyncData();}">
+                                        <b-select id="unidade-organica" placeholder="Unidade Orgânica" expanded
+                                            icon="magnify" v-model="filtros_id['unidade_organica']"
+                                            @input="value => {if(value == 'Qualquer') {filtros_id['unidade_organica'] = ''; jQuery('select#unidade-organica').parent().addClass('is-empty'); } else jQuery('select#unidade-organica').parent().removeClass('is-empty'); this.loadAsyncData();}">
                                             <option disabled="disabled" value="" hidden="hidden">
                                                 Unidade Orgânica
                                             </option>
-                                            <option >Qualquer</option>
-                                            <option v-for="(opcao, index) in unidades_organicas" :value="opcao" :key="index">
-                                                [[ opcao ]]
+                                            <option>Qualquer</option>
+                                            <option v-for="(opcao, index) in unidades_organicas" :value="opcao"
+                                                :key="index">
+                                                [[ opcao.nome ]]
                                             </option>
                                         </b-select>
                                     </b-field>
                                     <b-field>
                                         <b-select id="departamento" placeholder="Departamento" expanded icon="magnify"
-                                        v-model="filtros['departamento']" @input="value => {if(value == 'Qualquer') { filtros['departamento'] = ''; jQuery('select#departamento').parent().addClass('is-empty'); } else jQuery('select#departamento').parent().removeClass('is-empty'); this.loadAsyncData();}">
+                                            v-model="filtros_id['departamento']"
+                                            @input="value => {if(value == 'Qualquer') { filtros_id['departamento'] = ''; jQuery('select#departamento').parent().addClass('is-empty'); } else jQuery('select#departamento').parent().removeClass('is-empty'); this.loadAsyncData();}">
                                             <option disabled="disabled" value="" hidden="hidden">
                                                 Departamento
                                             </option>
                                             <option>Qualquer</option>
                                             <option v-for="(opcao, index) in departamentos" :value="opcao" :key="index">
-                                                [[ opcao ]]
+                                                [[ opcao.nome ]]
                                             </option>
                                         </b-select>
                                     </b-field>
                                     <b-field>
-                                        <b-select id="tema" placeholder="Tema" expanded icon="magnify"
-                                        v-model="filtros['tema']" @input="value => {if(value == 'Qualquer') { filtros['tema'] = ''; jQuery('select#tema').parent().addClass('is-empty'); } else jQuery('select#temax').parent().removeClass('is-empty'); this.loadAsyncData();}">
+                                        <b-select id="tipo" placeholder="Tipo" expanded icon="magnify"
+                                            v-model="filtros['tipo']"
+                                            @input="value => {if(value == 'Qualquer') { filtros['tipo'] = ''; jQuery('select#tipo').parent().addClass('is-empty'); } else jQuery('select#tipox').parent().removeClass('is-empty'); this.loadAsyncData();}">
                                             <option disabled="disabled" value="" hidden="hidden">
-                                                Tema
+                                                Tipo
                                             </option>
                                             <option>
                                                 Qualquer
                                             </option>
-                                            <option v-for="(opcao, index) in temas" :value="opcao" :key="index">
+                                            <option v-for="(opcao, index) in tipos" :value="opcao" :key="index">
                                                 [[ opcao ]]
                                             </option>
                                         </b-select>
@@ -389,7 +400,7 @@
                                             <p>[[ props.row.descricao ]]</p>
                                             {% comment %} <p><strong>Responsável:</strong> [[ props.row.creator ]]</p>
                                             {% endcomment %}
-                                            <b-table :data="props.row.sessoes" sort-icon="false"
+                                            <b-table :data="props.row.sessao_set" sort-icon="false"
                                                 default-sort="horario.inicio">
                                                 <template slot-scope="session_props">
                                                     <b-table-column field="horario.inicio" label="Horário" sortable>
@@ -407,7 +418,7 @@
                                                             <b-numberinput class="no-margin-bottom"
                                                                 style="width: 10rem; margin-bottom: 0"
                                                                 controls-position="compact" min="0"
-                                                                :max="session_props.row.vagas"
+                                                                :max="Math.min(session_props.row.vagas, nalunos)"
                                                                 v-model="inscritos[session_props.row.id]"
                                                                 @input="mudarInscritos(props.row, session_props.row)" />
                                                         </b-field>
@@ -434,7 +445,7 @@
                         <b-table-column label="Inscritos">
                             <b-field>
                                 <b-numberinput v-model="inscritos[props.row.sessao.id]" min="0"
-                                    :max="props.row.sessao.vagas" style="width: 10rem" controls-position="compact"
+                                    :max="Math.min(props.row.sessao.vagas, nalunos)" style="width: 10rem" controls-position="compact"
                                     @blur="mudarInscritos(props.row.atividade, props.row.sessao)" />
                             </b-field>
                         </b-table-column>

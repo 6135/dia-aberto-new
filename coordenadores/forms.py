@@ -1,15 +1,15 @@
 from django.forms import * 
 from .models import *
 from atividades.models import Atividade,Sessao
-from utilizadores.models import Colaborador
-from configuracao.models import Departamento, Diaaberto
-from datetime import datetime,timezone
-from inscricoes.models import Inscricao
+from utilizadores.models import Colaborador,Coordenador
+from configuracao.models import Departamento, Diaaberto, Horario
+from datetime import datetime,timezone,timedelta
+from inscricoes.models import Inscricao,Inscricaosessao
 
 def get_dias():
     try:
         today= datetime.now(timezone.utc) 
-        diaaberto=Diaaberto.objects.get(datadiaabertoinicio__lte=today,datadiaabertofim__gte=today)
+        diaaberto=Diaaberto.objects.get(datadiaabertoinicio__gte=today,datadiaabertofim__gte=today)
         diainicio= diaaberto.datadiaabertoinicio.date()
         diafim= diaaberto.datadiaabertofim.date()
         totaldias= diafim-diainicio+timedelta(days=1)
@@ -37,7 +37,7 @@ class TarefaForm(ModelForm):
   
     def clean(self):
         cleaned_data=super().clean()
-        self.instance.coord = Coordenador.objects.get(utilizador__id=5)
+        
         estado = 'naoConcluida'
         if cleaned_data.get('colab') is None:
             estado = 'naoAtribuida'
@@ -47,8 +47,8 @@ class TarefaForm(ModelForm):
         if cleaned_data.get('tipo') == 'tarefaAuxiliar':
             self.instance.nome = 'Auxiliar na atividade '+nome
         if cleaned_data.get('tipo') == 'tarefaAcompanhar':
-            nome = self.data.get('grupo')
-            self.instance.nome = 'Acompanhar o '+nome
+            nome = self.data.get('inscricao')
+            self.instance.nome = 'Acompanhar o Grupo '+nome
         elif cleaned_data.get('tipo') == 'tarefaOutra':
             nome = self.data.get('descricao')
             self.instance.nome = nome[0:18] + '...'
@@ -59,16 +59,18 @@ class TarefaForm(ModelForm):
             'tipo': RadioSelect(attrs={'class':'radio'},choices=[('tarefaAuxiliar','Auxiliar Atividade'),('tarefaAcompanhar','Acompanhar participantes'),('tarefaOutra','Outra')]),
             }
 
-    def __init__(self,*args, **kwargs):
+    def __init__(self,user,*args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['colab'].queryset =  Colaborador.objects.filter().order_by('utilizador_ptr_id__user_ptr_id__first_name')
+        coordenador = Coordenador.objects.get(user_ptr_id=user)
+        self.fields['colab'].queryset =  Colaborador.objects.filter(faculdade = coordenador.faculdade).order_by('utilizador_ptr_id__user_ptr_id__first_name')
+        self.instance.coord = Coordenador.objects.get(utilizador_ptr_id__user_ptr_id=user)
 
         if 'sessaoid' in self.data:
             try:
                 sessoes_id = int(self.data.get('sessaoid'))
                 self.fields['colab'].queryset = Colaborador.objects.filter().order_by('utilizador_ptr_id__user_ptr_id__first_name')
             except (ValueError, TypeError):
-                pass  # invalid input from the client; ignore and fallback to empty City queryset
+                pass  
         elif self.instance.pk:
             self.fields['colab'].queryset = Colaborador.objects.none()
 
@@ -91,28 +93,31 @@ class TarefaAuxiliarForm(ModelForm):
             try:
                 dia = self.data.get('dias')
                 self.fields['sessaoid'].queryset = Sessao.objects.filter(dia=dia)
-                print(self.fields['sessaoid'].queryset)
             except (ValueError, TypeError):
-                pass  # invalid input from the client; ignore and fallback to empty City queryset
+                pass  
         elif self.instance.pk:
             self.fields['sessaoid'].queryset = Sessao.objects.none()
             
 
 class TarefaAcompanharForm(ModelForm):
     grupos = [('','Escolha um grupo')]+[(grupo.id,'Grupo '+str(grupo.id)) for grupo in Inscricao.objects.filter(nalunos__gt=1)]
-    grupo =  ChoiceField(choices=grupos,widget=Select(attrs={'onchange':'grupoInfo();diasGrupo();'}))
-    dias = DateField(widget=Select(attrs={'onchange':'grupoHorario();'}))
+    inscricao =  ChoiceField(choices=grupos,widget=Select(attrs={'onchange':'grupoInfo();diasGrupo();'}))
     class Meta:
         model= TarefaAcompanhar
-        exclude = ['tarefaid']
+        exclude = ['tarefaid','inscricao','dias']
         widgets ={
-            'horario' : Select(attrs={'onchange':'grupoLocal();'}),
-            'origem' : Select(attrs={'onchange':'grupoDestino();'}),
-            'destino' : Select()
+            'dia' : Select(choices=[('','Escolha o dia')],attrs={'onchange':'grupoHorario();'}),
+            'horario' : Select(choices=[('','Escolha a hora')],attrs={'onchange':'grupoLocal();'}),
+            'origem' : Select(choices=[('','Escolha o local de encontro')],attrs={'onchange':'grupoDestino();'}),
+            'destino' : Select(choices=[('','Escolha o local de destino')],)
         }
 
+    def clean(self):
+        cleaned_data=super().clean()
+        self.instance.inscricao = Inscricao.objects.get(id=cleaned_data['inscricao']) 
+        
 class TarefaOutraForm(ModelForm):
-    dia = ChoiceField(choices=get_dias(),widget=Select())
+    dia = ChoiceField(choices=[('','Escolha o dia')]+get_dias(),widget=Select())
     #horario = DateField(widget=DateInput(attrs={'class':'timepicker'}))
     class Meta:
         model= TarefaOutra
@@ -121,7 +126,7 @@ class TarefaOutraForm(ModelForm):
             'descricao' : Textarea(attrs={'class':'textarea'}),
             'horario' : CustomTimeWidget(attrs={'class':'input'})
             }           
-    
+   
 
 class tarefaFilterForm(Form):
     searchTarefa = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Pesquisa'}), required=False)
