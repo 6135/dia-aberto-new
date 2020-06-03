@@ -111,7 +111,45 @@ function sortTable(n, isDate) {
 
 function getSchedules(field_id)
 {
-    var id= -1;
+    var valuedia= $('#'+field_id).val();
+    var rowNum = Number(field_id.split('-')[1]);
+    console.log(rowNum)
+    var number = Number(document.getElementById('id_form-TOTAL_FORMS').value);
+    var horarioindisponivel=[]
+    for(var i = 0; i < number; i++){
+        if(i != rowNum)
+            var diaId = "id_form-" + i + "-dia";
+            if(document.getElementById(diaId).value == valuedia){
+                var horarioId = "id_form-" + i + "-horarioid"
+                horarioindisponivel.push(document.getElementById(horarioId).value);
+            }
+        }
+    }
+    console.log(horarioindisponivel);
+    
+    $.ajax({
+        url:"/atividades/verhorarios/",
+        method: 'POST',
+        data: { 
+            'horarioindisponivel': JSON.stringify(horarioindisponivel),
+            'valuedia': valuedia,
+            'id': -1,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(data){
+            $('#'+field_id).closest('tr').find('.horario-sessao').html(data);
+            horarioindisponivel.forEach(function(item,index){
+                var stringId = 'id_form-' + field_id.split('-')[1] + '-horarioid ' + 'option[value=\'' + item +'\']';
+                $('#'+stringId).remove();
+            })
+        }
+
+    })
+
+};   
+
+function udpateSchedules(field_id)
+{
     var valuedia= $('#'+field_id).val();
     var number = Number(document.getElementById('id_form-TOTAL_FORMS').value);;
     var horarioindisponivel=[]
@@ -130,7 +168,7 @@ function getSchedules(field_id)
         data: { 
             'horarioindisponivel': JSON.stringify(horarioindisponivel),
             'valuedia': valuedia,
-            'id': id,
+            'id': -1,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function(data){
@@ -145,4 +183,3 @@ function getSchedules(field_id)
     })
 
 };   
-
