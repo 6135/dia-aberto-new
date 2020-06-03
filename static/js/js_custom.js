@@ -118,7 +118,7 @@ function getSchedules(field_id)
     var number = Number(document.getElementById('id_form-TOTAL_FORMS').value);
     var horarioindisponivel=[]
     for(var i = 0; i < number; i++){
-        if(i != rowNum)
+        if(i != rowNum) {
             var diaId = "id_form-" + i + "-dia";
             if(document.getElementById(diaId).value == valuedia){
                 var horarioId = "id_form-" + i + "-horarioid"
@@ -146,15 +146,19 @@ function getSchedules(field_id)
         }
 
     })
-
+    updateSchedules('id_form'+field_id.split('-')[1]+'-horarioid')
 };   
 
-function udpateSchedules(field_id)
+function updateSchedules(field_id)
 {
-    var valuedia= $('#'+field_id).val();
-    var number = Number(document.getElementById('id_form-TOTAL_FORMS').value);;
+    var splitFieldId = field_id.split('-'); //[0]=id_form [1]==Number() [2]==horarioid
+    var valuedia= $('#'+splitFieldId[0]+'-'+splitFieldId[1]+'-dia').val();
+    var rowNum = Number(field_id.split('-')[1]);
+    console.log('update')
+    var number = Number(document.getElementById('id_form-TOTAL_FORMS').value);
     var horarioindisponivel=[]
     for(var i = 0; i < number; i++){
+        console.log(i)
         var diaId = "id_form-" + i + "-dia";
         if(document.getElementById(diaId).value == valuedia){
             var horarioId = "id_form-" + i + "-horarioid"
@@ -173,12 +177,29 @@ function udpateSchedules(field_id)
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function(data){
-            $('#'+field_id).closest('tr').find('.horario-sessao').html(data);
-            horarioindisponivel.forEach(function(item,index){
-                var stringId = 'id_form-' + field_id.split('-')[1] + '-horarioid ' + 'option[value=\'' + item +'\']';
-                console.log(stringId)
-                $('#'+stringId).remove();
-            })
+            for(var i = 0; i < number; i++){
+                if(i != rowNum) {
+                    var diaId = "id_form-" + i + "-dia";
+                    if(document.getElementById(diaId).value == valuedia){
+                        var horarioId = "id_form-" + i + "-horarioid";
+                        var previousOptionPosition = document.getElementById(horarioId).selectedIndex;
+                        var previousOption = $('#'+horarioId).val();
+                        $('#'+horarioId).html(data);
+                        horarioindisponivel.forEach(function(item,index){
+                            var stringId = 'id_form-' + i + '-horarioid ' + 'option[value=\'' + item +'\']';
+                            $('#'+stringId).remove();
+                        });
+                        stringId = 'id_form-' + i + '-horarioid ' + 'option[value=\'' + previousOption + '\']';
+                        var opt = document.createElement('option');
+                        opt.value = previousOption;     opt.text = previousOption;
+                        document.getElementById('id_form-' + i + '-horarioid').options.add(opt,previousOptionPosition);
+                        document.getElementById('id_form-' + i + '-horarioid').selectedIndex = previousOptionPosition;
+
+                    }
+                }
+            }
+
+
         }
 
     })

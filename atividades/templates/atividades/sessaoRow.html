@@ -20,7 +20,7 @@
            <div class="field" >
                <div class="control">
                    <div class="select is-fullwidth" >
-                       <select id="id_{{form_horario}}" name="{{form_horario}}" class="input horario-sessao">
+                       <select id="id_{{form_horario}}" name="{{form_horario}}" class="input horario-sessao" onchange="updateSchedules('id_{{form_horario}}');">
                            <option value="">---------</option>
                        </select>
                    </div>

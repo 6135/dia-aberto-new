@@ -13,4 +13,6 @@ def field_data(value):
     result = str(classes)
     if value.name == 'dia':
         result += ' onchange="getSchedules(\'' + str(value.auto_id) + '\')"'
+    if value.name == 'horarioid':
+        result += ' onchange="updateSchedules(\'' + str(value.auto_id) + '\')"'
     return result
