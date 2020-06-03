@@ -66,12 +66,20 @@
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
         Utilizadores
       </a> 
-      <a href="{% url 'configuracao:verEdificios' %}" class="navbar-item">
-        Edificios e Espaços
-      </a> 
-      <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">
-        Temas
-      </a> 
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Extra
+        </a> 
+
+        <div class="navbar-dropdown"> 
+          <a href="{% url 'configuracao:verEdificios' %}" class="navbar-item">Edificios e Espaços</a> 
+          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Temas</a>
+          <a href="{% url 'configuracao:verUOs' %}" class="navbar-item">Unidades Organicas</a> 
+          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Departamentos</a> 
+          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Cursos</a> 
+        </div>
+      </div>
+
     {% else %}
     <a href="" class="navbar-item">
 

@@ -322,6 +322,8 @@ class Unidadeorganica(models.Model):
     def __str__(self):
         return self.nome
 
+    def dep_(self):
+        return Departamento.objects.filter(unidadeorganicaid=self)
 class Curso(models.Model):
 
     id = models.AutoField(db_column='ID', primary_key=True)
