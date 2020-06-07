@@ -3,9 +3,20 @@
     <input type="hidden" name="{{form_id}}" id="id_{{form_id}}">
     <td>
         <div class="field" >
-            <div class="control">
+            <!--<div class="control">
                 <div class="select is-fullwidth" >
                     <select id="id_{{form_dia}}" name="{{form_dia}}" class="input dia-sessao" onchange="getSchedules('id_{{form_dia}}');">
+                        <option value="">---------</option>
+                        {% for dia in dias %}
+                            <option value="{{dia|date:'Y-m-d'}}">{{dia}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            -->
+            <div class="control">
+                <div class="select is-fullwidth" >
+                    <select id="id_{{form_dia}}" name="{{form_dia}}" class="input dia-sessao">
                         <option value="">---------</option>
                         {% for dia in dias %}
                             <option value="{{dia|date:'Y-m-d'}}">{{dia}}</option>

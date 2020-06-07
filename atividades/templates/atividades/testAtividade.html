@@ -496,9 +496,18 @@ $('#del-row').click(function(e){
 	var initial = $("#id_form-INITIAL_FORMS").val();
 	var rowCount = $('#tableBody-01 tr').length;
 	if(Number(value) > Number(initial) && Number(value) > 1) {
+        var jqthis = $('.dia-sessao:last')
+        var id = jqthis.attr('id');
+        console.log(id)
 		$('#table01 tr:last').remove();
 		value = Number(value) - Number('1');
 		document.getElementById("id_form-TOTAL_FORMS").value = value;
+        for(var i = 0 ; i< Number(value); i++){
+            if(Number(id.split('-')[1]) != i){
+                console.log('I: '+ i)
+                updateSchedules('id_form-'+id.split('-')[1]+'-horarioid',$('#id_form-'+i+'-dia').val());
+            }
+        }
 	} else if(rowCount > 1){
 		var form_delete = 'form-'+Number(value-1)+'-DELETE';
 		var delete_ = "<input type='hidden' name='"+form_delete+"' id='id_"+form_delete+"' value='on'>";

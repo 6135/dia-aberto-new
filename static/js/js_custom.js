@@ -140,25 +140,40 @@ function getSchedules(field_id)
         success: function(data){
             $('#'+field_id).closest('tr').find('.horario-sessao').html(data);
             horarioindisponivel.forEach(function(item,index){
-                var stringId = 'id_form-' + field_id.split('-')[1] + '-horarioid ' + 'option[value=\'' + item +'\']';
-                $('#'+stringId).remove();
+                if(item != ''){
+                    var stringId = 'id_form-' + field_id.split('-')[1] + '-horarioid ' + 'option[value=\'' + item +'\']';
+                    $('#'+stringId).remove();
+                }
             })
         }
 
     })
     updateSchedules('id_form'+field_id.split('-')[1]+'-horarioid')
 };   
+$('.table-wrapper').on('change','.dia-sessao',function(){
+    var jqthis = $(this);
+    getSchedules(jqthis.attr('id'));
+    var id = jqthis.attr('id');
+    var number = Number(document.getElementById('id_form-TOTAL_FORMS').value);
+    for(var i = 0 ; i< number; i++){
+        if(Number(id.split('-')[1]) != i){
+            console.log('I: '+ i)
+            updateSchedules('id_form-'+id.split('-')[1]+'-horarioid',$('#id_form-'+i+'-dia').val());
+        }
+    }
+    
+});
 
-function updateSchedules(field_id)
+
+
+function updateSchedules(field_id,day=null)
 {
     var splitFieldId = field_id.split('-'); //[0]=id_form [1]==Number() [2]==horarioid
-    var valuedia= $('#'+splitFieldId[0]+'-'+splitFieldId[1]+'-dia').val();
+    var valuedia = (day == null) ? $('#'+splitFieldId[0]+'-'+splitFieldId[1]+'-dia').val() : day;
     var rowNum = Number(field_id.split('-')[1]);
-    console.log('update')
     var number = Number(document.getElementById('id_form-TOTAL_FORMS').value);
     var horarioindisponivel=[]
     for(var i = 0; i < number; i++){
-        console.log(i)
         var diaId = "id_form-" + i + "-dia";
         if(document.getElementById(diaId).value == valuedia){
             var horarioId = "id_form-" + i + "-horarioid"
@@ -186,14 +201,18 @@ function updateSchedules(field_id)
                         var previousOption = $('#'+horarioId).val();
                         $('#'+horarioId).html(data);
                         horarioindisponivel.forEach(function(item,index){
-                            var stringId = 'id_form-' + i + '-horarioid ' + 'option[value=\'' + item +'\']';
-                            $('#'+stringId).remove();
+                            if(item != ''){
+                                var stringId = 'id_form-' + i + '-horarioid ' + 'option[value=\'' + item +'\']';
+                                $('#'+stringId).remove();
+                            }
                         });
-                        stringId = 'id_form-' + i + '-horarioid ' + 'option[value=\'' + previousOption + '\']';
-                        var opt = document.createElement('option');
-                        opt.value = previousOption;     opt.text = previousOption;
-                        document.getElementById('id_form-' + i + '-horarioid').options.add(opt,previousOptionPosition);
-                        document.getElementById('id_form-' + i + '-horarioid').selectedIndex = previousOptionPosition;
+                        if(previousOption != ''){
+                            stringId = 'id_form-' + i + '-horarioid ' + 'option[value=\'' + previousOption + '\']';
+                            var opt = document.createElement('option');
+                            opt.value = previousOption;     opt.text = previousOption;
+                            document.getElementById('id_form-' + i + '-horarioid').options.add(opt,previousOptionPosition);
+                            document.getElementById('id_form-' + i + '-horarioid').selectedIndex = previousOptionPosition;
+                        }
 
                     }
                 }
