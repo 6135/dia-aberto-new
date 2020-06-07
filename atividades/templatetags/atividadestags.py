@@ -11,8 +11,6 @@ register = template.Library()
 def field_data(value):
     classes = 'class="' + str(value.field.widget.attrs.get('class')) + '"'
     result = str(classes)
-    #if value.name == 'dia':
-    #    result += ' onchange="getSchedules(\'' + str(value.auto_id) + '\')"'
     if value.name == 'horarioid':
         result += ' onchange="updateSchedules(\'' + str(value.auto_id) + '\')"'
     return result
