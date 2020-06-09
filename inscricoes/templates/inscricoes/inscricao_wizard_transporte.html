@@ -205,6 +205,15 @@
                 <b-radio v-model="precisamTransporteEntreCampi" name="name" native-value="Sim">
                     Sim
                 </b-radio>
+                {% if form.non_field_errors %}
+                    <div style="margin: 20px 20px; text-align: center;">
+                        <div class="message is-danger">
+                            <div class="message-body">
+                                {{ form.non_field_errors }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
                 <hr />
                 <div class="column is-8 is-offset-2">
                     <div class="level">

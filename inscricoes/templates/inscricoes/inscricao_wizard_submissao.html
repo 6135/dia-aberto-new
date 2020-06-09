@@ -91,6 +91,12 @@
         <form action="" method="post">
             {% csrf_token %}
             {{ wizard.management_form }}
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+                Resumo da Inscrição
+            </h2>
+            <p>Dados Pessoais, Dados da escola, Sessões escolhidas, etc...</p>
+            <br />
+            <p>Um e-mail de confirmação será enviado para [e-mails].</p>
             {% if form.non_field_errors %}
                 <div style="margin: 20px 20px; text-align: center;">
                     <div class="message is-danger">
@@ -100,12 +106,6 @@
                     </div>
                 </div>
             {% endif %}
-            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                Resumo da Inscrição
-            </h2>
-            <p>Dados Pessoais, Dados da escola, Sessões escolhidas, etc...</p>
-            <br />
-            <p>Um e-mail de confirmação será enviado para [e-mails].</p>
             <hr />
             <div class="column is-8 is-offset-2">
                 <div class="level">
