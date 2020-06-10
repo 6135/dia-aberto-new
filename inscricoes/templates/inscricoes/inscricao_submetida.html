@@ -1,18 +1,6 @@
 {% extends 'app.html' %}
 {% load static %}
 
-{% block load %}
-{{ wizard.form.media }}
-{% endblock %}
-
-{% block scripts %}
-<script src="{% static 'js/jquery.js' %}"></script>
-
-<script>
-    $("input").addClass("input");
-</script>
-{% endblock scripts %}
-
 {% block title %}Inscrição{% endblock title %}
 
 {% block content %}
@@ -88,42 +76,29 @@
             </div>
         </div>
         <hr />
-        <form action="" method="post">
-            {% csrf_token %}
-            {{ wizard.management_form }}
-            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                Resumo da Inscrição
-            </h2>
-            <p>Dados Pessoais, Dados da escola, Sessões escolhidas, etc...</p>
-            <br />
-            <p>Um e-mail de confirmação será enviado para [e-mails].</p>
-            {% if form.non_field_errors %}
-                <div style="margin: 20px 20px; text-align: center;">
-                    <div class="message is-danger">
-                        <div class="message-body">
-                            {{ form.non_field_errors }}
-                        </div>
-                    </div>
+        <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+            Resumo da Inscrição
+        </h2>
+        <p>Dados Pessoais, Dados da escola, Sessões escolhidas, etc...</p>
+        <br />
+        <p>Um e-mail de confirmação será enviado para [e-mails].</p>
+        <hr />
+        <div class="column is-8 is-offset-2">
+            <div class="level">
+                <div class="level-left">
+                    <a class="button is-outlined" href="{% url 'inscricoes:alterar-inscricao' inscricaoid %}">
+                        <span class=" icon is-small"><i class="mdi mdi-chevron-left"></i></span>
+                        <span>Alterar Inscrição</span>
+                    </a>
                 </div>
-            {% endif %}
-            <hr />
-            <div class="column is-8 is-offset-2">
-                <div class="level">
-                    <div class="level-left">
-                        <button class="button is-outlined" name="wizard_goto_step" value="{{ wizard.steps.prev }}">
-                            <span class=" icon is-small"><i class="mdi mdi-chevron-left"></i></span>
-                            <span>Anterior</span>
-                        </button>
-                    </div>
-                    <div class="level-right">
-                        <button type="submit" class="button is-success is-outlined">
-                            <span>Submeter</span>
-                            <span class="icon"><i class="mdi mdi-check"></i></span>
-                        </button>
-                    </div>
+                <div class="level-right">
+                    <a class="button is-success is-outlined" href="{% url 'home' %}">
+                        <span>Página Inicial</span>
+                        <span class="icon"><i class="mdi mdi-home"></i></span>
+                    </a>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
 {% endblock content %}

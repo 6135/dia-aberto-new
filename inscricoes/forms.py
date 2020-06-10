@@ -46,7 +46,7 @@ class AlmocoForm(forms.ModelForm):
 
 
 def horarios_intersetam(t1start, t1end, t2start, t2end):
-    return (t1start <= t2start <= t1end) or (t2start <= t1start <= t2end)
+    return (t1start < t2start < t1end) or (t2start < t1start < t2end)
 
 
 def verificar_vagas(sessoes, nalunos):
@@ -55,7 +55,11 @@ def verificar_vagas(sessoes, nalunos):
     """
     inscritos_horarios = []
     for sessao in sessoes:
-        horario = Sessao.objects.get(pk=sessao).horarioid
+        try:
+            horario = Sessao.objects.get(pk=sessao).horarioid
+        except:
+            raise forms.ValidationError(
+                _("Ocorreu um erro inesperado. Por favor, tente submeter uma nova inscrição."))
         inscritos_horarios.append({
             'sessao': sessao,
             'inicio': horario.inicio,
@@ -94,7 +98,8 @@ class SessoesForm(forms.Form):
             if re.match(pattern, cleaned_data['sessoes']) is None:
                 raise Exception()
             _sessoes = json.loads(cleaned_data['sessoes'])
-            cleaned_data['sessoes'] = {sessao: _sessoes[sessao] for sessao in _sessoes if _sessoes[sessao] > 0}
+            cleaned_data['sessoes'] = {sessao: _sessoes[sessao]
+                                       for sessao in _sessoes if _sessoes[sessao] > 0}
         except:
             raise forms.ValidationError(
                 _("Ocorreu um erro inesperado. Por favor, tente submeter uma nova inscrição."))
@@ -102,7 +107,3 @@ class SessoesForm(forms.Form):
             raise forms.ValidationError(
                 _("Deve inscrever-se, no mínimo, em uma sessão."))
         verificar_vagas(cleaned_data['sessoes'], cleaned_data['nalunos'])
-
-
-class SubmissaoForm(forms.Form):
-    pass
