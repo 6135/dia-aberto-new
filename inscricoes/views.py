@@ -6,7 +6,7 @@ from rest_framework.generics import ListCreateAPIView
 from inscricoes.models import Escola, Responsavel
 from utilizadores.models import Participante
 from formtools.wizard.views import SessionWizardView
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import json
 from django.forms.formsets import formset_factory
 from django.views.generic import CreateView, DetailView, TemplateView
@@ -196,30 +196,6 @@ class InscricaoWizard(SessionWizardView):
         return render(self.request, 'inscricoes/inscricao_submetida.html', {'inscricaoid': inscricao.pk})
 
 
-class ConsultarInscricaoIndividual(TemplateView):
-
-    template_name = 'inscricoes/consultar_inscricao.html'
-
-    def get(self, request):
-        form = InscricaoIndividualForm()
-        inscricoes = Inscricaoindividual.objects.all()
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request):
-        form = InscricaoIndividualForm()
-        if form.is_valid():
-            inscricao = form.save(commit=False)
-            inscricao.id = request.id
-            inscricao.save()
-
-        text = form.cleaned_data['post']
-        form = InscricaoIndividualForm()
-        return redirect('inscricao/criarinscricaoindividual')
-
-        args = {'form': form, 'text': text}
-        return render(request, "inscricoes/consultar_inscricao.html", args)
-
-
 class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     model = Inscricao
     table_class = InscricoesTable
@@ -228,5 +204,19 @@ class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     filterset_class = InscricaoFilter
 
     table_pagination = {
-        'per_page': 4
+        'per_page': 8
     }
+    
+
+def ApagarInscricao(request, pk):
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    inscricaosessao_set = inscricao.inscricaosessao_set.all()
+    for inscricaosessao in inscricaosessao_set:
+        sessao = inscricaosessao.sessao
+        nparticipantes = inscricaosessao.nparticipantes
+        with transaction.atomic():
+            sessao = Sessao.objects.select_for_update().get(pk=sessao.id)
+            sessao.vagas = F('vagas') + nparticipantes
+            sessao.save()
+    inscricao.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
