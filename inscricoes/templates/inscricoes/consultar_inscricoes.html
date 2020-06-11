@@ -23,11 +23,15 @@
                     <div class="field">
                         <div class="control">
                             <div class="select is-fullwidth">
-                                <select>
+                                <select name="{{ filter.form.escola.name }}" value="{{filter.form.escola.value}}">
                                     <option value="">Qualquer escola</option>
                                     {% for value, escola in filter.form.fields.escola.choices %}
                                     {% if value != "" %}
-                                    <option value="{{ value }}">{{ escola }}</option>
+                                    <option value="{{ value }}"
+                                        {% if value|stringformat:'s' == filter.form.escola.value %} selected
+                                        {% endif %}>
+                                        {{ escola }}
+                                    </option>
                                     {% endif %}
                                     {% endfor %}
                                 </select>

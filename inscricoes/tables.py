@@ -27,7 +27,7 @@ class InscricoesTable(tables.Table):
     # dia = tables.Column()
     # hora = tables.Column()
     Turma = tables.Column(accessor='turma')
-    Escola = tables.Column('Escola',accessor='escola__nome')
+    escola = tables.Column('Escola',accessor='escola__nome')
     nalunos = tables.Column(verbose_name='Nº Alunos')
     areacientifica = tables.Column(verbose_name='Área Científica')
     #participante = tables.Column(accessor='participante.nome')
@@ -37,11 +37,10 @@ class InscricoesTable(tables.Table):
     
     class Meta:
         model = Inscricao
-        sequence = ('Grupo', 'Escola', 'areacientifica', 'ano', 'Turma',  'nalunos', 'participante', 'acoes')
+        sequence = ('Grupo', 'escola', 'areacientifica', 'ano', 'Turma',  'nalunos', 'participante', 'acoes')
       
     def before_render(self, request):
         self.columns.hide('id')
-        self.columns.hide('escola')
         self.columns.hide('turma')
 
     def render_acoes(self, record):
@@ -52,13 +51,16 @@ class InscricoesTable(tables.Table):
                     <i class="mdi mdi-pencil mdi-24px"></i>
                 </span>
             </a>
-            <a href='{reverse("inscricoes:apagar-inscricao", kwargs={"pk": record.pk})}'>
+            <a onclick="alert.render('Tem a certeza que pretende eliminar esta inscrição?','{reverse("inscricoes:apagar-inscricao", kwargs={"pk": record.pk})}')">
                 <span class="icon has-text-danger">
                     <i class="mdi mdi-close-box mdi-24px"></i>
                 </span>
             </a>
         </div>
         """)
+
+    def render_participante(self, value):
+        return format_html(f"{value.first_name} {value.last_name}")
 
 
 
