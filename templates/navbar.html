@@ -66,12 +66,20 @@
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
         Utilizadores
       </a> 
-      <a href="{% url 'configuracao:verEdificios' %}" class="navbar-item">
-        Edificios e Espaços
-      </a> 
-      <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">
-        Temas
-      </a> 
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          Extra
+        </a> 
+
+        <div class="navbar-dropdown"> 
+          <a href="{% url 'configuracao:verEdificios' %}" class="navbar-item">Edificios e Espaços</a> 
+          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Temas</a>
+          <a href="{% url 'configuracao:verUOs' %}" class="navbar-item">Unidades Organicas</a> 
+          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Departamentos</a> 
+          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Cursos</a> 
+        </div>
+      </div>
+
     {% else %}
     <a href="" class="navbar-item">
 
@@ -121,7 +129,7 @@
 
 
   <p class="panel-tabs">
-    <a  class="tablinks is-active" onclick="openNotificacoes(event, 'Todas')" >Todas</a>
+    <a  class="tablinks" onclick="openNotificacoes(event, 'Todas')" >Todas</a>
     <a  class="tablinks" onclick="openNotificacoes(event, 'Novas')" >Novas</a>
     <a  class="tablinks" onclick="openNotificacoes(event, 'Anteriores')" >Anteriores</a>
   </p>
@@ -133,7 +141,7 @@
 <span class="icon has-text-info">
   <i class="fas fa-info-circle"></i>
   </span>
-{% elif notificacao.level == "sucess" %}
+{% elif notificacao.level == "success" %}
 <span class="icon has-text-success">
   <i class="fas fa-check-square"></i>
 </span>

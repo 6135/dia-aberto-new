@@ -553,3 +553,41 @@ def eliminarTema(request,id):
 
 	Tema.objects.get(id=id).delete()
 	return redirect('configuracao:verTemas')
+
+
+def verUOs(request):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	uos = Unidadeorganica.objects.all()
+
+	return render(request=request,
+				template_name='configuracao/listaUO.html',
+				context={'UOs': uos})
+
+def configurarUO(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	if(id is None):
+		pass
+	
+	if(request.method == 'POST'):
+		pass
+
+	if(id is None):
+		pass
+	else: 
+		pass
+	
+	pass
+
+def eliminarUO(request, id):
+
+	user_check_var = user_check(request=request, user_profile=Administrador)
+	if user_check_var is not None: return user_check_var
+
+	Unidadeorganica.objects.get(id=id).delete()
+	return redirect('configuracao:veruos')

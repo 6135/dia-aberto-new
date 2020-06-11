@@ -1,4 +1,5 @@
 {% extends 'app.html' %}
+{% load coordenadores_extra %}
 {% block content %}
 <div class="columns">
        <div class="column is-3">
@@ -149,7 +150,7 @@
                             <td data-label="Dia">{{tarefa.tarefaauxiliar.sessaoid.dia|date:'d-m-Y'}}</td>
                             <td data-label="Horarios">{{tarefa.tarefaauxiliar.sessaoid.horarioid.inicio}} - {{tarefa.tarefaauxiliar.sessaoid.horarioid.fim}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colab.utilizadorid.nome}}</td>
+                            <td data-label="Atribuido a">{{tarefa.colab|colab_none}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
                             <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
@@ -270,7 +271,7 @@
                             <td data-label="Dia">{{tarefa.tarefaacompanhar.dia|date:'d-m-Y'}}</td>
                             <td data-label="Horarios">{{tarefa.tarefaacompanhar.horario}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colab.utilizadorid.nome}}</td>
+                            <td data-label="Atribuido a">{{tarefa.colab|colab_none}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
                              <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
@@ -385,7 +386,7 @@
                             <td data-label="Dia">{{tarefaoutra.dia|date:'d-m-Y'}}</td>
                             <td data-label="Horarios">{{tarefaoutra.horario}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colab.utilizadorid.nome}}</td>
+                            <td data-label="Atribuido a">{{tarefa.colab|colab_none}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
                             <td data-label="Estado">
                             {% if tarefa.estado == "naoConcluida" %}
