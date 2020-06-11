@@ -46,7 +46,7 @@ class AlmocoForm(forms.ModelForm):
 
 
 def horarios_intersetam(t1start, t1end, t2start, t2end):
-    return (t1start < t2start < t1end) or (t2start < t1start < t2end)
+    return (t1start <= t2start < t1end) or (t2start <= t1start < t2end)
 
 
 def verificar_vagas(sessoes, nalunos):
