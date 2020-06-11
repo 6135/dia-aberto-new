@@ -59,7 +59,8 @@ def detalhes_notificacao_automatica(request, id):
 def enviar_notificacao_automatica(request, id):
     user = Utilizador.objects.get(id=2)
     user = Utilizador.objects.get(id=id)
-    notify.send(sender=user, recipient=user,verb="Pedido de cancelamento da tarefa", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now())
+    notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
+    return redirect("utilizadores:inicio") 
     # if sigla == "cancelarTarefa":  # Enviar notificação ao cancelar tarefa - colaborador
     #     tarefa = Tarefa.objects.get(id=id)
     #     titulo = "Pedido de cancelamento da tarefa"
