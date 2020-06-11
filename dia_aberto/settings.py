@@ -54,7 +54,7 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 30
+    'PAGE_SIZE': 20
 }
 
 # Application definition
@@ -104,9 +104,6 @@ def get_config():
 
     return config
 
-
-
-DJANGO_TABLES2_TEMPLATE = "django_tables2/bootstrap.html"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

@@ -135,7 +135,6 @@
         <form action="" method="post">
             {% csrf_token %}
             {{ wizard.management_form }}
-            {{ form.non_field_errors }}
             <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
                 Informação da Escola
             </h2>
@@ -199,6 +198,15 @@
                 <div class="control is-clearfix">{{form.areacientifica}}</div>
                 {{ form.areacientifica.errors }}
             </div>
+            {% if form.non_field_errors %}
+                <div style="margin: 20px 20px; text-align: center;">
+                    <div class="message is-danger">
+                        <div class="message-body">
+                            {{ form.non_field_errors }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
             <hr />
             <div class="column is-8 is-offset-2">
                 <div class="level">

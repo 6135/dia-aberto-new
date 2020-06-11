@@ -31,6 +31,11 @@ urlpatterns = [
     path('editaredificio/<int:id>', views.configurarEdificio, name='editarEdificio'),
     path('eliminaredificio/<int:id>', views.eliminarEdificio,name='eliminarEdificio'),
 
+    path('uos', views.verUOs, name='verUOs'),
+    path('adicionaruo', views.configurarUO, name='adicionarUO'),
+    path('editaruo/<int:id>', views.configurarUO, name='editarUO'),
+    path('eliminaruo/<int:id>', views.eliminarUO,name='eliminarUO'),
+
     path('temas', views.verTemas, name='verTemas'),
     path('adicionarTema', views.configurarTema, name='adicionarTema'),
     path('editarTema/<int:id>', views.configurarTema, name='editarTema'),

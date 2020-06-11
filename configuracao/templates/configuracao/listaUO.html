@@ -4,11 +4,12 @@
 {% load configuracao_tags %}
 <div class="columns">
     <div class="column is-3">
-        {% comment 'filter needs to be commented out first' %}
+        {% comment %}        
         <form method="POST" action="" id='filter'>
             {% csrf_token %}
+            
             <div class="menu">
-                <p class="menu-label">Filtros Edificios</p>
+                <p class="menu-label">Filtros Unidades Org.</p>
                 <ul class="menu-list">
                 <div class="field">
                     <!---->
@@ -61,14 +62,14 @@
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
               <li><a href="{% url 'home' %}">Início</a></li>
-              <li class="is-active"><a href="#" aria-current="page">Edificios</a></li>
+              <li class="is-active"><a href="#" aria-current="page">Unidades Orgânicas</a></li>
             </ul>
           </nav>
-        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'configuracao:adicionarEdificio'%}">     
+        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'configuracao:adicionarUO'%}">     
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
-            <span>Configurar Edificio</span>
+            <span>Configurar Unidades Orgânicas</span>
         </a>   
 
         <div class="b-table">
@@ -92,27 +93,28 @@
                         </tr>
                     </thead>
                     <tbody> 
-                    {% for edificio in edificios %}     
+                    {% for UO in UOs %}     
                     <tr draggable="false">
                         <td class="chevron-cell">
-                            <a role="button" onclick="displayDetails({{edificio.id}})">
+                            <a role="button" onclick="displayDetails({{UO.id}})">
                                 <span class="icon-expandable">
                                     <i class="mdi mdi-chevron-right mdi-24px"></i>
                                 </span>
                             </a>
                         </td>
                         <td data-label="Nome">
-                            {{edificio.nome}}
-                        </td>                    
-                        <td data-label="Campus">{{edificio.campus.nome}}</td>
-                        <td data-label="# Salas">
-                            {{edificio|get_salas_count}}
-                        </td>                            
+                            {{UO.nome}}
+                        </td>
+                        <td data-label="Sigla">
+                            {{UO.sigla}}
+                        </td>                      
+                        <td data-label="Campus">{{UO.campus.nome}}</td>
+                          
                         <td data-label="Operações">
                             <div class="columns">
                                 
                                 <div class="column is-1">  
-                                    <a id='edit' href="{% url 'configuracao:editarEdificio' edificio.id %}">
+                                    <a id='edit' href="{% url 'configuracao:editarUO' UO.id %}">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                                         </span>
@@ -120,7 +122,7 @@
                                 </div>
                                 &nbsp;
                                 <div class="column is-1">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este edificio?','{% url 'configuracao:eliminarEdificio' edificio.id %}')">
+                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este UO?','{% url 'configuracao:eliminarUO' UO.id %}')">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                                         </span>
@@ -129,36 +131,26 @@
                             </div> 
                         </td>                     
                       </tr> 
-                      <tr class="detail" style="display: none" id='Details{{edificio.id}}'>
+                      <tr class="detail" style="display: none" id='Details{{UO.id}}'>
                         <td colspan="5">
                             <div class="detail-container">
                                 <div class="table"> 
                                     <div class="table-wrapper">
-                                        <table class="table is-stripped has-mobile-cards is-fullwidth">
-                                            <thead id='tabble-details{{edificio.id}}'>
+                                        <table class="table is-stripped has-mobile-cards">
+                                            <thead id='tabble-details{{UO.id}}'>
                                                 <tr>
-                                                    <th class="th-wrap">Nome:</th>
-                                                    <th class="th-wrap">Andar:</th>
-                                                    <th class="th-wrap">Descrição:</th>
+                                                    <th class="th-wrap">Departamento:</th>
+                                                    <th class="th-wrap">Sigla</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {% for espaco in edificio.espacos_ %}
+                                                {% for dep in UO.dep_ %}
                                                 <tr style="border-bottom: 1px solid #ddd">
-                                                    <td data-label='Nome:' style="font-weight: normal;">
-                                                        <span>{{espaco.nome}}</span>
+                                                    <td data-label='Dep:' style="font-weight: normal;">
+                                                        <span>{{dep.nome}}</span>
                                                     </td>
-                                                    <td data-label='Andar:' style="font-weight: normal;">
-                                                        <span>{{espaco.andar}}</span>
-                                                    </td>
-                                                    <td data-label='Descrição:' style="font-weight: normal;">
-                                                        <span>
-                                                            {% if espaco.descricao != None %}
-                                                                {{espaco.descricao}}
-                                                            {% else %}
-                                                                N/E
-                                                            {% endif %}
-                                                        </span>
+                                                    <td data-label='Sigla' style="font-weight: normal;">
+                                                        <span>{{dep.sigla}}</span>
                                                     </td>
                                                 </tr>
                                                 {% endfor %}
