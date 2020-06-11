@@ -10,6 +10,7 @@ from django.urls import reverse
 class DepartamentoTable(tables.Table):
     #nome = tables.Column(verbose_name='Departamento')
     sigla = tables.Column(verbose_name='Departamento')
+
     class Meta:
         model = Departamento
 
@@ -17,31 +18,31 @@ class DepartamentoTable(tables.Table):
         self.columns.hide('id')
         self.columns.hide('unidadeorganicaid')
         self.columns.hide('nome')
-        #self.columns.hide('atividadeid')
+        # self.columns.hide('atividadeid')
 
 
 class InscricoesTable(tables.Table):
-    
-    Grupo = tables.Column('Grupo', accessor='id')
+    grupo = tables.Column('Grupo', accessor='id')
     #departamento = tables.Column(accessor='departamento__id')
     # dia = tables.Column()
     # hora = tables.Column()
-    Turma = tables.Column(accessor='turma')
-    escola = tables.Column('Escola',accessor='escola__nome')
-    nalunos = tables.Column(verbose_name='Nº Alunos')
+    nalunos = tables.Column(verbose_name='Qtd', attrs={
+                            "abbr": {"title": "Quantidade"}})
     areacientifica = tables.Column(verbose_name='Área Científica')
     #participante = tables.Column(accessor='participante.nome')
     #NumDocentes = tables.Column('Nº Docentes', accessor='inscricao.nresponsaveis')
     #nome = tables.Column('Departamento',accessor='departamento.nome')
-    acoes = tables.Column('Ações', empty_values=())
-    
+    acoes = tables.Column('Ações', empty_values=(),
+                          orderable=False, attrs={"td": {"style": "width: 80px"}})
+
     class Meta:
         model = Inscricao
-        sequence = ('Grupo', 'escola', 'areacientifica', 'ano', 'Turma',  'nalunos', 'participante', 'acoes')
-      
+        sequence = ('grupo', 'escola', 'areacientifica',
+                    'turma', 'nalunos', 'participante', 'acoes')
+
     def before_render(self, request):
         self.columns.hide('id')
-        self.columns.hide('turma')
+        self.columns.hide('ano')
 
     def render_acoes(self, record):
         return format_html(f"""
@@ -62,13 +63,17 @@ class InscricoesTable(tables.Table):
     def render_participante(self, value):
         return format_html(f"{value.first_name} {value.last_name}")
 
+    def render_turma(self, value, record):
+        return format_html(f"{record.ano}º {value}")
 
 
 class DiaAbertoTable(tables.Table):
-    datadiaabertoinicio = tables.DateColumn(verbose_name='Dia/Hora', format ='d/m/Y, h:i' )
+    datadiaabertoinicio = tables.DateColumn(
+        verbose_name='Dia/Hora', format='d/m/Y, h:i')
+
     class Meta:
         model = Diaaberto
-    
+
     def before_render(self, request):
         self.columns.hide('id')
         self.columns.hide('enderecopaginaweb')
@@ -84,5 +89,3 @@ class DiaAbertoTable(tables.Table):
         self.columns.hide('precoalunos')
         self.columns.hide('precoprofessores')
         self.columns.hide('escalasessoes')
-    
-
