@@ -37,7 +37,7 @@
             {% block table.tbody.row %}
             <tr {{ row.attrs.as_html }}>
                 {% for column, cell in row.items %}
-                <td {{ column.attrs.td.as_html }}>
+                <td {{ column.attrs.td.as_html }} data-label="{{column.header}}">
                     {% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}
                 </td>
                 {% endfor %}
@@ -76,7 +76,6 @@
     <div class="level-right">
         <div class="level-item">
             <nav class="pagination" role="navigation" aria-label="pagination">
-                {% comment %} {% if table.page.has_previous or table.page.has_next %} {% endcomment %}
                 {% block pagination.range %}
                 {% for p in table.page|table_page_range:table.paginator %}
                 <ul class="pagination-list">
@@ -94,23 +93,18 @@
                 </ul>
                 {% endfor %}
                 {% endblock pagination.range %}
-                {% comment %} {% endif %} {% endcomment %}
-                {% comment %} {% if table.page.has_previous %} {% endcomment %}
                 {% block pagination.previous %}
                 <a role="button" {% if table.page.has_previous %}
                     href="{% querystring table.prefixed_page_field=table.page.previous_page_number %}" {% else %}
                     disabled="disabled" {% endif %} class="pagination-previous"><span class="icon" aria-hidden="true"><i
                             class="mdi mdi-chevron-left mdi-24px"></i></span></a>
                 {% endblock pagination.previous %}
-                {% comment %} {% endif %} {% endcomment %}
-                {% comment %} {% if table.page.has_next %} {% endcomment %}
                 {% block pagination.next %}
                 <a role="button" {% if table.page.has_next %}
                     href="{% querystring table.prefixed_page_field=table.page.next_page_number %}" {% else %}
                     disabled="disabled" {% endif %} class="pagination-next"><span class="icon" aria-hidden="true"><i
                             class="mdi mdi-chevron-right mdi-24px"></i></span></a>
                 {% endblock pagination.next %}
-                {% comment %} {% endif %} {% endcomment %}
             </nav>
         </div>
     </div>

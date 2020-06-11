@@ -3,7 +3,8 @@ from .models import Inscricao, Escola
 from configuracao.models import Diaaberto, Departamento, Unidadeorganica, Campus
 from atividades.models import Atividade
 import itertools
-from django_tables2.utils import Accessor
+from django.utils.html import format_html
+from django.urls import reverse
 
 
 class DepartamentoTable(tables.Table):
@@ -22,29 +23,42 @@ class DepartamentoTable(tables.Table):
 class InscricoesTable(tables.Table):
     
     Grupo = tables.Column('Grupo', accessor='id')
-    #departamento = tables.Column(accessor='departamento.id')
+    #departamento = tables.Column(accessor='departamento__id')
     # dia = tables.Column()
     # hora = tables.Column()
     Turma = tables.Column(accessor='turma')
-    Escola = tables.Column('Escola',accessor='escola.nome')
+    Escola = tables.Column('Escola',accessor='escola__nome')
     nalunos = tables.Column(verbose_name='Nº Alunos')
     areacientifica = tables.Column(verbose_name='Área Científica')
     #participante = tables.Column(accessor='participante.nome')
     #NumDocentes = tables.Column('Nº Docentes', accessor='inscricao.nresponsaveis')
     #nome = tables.Column('Departamento',accessor='departamento.nome')
+    acoes = tables.Column('Ações', empty_values=())
     
     class Meta:
         model = Inscricao
-        sequence = ('Grupo', 'Escola', 'areacientifica', 'ano', 'Turma',  'nalunos')
-        attrs = {"class": "paleblue"}
+        sequence = ('Grupo', 'Escola', 'areacientifica', 'ano', 'Turma',  'nalunos', 'participante', 'acoes')
       
     def before_render(self, request):
-        #self.columns.hide('areacientifica')
         self.columns.hide('id')
         self.columns.hide('escola')
         self.columns.hide('turma')
-    
 
+    def render_acoes(self, record):
+        return format_html(f"""
+        <div>
+            <a href='{reverse("inscricoes:alterar-inscricao", kwargs={"pk": record.pk})}'>
+                <span class="icon has-text-warning">
+                    <i class="mdi mdi-pencil mdi-24px"></i>
+                </span>
+            </a>
+            <a href='{reverse("inscricoes:alterar-inscricao", kwargs={"pk": record.pk})}'>
+                <span class="icon has-text-danger">
+                    <i class="mdi mdi-close-box mdi-24px"></i>
+                </span>
+            </a>
+        </div>
+        """)
 
 
 
