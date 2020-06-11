@@ -9,16 +9,15 @@
         <thead {{ table.attrs.thead.as_html }}>
             <tr>
                 {% for column in table.columns %}
-                <th class="{% if request.GET.sort == column.order_by_alias %}is-sorting{% endif %}"
-                    style="cursor: pointer"
-                    onclick="window.location.href = '{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}';"
-                    {{ column.attrs.th.as_html }}>
+                <th {% if column.orderable %}class="orderable
+                    {% if request.GET.sort == column.order_by_alias %}is-sorting{% endif %}" {% endif %}
                     {% if column.orderable %}
-                    {{ column.header }}
-                    {% else %}
-                    {{ column.header }}
-                    {% endif %}
-                    {% if request.GET.sort == column.order_by_alias %}
+                    onclick="window.location.href = '{% querystring table.prefixed_order_by_field=column.order_by_alias.next %}';"
+                    {% endif %} {{ column.attrs.th.as_html }}>
+                    {% if column.attrs.abbr %}<abbr title="{{column.attrs.abbr.title}}">{% endif %}
+                        {{ column.header }}
+                        {% if column.attrs.abbr %}</abbr>{% endif %}
+                    {% if column.orderable and request.GET.sort == column.order_by_alias %}
                     {% if column.order_by_alias|slice:"0:1" == "-" %}
                     <span class="icon is-small"><i class="mdi mdi-menu-up"></i></span>
                     {% else %}
@@ -114,11 +113,15 @@
 
 <head>
     <style>
-        th:hover {
+        th.orderable {
+            cursor: pointer;
+        }
+
+        th.orderable:hover {
             border-color: #7a7a7a;
         }
 
-        th.is-sorting {
+        th.orderable.is-sorting {
             border-color: #7a7a7a;
         }
 
