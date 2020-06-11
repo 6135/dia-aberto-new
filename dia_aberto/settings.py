@@ -65,11 +65,11 @@ INSTALLED_APPS = [
     'configuracao',
     'coordenadores',
     'inscricoes',
+    'notifications',
     'notificacoes',
     'utilizadores',
     'phonenumber_field',
     'formtools',
-    'notifications',
     'rest_framework',
     'django_filters',
     "django_tables2",
@@ -81,7 +81,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-NOTIFICATIONS_NOTIFICATION_MODEL = 'notificacoes.Notificacao'
+DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True}
+
+
+NOTIFICATIONS_NOTIFICATION_MODEL = 'notifications.Notificacao'
 
 DJANGO_TABLES2_TEMPLATE = "bulma-table.html"
 
