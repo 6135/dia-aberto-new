@@ -196,30 +196,6 @@ class InscricaoWizard(SessionWizardView):
         return render(self.request, 'inscricoes/inscricao_submetida.html', {'inscricaoid': inscricao.pk})
 
 
-class ConsultarInscricaoIndividual(TemplateView):
-
-    template_name = 'inscricoes/consultar_inscricao.html'
-
-    def get(self, request):
-        form = InscricaoIndividualForm()
-        inscricoes = Inscricaoindividual.objects.all()
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request):
-        form = InscricaoIndividualForm()
-        if form.is_valid():
-            inscricao = form.save(commit=False)
-            inscricao.id = request.id
-            inscricao.save()
-
-        text = form.cleaned_data['post']
-        form = InscricaoIndividualForm()
-        return redirect('inscricao/criarinscricaoindividual')
-
-        args = {'form': form, 'text': text}
-        return render(request, "inscricoes/consultar_inscricao.html", args)
-
-
 class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     model = Inscricao
     table_class = InscricoesTable
@@ -228,8 +204,9 @@ class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     filterset_class = InscricaoFilter
 
     table_pagination = {
-        'per_page': 6
+        'per_page': 8
     }
+    
 
 def ApagarInscricao(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)
