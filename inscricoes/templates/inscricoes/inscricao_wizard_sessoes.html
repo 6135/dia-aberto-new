@@ -85,7 +85,7 @@
         methods: {
             loadAsyncData() {
                 let params = [
-                    `ordering=${this.sortOrder == 'asc' ? '-' : ''}${this.sortField}`,
+                    `ordering=${this.sortOrder == 'desc' ? '-' : ''}${this.sortField}`,
                     `page=${this.page}`,
                     `page_size=${this.perPage}`
                 ].join('&');
@@ -258,10 +258,18 @@
         <form action="" method="post">
             {% csrf_token %}
             {{ wizard.management_form }}
+            {% if form.non_field_errors %}
+                <div style="margin: 20px 20px; text-align: center;">
+                    <div class="message is-danger">
+                        <div class="message-body">
+                            {{ form.non_field_errors }}
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
             <div id="vue-app">
                 <input type="hidden" name="sessoes-sessoes" :value="JSON.stringify(inscritos)">
                 <input type="hidden" name="sessoes-sessoes_info" :value="JSON.stringify(sessoesEscolhidas)">
-                {{ form.non_field_errors }}
                 <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
                     Sessões Disponíveis
                 </h2>
@@ -400,7 +408,7 @@
                                             <p>[[ props.row.descricao ]]</p>
                                             {% comment %} <p><strong>Responsável:</strong> [[ props.row.creator ]]</p>
                                             {% endcomment %}
-                                            <b-table :data="props.row.sessao_set" sort-icon="false"
+                                            <b-table :data="props.row.sessao_set" sort-icon="menu-up"
                                                 default-sort="horario.inicio">
                                                 <template slot-scope="session_props">
                                                     <b-table-column field="horario.inicio" label="Horário" sortable>
@@ -437,7 +445,7 @@
                     Sessões Escolhidas
                 </h2>
                 <!-- TABELA ESCOLHIDAS -->
-                <b-table :data="sessoesEscolhidas" sort-icon="false" default-sort="sessao.horario.inicio">
+                <b-table :data="sessoesEscolhidas" sort-icon="menu-up" default-sort="sessao.horario.inicio">
                     <template slot-scope="props">
                         <b-table-column field="sessao.horario.inicio" label="Horário" sortable>
                             [[ moment(props.row.sessao.horario.inicio, "HH:mm:ss").format("HH:mm") ]] -
@@ -462,6 +470,15 @@
                         <p class="has-text-grey">Ainda não há sessões escolhidas</p>
                     </template>
                 </b-table>
+                {% if form.non_field_errors %}
+                    <div style="margin: 20px 20px; text-align: center;">
+                        <div class="message is-danger">
+                            <div class="message-body">
+                                {{ form.non_field_errors }}
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
                 <hr />
                 <div class="column is-8 is-offset-2">
                     <div class="level">
@@ -476,8 +493,8 @@
                         </div>
                         <div class="level-right">
                             <button type="submit" class="button is-success is-outlined">
-                                <span>Próximo</span>
-                                <span class="icon is-medium"><i class="mdi mdi-forward mdi-36px"></i></span>
+                                <span>Submeter</span>
+                                <span class="icon"><i class="mdi mdi-check"></i></span>
                             </button>
                         </div>
                     </div>

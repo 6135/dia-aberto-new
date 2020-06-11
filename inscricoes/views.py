@@ -25,6 +25,8 @@ from django_tables2 import RequestConfig, SingleTableView, MultiTableMixin, Sing
 from datetime import timezone
 from .filters import InscricaoFilter
 from django_filters.views import FilterView
+from django.db import transaction
+from django.db.models import F
 
 
 class AtividadesAPIView(ListCreateAPIView):
@@ -120,7 +122,6 @@ class InscricaoWizard(SessionWizardView):
         ('transporte', forms.TransporteForm),
         ('almoco', forms.AlmocoForm),
         ('sessoes', forms.SessoesForm),
-        ('submissao', forms.SubmissaoForm),
     ]
 
     def dispatch(self, request, *args, **kwargs):
@@ -156,9 +157,22 @@ class InscricaoWizard(SessionWizardView):
     def get_template_names(self):
         return [f'inscricoes/inscricao_wizard_{self.steps.current}.html']
 
+    def post(self, *args, **kwargs):
+        # Envia a informação extra necessária para o formulário atual, após preenchê-lo.
+        # Necessário para algumas validações especiais de backend, como verificar o número de alunos
+        # inscritos para verificar inscritos nos almoços e nas sessões.
+        mutable = self.request.POST._mutable
+        self.request.POST._mutable = True
+        if self.steps.current == 'sessoes':
+            self.request.POST['sessoes-nalunos'] = self.get_cleaned_data_for_step('escola')[
+                'nalunos']
+        self.request.POST._mutable = mutable
+        print(self.request.POST)
+        return super(InscricaoWizard, self).post(*args, **kwargs)
+
     def done(self, form_list, form_dict, **kwargs):
         # Save to DB
-        sessoes = json.loads(form_dict['sessoes'].cleaned_data['sessoes'])
+        sessoes = form_dict['sessoes'].cleaned_data['sessoes']
         responsaveis = form_dict['responsaveis'].save(commit=False)
         almoco = form_dict['almoco'].save(commit=False)
         inscricao = form_dict['escola'].save(commit=False)
@@ -169,15 +183,17 @@ class InscricaoWizard(SessionWizardView):
             if sessoes[sessaoid] > 0:
                 inscricao_sessao = models.Inscricaosessao(sessao=Sessao.objects.get(
                     pk=sessaoid), nparticipantes=sessoes[sessaoid], inscricao=inscricao)
+                with transaction.atomic():
+                    sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
+                    sessao.vagas = F('vagas') - sessoes[sessaoid]
+                    sessao.save()
                 inscricao_sessao.save()
         responsaveis.inscricao = inscricao
         almoco.inscricao = inscricao
         responsaveis.save()
         almoco.save()
-        return render(self.request, 'inscricoes/mensagem.html', {
-            'tipo': 'success',
-            'm': "Inscrição bem sucedida!",
-        })
+        # TODO: Construir PDF
+        return render(self.request, 'inscricoes/inscricao_submetida.html', {'inscricaoid': inscricao.pk})
 
 
 class ConsultarInscricaoIndividual(TemplateView):
@@ -209,8 +225,10 @@ class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     table_class = InscricoesTable
     template_name = 'inscricoes/consultar_inscricoes.html'
 
+    from notifications.signals import notify
+    
     filterset_class = InscricaoFilter
 
     table_pagination = {
-        'per_page': 10
+        'per_page': 4
     }
