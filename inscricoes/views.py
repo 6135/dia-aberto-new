@@ -6,7 +6,7 @@ from rest_framework.generics import ListCreateAPIView
 from inscricoes.models import Escola, Responsavel
 from utilizadores.models import Participante
 from formtools.wizard.views import SessionWizardView
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 import json
 from django.forms.formsets import formset_factory
 from django.views.generic import CreateView, DetailView, TemplateView
@@ -228,5 +228,18 @@ class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     filterset_class = InscricaoFilter
 
     table_pagination = {
-        'per_page': 4
+        'per_page': 6
     }
+
+def ApagarInscricao(request, pk):
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    inscricaosessao_set = inscricao.inscricaosessao_set.all()
+    for inscricaosessao in inscricaosessao_set:
+        sessao = inscricaosessao.sessao
+        nparticipantes = inscricaosessao.nparticipantes
+        with transaction.atomic():
+            sessao = Sessao.objects.select_for_update().get(pk=sessao.id)
+            sessao.vagas = F('vagas') + nparticipantes
+            sessao.save()
+    inscricao.delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
