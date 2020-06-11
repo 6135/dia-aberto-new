@@ -52,7 +52,7 @@ class InscricoesTable(tables.Table):
                     <i class="mdi mdi-pencil mdi-24px"></i>
                 </span>
             </a>
-            <a href='{reverse("inscricoes:alterar-inscricao", kwargs={"pk": record.pk})}'>
+            <a href='{reverse("inscricoes:apagar-inscricao", kwargs={"pk": record.pk})}'>
                 <span class="icon has-text-danger">
                     <i class="mdi mdi-close-box mdi-24px"></i>
                 </span>

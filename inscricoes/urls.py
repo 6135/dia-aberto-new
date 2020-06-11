@@ -13,6 +13,8 @@ urlpatterns = [
          name='criar-inscricao'),
     path('alterar/<int:pk>', views.AlterarInscricaoWizard.as_view(),
          name='alterar-inscricao'),
+    path('apagar/<int:pk>', views.ApagarInscricao,
+         name='apagar-inscricao'),
     # url('$', ConsultarInscricaoEscola.detail, name='escola'),
     # url('escola', ConsultarInscricaoResponsaveis.escola, name='escola'),
     # url('consultar-inscricao-transporte',  ConsultarInscricaoResponsaveis.transporte, name="transporte"),
