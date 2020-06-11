@@ -224,8 +224,6 @@ class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     model = Inscricao
     table_class = InscricoesTable
     template_name = 'inscricoes/consultar_inscricoes.html'
-
-    from notifications.signals import notify
     
     filterset_class = InscricaoFilter
 
