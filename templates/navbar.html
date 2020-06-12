@@ -19,29 +19,29 @@
   <div class="navbar-menu">
     <div class="navbar-start">
 
-    {% if request.user|has_group:'Participante' %}
-    {% if request.user|inscrito %}
-    <a href="{% url 'inscricoes:alterar-inscricao' request.user|inscricao %}" class="navbar-item">
-      Minha Inscrição
-    </a>
-    {% else %}
-    <a href="{% url 'inscricoes:criar-inscricao' %}" class="navbar-item">
-      Criar Inscrição
-    </a>
-    {% endif %}
-    {% elif request.user|has_group:'Colaborador'%}
-    <a href="{% url 'colaboradores:consultar-tarefas' %}" class="navbar-item">
-      Minhas Tarefas
-    </a> 
-    {% elif request.user|has_group:'ProfessorUniversitario'%}
-    <a href="/minhasatividades" class="navbar-item">
-      Minhas Atividades
-    </a>   
-    {% elif request.user|has_group:'Coordenador'%}
-    <a href="/minhasatividades" class="navbar-item">
-      Atividades dos Departamentos
-    </a>  
-    <a href="/minhasatividades" class="navbar-item">
+      {% if request.user|has_group:'Participante' %}
+      {% if request.user|inscrito %}
+      <a href="{% url 'inscricoes:alterar-inscricao' request.user|inscricao %}" class="navbar-item">
+        Minha Inscrição
+      </a>
+      {% else %}
+      <a href="{% url 'inscricoes:criar-inscricao' %}" class="navbar-item">
+        Criar Inscrição
+      </a>
+      {% endif %}
+      {% elif request.user|has_group:'Colaborador'%}
+      <a href="{% url 'colaboradores:consultar-tarefas' %}" class="navbar-item">
+        Minhas Tarefas
+      </a>
+      {% elif request.user|has_group:'ProfessorUniversitario'%}
+      <a href="/minhasatividades" class="navbar-item">
+        Minhas Atividades
+      </a>
+      {% elif request.user|has_group:'Coordenador'%}
+      <a href="/minhasatividades" class="navbar-item">
+        Atividades dos Departamentos
+      </a>
+      <a href="/minhasatividades" class="navbar-item">
         Inscrições
       </a>
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
@@ -65,27 +65,27 @@
       </a>
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
         Utilizadores
-      </a> 
+      </a>
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">
           Extra
-        </a> 
+        </a>
 
-        <div class="navbar-dropdown"> 
-          <a href="{% url 'configuracao:verEdificios' %}" class="navbar-item">Edificios e Espaços</a> 
+        <div class="navbar-dropdown">
+          <a href="{% url 'configuracao:verEdificios' %}" class="navbar-item">Edificios e Espaços</a>
           <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Temas</a>
-          <a href="{% url 'configuracao:verUOs' %}" class="navbar-item">Unidades Organicas</a> 
-          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Departamentos</a> 
-          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Cursos</a> 
+          <a href="{% url 'configuracao:verUOs' %}" class="navbar-item">Unidades Organicas</a>
+          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Departamentos</a>
+          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Cursos</a>
         </div>
       </div>
 
-    {% else %}
-    <a href="" class="navbar-item">
+      {% else %}
+      <a href="" class="navbar-item">
 
-    </a>
-    {% endif %}
-</div>
+      </a>
+      {% endif %}
+    </div>
     <div class="navbar-end">
       <div class="navbar-item">
         {% if user.is_authenticated %}
@@ -98,15 +98,15 @@
                 <div type="button" data-badge="0" class="button has-badge-rounded has-badge-warning is-text"
                   style="margin-right: 0.9rem">
                   <span>
-                  
+
                     <span class="icon">
-                    {% if request.user|nr_notificacoes > 0 %}
-                    <span title="Badge top right" class="badge is-warning">{{request.user|nr_notificacoes}}</span>
+                      {% if request.user|nr_notificacoes > 0 %}
+                      <span title="Badge top right" class="badge is-warning">{{request.user|nr_notificacoes}}</span>
                       {% endif %}
                       <i class="mdi mdi-bell mdi-24px"></i>
-                      
-                      
-                      
+
+
+
                     </span>
 
                   </span>
@@ -129,9 +129,8 @@
               <section class="modal-card-body">
                 <nav class="panel">
 
-                  
                   <p class="panel-tabs">
-                    <a class="tablinks" onclick="openNotificacoes(event, 'Todas')">Todas</a>
+                    <a class="tablinks is-active" onclick="openNotificacoes(event, 'Todas')">Todas</a>
                     <a class="tablinks" onclick="openNotificacoes(event, 'Novas')">Novas</a>
                     <a class="tablinks" onclick="openNotificacoes(event, 'Anteriores')">Anteriores</a>
                   </p>
@@ -170,7 +169,7 @@
                   <div id="Novas" style="display:none" class="tabcontent">
                     {% for notificacao in request.user|get_notificacoes:"False" %}
                     <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
-                      class="panel-block is-active">
+                      class="panel-block" style = " background: silver; ">
                       {% if notificacao.level == "info" %}
                       <span class="icon has-text-info">
                         <i class="fas fa-info-circle"></i>
@@ -422,16 +421,13 @@
 
         </div>
       </div>
-      
+
     </div>
 </nav>
 
 
 {% block scripts %}
 <script>
-
-
-
   function definicoes() {
     var x = document.getElementById("dropdown_definicoes");
     if (x.className === "dropdown is-right") {
@@ -450,7 +446,7 @@
     }
   }
 
-  function openNotificacoes(evt, cityName) {
+  function openNotificacoes(evt, tipo_notificacao) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
@@ -460,8 +456,8 @@
     for (i = 0; i < tablinks.length; i++) {
       tablinks[i].className = tablinks[i].className.replace(" is-active", "");
     }
-    document.getElementById(cityName).style.display = "block";
-    evt.currentTarget.className += " active";
+    document.getElementById(tipo_notificacao).style.display = "block";
+    evt.currentTarget.className += " is-active";
   }
 </script>
 
