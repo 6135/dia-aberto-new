@@ -261,14 +261,24 @@
 
 
                                             <div class="field is-grouped">
+                                                {% if tarefa.estado == 'naoConcluida'  %}
+                                                {% if date|tarefa_passou:tarefa.id == False %}
+                                                <div class="control">
+                                                    <a
+                                                        onclick="alert.warning('<b>Atenção!</b><br><br>Esta tarefa ainda não começou')">
 
-                                                {% if tarefa.estado == 'naoConcluida' and date|iniciar_tarefa:tarefa.id == True  %}
+                                                        <button class="button is-link">Iniciar</button>
+                                                    </a>
+                                                </div>
+                                                {% else %}
                                                 <div class="control">
                                                     <a href="{% url 'colaboradores:iniciar-tarefa' tarefa.id %}">
                                                         <button class="button is-link">Iniciar</button>
                                                     </a>
                                                 </div>
                                                 {% endif %}
+                                                {% endif %}
+
                                                 {% if tarefa.estado == 'Iniciada'  %}
 
                                                 <div class="control">
@@ -278,7 +288,7 @@
                                                 </div>
 
                                                 {% endif %}
-                                                {% if tarefa.estado != 'Cancelada' and tarefa.estado != 'Concluida' and date|tarefa_passou:tarefa.id == False %}
+                                                {% if tarefa.estado != 'Cancelada' and tarefa.estado != 'Concluida' %}
                                                 <div class="control">
                                                     <a
                                                         onclick="alert.render('Tem a certeza que pretende cancelar esta tarefa?','{% url 'colaboradores:cancelar-tarefa' tarefa.id %}')">

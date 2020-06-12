@@ -13,6 +13,8 @@ from django.contrib.auth.models import Group
 
 from django.core.paginator import Paginator
 
+from notificacoes import views
+
 # Funcionalidade de consultar tarefas do colaborador atual, funcionalidades de filtros para a a consulta das tarefas
 
 def consultar_tarefas(request):
@@ -147,10 +149,10 @@ def cancelar_tarefa(request, id):
             return redirect('colaboradores:mensagem',5) 
     else:
         return redirect('colaboradores:mensagem',5)
-
-    tarefa = Tarefa.objects.get(id=id)
-    tarefa.estado="Cancelada"
-    tarefa.save()
+    views.enviar_notificacao_automatica(user.id,user.id,"cancelarTarefa",id)
+    # tarefa = Tarefa.objects.get(id=id)
+    # tarefa.estado="Cancelada"
+    # tarefa.save()
     return redirect('colaboradores:consultar-tarefas') 
 
 

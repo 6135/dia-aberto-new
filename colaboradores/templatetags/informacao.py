@@ -52,7 +52,7 @@ def tarefa_passou(value,id):
         value = tarefa.dia
         comecou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
     delta = value - date.today()
-    return comecou == True and delta.days < 0
+    return comecou == True or delta.days < 0
 
 
 @register.filter(name='iniciar_tarefa')
