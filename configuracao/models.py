@@ -153,7 +153,7 @@ class Diaaberto(models.Model):
     @staticmethod
     def current():
         now = datetime.now(timezone.utc)
-        qs = Diaaberto.objects.filter(ano=now.year,datadiaabertoinicio__gte=now)
+        qs = Diaaberto.objects.filter(ano=now.year,datadiaabertofim__gte=now)
         if qs.exists():
             return qs.first()
         else: return None
