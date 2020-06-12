@@ -2,6 +2,8 @@
 {% load poll_extras %}
 {% load notificacoes_extras %}
 {% load inscricoes_extras %}
+{% load notifications_tags %}
+
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <a class="navbar-item logo" href="{% url 'home' %}">
@@ -101,6 +103,7 @@
 
                     <span class="icon">
                       {% if request.user|nr_notificacoes > 0 %}
+                      
                       <span title="Badge top right" class="badge is-warning">{{request.user|nr_notificacoes}}</span>
                       {% endif %}
                       <i class="mdi mdi-bell mdi-24px"></i>
@@ -137,8 +140,15 @@
                   <div id="Todas" style="display:block" class="tabcontent">
 
                     {% for notificacao in request.user|get_notificacoes:"Todas" %}
-                    <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
+                    
+                    {% if notificacao.unread == False %}
+                       <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
                       class="panel-block">
+                      {% else %}
+                      <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
+                      class="panel-block" style = " background: LightGray; ">
+                    {% endif %}
+
                       {% if notificacao.level == "info" %}
                       <span class="icon has-text-info">
                         <i class="fas fa-info-circle"></i>
@@ -169,7 +179,7 @@
                   <div id="Novas" style="display:none" class="tabcontent">
                     {% for notificacao in request.user|get_notificacoes:"False" %}
                     <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
-                      class="panel-block" style = " background: silver; ">
+                      class="panel-block" style = " background: LightGray; ">
                       {% if notificacao.level == "info" %}
                       <span class="icon has-text-info">
                         <i class="fas fa-info-circle"></i>
