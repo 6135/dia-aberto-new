@@ -44,6 +44,7 @@ class InscricoesTable(tables.Table):
         self.columns.hide('ano')
         self.columns.hide('areacientifica')
         self.columns.hide('participante')
+        self.columns.hide('diaaberto')
 
     def render_acoes(self, record):
         return format_html(f"""
@@ -65,7 +66,7 @@ class InscricoesTable(tables.Table):
         return format_html(f"{value.first_name} {value.last_name}")
 
     def render_turma(self, value, record):
-        return format_html(f"{record.ano}º {value} {record.areacientifica}")
+        return format_html(f"{record.ano}º {value}, {record.areacientifica}")
 
 
 class DiaAbertoTable(tables.Table):
