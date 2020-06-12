@@ -28,7 +28,6 @@ class InscricoesTable(tables.Table):
     # hora = tables.Column()
     nalunos = tables.Column(verbose_name='Qtd', attrs={
                             "abbr": {"title": "Quantidade"}})
-    areacientifica = tables.Column(verbose_name='Área Científica')
     #participante = tables.Column(accessor='participante.nome')
     #NumDocentes = tables.Column('Nº Docentes', accessor='inscricao.nresponsaveis')
     #nome = tables.Column('Departamento',accessor='departamento.nome')
@@ -37,12 +36,14 @@ class InscricoesTable(tables.Table):
 
     class Meta:
         model = Inscricao
-        sequence = ('grupo', 'escola', 'areacientifica',
-                    'turma', 'nalunos', 'participante', 'acoes')
+        sequence = ('grupo', 'dia', 'escola', 'areacientifica',
+                    'turma', 'nalunos', 'acoes')
 
     def before_render(self, request):
         self.columns.hide('id')
         self.columns.hide('ano')
+        self.columns.hide('areacientifica')
+        self.columns.hide('participante')
 
     def render_acoes(self, record):
         return format_html(f"""
@@ -64,7 +65,7 @@ class InscricoesTable(tables.Table):
         return format_html(f"{value.first_name} {value.last_name}")
 
     def render_turma(self, value, record):
-        return format_html(f"{record.ano}º {value}")
+        return format_html(f"{record.ano}º {value} {record.areacientifica}")
 
 
 class DiaAbertoTable(tables.Table):

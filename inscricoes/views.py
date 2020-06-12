@@ -110,7 +110,7 @@ class AlterarInscricaoWizard(SessionWizardView):
         return [f'inscricoes/inscricao_wizard_{self.steps.current}.html']
 
     def done(self, form_list, form_dict, **kwargs):
-        # Save to DB
+        # TODO: Guardar na Base de Dados (Alterar Inscrição)
         print(form_dict)
         return HttpResponse('<h1>Done!</h1>')
 
@@ -166,12 +166,14 @@ class InscricaoWizard(SessionWizardView):
         if self.steps.current == 'sessoes':
             self.request.POST['sessoes-nalunos'] = self.get_cleaned_data_for_step('escola')[
                 'nalunos']
+        # elif self.steps.current == 'almoco':
+        #     self.request.POST['almoco-nalunos'] = self.get_cleaned_data_for_step('almoco')[
+        #         'nalunos']
         self.request.POST._mutable = mutable
-        print(self.request.POST)
         return super(InscricaoWizard, self).post(*args, **kwargs)
 
     def done(self, form_list, form_dict, **kwargs):
-        # Save to DB
+        # Guardar na Base de Dados
         sessoes = form_dict['sessoes'].cleaned_data['sessoes']
         responsaveis = form_dict['responsaveis'].save(commit=False)
         almoco = form_dict['almoco'].save(commit=False)
@@ -200,13 +202,13 @@ class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     model = Inscricao
     table_class = InscricoesTable
     template_name = 'inscricoes/consultar_inscricoes.html'
-    
+
     filterset_class = InscricaoFilter
 
     table_pagination = {
         'per_page': 8
     }
-    
+
 
 def ApagarInscricao(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)
