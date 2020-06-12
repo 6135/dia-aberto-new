@@ -27,6 +27,8 @@ from .filters import InscricaoFilter
 from django_filters.views import FilterView
 from django.db import transaction
 from django.db.models import F
+from _datetime import date
+import pytz
 
 
 class AtividadesAPIView(ListCreateAPIView):
@@ -141,8 +143,14 @@ class InscricaoWizard(SessionWizardView):
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
         if self.steps.current == 'escola':
+            from datetime import datetime
+            hoje = datetime.now(pytz.utc)
+            prox_diaaberto = Diaaberto.objects.filter(
+                datadiaabertoinicio__gte=hoje).first()
             context.update({
-                'escolas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Escola.objects.all())))
+                'escolas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Escola.objects.all()))),
+                'inicio': prox_diaaberto.datadiaabertoinicio.strftime("%d/%m/%Y"),
+                'fim': prox_diaaberto.datadiaabertofim.strftime("%d/%m/%Y"),
             })
         elif self.steps.current == 'sessoes':
             context.update({
@@ -163,13 +171,25 @@ class InscricaoWizard(SessionWizardView):
         # inscritos para verificar inscritos nos almoços e nas sessões.
         mutable = self.request.POST._mutable
         self.request.POST._mutable = True
-        if self.steps.current == 'sessoes':
+        if self.steps.current == 'escola':
+            from datetime import datetime
+            try:
+                from django.utils import timezone as tz
+                dia = tz.make_aware(datetime.strptime(self.request.POST.get(
+                    'escola-dia', ''), "%d/%m/%Y"))
+                if dia:
+                    self.request.POST['escola-diaaberto'] = Diaaberto.objects.filter(
+                        datadiaabertoinicio__lte=dia, datadiaabertofim__gte=dia).first().id
+            except ValueError:
+                print(f"ValueError: {self.request.POST.get('escola-dia', '')}")
+        elif self.steps.current == 'sessoes':
             self.request.POST['sessoes-nalunos'] = self.get_cleaned_data_for_step('escola')[
                 'nalunos']
         # elif self.steps.current == 'almoco':
         #     self.request.POST['almoco-nalunos'] = self.get_cleaned_data_for_step('almoco')[
         #         'nalunos']
         self.request.POST._mutable = mutable
+        print(self.request.POST)
         return super(InscricaoWizard, self).post(*args, **kwargs)
 
     def done(self, form_list, form_dict, **kwargs):
