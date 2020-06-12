@@ -55,19 +55,14 @@ def detalhes_notificacao_automatica(request, id):
     })
 
 # Envio de notificação automática
-
-def enviar_notificacao_automatica(request, id):
-    user = Utilizador.objects.get(id=2)
-    user = Utilizador.objects.get(id=id)
-    notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
-    return redirect("utilizadores:inicio") 
-    # if sigla == "cancelarTarefa":  # Enviar notificação ao cancelar tarefa - colaborador
-    #     tarefa = Tarefa.objects.get(id=id)
-    #     titulo = "Pedido de cancelamento da tarefa"
-    #     descricao = "Foi feito um pedido de cancelamento da tarefa "+tarefa.nome
-    #     novaNotificacao = NotificacaoAutomatica(titulo=titulo,lida=False, descricao=descricao, criadoem=today, recetor=user, sigla=sigla)
-    #     novaNotificacao.save()
-    #     return redirect("")
+def enviar_notificacao_automatica(sender, recipient, sigla, id ):
+    user_sender = Utilizador.objects.get(id=sender)
+    user_recipient = Utilizador.objects.get(id=recipient)
+    if sigla == "cancelarTarefa":  # Enviar notificação ao cancelar tarefa - colaborador
+        tarefa = Tarefa.objects.get(id=id)
+        titulo = "Pedido de cancelamento da tarefa"
+        descricao = "Foi feito um pedido de cancelamento da tarefa "+tarefa.nome
+        notify.send(sender=user_sender, recipient=user_recipient,verb=descricao, action_object=None, target=None, level="warning",description=titulo,public=False, timestamp=timezone.now())
     # # Enviar notificação ao enviar confirmação do cancelamento da tarefa - coordenador
     # elif sigla == "confirmarCancelarTarefa":
     #     tarefa = Tarefa.objects.get(id=id)
@@ -75,7 +70,7 @@ def enviar_notificacao_automatica(request, id):
     #     descricao = "O cancelamento da sua tarefa "+tarefa.nome+" foi aprovado"
     #     novaNotificacao = NotificacaoAutomatica(titulo=titulo,lida=False, descricao=descricao, criadoem=today, recetor=user, sigla=sigla)
     #     novaNotificacao.save()
-    #     return redirect("")
+    #     notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
     # # Enviar notificação atividade confirmada - professor universitário
     # elif sigla == "confirmarAtividade":
     #     atividade = Atividade.objects.get(id=id)
@@ -83,7 +78,7 @@ def enviar_notificacao_automatica(request, id):
     #     descricao = "A sua proposta de atividade "+atividade.nome+" foi aceite"
     #     novaNotificacao = NotificacaoAutomatica(titulo=titulo,lida=False, descricao=descricao, criadoem=today, recetor=user, sigla=sigla)
     #     novaNotificacao.save()
-    #     return redirect("")
+    #     notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
     # # Enviar notificação atividade rejeitada - professor universitário
     # elif sigla == "rejeitarAtividade":
     #     atividade = Atividade.objects.get(id=id)
@@ -91,14 +86,14 @@ def enviar_notificacao_automatica(request, id):
     #     descricao = "A sua proposta de atividade "+atividade.nome+" foi rejeitada"
     #     novaNotificacao = NotificacaoAutomatica(titulo=titulo,lida=False, descricao=descricao, criadoem=today, recetor=user, sigla=sigla)
     #     novaNotificacao.save()
-    #     return redirect("")
+    #     notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
     # elif sigla == "tarefaAtribuida":  # Enviar notificação tarefa atribuida - colaborador
     #     tarefa = Tarefa.objects.get(id=id)
     #     titulo = "Atribuição de uma tarefa"
     #     descricao = "Foi lhe atribuida a tarefa "+tarefa.nome
     #     novaNotificacao = NotificacaoAutomatica(titulo=titulo,lida=False, descricao=descricao, criadoem=today, recetor=user, sigla=sigla)
     #     novaNotificacao.save()
-    #     return redirect("")
+    #     notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
 
     # elif sigla == "tarefaApagada":  # Enviar notificação tarefa apagada - colaborador
     #     titulo = "Atividade apagada"
@@ -106,13 +101,13 @@ def enviar_notificacao_automatica(request, id):
     #     descricao = "Foi apagada a tarefa "+tarefa.nome
     #     novaNotificacao = NotificacaoAutomatica(titulo=titulo,lida=False, descricao=descricao, criadoem=today, recetor=user, sigla=sigla)
     #     novaNotificacao.save()
-    #     return redirect("")
+    #     notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
     # elif sigla == "tarefaAlterada":  # Enviar notificação tarefa alterada - colaborador
     #     tarefa=Tarefa.objects.get(id = id)
     #     descricao="Foi alterada a tarefa "+tarefa.nome
     #     novaNotificacao=NotificacaoAutomatica(titulo = titulo, descricao = descricao, criadoem = today, recetor = user)
     #     novaNotificacao.save()
-    #     return redirect("")
+    #     notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
     # # Enviar notificação atividade apagada - coordenador
     # elif sigla == "atividadeAlterada":
     #     titulo="Atividade apagada"
@@ -120,7 +115,7 @@ def enviar_notificacao_automatica(request, id):
     #     descricao="Foi apagada a atividade"+tarefa.nome
     #     novaNotificacao=NotificacaoAutomatica(titulo=titulo,lida=False, descricao=descricao, criadoem=today, recetor=user, sigla=sigla)
     #     novaNotificacao.save()
-    #     return redirect("")
+    #     notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
     # # Enviar notificação atividade alterada - coordenador
     # elif sigla == "validarRegistosPendentes":
     #     titulo="Alteração em uma atividade "
@@ -128,21 +123,21 @@ def enviar_notificacao_automatica(request, id):
     #     descricao="Foi feita uma alteração na atividade "+atividade.nome
     #     novaNotificacao=NotificacaoAutomatica(titulo=titulo,lida=False, descricao=descricao, criadoem=today, recetor=user, sigla=sigla)
     #     novaNotificacao.save()
-    #     return redirect("")
+    #     notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
     # # Enviar notificação quando há registo de utilizador por validar (5 dias antes do fim das inscrições) - administrador e ao coordenador
     # elif sigla == "validarRegistosPendentes":
     #     titulo="Validação de registos de utilizadores pendentes"
     #     descricao="Existem registos de utilizadores por validar"
     #     novaNotificacao=NotificacaoAutomatica(titulo=titulo,lida=False, descricao=descricao, criadoem=today, recetor=user, sigla=sigla)
     #     novaNotificacao.save()
-    #     return redirect("")
+    #     notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
     # # Enviar notificação quando há atividades por validar (5 dias antes do fim das inscrições) - coordenador
     # elif sigla == "validarAtividades":
     #     titulo="Validação de atividades pendentes"
     #     descricao="Existem atividades por validar"
     #     novaNotificacao=NotificacaoAutomatica(titulo=titulo,lida=False, descricao=descricao, criadoem=today, recetor=user, sigla=sigla)
     #     novaNotificacao.save()
-    #     return redirect("")
+    #     notify.send(sender=user, recipient=user,verb="oi", action_object=None, target=None, level="info",description="Foi feito um pedido de cancelamento da tarefa ",public=False, timestamp=timezone.now(),titulo="tiago")
 
 
 
