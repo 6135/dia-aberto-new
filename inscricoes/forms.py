@@ -21,6 +21,10 @@ class InscricaoForm(forms.ModelForm):
     class Meta:
         model = models.Inscricao
         exclude = ('escola', "ninscricao", 'participante')
+    
+    def clean(self):
+        cleaned_data = super(InscricaoForm, self).clean()
+        # TODO: Verificar se o dia faz parte dos dias do dia aberto
 
     def save(self, commit=True):
         self.instance.escola = models.Escola.objects.get_or_create(
