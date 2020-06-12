@@ -16,11 +16,71 @@ from pip._vendor import requests
 from django.core import serializers
 
 # Create your views here.
+class TimeC():
+	time: str = None
+	seconds: int = None
+	time_split = None
 
-def user_check(request, user_profile = Administrador):
+	def __init__(self, time:str = None, time_as_seconds: int = None):
+		if time is not None and time_as_seconds is not None:
+			raise Exception('Only one argument can be set')
+		if time is None and time_as_seconds is None:
+			raise Exception('Either argument must be set')
+		if time is not None:
+			self.time = time
+			self.time_split = str(time).split(':')
+			self.seconds = int(self.time_split[0])*60*60 + int(self.time_split[1])*60
+			self.__str__()
+		else:
+			self.time = str(int(time_as_seconds/60/60)) + ':' + str(int(time_as_seconds%3600))
+			self.seconds = time_as_seconds
+			self.time_split = self.time.split(':')
+			self.__str__()
+
+
+	def __add__(self, other):
+		time_s = other.seconds
+		time_sum = self.seconds+time_s
+		if time_sum >= 86400:
+			time_sum-=86400
+		return TimeC(time_as_seconds=time_sum)
+
+	def __sub__(self, other):
+		time_s = other.seconds
+		time_sub = self.seconds-time_s
+		if time_sub < 0:
+			time_sub=0
+		return TimeC(time_as_seconds=time_sub)
+
+	def __str__(self):
+		if (len(self.time_split[0]) == 1): time_start = '0' + str(self.time_split[0]) 
+		else: time_start = self.time_split[0]
+		if (len(self.time_split[1]) == 1): time_end =  self.time_split[1] + '0'
+		else: time_end =  self.time_split[1]
+		self.time= time_start+':'+time_end
+		return self.time
+
+	def __eq__(self, other):
+		return other.__str__() == self.__str__()
+	def __lt__(self, other):
+		return self.seconds < other.seconds
+	def __gt__(self, other):
+		return self.seconds > other.seconds
+	def __le__(self, other):
+		return self.seconds <= other.seconds
+	def __ge__(self, other):
+		return self.seconds >= other.seconds	
+	def __ne__(self, other):
+		return not self.__eq__(self,other=other)
+
+def user_check(request, user_profile = None):
 	if not request.user.is_authenticated:
 		return redirect('utilizadores:login')
-	elif not user_profile.objects.filter(utilizador_ptr_id = request.user.id).exists():
+	elif user_profile is not None:
+		matches_profile = False
+		for profile in user_profile:
+			if profile.objects.filter(utilizador_ptr_id = request.user.id).exists():
+				return None
 		return render(request=request,
 					template_name='mensagem.html',
 					context={
@@ -28,10 +88,6 @@ def user_check(request, user_profile = Administrador):
 						'm':'Não tem permissões para aceder a esta pagina!'
 					})
 	return None
-
-def homepage(request):
-	return render(request=request,
-				  template_name="configuracao/inicio.html",)
 
 def orderBy(request, list_diaaberto):
 	if request.method == 'POST':
@@ -63,8 +119,7 @@ def showBy(request, list_diaaberto):
 	return list_diaaberto
 	
 def viewDays(request):
-
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	if request.method == 'POST':
@@ -76,16 +131,17 @@ def viewDays(request):
 
 	earliest = Diaaberto.objects.all().order_by('ano').first()	#Obtain some constants
 	latest = Diaaberto.objects.all().order_by('ano').last()
-	current = Diaaberto.objects.filter(ano=datetime.now().year).first()
+	current = Diaaberto.current()
 	is_open=False
 	latest_year = 9999
 	earliest_year = 0
 	if earliest is not None: 
 		if current is not None:
-			is_open = (current.datadiaabertofim > datetime.now(timezone.utc))
+			is_open = True
 		latest_year = latest.ano
 		earliest_year = earliest.ano
-	
+	print(Diaaberto.singup_open())
+	print(Diaaberto.submit_activities_open())
 
 	filterRes = orderBy(request, list_diaaberto)		#Filter/order
 	list_diaaberto = filterRes['list_diaaberto']
@@ -102,7 +158,7 @@ def viewDays(request):
 
 def newDay(request, id=None):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	logged_admin = Administrador.objects.get(utilizador_ptr_id = request.user.id)
@@ -129,7 +185,7 @@ def newDay(request, id=None):
 
 def delDay(request, id=None):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	if id is not None:
@@ -158,7 +214,7 @@ def filterMenus(request, menus):
 
 def viewMenus(request):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	form = menusFilterForm(request.POST)
@@ -171,7 +227,7 @@ def viewMenus(request):
 
 def newMenu(request, id = None):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	PratoFormSet = menuPratoFormset()
@@ -203,7 +259,7 @@ def newMenu(request, id = None):
 
 def delMenu(request, id = None):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	menu=Menu.objects.get(id=id)
@@ -222,7 +278,7 @@ def menuPratoFormset(extra = 0, minVal = 1):
 
 def delPrato(request, id):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	prato=Prato.objects.get(id=id)
@@ -282,7 +338,7 @@ def filtrarTransportes(request, transportes):
 
 def verTransportes(request):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	form = transporteFilterForm(request.POST)
@@ -294,7 +350,7 @@ def verTransportes(request):
 
 def criarTransporte(request, id = None):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	#vars
@@ -365,7 +421,7 @@ def newHorarioRow(request):
 
 def eliminarTransporte(request, id):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	Transportehorario.objects.get(id=id).delete()
@@ -374,7 +430,7 @@ def eliminarTransporte(request, id):
 
 def atribuirTransporte(request, id):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	class ChegadaPartida:
@@ -440,7 +496,7 @@ def atribuirTransporte(request, id):
 
 def eliminarAtribuicao(request, id):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	transportehorario=Inscricaotransporte.objects.get(id=id).transporte.id
@@ -449,7 +505,7 @@ def eliminarAtribuicao(request, id):
 	return redirect('configuracao:atribuirTransporte', transportehorario)
 
 def verEdificios(request):
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	edificios = Edificio.objects.all()
@@ -460,7 +516,7 @@ def verEdificios(request):
 
 def configurarEdificio(request, id = None):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	espacoFormSet = modelformset_factory(model=Espaco, form=EspacoForm,extra=0, min_num = 1, can_delete=True)
@@ -508,14 +564,14 @@ def newEspacoRow(request):
 
 def eliminarEdificio(request,id):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	Edificio.objects.get(id=id).delete()
 	return redirect('configuracao:verEdificios')
 
 def verTemas(request):
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	temas = Tema.objects.all()
@@ -526,7 +582,7 @@ def verTemas(request):
 
 def configurarTema(request, id = None):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	tema = Tema()
@@ -548,7 +604,7 @@ def configurarTema(request, id = None):
 
 def eliminarTema(request,id):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	Tema.objects.get(id=id).delete()
@@ -557,7 +613,7 @@ def eliminarTema(request,id):
 
 def verUOs(request):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	uos = Unidadeorganica.objects.all()
@@ -568,7 +624,7 @@ def verUOs(request):
 
 def configurarUO(request, id = None):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	if(id is None):
@@ -581,12 +637,11 @@ def configurarUO(request, id = None):
 		pass
 	else: 
 		pass
-	
 	pass
 
 def eliminarUO(request, id):
 
-	user_check_var = user_check(request=request, user_profile=Administrador)
+	user_check_var = user_check(request=request, user_profile={Administrador})
 	if user_check_var is not None: return user_check_var
 
 	Unidadeorganica.objects.get(id=id).delete()

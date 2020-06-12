@@ -69,7 +69,7 @@
           </nav>
         {% if is_open == True %}
         <input type="hidden" id="novoDia" value="{% url 'configuracao:novoDia'%}">  
-        <a onclick="alert.render('Ainda existe um dia aberto em vigor.\nTem a certeza que deseja criar um novo?','novoDia')" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">     
+        <a onclick="alert.warning('Não pode criar um novo Dia Aberto enquanto existe outro pendente');" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" >     
         {% else %}
         <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'configuracao:novoDia'%}">     
         {% endif %}
