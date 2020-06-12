@@ -156,7 +156,7 @@ def alterarAtividade(request,id):
                 activity_object_formed.dataalteracao = datetime.now()
                 activity_object_formed.save()
                 materiais_object_form.save()
-                return redirect('inserirSessao',id)          
+                return redirect('atividades:inserirSessao',id)          
     return render(request=request,
                     template_name='atividades/proporAtividadeAtividade.html',
                     context={'form': activity_object_form, 'espaco':espaco,'espacos':espacos, "edificios": edificios, "campus":campus, "materiais":materiais_object_form}
@@ -170,7 +170,7 @@ def eliminarAtividade(request,id):
 def eliminarSessao(request,id):
     atividadeid=Sessao.objects.get(id=id).atividadeid.id
     Sessao.objects.get(id=id).delete()
-    return redirect('inserirSessao',atividadeid)
+    return redirect('atividades:inserirSessao',atividadeid)
 #-----------------EndDiogo------------------
 
 
@@ -292,7 +292,122 @@ def SessaoFormset(extra = 0, minVal = 1):
                                 can_delete=True)
     return formSets
 
-#---------------original 
+#---------------original
+
+def horariofim(inicio,duracao):
+    calculo= int(inicio[0])*60+ int(inicio[1])+duracao
+    hora=int(calculo/60)
+    minutos= int(calculo%60)
+    fim= str(hora)+":"+str(minutos)
+    return fim;
+
+def inserirsessao(request,id):
+    is_empty = Sessao.objects.filter(atividadeid=id).count() < 2
+    #print(is_empty)
+    today= datetime.now(timezone.utc) 
+    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+    diainicio= diaaberto.datadiaabertoinicio.date()
+    diafim= diaaberto.datadiaabertofim.date()
+    totaldias= diafim-diainicio+timedelta(days=1)
+    dias_diaaberto= []
+    for d in range(totaldias.days):
+        dias_diaaberto.append(diainicio+timedelta(days=d))
+    horariosindisponiveis= []
+    disp= []
+    if request.method == "POST":
+        atividadeid=Atividade.objects.get(id=id)
+        sessoes=Sessao.objects.all().filter(atividadeid=id)
+        if 'save' in request.POST and len(sessoes)!=0 :
+            return redirect('atividades:minhasAtividades')
+        if 'save' in request.POST and len(sessoes)==0:
+            return redirect('atividades:inserirSessao', id)
+        if 'anterior' in request.POST :
+            return redirect('atividades:alterarAtividade',id)
+        if 'new' in request.POST:
+            diasessao=request.POST["diasessao"]
+            print(diasessao)
+            inicio= request.POST['horarioid']
+            splitinicio=inicio.split(":")
+            print(splitinicio)
+            duracaoesperada= atividadeid.duracaoesperada
+            hfim= horariofim(splitinicio,duracaoesperada)
+            horario= Horario.objects.filter(inicio= request.POST['horarioid'], fim=hfim).first()
+            if horario is None:
+                new_Horario= Horario(inicio=inicio, fim=hfim)
+                new_Horario.save()
+            else:
+                new_Horario= horario
+            new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=new_Horario.id), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
+            new_Sessao.save()
+            return redirect('atividades:inserirSessao', id)
+    return render(request=request,
+                  template_name='atividades/proporAtividadeSessao.html',
+                  context={'horarios': "" , 
+                           'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 
+                           'dias': dias_diaaberto,
+                           'is_empty': is_empty, "id":id})     
+
+
+class TimeC():
+    time: str = None
+    seconds: int = None
+    time_split = None
+
+    def __init__(self, time:str = None, time_as_seconds: int = None):
+        if time is not None and time_as_seconds is not None:
+            raise Exception('Only one argument can be set')
+        if time is None and time_as_seconds is None:
+            raise Exception('Either argument must be set')
+        if time is not None:
+            self.time = time
+            self.time_split = str(time).split(':')
+            self.seconds = int(self.time_split[0])*60*60 + int(self.time_split[1])*60
+            self.__str__()
+        else:
+            self.time = str(int(time_as_seconds/60/60)) + ':' + str(int(time_as_seconds%3600))
+            self.seconds = time_as_seconds
+            self.time_split = self.time.split(':')
+            self.__str__()
+
+
+    def __add__(self, other):
+        time_s = other.seconds
+        time_sum = self.seconds+time_s
+        if time_sum >= 86400:
+            time_sum-=86400
+        return TimeC(time_as_seconds=time_sum)
+
+    def __sub__(self, other):
+        time_s = other.seconds
+        time_sub = self.seconds-time_s
+        if time_sub < 0:
+            time_sub=0
+        return TimeC(time_as_seconds=time_sub)
+
+    def __str__(self):
+        if (len(self.time_split[0]) == 1): time_start = '0' + str(self.time_split[0]) 
+        else: time_start = self.time_split[0]
+        if (len(self.time_split[1]) == 1): time_end =  self.time_split[1] + '0'
+        else: time_end =  self.time_split[1]
+        self.time= time_start+':'+time_end
+        return self.time
+
+
+    def __eq__(self, other):
+        return other.__str__() == self.__str__()
+    def __lt__(self, other):
+        return self.seconds < other.seconds
+    def __gt__(self, other):
+        return self.seconds > other.seconds
+    def __le__(self, other):
+        return self.seconds <= other.seconds
+    def __ge__(self, other):
+        return self.seconds >= other.seconds    
+    def __ne__(self, other):
+        return not self.__eq__(self,other=other)
+
+
+
 
 
 def sessaoRow(request):
@@ -321,6 +436,13 @@ def versalas(request):
     salas = Espaco.objects.filter(edificio=edificios)
     return render(request, template_name="atividades/generic_list_options.html", context={"generic": salas})
 
+
+class Chorarios:
+    def __init__(self, inicio,fim):
+        self.inicio=inicio
+        self.fim=fim
+
+
 def verhorarios(request):
     horarios=[]
     #horarioindisponivel = request.POST['horarioindisponivel[]']
@@ -331,10 +453,50 @@ def verhorarios(request):
         'key': '',
         'value': 'Escolha um horario'
     }
-    options = [{
-        'key': str(session_time),
-        'value': str(session_time),
-    } for session_time in Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today).session_times()]
+
+    diasessao=request.POST["valuedia"]
+    id= request.POST["id"]
+    print(id)
+    if id != -1:
+        sessaodia=Sessao.objects.filter(atividadeid=id, dia=diasessao)
+
+        print(sessaodia)
+        horar= []
+        horariosindisponiveis= []
+        
+        if len(sessaodia)==0:
+            options = [{
+            'key': str(session_time),
+            'value': str(session_time),
+            } for session_time in Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today).session_times()]
+        else:
+            for sessao in sessaodia:
+                timeinicio= TimeC(time=str(sessao.horarioid.inicio.hour)+":"+str(sessao.horarioid.inicio.minute))
+                timefim= TimeC(time=str(sessao.horarioid.fim.hour)+":"+str(sessao.horarioid.fim.minute))    
+                hor= Chorarios(timeinicio,timefim)
+                horariosindisponiveis.append(timeinicio)
+            
+    
+            for session_time in Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today).session_times():
+                timelist= TimeC(time=str(session_time))
+                for sessao in sessaodia:
+                    timeinicio= TimeC(time=str(sessao.horarioid.inicio.hour)+":"+str(sessao.horarioid.inicio.minute))
+                    timefim= TimeC(time=str(sessao.horarioid.fim.hour)+":"+str(sessao.horarioid.fim.minute))
+                    if (timelist < timeinicio or timelist >= timefim) and timelist not in horar and timelist not in horariosindisponiveis :
+                        print(str(timelist)+":"+str(timeinicio)+":"+str(timefim))
+                        horar.append(timelist)
+            #horar= list(dict.fromkeys(horar))       
+            print(horar)
+            options = [{
+                'key': str(session_time),
+                'value': str(session_time),
+            } for session_time in horar]
+
+    else:       
+        options = [{
+            'key': str(session_time),
+            'value': str(session_time),
+        } for session_time in Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today).session_times()]
 
     return render(request=request, 
                 template_name="configuracao/dropdown.html", 
