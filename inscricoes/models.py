@@ -29,8 +29,7 @@ class Inscricao(models.Model):
     participante = models.ForeignKey(
         'utilizadores.Participante', models.CASCADE)
     dia = models.DateField()
-    # TODO: Descomentar quando a configuração do Dia Aberto estiver pronta
-    # diaaberto = models.ForeignKey('configuracao.Diaaberto', models.CASCADE)
+    diaaberto = models.ForeignKey('configuracao.Diaaberto', models.CASCADE)
 
     class Meta:
         db_table = 'Inscricao'

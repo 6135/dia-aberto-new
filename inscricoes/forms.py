@@ -1,11 +1,15 @@
 from . import models
 from django import forms
 from phonenumber_field.formfields import PhoneNumberField
-from configuracao.models import Campus
+from configuracao.models import Campus, Diaaberto
 import json
 from django.utils.translation import gettext as _
 import re
 from atividades.models import Sessao
+from django.core.exceptions import ValidationError
+from _datetime import date
+import pytz
+from datetime import datetime
 
 
 class ResponsavelForm(forms.ModelForm):
@@ -21,10 +25,20 @@ class InscricaoForm(forms.ModelForm):
     class Meta:
         model = models.Inscricao
         exclude = ('escola', "ninscricao", 'participante')
-    
+
     def clean(self):
         cleaned_data = super(InscricaoForm, self).clean()
-        # TODO: Verificar se o dia faz parte dos dias do dia aberto
+        # Verificar se o dia escolhido faz parte do Dia Aberto
+        if not cleaned_data.get('diaaberto', ''):
+            hoje = datetime.now(pytz.utc)
+            prox_diaaberto = Diaaberto.objects.filter(
+                datadiaabertoinicio__gte=hoje).first()
+            if prox_diaaberto:
+                raise ValidationError(
+                    _(f"""A data que escolheu não faz parte do Dia Aberto. Próximo dia aberto: de {prox_diaaberto.datadiaabertoinicio.strftime("%d/%m/%Y às %H:%M")}, até {prox_diaaberto.datadiaabertofim.strftime("%d/%m/%Y às %H:%M")}."""))
+            else:
+                raise ValidationError(
+                    _(f"A data que escolheu não faz parte do Dia Aberto."))
 
     def save(self, commit=True):
         self.instance.escola = models.Escola.objects.get_or_create(
