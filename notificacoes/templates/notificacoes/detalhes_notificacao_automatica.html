@@ -110,7 +110,7 @@
                             </p>
 
                             <p class="control">
-                                <a class="button is-success is-outlined">
+                                <a href = "{% url 'notificacoes:validar-cancelamento-tarefa' notificacao.id %}" class="button is-success is-outlined">
                                     <span class="icon has-text-success">
                                     <i class="fas fa-check-square"></i>
                                     </span>
@@ -118,7 +118,7 @@
                                 </a>
                             </p>
                             <p class="control">
-                             <a class="button is-danger is-outlined" onclick="alert.render('Tem a certeza que pretende rejeitar este pedido?','{% url 'notificacoes:enviar-notificacao-automatica' notificacao.id %}')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
+                             <a class="button is-danger is-outlined" onclick="alert.render('Tem a certeza que pretende rejeitar este pedido?','{% url 'notificacoes:rejeitar-cancelamento-tarefa' notificacao.id %}')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
 
                             <span class="icon has-text-danger">
                             <i class="fas fa-ban"></i>
