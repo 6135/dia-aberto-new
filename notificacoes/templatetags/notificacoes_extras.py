@@ -133,11 +133,13 @@ def get_notificacoes(user, filtro):
     else:
         return None
 
-@register.filter(name='enviar_notificacao') 
-def enviar_notificacao(user, recipient):
-    
-    return True
 
+@register.filter(name='total_notificacoes') 
+def total_notificacoes(user):
+    if user.is_authenticated:    
+            return len(user.notifications.all())
+    else:
+        return None
 
 @register.filter(name='nr_notificacoes') 
 def nr_notificacoes(user):

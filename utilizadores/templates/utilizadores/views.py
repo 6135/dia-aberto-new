@@ -418,7 +418,6 @@ def apagar_utilizador(request, id):
     else:
         u= user     
 
-    print(u)
     u.delete() 
     return redirect('utilizadores:consultar-utilizadores')   
 

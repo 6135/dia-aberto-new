@@ -157,7 +157,7 @@ def validar_cancelamento_tarefa(request, id):
     tarefa = Tarefa.objects.get(id=id)
     tarefa.estado="Cancelada"
     tarefa.save()
-    return redirect('') 
+    return redirect('colaboradores:') 
 
 def rejeitar_cancelamento_tarefa(request, id):
     if request.user.is_authenticated:    

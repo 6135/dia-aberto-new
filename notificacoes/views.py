@@ -42,6 +42,17 @@ def apagar_notificacao_automatica(request, id):
         'notificacao': notificacao
     })
 
+
+def limpar_notificacoes(request):
+    if request.user.is_authenticated:    
+        user = get_user(request)
+    else:
+        return redirect('utilizadores:mensagem',5)
+    todas_notificacoes = user.notifications.all()
+    for x in todas_notificacoes:
+        x.delete() 
+    return redirect("home")
+
 # Ver detalhes de uma notificação automática
 def detalhes_notificacao_automatica(request, id):
     notificacao = Notificacao.objects.get(id=id)
