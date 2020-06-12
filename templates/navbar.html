@@ -146,7 +146,7 @@
                       class="panel-block">
                       {% else %}
                       <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
-                      class="panel-block" style = " background: LightGray; ">
+                      class="panel-block" style = " background: Gainsboro; ">
                     {% endif %}
 
                       {% if notificacao.level == "info" %}
@@ -179,7 +179,7 @@
                   <div id="Novas" style="display:none" class="tabcontent">
                     {% for notificacao in request.user|get_notificacoes:"False" %}
                     <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
-                      class="panel-block" style = " background: LightGray; ">
+                      class="panel-block" style = " background: Gainsboro; ">
                       {% if notificacao.level == "info" %}
                       <span class="icon has-text-info">
                         <i class="fas fa-info-circle"></i>
