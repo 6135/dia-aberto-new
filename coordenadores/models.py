@@ -22,11 +22,11 @@ class Tarefa(models.Model):
 
     def getDescription(self):
         if self.tipo == "tarefaAcompanhar":
-            tmp = TarefaAcompanhar.objects.get(tarefaid=id)
+            tmp = TarefaAcompanhar.objects.get(tarefaid=self.id)
         elif self.tipo == "tarefaAuxiliar":   
-            tmp = TarefaAuxiliar.objects.get(tarefaid=id)
+            tmp = TarefaAuxiliar.objects.get(tarefaid=self.id)
         else:
-            tmp = TarefaOutra.objects.get(tarefaid=id)
+            tmp = TarefaOutra.objects.get(tarefaid=self.id)
         return tmp.getDescription()
 
 class TarefaAcompanhar(models.Model):
