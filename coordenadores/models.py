@@ -20,25 +20,39 @@ class Tarefa(models.Model):
         db_table = 'Tarefa'
 
 
+    def getDescription(self):
+        if self.tipo == "tarefaAcompanhar":
+            tmp = TarefaAcompanhar.objects.get(tarefaid=id)
+        elif self.tipo == "tarefaAuxiliar":   
+            tmp = TarefaAuxiliar.objects.get(tarefaid=id)
+        else:
+            tmp = TarefaOutra.objects.get(tarefaid=id)
+        return tmp.getDescription()
+
 class TarefaAcompanhar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
-    inscricao = models.ForeignKey('inscricoes.Inscricao', models.CASCADE, db_column='inscricao')
     origem = models.CharField(max_length=255, db_column='origem', blank=False, null=False)
     destino = models.CharField(max_length=255, db_column='destino', blank=False, null=False)
-    horario = models.TimeField(blank=False, null=False)
     dia = models.DateField()
+    horario = models.TimeField(blank=False, null=False)
+    inscricao = models.ForeignKey('inscricoes.Inscricao', models.CASCADE, db_column='inscricao')
     
     class Meta:
         db_table = 'TarefaAcompanhar'
 
-
+    def getDescription(self):
+        msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.dia.strftime('%d/%m/%y')+" às "+self.horario.strftime('%H horas e %M minutos')+"."
+        return msg
 class TarefaAuxiliar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
     sessaoid = models.ForeignKey('atividades.Sessao', models.CASCADE, db_column='sessaoid')
 
     class Meta:
         db_table = 'TarefaAuxiliar'
-
+    
+    def getDescription(self):
+        msg = "Auxiliar na atividade "+self.sessaoid.atividadeid.nome+"."
+        return msg
 
 class TarefaOutra(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
@@ -49,3 +63,6 @@ class TarefaOutra(models.Model):
     class Meta:
         db_table = 'TarefaOutra'
 
+    def getDescription(self):
+        msg = self.descricao
+        return msg
