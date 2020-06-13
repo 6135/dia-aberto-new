@@ -237,7 +237,6 @@ class InscricaoWizard(SessionWizardView):
 
 
 class ConsultarInscricoesListView(SingleTableMixin, FilterView):
-    model = Inscricao
     table_class = InscricoesTable
     template_name = 'inscricoes/consultar_inscricoes.html'
 
@@ -246,6 +245,20 @@ class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     table_pagination = {
         'per_page': 8
     }
+
+
+class MinhasInscricoes(SingleTableMixin, FilterView):
+    table_class = InscricoesTable
+    template_name = 'inscricoes/minhas_inscricoes.html'
+
+    filterset_class = InscricaoFilter
+
+    table_pagination = {
+        'per_page': 8
+    }
+
+    def get_queryset(self):
+        return Inscricao.objects.filter(participante__user_ptr=self.request.user)
 
 
 def ApagarInscricao(request, pk):
