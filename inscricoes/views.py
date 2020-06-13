@@ -40,6 +40,7 @@ class AtividadesAPIView(ListCreateAPIView):
             field_name="espacoid__edificio__campus__id")
         unidade_organica_id = djangofilters.NumberFilter(
             field_name="espacoid__edificio__campus__id")
+        # TODO: Adicionar filtros
         # min_price = filters.NumberFilter(field_name="price", lookup_expr='gte')
         # max_price = filters.NumberFilter(field_name="price", lookup_expr='lte')
 
@@ -160,6 +161,16 @@ class InscricaoWizard(SessionWizardView):
                 'tipos': json.dumps(list(map(lambda x: x[0], Atividade.tipos))),
                 'nalunos': self.get_cleaned_data_for_step('escola')['nalunos'],
             })
+        visited = []
+        for step in self.form_list:
+            cleaned_data = self.get_cleaned_data_for_step(step)
+            if cleaned_data:
+                visited.append(True)
+            else:
+                visited.append(False)
+        context.update({
+            'visited': visited
+        })
         return context
 
     def get_template_names(self):
@@ -171,18 +182,20 @@ class InscricaoWizard(SessionWizardView):
         # inscritos para verificar inscritos nos almoços e nas sessões.
         mutable = self.request.POST._mutable
         self.request.POST._mutable = True
-        if self.steps.current == 'escola':
+        if self.steps.current == 'escola' or self.request.POST.get('inscricao_wizard-current_step', '') == 'escola':
             from datetime import datetime
+            from django.utils import timezone as tz
             try:
-                from django.utils import timezone as tz
                 dia = tz.make_aware(datetime.strptime(self.request.POST.get(
                     'escola-dia', ''), "%d/%m/%Y"))
                 if dia:
-                    self.request.POST['escola-diaaberto'] = Diaaberto.objects.filter(
-                        datadiaabertoinicio__lte=dia, datadiaabertofim__gte=dia).first().id
+                    diaaberto = Diaaberto.objects.filter(
+                        datadiaabertoinicio__lte=dia.replace(hour=23), datadiaabertofim__gte=dia.replace(hour=0)).first()
+                    if diaaberto:
+                        self.request.POST['escola-diaaberto'] = diaaberto.id
             except ValueError:
                 print(f"ValueError: {self.request.POST.get('escola-dia', '')}")
-        elif self.steps.current == 'sessoes':
+        elif self.steps.current == 'sessoes' or self.request.POST.get('inscricao_wizard-current_step', '') == 'sessoes':
             self.request.POST['sessoes-nalunos'] = self.get_cleaned_data_for_step('escola')[
                 'nalunos']
         # elif self.steps.current == 'almoco':
@@ -200,6 +213,11 @@ class InscricaoWizard(SessionWizardView):
         inscricao = form_dict['escola'].save(commit=False)
         inscricao.participante = Participante.objects.filter(
             utilizador_ptr_id=self.request.user.id).first()
+        inscricao.meio_transporte = form_dict['transporte'].cleaned_data['meio']
+        if(form_dict['transporte'].cleaned_data['meio'] != 'outro'):
+            inscricao.hora_chegada = form_dict['transporte'].cleaned_data['hora_chegada']
+            inscricao.local_chegada = form_dict['transporte'].cleaned_data['local_chegada']
+        inscricao.entrecampi = form_dict['transporte'].cleaned_data['entrecampi']
         inscricao.save()
         for sessaoid in sessoes:
             if sessoes[sessaoid] > 0:

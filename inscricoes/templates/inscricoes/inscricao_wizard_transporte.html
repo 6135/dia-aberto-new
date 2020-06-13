@@ -7,9 +7,8 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/vue.js' %}"></script>
+<script src="{% static 'js/vue-dev.js' %}"></script>
 <script src="{% static 'js/moment.js' %}"></script>
-<script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
 <script src="{% static 'js/buefy/components/table/index.min.js' %}"></script>
 <script src="{% static 'js/buefy/components/select/index.min.js' %}"></script>
 <script src="{% static 'js/buefy/components/radio/index.min.js' %}"></script>
@@ -29,14 +28,27 @@
         data() {
             return {
                 meio: "{{ form.meio.value|default_if_none:'' }}",
-                precisamTransporteEntreCampi: "Não",
-                transportes: [],
+                precisamTransporteEntreCampi: "{{ form.entrecampi.value|default_if_none:'False' }}" == "False" ?
+                    "" : "True",
             }
+        },
+        computed: {
+            hora: function () {
+                let result = moment("{{ form.hora_chegada.value|default_if_none:'null' }}", "HH:mm:ss")
+                    .toDate()
+                if (isNaN(result)) return null;
+                return result;
+            },
         },
         methods: {
             moment: function () {
                 return moment();
-            }
+            },
+            local: function (meio) {
+                if (meio == 'outro') return "";
+                else if (meio == 'comboio') return "Estação de Comboios de Faro";
+                else if (meio == 'autocarro') return "Terminal Rodoviário de Faro";
+            },
         },
     });
 
@@ -50,6 +62,12 @@
             }
         });
     });
+
+    function navigate_step(step) {
+        const form = $("form")
+        form.prepend('<input type="hidden" name="wizard_goto_step" value="' + step + '">');
+        $("form").submit();
+    }
 </script>
 {% endblock scripts %}
 
@@ -66,7 +84,7 @@
     </nav>
     <div style="padding: 3rem 2vw 1rem;">
         <div class="steps is-success">
-            <div class="step-item is-success is-completed">
+            <div class="step-item is-success is-completed" onclick="navigate_step('responsaveis')">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-account"></i>
@@ -76,7 +94,7 @@
                     <p class="step-title">Responsáveis</p>
                 </div>
             </div>
-            <div class="step-item is-success is-completed">
+            <div class="step-item is-success is-completed" onclick="navigate_step('escola')">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-school"></i>
@@ -96,7 +114,8 @@
                     <p class="step-title">Transporte</p>
                 </div>
             </div>
-            <div class="step-item is-success">
+            <div class="step-item is-success {% if visited.2 %}is-completed {% endif %}"
+                {% if visited.2 %}onclick="navigate_step('transporte')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-food-apple"></i>
@@ -106,7 +125,8 @@
                     <p class="step-title">Almoço</p>
                 </div>
             </div>
-            <div class="step-item is-success">
+            <div class="step-item is-success {% if visited.3 %}is-completed {% endif %}"
+                {% if visited.3 %}onclick="navigate_step('sessoes')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-calendar-check"></i>
@@ -131,7 +151,48 @@
         <form action="" method="post">
             {% csrf_token %}
             {{ wizard.management_form }}
-            {% if form.non_field_errors %}
+            <div id="vue-app">
+                <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+                    Informação de transporte
+                </h2>
+                <div class="columns">
+                    <div class="column is-4">
+                        <b-field label="Meio de transporte">
+                            <b-select v-model="meio" expanded name="transporte-meio" required>
+                                {% for value, meio in form.fields.meio.choices %}
+                                <option value="{{ value }}" {% if value|stringformat:'s' == form.meio.value %} selected
+                                    {% endif %}>
+                                    {{ meio }}
+                                </option>
+                                {% endfor %}
+                            </b-select>
+                            {{form.meio.errors}}
+                        </b-field>
+                    </div>
+                    <div class="column is-2">
+                        <b-field label="Hora de chegada">
+                            <b-timepicker v-model="hora" icon="clock" :increment-minutes="5" editable
+                                :disabled="meio=='outro'" name="transporte-hora_chegada">
+                            </b-timepicker>
+                        </b-field>
+                    </div>
+                    <div class="column">
+                        <b-field label="Local de chegada">
+                            <input class="input" name="transporte-local_chegada" :value="local(meio)"
+                                :disabled="meio=='outro'">
+                        </b-field>
+                    </div>
+                </div>
+                <p style="display: inline-block; padding-right: 2rem">
+                    Precisam de transporte para efectuar as visitas entre os Campi?
+                </p>
+                <b-radio v-model="precisamTransporteEntreCampi" name="transporte-entrecampi" native-value="">
+                    Não
+                </b-radio>
+                <b-radio v-model="precisamTransporteEntreCampi" name="transporte-entrecampi" native-value="True">
+                    Sim
+                </b-radio>
+                {% if form.non_field_errors %}
                 <div style="margin: 20px 20px; text-align: center;">
                     <div class="message is-danger">
                         <div class="message-body">
@@ -139,80 +200,6 @@
                         </div>
                     </div>
                 </div>
-            {% endif %}
-            <div id="vue-app">
-                <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                    Transportes fornecidos pela universidade
-                </h2>
-                <b-table :data="transportes" striped hoverable>
-                    <template slot-scope="props">
-                        <b-table-column field="escola" label="Escola" sortable>
-                            [[ props.row.escola ]]
-                        </b-table-column>
-                        <b-table-column field="hora_partida" label="Horário" width="120">
-                            [[ moment(props.row.hora_partida).format("hh:mm") ]] -
-                            [[ moment(props.row.hora_chegada).format("hh:mm") ]]
-                        </b-table-column>
-                        <b-table-column field="campus" label="Campus" sortable>
-                            [[ props.row.campus ]]
-                        </b-table-column>
-                        <b-table-column field="numero_autocarros" label="Nº Autocarros" sortable>
-                            [[ props.row.numero_autocarros ]]
-                        </b-table-column>
-                        <b-table-column field="numero_participantes" label="Nº Lugares Disponíveis" sortable>
-                            [[ props.row.numero_participantes ]]
-                        </b-table-column>
-                    </template>
-                </b-table>
-                <hr />
-                <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                    Informação de transporte
-                </h2>
-                <div class="columns">
-                    <div class="column">
-                        <b-field label="Meio de transporte">
-                            <b-select v-model="meio" expanded name="transporte-meio" required>
-                                <option value="universidade">Pedir transporte à universidade</option>
-                                <option value="comboio">Comboio</option>
-                                <option value="autocarroProprio">Autocarro Próprio</option>
-                                <option value="outrosMeios">Outros Meios</option>
-                            </b-select>
-                        </b-field>
-                    </div>
-                    <div class="column">
-                        <div class="columns">
-                            <div class="column">
-                                <b-field label="Hora de chegada">
-                                    <b-timepicker icon="clock" :increment-minutes="5" editable>
-                                    </b-timepicker>
-                                </b-field>
-                            </div>
-                            <div class="column">
-                                <b-field label="Hora de partida">
-                                    <b-timepicker icon="clock" :increment-minutes="5" editable>
-                                    </b-timepicker>
-                                </b-field>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <p style="display: inline-block; padding-right: 2rem">
-                    Precisam de transporte para efectuar as visitas entre os 3 Campi?
-                </p>
-                <b-radio v-model="precisamTransporteEntreCampi" name="name" native-value="Não">
-                    Não
-                </b-radio>
-                <b-radio v-model="precisamTransporteEntreCampi" name="name" native-value="Sim">
-                    Sim
-                </b-radio>
-                {% if form.non_field_errors %}
-                    <div style="margin: 20px 20px; text-align: center;">
-                        <div class="message is-danger">
-                            <div class="message-body">
-                                {{ form.non_field_errors }}
-                            </div>
-                        </div>
-                    </div>
                 {% endif %}
                 <hr />
                 <div class="column is-8 is-offset-2">
