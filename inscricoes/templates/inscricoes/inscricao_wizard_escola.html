@@ -9,7 +9,6 @@
 {% block scripts %}
 
 <script src="{% static 'js/encoding.js' %}"></script>
-<script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
 <script src="{% static 'js/vue.js' %}"></script>
 <script src="{% static 'js/axios.js' %}"></script>
 <script src="{% static 'js/moment.js' %}"></script>
@@ -77,6 +76,12 @@
             }
         });
     });
+
+    function navigate_step(step) {
+        const form = $("form")
+        form.prepend('<input type="hidden" name="wizard_goto_step" value="' + step + '">');
+        $("form").submit();
+    }
 </script>
 {% endblock scripts %}
 
@@ -93,7 +98,7 @@
     </nav>
     <div style="padding: 3rem 2vw 1rem;">
         <div class="steps is-success">
-            <div class="step-item is-success is-completed">
+            <div class="step-item is-success is-completed" onclick="navigate_step('responsaveis')">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-account"></i>
@@ -113,7 +118,8 @@
                     <p class="step-title">Escola</p>
                 </div>
             </div>
-            <div class="step-item is-success">
+            <div class="step-item is-success {% if visited.1 %}is-completed{% endif %}"
+                {% if visited.1 %}onclick="navigate_step('transporte')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-train-car"></i>
@@ -123,7 +129,8 @@
                     <p class="step-title">Transporte</p>
                 </div>
             </div>
-            <div class="step-item is-success">
+            <div class="step-item is-success {% if visited.2 %}is-completed{% endif %}"
+                {% if visited.2 %}onclick="navigate_step('almoco')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-food-apple"></i>
@@ -133,7 +140,8 @@
                     <p class="step-title">Almoço</p>
                 </div>
             </div>
-            <div class="step-item is-success">
+            <div class="step-item is-success {% if visited.3 %}is-completed{% endif %}"
+                {% if visited.3 %}onclick="navigate_step('sessoes')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-calendar-check"></i>
@@ -171,10 +179,10 @@
                         </b-field>
                         {{ form.dia.errors }}
                     </div>
+                    <input type="hidden" name="escola-nalunos" :value="nalunos">
                     <div class="column">
                         <b-field label="Número de alunos">
-                            <b-numberinput v-model="nalunos" name="escola-nalunos" required controls-position="compact"
-                                min="1">
+                            <b-numberinput v-model="nalunos" required controls-position="compact" min="1">
                             </b-numberinput>
                         </b-field>
                         {{ form.nalunos.errors }}

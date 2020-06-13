@@ -24,7 +24,8 @@ class InscricaoForm(forms.ModelForm):
 
     class Meta:
         model = models.Inscricao
-        exclude = ('escola', "ninscricao", 'participante')
+        exclude = ('escola', "ninscricao", 'participante',
+                   'meio_transporte', 'hora_chegada', 'local_chegada', 'entrecampi')
 
     def clean(self):
         cleaned_data = super(InscricaoForm, self).clean()
@@ -47,7 +48,17 @@ class InscricaoForm(forms.ModelForm):
 
 
 class TransporteForm(forms.Form):
-    pass
+    meio = forms.ChoiceField(choices=models.Inscricao.MEIO_TRANSPORTE_CHOICES)
+    hora_chegada = forms.TimeField(required=False)
+    local_chegada = forms.CharField(max_length=200, required=False)
+    entrecampi = forms.BooleanField(required=False)
+
+    def clean(self):
+        cleaned_data = super(TransporteForm, self).clean()
+        print(cleaned_data['hora_chegada'])
+        if cleaned_data['meio'] != 'outro' and not cleaned_data['hora_chegada'] and not cleaned_data['local_chegada']:
+            raise forms.ValidationError(
+                _("Por favor, indique a hora e o local de chegada."))
 
 
 class AlmocoForm(forms.ModelForm):
@@ -110,7 +121,7 @@ class SessoesForm(forms.Form):
     nalunos = forms.IntegerField(min_value=1)
 
     def clean(self):
-        cleaned_data = super().clean()
+        cleaned_data = super(SessoesForm, self).clean()
         try:
             pattern = re.compile('{(\"\d*\":\d*,)*\"\d*\":\d*}|{}')
             if re.match(pattern, cleaned_data['sessoes']) is None:

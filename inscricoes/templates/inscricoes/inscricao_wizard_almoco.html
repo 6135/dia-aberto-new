@@ -8,7 +8,6 @@
 
 {% block scripts %}
 <script src="{% static 'js/vue.js' %}"></script>
-<script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
 <script src="{% static 'js/buefy/components/numberinput/index.min.js' %}"></script>
 <script src="{% static 'js/buefy/components/field/index.min.js' %}"></script>
 
@@ -39,6 +38,12 @@
             }
         });
     });
+
+    function navigate_step(step) {
+        const form = $("form")
+        form.prepend('<input type="hidden" name="wizard_goto_step" value="' + step + '">');
+        $("form").submit();
+    }
 </script>
 {% endblock scripts %}
 
@@ -55,7 +60,7 @@
     </nav>
     <div style="padding: 3rem 2vw 1rem;">
         <div class="steps is-success">
-            <div class="step-item is-success is-completed">
+            <div class="step-item is-success is-completed" onclick="navigate_step('responsaveis')">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-account"></i>
@@ -65,7 +70,7 @@
                     <p class="step-title">Responsáveis</p>
                 </div>
             </div>
-            <div class="step-item is-success is-completed">
+            <div class="step-item is-success is-completed" onclick="navigate_step('escola')">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-school"></i>
@@ -75,7 +80,7 @@
                     <p class="step-title">Escola</p>
                 </div>
             </div>
-            <div class="step-item is-success is-completed">
+            <div class="step-item is-success is-completed" onclick="navigate_step('transporte')">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-train-car"></i>
@@ -95,7 +100,8 @@
                     <p class="step-title">Almoço</p>
                 </div>
             </div>
-            <div class="step-item is-success">
+            <div class="step-item is-success {% if visited.3 %}is-completed {% endif %}"
+                {% if visited.3 %}onclick="navigate_step('sessoes')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-calendar-check"></i>

@@ -45,6 +45,10 @@ class InscricoesTable(tables.Table):
         self.columns.hide('areacientifica')
         self.columns.hide('participante')
         self.columns.hide('diaaberto')
+        self.columns.hide('meio_transporte')
+        self.columns.hide('hora_chegada')
+        self.columns.hide('local_chegada')
+        self.columns.hide('entrecampi')
 
     def render_acoes(self, record):
         return format_html(f"""

@@ -6,10 +6,15 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
 
 <script>
     $("input").addClass("input");
+
+    function navigate_step(step) {
+        const form = $("form")
+        form.prepend('<input type="hidden" name="wizard_goto_step" value="' + step + '">');
+        $("form").submit();
+    }
 </script>
 {% endblock scripts %}
 
@@ -36,7 +41,8 @@
                     <p class="step-title">Responsáveis</p>
                 </div>
             </div>
-            <div class="step-item is-success">
+            <div class="step-item is-success {% if visited.0 %}is-completed{% endif %}"
+                {% if visited.0 %}onclick="navigate_step('escola')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-school"></i>
@@ -46,7 +52,8 @@
                     <p class="step-title">Escola</p>
                 </div>
             </div>
-            <div class="step-item is-success">
+            <div class="step-item is-success {% if visited.1 %}is-completed{% endif %}"
+                {% if visited.1 %}onclick="navigate_step('transporte')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-train-car"></i>
@@ -56,7 +63,8 @@
                     <p class="step-title">Transporte</p>
                 </div>
             </div>
-            <div class="step-item is-success">
+            <div class="step-item is-success {% if visited.2 %}is-completed{% endif %}"
+                {% if visited.2 %}onclick="navigate_step('almoco')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-food-apple"></i>
@@ -66,7 +74,8 @@
                     <p class="step-title">Almoço</p>
                 </div>
             </div>
-            <div class="step-item is-success">
+            <div class="step-item is-success {% if visited.3 %}is-completed{% endif %}"
+                {% if visited.3 %}onclick="navigate_step('sessoes')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-calendar-check"></i>
