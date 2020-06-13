@@ -45,6 +45,9 @@ class Inscricao(models.Model):
     class Meta:
         db_table = 'Inscricao'
 
+    def get_grupo(self):
+        return self.id
+
     def get_dias(self):
         inscricao_sessoes = Inscricaosessao.objects.filter(
             inscricao=self).order_by('sessao__dia')
