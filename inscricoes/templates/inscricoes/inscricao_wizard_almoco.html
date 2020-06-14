@@ -23,7 +23,7 @@
         delimiters: ['[[', ']]'],
         data() {
             return {
-                npessoas: {{ form.npessoas.value|default_if_none:'0' }}
+                npessoas: parseInt("{{ form.npessoas.value|default_if_none:'0' }}")
             }
         },
     });
@@ -123,38 +123,80 @@
             </div>
         </div>
         <hr />
-        <form action="" method="post">
-            {% csrf_token %}
-            {{ wizard.management_form }}
-            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-                Informação de Almoço
-            </h2>
-            <div class="columns">
-                <div class="column is-3">
-                    <div class="field">
-                        <label for="{{ form.campus.id_for_label }}" class="label">{{ form.campus.label }}</label>
-                        <div class="control">
-                            <div class="select is-primary is-fullwidth">
-                                {{ form.campus }}
-                            </div>
-                        </div>
-                        {{ form.campus.errors }}
-                    </div>
-                </div>
-            <!--{% for select in form.campus %}
-                {{ select.tag }}
-            {% endfor %}-->
-                <div class="column">
-                    <div id="vue-app">
+        <div id="vue-app">
+            <form action="" method="post">
+                {% csrf_token %}
+                {{ wizard.management_form }}
+                <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+                    Informação de Menu
+                </h2>
+                <table class="table is-bordered is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            {% for campus in campi %}
+                            <th class="has-text-centered">{{campus}}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <thead>
+                        {% for tipo, campi_tipo in pratos_info.items %}
+                        <tr>
+                            <td class="has-text-right"><strong>{{tipo}}</strong></td>
+                            {% for campus, pratos in campi_tipo.items %}
+                            <td>
+                                {% if pratos %}
+                                {{pratos|join:' / '}}
+                                {% else %}
+                                ---
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </thead>
+                </table>
+                <hr />
+                <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
+                    Inscrição de almoços
+                </h2>
+                <div class="columns">
+                    <div class="column is-5">
                         <div class="field">
-                            <label for="{{ form.npessoas.id_for_label }}" class="label">Número de pessoas</label>
-                            <b-numberinput v-model="npessoas" controls-position="compact" min="0" name="almoco-npessoas" style="width: 30%"/>
+                            <label for="{{ form.campus.id_for_label }}" class="label">{{ form.campus.label }}</label>
+                            <div class="control">
+                                <div class="select is-primary is-fullwidth">
+                                    {{ form.campus }}
+                                </div>
+                            </div>
+                            {{ form.campus.errors }}
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label for="{{ form.npessoas.id_for_label }}" class="label">Nº Alunos
+                                ({{precoalunos}}€)</label>
+
+                            <div class="field has-addons has-addons-right">
+                                <p class="control">
+                                    <b-numberinput v-model="npessoas" controls-position="compact" min="0"
+                                        name="almoco-npessoas" />
+                                </p>
+                            </div>
+                            {{ form.npessoas.errors }}
+                        </div>
+                    </div>
+                    <div class="column">
+                        <div class="field">
+                            <label for="{{ form.npessoas.id_for_label }}" class="label">Nº Docentes
+                                ({{precoprofessores}}€)</label>
+                            <b-numberinput v-model="npessoas" controls-position="compact" min="0"
+                                name="almoco-npessoas" />
                         </div>
                         {{ form.npessoas.errors }}
                     </div>
                 </div>
-            </div>
-            {% if form.non_field_errors %}
+                {% if form.non_field_errors %}
                 <div style="margin: 20px 20px; text-align: center;">
                     <div class="message is-danger">
                         <div class="message-body">
@@ -162,28 +204,29 @@
                         </div>
                     </div>
                 </div>
-            {% endif %}
-            <hr />
-            <div class="column is-8 is-offset-2">
-                <div class="level">
-                    <div class="level-left">
-                        {% if wizard.steps.prev %}
-                        <button class="button is-outlined" formnovalidate="formnovalidate" name="wizard_goto_step"
-                            value="{{ wizard.steps.prev }}">
-                            <span class=" icon is-small"><i class="mdi mdi-chevron-left"></i></span>
-                            <span>Anterior</span>
-                        </button>
-                        {% endif %}
-                    </div>
-                    <div class="level-right">
-                        <button type="submit" class="button is-success is-outlined">
-                            <span>Próximo</span>
-                            <span class="icon is-medium"><i class="mdi mdi-forward mdi-36px"></i></span>
-                        </button>
+                {% endif %}
+                <hr />
+                <div class="column is-8 is-offset-2">
+                    <div class="level">
+                        <div class="level-left">
+                            {% if wizard.steps.prev %}
+                            <button class="button is-outlined" formnovalidate="formnovalidate" name="wizard_goto_step"
+                                value="{{ wizard.steps.prev }}">
+                                <span class=" icon is-small"><i class="mdi mdi-chevron-left"></i></span>
+                                <span>Anterior</span>
+                            </button>
+                            {% endif %}
+                        </div>
+                        <div class="level-right">
+                            <button type="submit" class="button is-success is-outlined">
+                                <span>Próximo</span>
+                                <span class="icon is-medium"><i class="mdi mdi-forward mdi-36px"></i></span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 {% endblock content %}

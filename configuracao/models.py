@@ -208,12 +208,12 @@ class Prato(models.Model):
     # Field name made lowercase.
     prato = models.CharField(db_column='Prato',max_length=255, blank=False, null=False)
     # Field name made lowercase.
-    tipos = {
+    tipos = [
         ('Carne',"Carne"),
         ('Peixe','Peixe'),
         ('Vegetariano', 'Vegetariano'),
         ('Sobremesa', 'Sobremesa'),
-    }
+    ]
     tipo = models.CharField(
         choices=tipos,db_column='Tipo', max_length=255, blank=True, null=False)
     # Field name made lowercase.
