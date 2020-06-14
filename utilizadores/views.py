@@ -12,6 +12,27 @@ from configuracao.models import Unidadeorganica,Departamento,Curso
 from django.core.paginator import Paginator
 
 
+# Verifica se o utilizador que esta logado pertence a pelo menos um dos perfeis mencionados e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
+# Isto faz com que o user que esta logado possa ser qualquer um dos 3 perfeis.
+
+def user_check(request, user_profile = None):
+    if not request.user.is_authenticated:
+        return {'exists': False, 'render': redirect('utilizadores:login')}
+    elif user_profile is not None:
+        matches_profile = False
+        for profile in user_profile:
+            if profile.objects.filter(utilizador_ptr_id = request.user.id).exists():
+                return {'exists': True, 'firstProfile': profile.objects.filter(utilizador_ptr_id = request.user.id).first()}
+        return {'exists': False, 
+                'render': render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para aceder a esta pagina!'
+                            })
+                }
+    return {'exists': False, 'render': render()}
+
 
 # Carregar todos os departamentos para uma determinada faculdade 
 
