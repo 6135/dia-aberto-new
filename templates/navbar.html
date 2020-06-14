@@ -103,7 +103,7 @@
                   <span>
 
                     <span class="icon">
-                    <span id="badge-inject" style = "display:none;" title="Badge top right" class="badge is-warning" onclick="refresh();">{% live_notify_badge %}</span>
+                    <span id="badge-inject" style = "display:none;" title="Badge top right" class="badge is-warning"">{% live_notify_badge %}</span>
 
 
                       <i class="mdi mdi-bell mdi-24px"></i>
@@ -138,7 +138,7 @@
                     <a class="tablinks" onclick="openNotificacoes(event, 'Anteriores')">Anteriores</a>
                   </p>
                   <div id="Todas" style="display:block" class="tabcontent">
-
+                  {% live_notify_list %}
                     {% for notificacao in request.user|get_notificacoes:"Todas" %}
                     <div data-tooltip="Click para ver detalhes">
                       {% if notificacao.unread == False %}
@@ -534,12 +534,12 @@
       document.getElementById("badge-inject").style.display = "";
     }
   }
-  function refresh() {
+  {% comment %} function refresh() {
   location.href="/notificacoes/detalhes"
-}
+} {% endcomment %}
 </script>
 <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
-{% register_notify_callbacks callbacks='fill_notification_badge,my_special_notification_callback' %}
+{% register_notify_callbacks callbacks='fill_notification_badge,fill_notification_list,my_special_notification_callback' %}
 
 
 {% endblock scripts %}
