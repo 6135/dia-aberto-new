@@ -11,7 +11,7 @@ from _datetime import timedelta
 from django.db.models import Q
 from django.core import serializers
 
-
+from notificacoes import views
 
 #-------------Diogo----------------------
 def filters(request):
@@ -114,7 +114,7 @@ def alterarAtividade(request,id):
     if user_check_var is not None: return user_check_var
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     if activity_object.professoruniversitarioutilizadorid != ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
-        return redirect("home")
+        return redirect("utilizadores:home")
     #------atividade a alterar----
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
@@ -144,6 +144,7 @@ def alterarAtividade(request,id):
                 activity_object_formed.dataalteracao = datetime.now()
                 activity_object_formed.save()
                 materiais_object_form.save()
+                views.enviar_notificacao_automatica(request,"atividadeAlterada",id) #Enviar Notificacao Automatica !!!!!!
                 return redirect('atividades:inserirSessao',id)          
     return render(request=request,
                     template_name='atividades/proporAtividadeAtividade.html',
@@ -156,6 +157,7 @@ def eliminarAtividade(request,id):
     prof=Atividade.objects.get(id=id).professoruniversitarioutilizadorid
     if prof == ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
         Atividade.objects.get(id=id).delete() #Dupla (sessao,atividade)
+        views.enviar_notificacao_automatica(request,"atividadeApagada",id) #Enviar Notificacao Automatica !!!!!!
     return redirect('atividades:minhasAtividades')
     
 
@@ -351,8 +353,10 @@ def verhorarios(request):
 def validaratividade(request,id, action):
     atividade=Atividade.objects.get(id=id)
     if action==0:
+        views.enviar_notificacao_automatica(request,"rejeitarAtividade",id) #Enviar Notificacao Automatica !!!!!!
         atividade.estado='Recusada'
     if action==1:
+        views.enviar_notificacao_automatica(request,"confirmarAtividade",id) #Enviar Notificacao Automatica !!!!!!
         atividade.estado='Aceite'
     atividade.save()
     return redirect('minhasAtividades')

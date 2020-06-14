@@ -3,7 +3,6 @@ from django.urls import path
 from django.urls import re_path as pattern
 
 
-
 app_name = 'notificacoes'
 
 urlpatterns = [
@@ -15,7 +14,12 @@ urlpatterns = [
          name='detalhes-notificacao-automatica'),
     path('apagarnotificacao/<int:id>', views.apagar_notificacao_automatica,
          name='apagar-notificacao-automatica'),
-    path('notificar/<int:id>', views.enviar_notificacao_mensagem, name='notificar'),
-     path('limpar', views.limpar_notificacoes,
+    path('notificar/<int:id>', views.enviar_notificacao_mensagem,
+         name='notificar'),  # comentar mais tarde
+    path('limpar/<int:id>', views.limpar_notificacoes,
          name='limpar-notificacoes'),
+    path('marcarcomolida', views.marcar_como_lida,
+         name='ler-notificacoes'),
+    path('detalhes', views.detalhes,
+         name='detalhes-automatica'),
 ]

@@ -142,7 +142,7 @@ def cancelar_tarefa(request, id):
     else:
         return redirect('utilizadores:mensagem',5)
     # Envio de notificacao automatica
-    views.enviar_notificacao_automatica(user.id,"cancelarTarefa",id)
+    views.enviar_notificacao_automatica(request,"cancelarTarefa",id)
     return redirect('notificacoes:notificar',id) 
 
 def validar_cancelamento_tarefa(request, id):
@@ -157,7 +157,8 @@ def validar_cancelamento_tarefa(request, id):
     tarefa = Tarefa.objects.get(id=id)
     tarefa.estado="Cancelada"
     tarefa.save()
-    return redirect('colaboradores:') 
+    views.enviar_notificacao_automatica(request,"confirmarCancelarTarefa",id)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 def rejeitar_cancelamento_tarefa(request, id):
     if request.user.is_authenticated:    
@@ -168,6 +169,8 @@ def rejeitar_cancelamento_tarefa(request, id):
             return redirect('utilizadores:mensagem',5) 
     else:
         return redirect('utilizadores:mensagem',5) 
-    return redirect('') 
+    views.enviar_notificacao_automatica(request,"rejeitarCancelarTarefa",id)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
 
 

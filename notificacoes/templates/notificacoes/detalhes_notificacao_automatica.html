@@ -1,4 +1,3 @@
-
 {% extends 'app.html' %}
 
 {% block title %}- Detalhes{% endblock title %}
@@ -15,150 +14,156 @@
             <li class="is-active"><a href="/inscricao">Detalhes</a></li>
         </ul>
     </nav>
-<div class="columns">
-<div class="column is-3">
-</div>
-<div class="column">
-    <div style="padding: 3rem 2vw 1rem;">
-        <div class="field is-horizontal">
-            <div class="field-label is-normal">
-                <label class="label">Título</label>
-            </div>
-            <div class="field-body">
-                <div class="field has-addons has-background-light">
-                    <p class="control has-background-light" style="padding: 10px 30px">
-                        {{notificacao.description}}
-                    </p>
-                </div>
-            </div>
+    <div class="columns">
+        <div class="column is-3">
         </div>
-        <div class="field is-horizontal">
-            <div class="field-label is-normal">
-                <label class="label">Mensagem</label>
-            </div>
-            <div class="field-body">
-                <div class="field has-addons has-background-light">
-                    <p class="control has-background-light" style="padding: 10px 30px">
-                        {{notificacao.verb}}
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="field is-horizontal">
-            <div class="field-label is-normal">
-                <label class="label">Data de Envio</label>
-            </div>
-            <div class="field-body">
-                <div class="field has-addons has-background-light">
-                    <p class="control has-background-light" style="padding: 10px 30px">
-                        {{notificacao.timestamp}}
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="field is-horizontal">
-            <div class="field-label is-normal">
-                <label class="label">Remetente </label>
-            </div>
-            <div class="field-body">
-                <div class="field has-addons has-background-light">
-                    <p class="control has-background-light" style="padding: 10px 30px">
-                        {{notificacao.actor_object_id|get_user_name}}  {% if notificacao.actor_object_id|get_user_type != 0 %}<small>({{notificacao.actor_object_id|get_user_type}})</small>{% endif %}
-
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="field is-horizontal">
-            <div class="field-label is-normal">
-                <label class="label">Destinatário</label>
-            </div>
-            <div class="field-body">
-                <div class="field has-addons has-background-light">
-                    <p class="control has-background-light" style="padding: 10px 30px">
-                        {{notificacao.recipient_id|get_user_name}} 
-                    </p>
-                </div>
-            </div>
-        </div>
-
-        <div class="columns is-mobile is-centered">
-        <div class="column is-narrow">
         <div class="column">
-                <div class="field is-horizontal" style="margin-top: 17px">
-                    <div class="field-label">
-                        <!-- Left empty for spacing -->
-                    </div>
-                    <div class="field-label">
-                        <!-- Left empty for spacing -->
-                    </div>
-                    <div class="field-label">
-                        <!-- Left empty for spacing -->
+            <div style="padding: 3rem 2vw 1rem;">
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Título</label>
                     </div>
                     <div class="field-body">
-                        <div class="field is-grouped">
-                            {% if notificacao.tipo == "Solicitação" %}
-
-                            
-                            <p class="control">
-                                <a class="button">
-                                    <span>Ver Detalhes</span>
-                                    <span class="icon is-small">
-                                        <i class="fas fa-plus"></i>
-                                    </span>
-                                </a>
-                            </p>
-
-                            <p class="control">
-                                <a href = "{% url 'notificacoes:validar-cancelamento-tarefa' notificacao.id %}" class="button is-success is-outlined">
-                                    <span class="icon has-text-success">
-                                    <i class="fas fa-check-square"></i>
-                                    </span>
-                                    <span>Confirmar</span>
-                                </a>
-                            </p>
-                            <p class="control">
-                             <a class="button is-danger is-outlined" onclick="alert.render('Tem a certeza que pretende rejeitar este pedido?','{% url 'notificacoes:rejeitar-cancelamento-tarefa' notificacao.id %}')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
-
-                            <span class="icon has-text-danger">
-                            <i class="fas fa-ban"></i>
-                            </span>
-                                    <span>Rejeitar</span>
-                                </a>
-                            </p>
-
-
-
-                            {% else %}
-                            <p class="control">
-                             <a class="button is-danger is-outlined" onclick="alert.render('Tem a certeza que pretende apagar esta notificação?','{% url 'notificacoes:apagar-notificacao-automatica' notificacao.id %}')"role="listitem" tabindex="0" class="dropdown-item is-disabled">
-                  
-                                    <span class="icon is-small">
-                                        <i class="fas fa-trash"></i>
-                                    </span>
-                                    <span>Apagar Notificação</span>
-                                </a>
-                            </p>
-
-                            {% endif %}
-                            <p class="control">
-                                <a href="{% url 'notificacoes:enviar-notificacao' %}" class="button">
-                                    <span>Enviar Mensagem</span>
-                                    <span class="icon is-small">
-                                        <i class="fas fa-reply"></i>
-                                    </span>
-                                </a>
+                        <div class="field has-addons has-background-light">
+                            <p class="control has-background-light" style="padding: 10px 30px">
+                                {{notificacao.description}}
                             </p>
                         </div>
                     </div>
                 </div>
-        </div>        
-        </div> 
-        </div> 
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Mensagem</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field has-addons has-background-light">
+                            <p class="control" style="padding: 10px 30px">
+                                {{notificacao.verb}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Data de Envio</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field has-addons has-background-light">
+                            <p class="control has-background-light" style="padding: 10px 30px">
+                                {{notificacao.timestamp}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Remetente </label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field has-addons has-background-light">
+                            <p class="control has-background-light" style="padding: 10px 30px">
+                                {{notificacao.actor_object_id|get_user_name}}
+                                {% if notificacao.public == False %}<small>({{notificacao.actor_object_id|get_user_type}})</small>{% endif %}
+
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="field is-horizontal">
+                    <div class="field-label is-normal">
+                        <label class="label">Destinatário</label>
+                    </div>
+                    <div class="field-body">
+                        <div class="field has-addons has-background-light">
+                            <p class="control has-background-light" style="padding: 10px 30px">
+                                {{notificacao.recipient_id|get_user_name}}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="columns is-mobile is-centered">
+                    <div class="column is-narrow">
+                        <div class="column">
+                            <div class="field is-horizontal" style="margin-top: 17px">
+                                <div class="field-label">
+                                    <!-- Left empty for spacing -->
+                                </div>
+                                <div class="field-label">
+                                    <!-- Left empty for spacing -->
+                                </div>
+                                <div class="field-label">
+                                    <!-- Left empty for spacing -->
+                                </div>
+                                <div class="field-body">
+                                    <div class="field is-grouped">
+                                        {% if notificacao.tipo == "Solicitação" %}
+
+
+                                        <p class="control">
+                                            <a class="button">
+                                                <span>Ver Detalhes</span>
+                                                <span class="icon is-small">
+                                                    <i class="fas fa-plus"></i>
+                                                </span>
+                                            </a>
+                                        </p>
+
+                                        <p class="control">
+                                            <a href="{% url 'notificacoes:validar-cancelamento-tarefa' notificacao.id %}"
+                                                class="button is-success is-outlined">
+                                                <span class="icon has-text-success">
+                                                    <i class="fas fa-check-square"></i>
+                                                </span>
+                                                <span>Confirmar</span>
+                                            </a>
+                                        </p>
+                                        <p class="control">
+                                            <a class="button is-danger is-outlined"
+                                                onclick="alert.render('Tem a certeza que pretende rejeitar este pedido?','{% url 'notificacoes:rejeitar-cancelamento-tarefa' notificacao.id %}')"
+                                                role="listitem" tabindex="0" class="dropdown-item is-disabled">
+
+                                                <span class="icon has-text-danger">
+                                                    <i class="fas fa-ban"></i>
+                                                </span>
+                                                <span>Rejeitar</span>
+                                            </a>
+                                        </p>
+
+
+
+                                        {% else %}
+                                        <p class="control">
+                                            <a class="button is-danger is-outlined"
+                                                onclick="alert.render('Tem a certeza que pretende apagar esta notificação?','{% url 'notificacoes:apagar-notificacao-automatica' notificacao.id %}')"
+                                                role="listitem" tabindex="0" class="dropdown-item is-disabled">
+
+                                                <span class="icon is-small">
+                                                    <i class="fas fa-trash"></i>
+                                                </span>
+                                                <span>Apagar Notificação</span>
+                                            </a>
+                                        </p>
+
+                                        {% endif %}
+                                        <p class="control">
+                                            <a href="{% url 'notificacoes:enviar-notificacao' %}" class="button">
+                                                <span>Enviar Mensagem</span>
+                                                <span class="icon is-small">
+                                                    <i class="fas fa-reply"></i>
+                                                </span>
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-3">
+        </div>
     </div>
-    </div>
-    <div class="column is-3">
-    </div>
-</div>
 </div>
 {% endblock content %}

@@ -3,6 +3,7 @@
 {% load notificacoes_extras %}
 {% load inscricoes_extras %}
 {% load notifications_tags %}
+{% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' %}
 
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
@@ -48,7 +49,7 @@
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
         Utilizadores
       </a>
-      <a href="{% url 'consultarTarefa' %}" class="navbar-item">
+      <a href="{% url 'coordenadores:consultarTarefa' %}" class="navbar-item">
         Tarefas
       </a>
       {% elif request.user|has_group:'Administrador'%}
@@ -119,7 +120,7 @@
             </div>
           </div>
 
-          <div id="ver_notificacoes" class="modal">
+          <div id="ver_notificacoes" class="modal {{notificacoes_ativas}}">
             <div class="modal-background"></div>
             <div class="modal-card">
               <header class="modal-card-head">
@@ -176,6 +177,26 @@
                         </a>
                     </div>
                     {%endfor%}
+                    {% if request.user|get_notificacoes_nr:"Todas" > 0 %}
+                    <div class="panel-block">
+
+                      {% if request.user|nr_notificacoes > 0 %}
+                      <a onclick="alert.warning('Esta ação não pode ser efetuada sem que todas as notificações tenham sido lidas.')"
+                        role="listitem" tabindex="0" class="dropdown-item is-disabled">
+
+                        {% else %}
+                        <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações?','{% url 'notificacoes:limpar-notificacoes' 0 %}')"
+                          role="listitem" tabindex="0" class="dropdown-item is-disabled">
+                          {% endif %}
+                          <button class="button is-link is-outlined is-fullwidth">
+                            Limpar notificações
+                          </button>
+                        </a>
+
+                    </div>
+                    {% else %}
+                    <p style="text-align: center;margin-top:2%"><strong>Não tem nenhuma notificação.</strong></p>
+                    {% endif %}
                   </div>
 
 
@@ -188,7 +209,7 @@
                         <span class="icon has-text-info">
                           <i class="fas fa-info-circle"></i>
                         </span>
-                        {% elif notificacao.level == "sucess" %}
+                        {% elif notificacao.level == "success" %}
                         <span class="icon has-text-success">
                           <i class="fas fa-check-square"></i>
                         </span>
@@ -208,6 +229,22 @@
                       </a>
                     </div>
                     {%endfor%}
+                    {% if request.user|get_notificacoes_nr:"Novas" > 0 %}
+                    <div class="panel-block">
+
+
+                        <a onclick="alert.render('Tem a certeza que pretende marcar todas as notificações como lidas?','{% url 'notificacoes:ler-notificacoes'%}')"
+                          role="listitem" tabindex="0" class="dropdown-item is-disabled">
+                   
+                          <button class="button is-link is-outlined is-fullwidth">
+                            Marcar notificações como lidas
+                          </button>
+                        </a>
+
+                    </div>
+                    {% else %}
+                    <p style="text-align: center;margin-top:2%"><strong>Não tem nenhuma notificação nova.</strong></p>
+                    {% endif %}
                   </div>
                   <div id="Anteriores" style="display:none" class="tabcontent">
                     {% for notificacao in request.user|get_notificacoes:"True" %}
@@ -218,7 +255,7 @@
                         <span class="icon has-text-info">
                           <i class="fas fa-info-circle"></i>
                         </span>
-                        {% elif notificacao.level == "sucess" %}
+                        {% elif notificacao.level == "success" %}
                         <span class="icon has-text-success">
                           <i class="fas fa-check-square"></i>
                         </span>
@@ -238,28 +275,25 @@
                       </a>
                     </div>
                     {%endfor%}
+                    {% if request.user|get_notificacoes_nr:"Anteriores" > 0 %}
+                    <div class="panel-block">
+
+
+                        <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações lidas?','{% url 'notificacoes:limpar-notificacoes' 1 %}')"
+                          role="listitem" tabindex="0" class="dropdown-item is-disabled">
+                          
+                          <button class="button is-link is-outlined is-fullwidth">
+                            Limpar notificações
+                          </button>
+                        </a>
+
+                    </div>
+                    {% else %}
+                    <p style="text-align: center;margin-top:2%"><strong>Não tem nenhuma notificação anterior.</strong></p>
+                    {% endif %}
                   </div>
 
 
-                  {% if request.user|total_notificacoes > 0 %}
-                  <div class="panel-block">
-                    {% if request.user|nr_notificacoes > 0 %}
-                    <a onclick="alert.warning('Esta ação não pode ser efetuada sem que todas as notificações tenham sido lidas.')"
-                      role="listitem" tabindex="0" class="dropdown-item is-disabled">
-
-                      {% else %}
-                      <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações?','{% url 'notificacoes:limpar-notificacoes'%}')"
-                        role="listitem" tabindex="0" class="dropdown-item is-disabled">
-                        {% endif %}
-                        <button class="button is-link is-outlined is-fullwidth">
-                          Limpar Notificações
-                        </button>
-                      </a>
-
-                  </div>
-                  {% else %}
-                  <p style="text-align: center;margin-top:2%"><strong>Não tem nenhuma notificação.</strong></p>
-                  {% endif %}
                 </nav>
               </section>
             </div>
@@ -455,6 +489,7 @@
       </div>
 
     </div>
+    <h1>{% live_notify_badge %}</h1>
 </nav>
 
 
