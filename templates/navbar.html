@@ -103,10 +103,9 @@
                   <span>
 
                     <span class="icon">
-                      {% if request.user|nr_notificacoes > 0 %}
+                    <span id="badge-inject" style = "display:none;" title="Badge top right" class="badge is-warning" onclick="refresh();">{% live_notify_badge %}</span>
 
-                      <span title="Badge top right" class="badge is-warning">{{request.user|nr_notificacoes}}</span>
-                      {% endif %}
+
                       <i class="mdi mdi-bell mdi-24px"></i>
 
 
@@ -121,7 +120,7 @@
             </div>
           </div>
 
-          <div id="ver_notificacoes" class="modal">
+          <div id="ver_notificacoes" class="modal{{notificacoes_ativas}}">
             <div class="modal-background"></div>
             <div class="modal-card">
               <header class="modal-card-head">
@@ -491,7 +490,6 @@
       </div>
 
     </div>
-    <h1>{% live_notify_badge %}</h1>
 </nav>
 
 
@@ -528,9 +526,20 @@
     document.getElementById(tipo_notificacao).style.display = "block";
     evt.currentTarget.className += " is-active";
   }
+
+  function my_special_notification_callback(data) {
+    for (var i = 0; i < data.unread_list.length; i++) {
+      msg = data.unread_list[i];
+      console.log(msg);
+      document.getElementById("badge-inject").style.display = "";
+    }
+  }
+  function refresh() {
+  location.href="/notificacoes/detalhes"
+}
 </script>
 <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
-{% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' %}
+{% register_notify_callbacks callbacks='fill_notification_badge,my_special_notification_callback' %}
 
 
 {% endblock scripts %}

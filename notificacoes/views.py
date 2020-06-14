@@ -74,7 +74,7 @@ def marcar_como_lida(request):
 
 def detalhes(request):
     return render(request, 'inicio.html', {
-        'notificacoes_ativas': "is-active"
+        'notificacoes_ativas': " is-active"
     } )
 
 
