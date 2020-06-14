@@ -3,7 +3,7 @@
 {% load notificacoes_extras %}
 {% load inscricoes_extras %}
 {% load notifications_tags %}
-{% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' %}
+
 
 <nav class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
@@ -121,7 +121,7 @@
             </div>
           </div>
 
-          <div id="ver_notificacoes" class="modal {{notificacoes_ativas}}">
+          <div id="ver_notificacoes" class="modal">
             <div class="modal-background"></div>
             <div class="modal-card">
               <header class="modal-card-head">
@@ -234,13 +234,13 @@
                     <div class="panel-block">
 
 
-                        <a onclick="alert.render('Tem a certeza que pretende marcar todas as notificações como lidas?','{% url 'notificacoes:ler-notificacoes'%}')"
-                          role="listitem" tabindex="0" class="dropdown-item is-disabled">
-                   
-                          <button class="button is-link is-outlined is-fullwidth">
-                            Marcar notificações como lidas
-                          </button>
-                        </a>
+                      <a onclick="alert.render('Tem a certeza que pretende marcar todas as notificações como lidas?','{% url 'notificacoes:ler-notificacoes'%}')"
+                        role="listitem" tabindex="0" class="dropdown-item is-disabled">
+
+                        <button class="button is-link is-outlined is-fullwidth">
+                          Marcar notificações como lidas
+                        </button>
+                      </a>
 
                     </div>
                     {% else %}
@@ -280,17 +280,18 @@
                     <div class="panel-block">
 
 
-                        <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações lidas?','{% url 'notificacoes:limpar-notificacoes' 1 %}')"
-                          role="listitem" tabindex="0" class="dropdown-item is-disabled">
-                          
-                          <button class="button is-link is-outlined is-fullwidth">
-                            Limpar notificações
-                          </button>
-                        </a>
+                      <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações lidas?','{% url 'notificacoes:limpar-notificacoes' 1 %}')"
+                        role="listitem" tabindex="0" class="dropdown-item is-disabled">
+
+                        <button class="button is-link is-outlined is-fullwidth">
+                          Limpar notificações
+                        </button>
+                      </a>
 
                     </div>
                     {% else %}
-                    <p style="text-align: center;margin-top:2%"><strong>Não tem nenhuma notificação anterior.</strong></p>
+                    <p style="text-align: center;margin-top:2%"><strong>Não tem nenhuma notificação anterior.</strong>
+                    </p>
                     {% endif %}
                   </div>
 
@@ -528,7 +529,8 @@
     evt.currentTarget.className += " is-active";
   }
 </script>
-
+<script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
+{% register_notify_callbacks callbacks='fill_notification_list,fill_notification_badge' %}
 
 
 {% endblock scripts %}
