@@ -33,6 +33,8 @@ function definicoes() {
   function my_special_notification_callback(data) {
     for (var i = 0; i < data.unread_list.length; i++) {
       document.getElementById("badge-inject").style.display = "";
+      document.getElementById("sem-mensagens").style.display = "none";
+      document.getElementById("sem-notificacoes").style.display = "none";
     }
   }
 
