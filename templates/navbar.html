@@ -139,10 +139,8 @@
                     <a class="tablinks" onclick="openNotificacoes(event, 'Anteriores')">Anteriores</a>
                   </p>
                   <div id="Todas" style="display:block" class="tabcontent">
-                    {% comment %} {% notifications_unread as unread %}
-                    {{ unread }} {% endcomment %}
                     {% notification_list %}
-                    {% for notificacao in request.user|get_notificacoes:"Todas" %}
+                    {% for notificacao in request.user|notificacoes_lidas %}
                     <div data-tooltip="Click para ver detalhes">
                       {% if notificacao.unread == False %}
                       <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
@@ -180,62 +178,26 @@
                         </a>
                     </div>
                     {%endfor%}
-                    {% if request.user|get_notificacoes_nr:"Todas" > 0 %}
+                    {% if request.user|nr_notificacoes > 0 %}
                     <div class="panel-block">
-
-                      {% if request.user|get_notificacoes_nr:"Novas" > 0 %}
-                      <a onclick="alert.warning('Esta ação não pode ser efetuada sem que todas as notificações tenham sido lidas.')"
+                      <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações?','{% url 'notificacoes:limpar-notificacoes' 0 %}')"
                         role="listitem" tabindex="0" class="dropdown-item is-disabled">
-
-                        {% else %}
-                        <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações?','{% url 'notificacoes:limpar-notificacoes' 0 %}')"
-                          role="listitem" tabindex="0" class="dropdown-item is-disabled">
-                          {% endif %}
-                          <button class="button is-link is-outlined is-fullwidth">
-                            Limpar notificações
-                          </button>
-                        </a>
-
+                        <button class="button is-link is-outlined is-fullwidth">
+                          Limpar notificações
+                        </button>
+                      </a>
                     </div>
                     {% else %}
                     <p style="text-align: center;margin-top:2%"><strong>Não tem nenhuma notificação.</strong></p>
                     {% endif %}
+
                   </div>
-
-
                   <div id="Novas" style="display:none" class="tabcontent">
-                    {% for notificacao in request.user|get_notificacoes:"False" %}
-                    <div data-tooltip="Click para ver detalhes">
-                      <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
-                        class="panel-block" style=" background: Gainsboro; ">
-                        {% if notificacao.level == "info" %}
-                        <span class="icon has-text-info">
-                          <i class="fas fa-info-circle"></i>
-                        </span>
-                        {% elif notificacao.level == "success" %}
-                        <span class="icon has-text-success">
-                          <i class="fas fa-check-square"></i>
-                        </span>
-                        {% elif notificacao.level == "warning" %}
-                        <span class="icon has-text-warning">
-                          <i class="fas fa-exclamation-triangle"></i>
-                        </span>
-                        {% elif notificacao.level == "error" %}
-                        <span class="icon has-text-danger">
-                          <i class="fas fa-ban"></i>
-                        </span>
-                        {% endif %}
 
+                    {% notification_list %}
 
-                        <p><strong>{{notificacao.description}}</strong></p>
-
-                      </a>
-                    </div>
-                    {%endfor%}
-                    {% if request.user|get_notificacoes_nr:"Novas" > 0 %}
+                    {% if request.user|has_notification %}
                     <div class="panel-block">
-
-
                       <a onclick="alert.render('Tem a certeza que pretende marcar todas as notificações como lidas?','{% url 'notificacoes:ler-notificacoes'%}')"
                         role="listitem" tabindex="0" class="dropdown-item is-disabled">
 
@@ -243,14 +205,15 @@
                           Marcar notificações como lidas
                         </button>
                       </a>
-
                     </div>
                     {% else %}
                     <p style="text-align: center;margin-top:2%"><strong>Não tem nenhuma notificação nova.</strong></p>
+
                     {% endif %}
+
                   </div>
                   <div id="Anteriores" style="display:none" class="tabcontent">
-                    {% for notificacao in request.user|get_notificacoes:"True" %}
+                    {% for notificacao in request.user|notificacoes_lidas %}
                     <div data-tooltip="Click para ver detalhes">
                       <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
                         class="panel-block">
@@ -278,7 +241,7 @@
                       </a>
                     </div>
                     {%endfor%}
-                    {% if request.user|get_notificacoes_nr:"Anteriores" > 0 %}
+                    {% if request.user|nr_notificacoes_lidas > 0 %}
                     <div class="panel-block">
 
 
@@ -286,7 +249,7 @@
                         role="listitem" tabindex="0" class="dropdown-item is-disabled">
 
                         <button class="button is-link is-outlined is-fullwidth">
-                          Limpar notificações
+                          Limpar notificações anteriores
                         </button>
                       </a>
 
@@ -295,6 +258,7 @@
                     <p style="text-align: center;margin-top:2%"><strong>Não tem nenhuma notificação anterior.</strong>
                     </p>
                     {% endif %}
+
                   </div>
 
 

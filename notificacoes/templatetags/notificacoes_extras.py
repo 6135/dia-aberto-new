@@ -24,35 +24,25 @@ register = template.Library()
 
 
 
-@register.filter(name='get_notificacoes') 
-def get_notificacoes(user, filtro):
+@register.filter(name='notificacoes_lidas') 
+def notificacoes_lidas(user):
     if user.is_authenticated:    
-        if filtro == "Todas":
-            return user.notifications.all() 
-        elif filtro == "False":
-            return user.notifications.unread()
-        else:
             return user.notifications.read()  
-        
     else:
         return None
 
 
-@register.filter(name='get_notificacoes_nr') 
-def get_notificacoes_nr(user, filtro):
-    if user.is_authenticated:    
-        if filtro == "Todas":
-            return len(user.notifications.all()) 
-        elif filtro == "Novas":
-            return user.notifications.unread().count()
-        elif filtro == "Anteriores":
-            return len(user.notifications.read())  
-        else:
-            return None    
-        
-    else:
-        return None
+@register.filter(name='nr_notificacoes_lidas') 
+def nr_notificacoes(user):
+    if not user:
+        return 0
+    return user.notifications.read().count()
 
+@register.filter(name='nr_notificacoes') 
+def nr_notificacoes(user):
+    if not user:
+        return 0
+    return user.notifications.all().count()
 
 # Requires vanilla-js framework - http://vanilla-js.com/
 @register.simple_tag
@@ -101,13 +91,11 @@ def live_notify_badge(context, badge_class='live_notify_badge'):
     if not user:
         return ''
 
-    html = "<span class='{badge_class}'>{unread}</span>".format(
-        badge_class=badge_class, unread=user.notifications.unread().count()
-    )
-    return format_html(html)
+    return user.notifications.unread().count()
 
 
 @register.simple_tag
 def notification_list(list_class='notification_list'):
     html = "<ul class='{list_class}'></ul>".format(list_class=list_class)
     return format_html(html)
+
