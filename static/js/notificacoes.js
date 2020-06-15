@@ -47,10 +47,7 @@ function lista_notificacoes(data) {
             if (typeof item.id !== 'undefined') {
                       
                 message += '<div data-tooltip="Click para ver detalhes">';
-                var str1 = "{% url 'notificacoes:detalhes-notificacao-automatica' ";
-                var str2 = item.id.toString()+" %}";
-                var url = str1.concat(str2);
-                message += '<a href="'+url+'" class="panel-block" style=" background: Gainsboro; ">';
+                message += '<a href="'+detalhes_url_notificacoes(item)+'" class="panel-block" style=" background: Gainsboro; ">';
                 if (typeof item.level !== 'undefined') {
                     if (item.level === "info") {
                         message += '<span class="icon has-text-info"> ';

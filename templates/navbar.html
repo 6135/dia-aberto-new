@@ -461,6 +461,13 @@
 
 
 {% block scripts %}
+<script>
+var DETAILS_NOTIFICATION_URL_PATH = "{% url 'notificacoes:detalhes-notificacao-automatica' 100 %}"
+function detalhes_url_notificacoes(item){
+  var tmp = String(item.id)
+  return "{% url 'notificacoes:detalhes-notificacao-automatica' 12345 %}".replace("12345", tmp);
+}
+</script>
 <script type="text/javascript" src="{% static 'js/notificacoes.js' %}"></script>
 <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
 {% register_notify callbacks='fill_notification_badge,lista_notificacoes,my_special_notification_callback' %}
