@@ -1,4 +1,3 @@
-
 from django.http import HttpResponse
 from .models import *
 from utilizadores.models import *
@@ -6,11 +5,18 @@ from configuracao.models import *
 from coordenadores.models import *
 from atividades.models import *
 
+from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth import *
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth.models import Group
+
 
 from notifications.signals import notify
 from django.utils import timezone
 
 from datetime import datetime, timedelta
+
 
 def EnviarNotificacao(request):
     return render(request, 'notificacoes/enviar_notificacao.html')
