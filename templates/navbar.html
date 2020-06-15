@@ -462,7 +462,6 @@
 
 {% block scripts %}
 <script>
-var DETAILS_NOTIFICATION_URL_PATH = "{% url 'notificacoes:detalhes-notificacao-automatica' 100 %}"
 function detalhes_url_notificacoes(item){
   var tmp = String(item.id)
   return "{% url 'notificacoes:detalhes-notificacao-automatica' 12345 %}".replace("12345", tmp);
