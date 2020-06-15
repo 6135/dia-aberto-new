@@ -42,12 +42,13 @@ def apagar_notificacao_automatica(request, id):
 
 # Apagar todas as notificações de um utilizadador
 
-def limpar_notificacoes(request,id):
+
+def limpar_notificacoes(request, id):
     if request.user.is_authenticated:
         user = get_user(request)
     else:
         return redirect('utilizadores:mensagem', 5)
-    if id == 0:    
+    if id == 0:
         todas_notificacoes = user.notifications.all()
         for x in todas_notificacoes:
             x.delete()
@@ -74,8 +75,7 @@ def marcar_como_lida(request):
 def detalhes(request):
     return render(request, 'inicio.html', {
         'notificacoes_ativas': " is-active"
-    } )
-
+    })
 
 
 # Ver detalhes de uma notificação automática
@@ -156,7 +156,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
                     target=atividade, level="success", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificacao tarefa atribuida - colaborador
-    elif sigla == "tarefaAtribuida":  
+    elif sigla == "tarefaAtribuida":
         tarefa = Tarefa.objects.get(id=id)
         if tarefa.estado != "naoAtribuida":
             titulo = "Atribuição de uma tarefa"
@@ -165,15 +165,16 @@ def enviar_notificacao_automatica(request, sigla, id):
             notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=tarefa,
                         target=None, level="success", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação tarefa apagada - colaborador
-    elif sigla == "tarefaApagada":  
+    elif sigla == "tarefaApagada":
         titulo = "Foi apagada uma tarefa"
         tarefa = Tarefa.objects.get(id=id)
-        descricao = "Foi apagada a tarefa \""+tarefa.getDescription()+"\", por esse motivo a tarefa deixou de lhe estar atribuída."
+        descricao = "Foi apagada a tarefa \""+tarefa.getDescription() + \
+            "\", por esse motivo a tarefa deixou de lhe estar atribuída."
         user_recipient = Utilizador.objects.get(id=tarefa.colab.id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=tarefa,
                     target=None, level="error", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação tarefa alterada - colaborador
-    elif sigla == "tarefaAlterada":  
+    elif sigla == "tarefaAlterada":
         tarefa = Tarefa.objects.get(id=id)
         if tarefa.estado != "naoAtribuida":
             titulo = "Alteração de uma tarefa"
@@ -186,31 +187,30 @@ def enviar_notificacao_automatica(request, sigla, id):
         titulo = "Foi apagada uma atividade"
         atividade = Atividade.objects.get(id=id)
         descricao = "Foi apagada a atividade \""+atividade.nome+"\""
-        user_recipient = Utilizador.objects.get(id=atividade.coordenadorutilizadorid.id)
+        user_recipient = Utilizador.objects.get(
+            id=atividade.coordenadorutilizadorid.id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
                     target=atividade, level="error", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação atividade alterada - coordenador
-    elif sigla == "atividadeAlterada": 
+    elif sigla == "atividadeAlterada":
         titulo = "Foi alterada uma atividade "
         atividade = Atividade.objects.get(id=id)
         descricao = "Foi feita uma alteração na atividade \""+atividade.nome+"\""
-        user_recipient = Utilizador.objects.get(id=atividade.coordenadorutilizadorid.id)
+        user_recipient = Utilizador.objects.get(
+            id=atividade.coordenadorutilizadorid.id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
                     target=atividade, level="warning", description=titulo, public=False, timestamp=timezone.now())
-    # # Enviar notificação quando há registo de utilizador por validar (5 dias antes do fim das inscrições) - administrador e ao coordenador
+    # # Enviar notificação quando há registo de utilizador por validar - administrador e ao coordenador ( 5 dias depois de criado se ainda tiver pendente
     # elif sigla == "validarRegistosPendentes": # timezone.now() + timedelta(days=5)
     #     titulo = "Validação de registos de utilizadores pendentes"
     #     descricao = "Existem registos de utilizadores por validar"
 
-    #     notify.send(sender=user, recipient=user, verb="oi", action_object=tarefa, target=None, level="info",
-    #                 description="Foi feito um pedido de cancelamento da tarefa ", public=False, timestamp=timezone.now(), titulo="tiago")
-    # # Enviar notificação quando há atividades por validar (5 dias antes do fim das inscrições) - coordenador
-    # elif sigla == "validarAtividades":
+    # # Enviar notificação quando há alterações de perfil de utilizador por validar - administrador e ao coordenador ( 5 dias depois de alterado se ainda tiver pendente )
+    # elif sigla == "validarAlteracoesPerfil": # timezone.now() + timedelta(days=5)
+    #     titulo = "Validação de registos de utilizadores pendentes"
+    #     descricao = "Existem registos de utilizadores por validar"
+
+    # elif sigla == "validarAtividades": #Enviar notificação atividades por validar pendentes - coordenador (5 dias depois de criada a atividade se ainda tiver pendente)
     #     titulo = "Validação de atividades pendentes"
     #     descricao = "Existem atividades por validar"
-
-    #     notify.send(sender=user, recipient=user, verb="oi", action_object=tarefa, target=None, level="info",
-    #                 description="Foi feito um pedido de cancelamento da tarefa ", public=False, timestamp=timezone.now(), titulo="tiago")
-
-
 
