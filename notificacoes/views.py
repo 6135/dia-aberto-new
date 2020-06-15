@@ -6,18 +6,11 @@ from configuracao.models import *
 from coordenadores.models import *
 from atividades.models import *
 
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth import *
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib.auth.models import Group
-
 
 from notifications.signals import notify
 from django.utils import timezone
 
 from datetime import datetime, timedelta
-
 
 def EnviarNotificacao(request):
     return render(request, 'notificacoes/enviar_notificacao.html')
@@ -212,4 +205,6 @@ def enviar_notificacao_automatica(request, sigla, id):
 
     #     notify.send(sender=user, recipient=user, verb="oi", action_object=tarefa, target=None, level="info",
     #                 description="Foi feito um pedido de cancelamento da tarefa ", public=False, timestamp=timezone.now(), titulo="tiago")
+
+
 

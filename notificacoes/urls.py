@@ -20,6 +20,6 @@ urlpatterns = [
          name='limpar-notificacoes'),
     path('marcarcomolida', views.marcar_como_lida,
          name='ler-notificacoes'),
-    path('detalhes', views.detalhes,
+    path('', views.detalhes,
          name='detalhes-automatica'),
 ]
