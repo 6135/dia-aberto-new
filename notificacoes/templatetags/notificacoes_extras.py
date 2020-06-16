@@ -8,7 +8,6 @@ from django import get_version
 from django.template import Library
 from django.utils.html import format_html
 
-
 from notifications.signals import notify
 
 
@@ -16,6 +15,10 @@ try:
     from django.urls import reverse
 except ImportError:
     from django.core.urlresolvers import reverse  # pylint: disable=no-name-in-module,import-error
+
+from datetime import date, timedelta
+import datetime
+from django.utils import timezone
 
 register = Library()
 
@@ -33,7 +36,7 @@ def notificacoes_lidas(user):
 
 
 @register.filter(name='nr_notificacoes_lidas') 
-def nr_notificacoes(user):
+def nr_notificacoes_lidas(user):
     if not user:
         return 0
     return user.notifications.read().count()
@@ -99,3 +102,19 @@ def notification_list(list_class='notification_list'):
     html = "<ul class='{list_class}'></ul>".format(list_class=list_class)
     return format_html(html)
 
+
+
+
+@register.filter(name='atualizar_informacoes') 
+def atualizar_informacoes(user):
+    if user.is_authenticated:    
+        utilizador_recetor = Utilizador.objects.get(id=user.id)
+        info = InformacaoNotificacao.objects.filter(
+                    recetor = utilizador_recetor)
+        for x in info:
+            delta = abs(x.data - timezone.now()) 
+            if delta >= 5 and x.lido == False:
+                notify.send(sender=x.emissor, recipient=utilizador_recetor, verb=x.descricao, action_object=None,
+                    target=None, level="info", description=x.titulo, public=True, timestamp=timezone.now())
+                x.delete()
+    return ""

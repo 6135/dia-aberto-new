@@ -106,7 +106,7 @@
                       <span id="badge-inject" style="display:none;" title="Badge top right"
                         class="badge is-warning">{% live_notify_badge %}</span>
 
-
+                      {{request.user|atualizar_informacoes}}
                       <i class=" mdi mdi-bell mdi-24px"></i>
 
 
@@ -462,10 +462,10 @@
 
 {% block scripts %}
 <script>
-function detalhes_url_notificacoes(item){
-  var tmp = String(item.id)
-  return "{% url 'notificacoes:detalhes-notificacao-automatica' 12345 %}".replace("12345", tmp);
-}
+  function detalhes_url_notificacoes(item) {
+    var tmp = String(item.id)
+    return "{% url 'notificacoes:detalhes-notificacao-automatica' 12345 %}".replace("12345", tmp);
+  }
 </script>
 <script type="text/javascript" src="{% static 'js/notificacoes.js' %}"></script>
 <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>

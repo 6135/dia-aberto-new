@@ -201,18 +201,6 @@ def eliminarSessao(request,id):
 
 #-------------------- versao sem reload
 
-def user_check(request, user_profile = ProfessorUniversitario):
-    if not request.user.is_authenticated:
-        return redirect('utilizadores:login')
-    elif not user_profile.objects.filter(utilizador_ptr_id = request.user.id).exists():
-        return render(request=request,
-                    template_name='mensagem.html',
-                    context={
-                        'tipo':'error',
-                        'm':'Não tem permissões para aceder a esta pagina!'
-                    })
-    return None
-
 
 def proporatividade(request):
 
@@ -270,7 +258,9 @@ def proporatividade(request):
             diasessao=request.POST["diasessao"]
             #print(diasessao)
             new_Sessao= Sessao(vagas=Atividade.objects.get(id= idAtividade.id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=request.POST['horarioid']), atividadeid=Atividade.objects.get(id=idAtividade.id),dia=diasessao)
+            
             new_Sessao.save()
+            views.enviar_notificacao_automatica(request,"validarAtividades",idAtividade) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
             return redirect('atividades:inserirSessao', idAtividade.id)
     else:
         material_object_form= MateriaisForm() 

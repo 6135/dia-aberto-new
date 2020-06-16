@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from configuracao.models import Unidadeorganica,Departamento,Curso
 from django.core.paginator import Paginator
-
+from notificacoes import views
 
 # Verifica se o utilizador que esta logado pertence a pelo menos um dos perfeis mencionados e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
 # Isto faz com que o user que esta logado possa ser qualquer um dos 3 perfeis.
@@ -237,6 +237,11 @@ def criar_utilizador(request, id):
                 p=1
             else:
                 user.valido = 'False'
+                if tipo == 2 or tipo == 3 or tipo == 4: #Enviar Notificacao Automatica !!!!!!!!!
+                    recipient_id = user.departamento.id #Enviar Notificacao Automatica !!!!!!!!!
+                else: #Enviar Notificacao Automatica !!!!!!!!!
+                    recipient_id = -1 #Enviar Notificacao Automatica !!!!!!!!!
+                views.enviar_notificacao_automatica(request,"validarRegistosPendentes",recipient_id) #Enviar Notificacao Automatica !!!!!!!!!
                 user.save()
                 p=0
 
@@ -1030,7 +1035,7 @@ def mudar_perfil_admin(request,tipo,id):
             utilizador_form_object.id=id
             utilizador_form_object.save()  
             my_group.user_set.add(utilizador_form_object)
-            print(utilizador_form_object.id)
+            
             return redirect('utilizadores:mensagem',8) 
         else:
             msg=True
@@ -1164,7 +1169,13 @@ def mudar_perfil(request,tipo):
             utilizador_form_object.id=id
             utilizador_form_object.save()  
             my_group.user_set.add(utilizador_form_object)
-            print(utilizador_form_object.id)
+
+            if tipo == 2 or tipo == 3 or tipo == 4 or tipo == 5: #Enviar Notificacao Automatica !!!!!!!!!
+                if tipo == 2 or tipo == 3 or tipo == 4: #Enviar Notificacao Automatica !!!!!!!!!
+                    recipient_id = utilizador_form_object.departamento.id #Enviar Notificacao Automatica !!!!!!!!!
+                else: #Enviar Notificacao Automatica !!!!!!!!!
+                    recipient_id = -1 #Enviar Notificacao Automatica !!!!!!!!!
+                views.enviar_notificacao_automatica(request,"validarAlteracoesPerfil",recipient_id) #Enviar Notificacao Automatica !!!!!!!!!
             return redirect('utilizadores:mensagem',8) 
         else:
             msg=True
