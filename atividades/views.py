@@ -565,7 +565,7 @@ def verhorarios(request):
             #print(horar)
             for h in horar:             
                 for s in horariosindisponiveis:
-                    print("inicio:"+ str(s.inicio))
+                    print("inicio:"+ str(s.inicio) )
                     if h >= s.inicio and h < s.fim:
                         horar2.append(h)
 
