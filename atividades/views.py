@@ -555,7 +555,7 @@ def verhorarios(request):
                 timefim= TimeC(time=str(sessao.horarioid.fim.hour)+":"+str(sessao.horarioid.fim.minute))    
                 hor= Chorarios(timeinicio,timefim)
                 horariosindisponiveis.append(hor)
-            print(horariosindisponiveis)
+            #print(horariosindisponiveis)
             
             for session_time in Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today).session_times():
                 timelist= TimeC(time=str(session_time))
@@ -565,7 +565,7 @@ def verhorarios(request):
             #print(horar)
             for h in horar:             
                 for s in horariosindisponiveis:
-                    print("inicio:"+ str(s.inicio)+ " timelist:" + str(h))
+                    print("inicio:"+ str(s.inicio))
                     if h >= s.inicio and h < s.fim:
                         horar2.append(h)
 
