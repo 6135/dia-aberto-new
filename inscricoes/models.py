@@ -111,19 +111,13 @@ class Responsavel(models.Model):
 
 class Inscricaoprato(models.Model):
     inscricao = models.ForeignKey(Inscricao, models.CASCADE)
-    # TODO: Descomentar quando a configuração dos pratos estiver pronta
     # prato = models.ForeignKey('configuracao.Prato', models.CASCADE)
     campus = models.ForeignKey('configuracao.Campus', models.CASCADE)
-    npessoas = models.IntegerField(
-        validators=[
-            validators.MinValueValidator(1),
-            validators.MaxValueValidator(300),
-        ]
-    )
+    npratosalunos = models.IntegerField()
+    npratosdocentes = models.IntegerField()
 
     class Meta:
         db_table = 'InscricaoPrato'
-        # TODO: Descomentar quando a configuração dos pratos estiver pronta
         # unique_together = (('inscricao', 'prato'),)
 
 
