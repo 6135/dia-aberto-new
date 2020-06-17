@@ -237,14 +237,10 @@ def criar_utilizador(request, id):
                 p=1
             else:
                 user.valido = 'False'
-                if tipo == 2 or tipo == 3 or tipo == 4: #Enviar Notificacao Automatica !!!!!!!!!
-                    recipient_id = user.departamento.id #Enviar Notificacao Automatica !!!!!!!!!
-                else: #Enviar Notificacao Automatica !!!!!!!!!
-                    recipient_id = -1 #Enviar Notificacao Automatica !!!!!!!!!
-                views.enviar_notificacao_automatica(request,"validarRegistosPendentes",recipient_id) #Enviar Notificacao Automatica !!!!!!!!!
+                recipient_id = user.id #Enviar Notificacao Automatica !!!!!!!!!
                 user.save()
                 p=0
-
+                views.enviar_notificacao_automatica(request,"validarRegistosPendentes",recipient_id) #Enviar Notificacao Automatica !!!!!!!!!
             if request.user.is_authenticated:    
                 user = get_user(request)
                 if user.groups.filter(name = "Coordenador").exists():
@@ -1162,8 +1158,10 @@ def mudar_perfil(request,tipo):
                 utilizador_form_object.faculdade = Unidadeorganica.objects.get(id=submitted_data['faculdade'])
                 utilizador_form_object.departamento = Departamento.objects.get(id=submitted_data['departamento'])
 
-            
-            utilizador_form_object.valido=utilizador_object.valido
+            if tipo == 1:
+                utilizador_form_object.valido="True"
+            else:
+                utilizador_form_object.valido="False"
             utilizador_form_object.password=utilizador_object.password
             utilizador_object.delete()
             utilizador_form_object.id=id
@@ -1171,10 +1169,7 @@ def mudar_perfil(request,tipo):
             my_group.user_set.add(utilizador_form_object)
 
             if tipo == 2 or tipo == 3 or tipo == 4 or tipo == 5: #Enviar Notificacao Automatica !!!!!!!!!
-                if tipo == 2 or tipo == 3 or tipo == 4: #Enviar Notificacao Automatica !!!!!!!!!
-                    recipient_id = utilizador_form_object.departamento.id #Enviar Notificacao Automatica !!!!!!!!!
-                else: #Enviar Notificacao Automatica !!!!!!!!!
-                    recipient_id = -1 #Enviar Notificacao Automatica !!!!!!!!!
+                recipient_id = utilizador_form_object.id #Enviar Notificacao Automatica !!!!!!!!!
                 views.enviar_notificacao_automatica(request,"validarAlteracoesPerfil",recipient_id) #Enviar Notificacao Automatica !!!!!!!!!
             return redirect('utilizadores:logout') 
         else:

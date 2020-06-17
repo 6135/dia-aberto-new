@@ -12,6 +12,7 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 
 
+
 from notifications.signals import notify
 from django.utils import timezone
 
@@ -108,7 +109,7 @@ def enviar_notificacao_mensagem(request, id):
 def enviar_notificacao_automatica(request, sigla, id):
     if request.user.is_authenticated:
         user_sender = get_user(request)
-    else:
+    elif sigla!="validarRegistosPendentes":
         return redirect('utilizadores:mensagem', 5)
     # Enviar notificacao ao cancelar tarefa - colaborador
     if sigla == "cancelarTarefa":
@@ -205,15 +206,16 @@ def enviar_notificacao_automatica(request, sigla, id):
         titulo = "Validação de registos de utilizadores pendentes"
         descricao = "Foram feitos registos de utilizadores na plataforma que necessitam de ser validados."
         administradores = Administrador.objects.all()
-        user_sender = Utilizador.objects.get(id=user_sender.id)
+        user_sender = Utilizador.objects.get(id=id)
         for x in administradores:
-            user_recipient = Utilizador.objects.get(id=x.id)
-            InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
+            user_recipient = Utilizador.objects.get(user_ptr_id=x.utilizador_ptr_id)
+            info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
                               descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "register "+str(id) , lido = False)
-        if id != -1:
-            coordenadores = Coordenador.objects.filter(departamento=Departamento.objects.get(id=id)) 
+            info.save()
+        if user_sender.getProfile() != "Administrador":
+            coordenadores = Coordenador.objects.filter(faculdade=Unidadeorganica.objects.get(id=user_sender.getUser().faculdade.id)) 
             for x in coordenadores: 
-                user_recipient = Utilizador.objects.get(id=x.id)
+                user_recipient = Utilizador.objects.get(user_ptr_id=x.utilizador_ptr_id)
                 info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
                                 descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "register "+str(id) , lido = False)
                 info.save()
@@ -222,13 +224,14 @@ def enviar_notificacao_automatica(request, sigla, id):
         titulo = "Alterações de perfil de utilizadores por validar"
         descricao = "Foram feitas alterações de perfil de utilizadores que necessitam de ser validadas."
         administradores = Administrador.objects.all()
-        user_sender = Utilizador.objects.get(id=user_sender.id)
+        user_sender = Utilizador.objects.get(id=id)
         for x in administradores:
-            user_recipient = Utilizador.objects.get(id=x.id)
-            InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
+            user_recipient = Utilizador.objects.get(user_ptr_id=x.utilizador_ptr_id)
+            info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
                               descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "profile "+str(id) , lido = False)
-        if id != -1:
-            coordenadores = Coordenador.objects.filter(departamento=Departamento.objects.get(id=id)) 
+            info.save()
+        if user_sender.getProfile() != "Administrador":
+            coordenadores = Coordenador.objects.filter(faculdade=Unidadeorganica.objects.get(id=user_sender.getUser().faculdade.id)) 
             for x in coordenadores: 
                 user_recipient = Utilizador.objects.get(id=x.id)
                 info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
