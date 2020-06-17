@@ -23,7 +23,10 @@
         delimiters: ['[[', ']]'],
         data() {
             return {
-                npessoas: parseInt("{{ form.npessoas.value|default_if_none:'0' }}")
+                npratosalunos: parseInt("{{ form.npratosalunos.value|default_if_none:'0' }}"),
+                npratosdocentes: parseInt("{{ form.npratosdocentes.value|default_if_none:'0' }}"),
+                nalunos: parseInt("{{ nalunos|default_if_none:'0' }}"),
+                nresponsaveis: parseInt("{{ nresponsaveis|default_if_none:'0' }}"),
             }
         },
     });
@@ -174,26 +177,26 @@
                     </div>
                     <div class="column">
                         <div class="field">
-                            <label for="{{ form.npessoas.id_for_label }}" class="label">Nº Alunos
+                            <label for="{{ form.npratosalunos.id_for_label }}" class="label">Nº Alunos
                                 ({{precoalunos}}€)</label>
 
                             <div class="field has-addons has-addons-right">
                                 <p class="control">
-                                    <b-numberinput v-model="npessoas" controls-position="compact" min="0"
-                                        name="almoco-npessoas" />
+                                    <b-numberinput v-model="npratosalunos" controls-position="compact" min="0"
+                                        name="almoco-npratosalunos" :max="nalunos" />
                                 </p>
                             </div>
-                            {{ form.npessoas.errors }}
+                            {{ form.npratosalunos.errors }}
                         </div>
                     </div>
                     <div class="column">
                         <div class="field">
-                            <label for="{{ form.npessoas.id_for_label }}" class="label">Nº Docentes
+                            <label for="{{ form.npratosdocentes.id_for_label }}" class="label">Nº Docentes
                                 ({{precoprofessores}}€)</label>
-                            <b-numberinput v-model="npessoas" controls-position="compact" min="0"
-                                name="almoco-npessoas" />
+                            <b-numberinput v-model="npratosdocentes" controls-position="compact" min="0"
+                                name="almoco-npratosdocentes" :max="nresponsaveis" />
                         </div>
-                        {{ form.npessoas.errors }}
+                        {{ form.npratosdocentes.errors }}
                     </div>
                 </div>
                 {% if form.non_field_errors %}

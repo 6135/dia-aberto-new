@@ -173,6 +173,8 @@ class InscricaoWizard(SessionWizardView):
                 'precoprofessores': '%.2f' % diaaberto.precoprofessores,
                 'campi': campi_str,
                 'pratos_info': pratos_info,
+                'nalunos': self.get_cleaned_data_for_step('escola')['nalunos'],
+                'nresponsaveis': 1,
             })
         elif self.steps.current == 'sessoes':
             context.update({
@@ -216,6 +218,10 @@ class InscricaoWizard(SessionWizardView):
                         self.request.POST['escola-diaaberto'] = diaaberto.id
             except ValueError:
                 print(f"ValueError: {self.request.POST.get('escola-dia', '')}")
+        elif self.steps.current == 'almoco' or self.request.POST.get('inscricao_wizard-current_step', '') == 'almoco':
+            self.request.POST['almoco-nalunos'] = self.get_cleaned_data_for_step('escola')[
+                'nalunos']
+            self.request.POST['almoco-nresponsaveis'] = 1
         elif self.steps.current == 'sessoes' or self.request.POST.get('inscricao_wizard-current_step', '') == 'sessoes':
             self.request.POST['sessoes-nalunos'] = self.get_cleaned_data_for_step('escola')[
                 'nalunos']
