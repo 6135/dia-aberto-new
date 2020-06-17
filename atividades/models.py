@@ -71,6 +71,9 @@ class Atividade(models.Model):
         dias = [sessao.dia for sessao in sessoes]
         return [dia for dia in set(dias)]
 
+    def get_campus_str(self):
+        return self.espacoid.edificio.campus.__str__()
+
     #def get_uo(self):
     #    return str(self.professoruniversitarioutilizadorid.faculdade)
     

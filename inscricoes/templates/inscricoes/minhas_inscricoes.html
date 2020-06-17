@@ -1,7 +1,7 @@
 {% extends 'app.html' %}
 {% load django_tables2 %}
 
-{% block title %}- Consultar Inscrições
+{% block title %}- Minhas Inscrições
 {% endblock title %}
 
 {% block content %}
@@ -61,7 +61,7 @@
         <nav aria-label="breadcrumbs" class="breadcrumb">
             <ul>
                 <li><a href="/">Início</a></li>
-                <li class="is-active"><a href="{% url 'inscricoes:consultar-inscricoes' %}">Inscrições</a></li>
+                <li class="is-active"><a href="{% url 'inscricoes:minhas-inscricoes' %}">Minhas Inscrições</a></li>
             </ul>
         </nav>
         {% render_table table %}

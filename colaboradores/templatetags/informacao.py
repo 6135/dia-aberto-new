@@ -36,33 +36,43 @@ def get_due_date_string(value,id):
         return "Esta tarefa é daqui a %s dias" % delta.days
 
 
-@register.filter(name='tarefa_utrapassada')
-def tarefa_utrapassada(value,id):
-    temp= Tarefa.objects.get(id=id)
+@register.filter(name='tarefa_passou')
+def tarefa_passou(value,id):
+    temp = Tarefa.objects.get(id=id)
     if temp.tipo=="tarefaAuxiliar":
         tarefa = TarefaAuxiliar.objects.get(tarefaid=id)
         value = tarefa.sessaoid.dia
-        passou = tarefa.sessaoid.horarioid.inicio.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
+        comecou = tarefa.sessaoid.horarioid.inicio.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
     elif temp.tipo == "tarefaAcompanhar":
         tarefa = TarefaAcompanhar.objects.get(tarefaid=id)  
         value = tarefa.dia 
-        passou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S') 
+        comecou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S') 
     else:
         tarefa = TarefaOutra.objects.get(tarefaid=id)  
         value = tarefa.dia
-        passou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
+        comecou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
     delta = value - date.today()
-
-    if delta.days == 0 and passou == True:
-        return True
-    elif delta.days > 0:
-        return True
-    elif delta.days == 0 and passou == False:
-        return False    
-    else :
-        return None    
+    return comecou == True or delta.days < 0
 
 
+@register.filter(name='iniciar_tarefa')
+def iniciar_tarefa(value,id):
+    temp = Tarefa.objects.get(id=id)
+    if temp.tipo=="tarefaAuxiliar":
+        tarefa = TarefaAuxiliar.objects.get(tarefaid=id)
+        value = tarefa.sessaoid.dia
+        comecou = tarefa.sessaoid.horarioid.inicio.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
+    elif temp.tipo == "tarefaAcompanhar":
+        tarefa = TarefaAcompanhar.objects.get(tarefaid=id)  
+        value = tarefa.dia 
+        comecou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S') 
+    else:
+        tarefa = TarefaOutra.objects.get(tarefaid=id)  
+        value = tarefa.dia
+        comecou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
+    delta = value - date.today()
+    return comecou == True and delta.days == 0
+ 
 @register.filter(name='get_tarefa_auxiliar_prof') 
 def get_tarefa_auxiliar_prof(tarefa,id):
     tarefa = TarefaAuxiliar.objects.get(tarefaid=id)

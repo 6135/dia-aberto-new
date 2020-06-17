@@ -9,7 +9,7 @@ from django.db import models
 from django.core import validators
 import time
 from time import mktime
-from datetime import datetime,timedelta
+from datetime import datetime,timedelta, timezone
 class Transporte(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
@@ -150,6 +150,28 @@ class Diaaberto(models.Model):
                     str((data_inicio+timedelta(days=d)).date())
                 ) for d in range(total_dias.days)
             ]
+    @staticmethod
+    def current():
+        now = datetime.now(timezone.utc)
+        qs = Diaaberto.objects.filter(ano=now.year,datadiaabertofim__gte=now)
+        if qs.exists():
+            return qs.first()
+        else: return None
+
+    @staticmethod
+    def singup_open():
+        now = datetime.now(timezone.utc)
+        current = Diaaberto.current()
+        if current is not None:
+            return current.datainscricaoatividadesinicio <= now and current.datainscricaoatividadesfim > now
+        else: return False
+    @staticmethod
+    def submit_activities_open():
+        now = datetime.now(timezone.utc)
+        current = Diaaberto.current()
+        if current is not None:
+            return current.datapropostasatividadesincio <= now and current.dataporpostaatividadesfim > now
+        else: return False
 
     def days_as_array(self):
         data_inicio = self.datadiaabertoinicio
@@ -195,12 +217,12 @@ class Prato(models.Model):
     # Field name made lowercase.
     prato = models.CharField(db_column='Prato',max_length=255, blank=False, null=False)
     # Field name made lowercase.
-    tipos = {
+    tipos = [
         ('Carne',"Carne"),
         ('Peixe','Peixe'),
         ('Vegetariano', 'Vegetariano'),
         ('Sobremesa', 'Sobremesa'),
-    }
+    ]
     tipo = models.CharField(
         choices=tipos,db_column='Tipo', max_length=255, blank=True, null=False)
     # Field name made lowercase.
@@ -334,6 +356,8 @@ class Unidadeorganica(models.Model):
     def __str__(self):
         return self.nome
 
+    def dep_(self):
+        return Departamento.objects.filter(unidadeorganicaid=self)
 class Curso(models.Model):
 
     id = models.AutoField(db_column='ID', primary_key=True)

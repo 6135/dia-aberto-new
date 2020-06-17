@@ -1,13 +1,12 @@
 from django import template
 from utilizadores.models import *
 from notificacoes.models import *
-
+from coordenadores.models import *
 from distutils.version import StrictVersion  # pylint: disable=no-name-in-module,import-error
 
 from django import get_version
 from django.template import Library
 from django.utils.html import format_html
-
 
 from notifications.signals import notify
 
@@ -17,39 +16,44 @@ try:
 except ImportError:
     from django.core.urlresolvers import reverse  # pylint: disable=no-name-in-module,import-error
 
+from datetime import date, timedelta
+import datetime
+
 register = Library()
 
 
+register = template.Library()
 
 
-def notifications_unread(context):
-    user = user_context(context)
+
+@register.filter(name='notificacoes_lidas') 
+def notificacoes_lidas(user):
+    if user.is_authenticated:    
+            return user.notifications.read()  
+    else:
+        return None
+
+
+@register.filter(name='nr_notificacoes_lidas') 
+def nr_notificacoes_lidas(user):
     if not user:
-        return ''
-    return user.notifications.unread().count()
+        return 0
+    return user.notifications.read().count()
 
-
-if StrictVersion(get_version()) >= StrictVersion('2.0'):
-    notifications_unread = register.simple_tag(takes_context=True)(notifications_unread)  # pylint: disable=invalid-name
-else:
-    notifications_unread = register.assignment_tag(takes_context=True)(notifications_unread)  # noqa
-
-
-@register.filter
-def has_notification(user):
-    if user:
-        return user.notifications.unread().exists()
-    return False
-
+@register.filter(name='nr_notificacoes') 
+def nr_notificacoes(user):
+    if not user:
+        return 0
+    return user.notifications.all().count()
 
 # Requires vanilla-js framework - http://vanilla-js.com/
 @register.simple_tag
-def register_notify_callbacks(badge_class='live_notify_badge',  # pylint: disable=too-many-arguments,missing-docstring
-                              menu_class='live_notify_list',
+def register_notify(badge_class='live_notify_badge',  # pylint: disable=too-many-arguments,missing-docstring
+                              menu_class='notification_list',
                               refresh_period=15,
                               callbacks='',
                               api_name='list',
-                              fetch=5):
+                              fetch=50):
     refresh_period = int(refresh_period) * 1000
 
     if api_name == 'list':
@@ -89,58 +93,39 @@ def live_notify_badge(context, badge_class='live_notify_badge'):
     if not user:
         return ''
 
-    html = "<span class='{badge_class}'>{unread}</span>".format(
-        badge_class=badge_class, unread=user.notifications.unread().count()
-    )
-    return format_html(html)
+    return user.notifications.unread().count()
 
 
 @register.simple_tag
-def live_notify_list(list_class='live_notify_list'):
+def notification_list(list_class='notification_list'):
     html = "<ul class='{list_class}'></ul>".format(list_class=list_class)
     return format_html(html)
 
 
-def user_context(context):
-    if 'user' not in context:
-        return None
-
-    request = context['request']
-    user = request.user
-    try:
-        user_is_anonymous = user.is_anonymous()
-    except TypeError:  # Django >= 1.11
-        user_is_anonymous = user.is_anonymous
-
-    if user_is_anonymous:
-        return None
-    return user
-
-register = template.Library()
 
 
-
-@register.filter(name='get_notificacoes') 
-def get_notificacoes(user, filtro):
+@register.filter(name='atualizar_informacoes') 
+def atualizar_informacoes(user):
     if user.is_authenticated:    
-        if filtro == "Todas":
-            return user.notifications.all() 
-        elif filtro == "False":
-            return user.notifications.unread()
-        else:
-            return user.notifications.read()  
-        
-    else:
-        return None
-
-@register.filter(name='enviar_notificacao') 
-def enviar_notificacao(user, recipient):
-    
-    return True
-
-
-@register.filter(name='nr_notificacoes') 
-def nr_notificacoes(user):
-    if not user:
-        return 0
-    return user.notifications.unread().count()
+        utilizador_recetor = Utilizador.objects.get(id=user.id)
+        info = InformacaoNotificacao.objects.filter(
+                    recetor = utilizador_recetor)
+        for x in info:
+            tmp = x.tipo
+            y = tmp.split()
+            type = y[0]
+            id = parseInt(y[1])
+            if type == "profile" or type == "register":
+                u = Utilizador.objects.get(id = id)
+                if u.valido == "False":
+                    pendente = True
+                elif u.valido == "True":
+                    pendente = False
+                else:
+                    x.delete()
+                    return ""
+            if timezone.now() >= x.data and pendente:
+                notify.send(sender=x.emissor, recipient=utilizador_recetor, verb=x.descricao, action_object=None,
+                    target=None, level="info", description=x.titulo, public=True, timestamp=timezone.now())
+                x.delete()
+    return ""

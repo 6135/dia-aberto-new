@@ -13,6 +13,8 @@ from django.contrib.auth.models import Group
 
 from django.core.paginator import Paginator
 
+from notificacoes import views
+
 # Funcionalidade de consultar tarefas do colaborador atual, funcionalidades de filtros para a a consulta das tarefas
 
 def consultar_tarefas(request):
@@ -22,9 +24,9 @@ def consultar_tarefas(request):
         if user.groups.filter(name = "Colaborador").exists():
             u = "Colaborador"
         else:
-            return redirect('tarefas:mensagem',5)
+            return redirect('utilizadores:mensagem',5)
     else:
-        return redirect('tarefas:mensagem',5)  
+        return redirect('utilizadores:mensagem',5)  
 
 
     if request.method == 'POST':
@@ -96,9 +98,9 @@ def concluir_tarefa(request, id):
         if user.groups.filter(name = "Colaborador").exists():
             u = "Colaborador"       
         else:
-            return redirect('colaboradores:mensagem',5) 
+            return redirect('utilizadores:mensagem',5) 
     else:
-        return redirect('colaboradores:mensagem',5)
+        return redirect('utilizadores:mensagem',5)
 
 
     tarefa = Tarefa.objects.get(id=id)
@@ -118,9 +120,9 @@ def iniciar_tarefa(request, id):
         if user.groups.filter(name = "Colaborador").exists():
             u = "Colaborador"       
         else:
-            return redirect('colaboradores:mensagem',5) 
+            return redirect('utilizadores:mensagem',5) 
     else:
-        return redirect('colaboradores:mensagem',5)
+        return redirect('utilizadores:mensagem',5)
 
 
     tarefa = Tarefa.objects.get(id=id)
@@ -129,87 +131,46 @@ def iniciar_tarefa(request, id):
     return redirect('colaboradores:consultar-tarefas')   
 
 
-
-
-
-
-
 # Funcionalidade de cancelamento de uma tarefa do colaborador
-
-
-
 def cancelar_tarefa(request, id): 
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Colaborador").exists():
             u = "Colaborador"       
         else:
-            return redirect('colaboradores:mensagem',5) 
+            return redirect('utilizadores:mensagem',5) 
     else:
-        return redirect('colaboradores:mensagem',5)
+        return redirect('utilizadores:mensagem',5)
+    # Envio de notificacao automatica
+    views.enviar_notificacao_automatica(request,"cancelarTarefa",id)
+    return redirect('notificacoes:notificar',id) 
 
-    tarefa = Tarefa.objects.get(id=id)
-    tarefa.estado="Cancelada"
-    tarefa.save()
-    return redirect('colaboradores:consultar-tarefas') 
-
-
-
-# Template de mensagens para mostrar mensagem de erro/sucesso/informação
-
-def mensagem(request, id):
+def validar_cancelamento_tarefa(request, id):
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
-            u = "Coordenador"
-        elif user.groups.filter(name = "Administrador").exists():
-            u = "Administrador"
-        elif user.groups.filter(name = "ProfessorUniversitario").exists():
-            u = "ProfessorUniversitario"
-        elif user.groups.filter(name = "Colaborador").exists():
-            u = "Colaborador"
-        elif user.groups.filter(name = "Participante").exists():
-            u = "Participante" 
+            u = "Coordenador"       
         else:
-            u=""     
+            return redirect('utilizadores:mensagem',5) 
     else:
-        u=""
+        return redirect('utilizadores:mensagem',5) 
+    tarefa = Tarefa.objects.get(id=id)
+    tarefa.estado="Cancelada"
+    tarefa.save()
+    views.enviar_notificacao_automatica(request,"confirmarCancelarTarefa",id)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-
-    if id == 1:
+def rejeitar_cancelamento_tarefa(request, id):
+    if request.user.is_authenticated:    
         user = get_user(request)
-        m = "Bem vindo(a) "+user.first_name
-        tipo = "info"
-
-    elif id == 2:
-        m = "Até á próxima!"
-        tipo = "info"
-
-    elif id == 3:
-        m = "Registo feito com sucesso!"
-        tipo = "sucess"
-
-    elif id == 4:
-        m = "É necessário fazer login primeiro"
-        tipo = "error"
-
-    elif id == 5:
-        m = "Não permitido"
-        tipo = "error"
-    elif id == 6:
-        m = "Senha alterada com sucesso!"
-        tipo = "success"    
-    elif id == 7:
-        m = "Conta apagada com sucesso"
-        tipo = "success"   
-    elif id == 8:
-        m = "Perfil alterado com sucesso"
-        tipo = "success" 
-    elif id == 9:
-        m = "Perfil criado com sucesso"
-        tipo = "success"                         
+        if user.groups.filter(name = "Coordenador").exists():
+            u = "Coordenador"       
+        else:
+            return redirect('utilizadores:mensagem',5) 
     else:
-        return redirect('utilizadores:login')
- 
-    return render(request=request,
-        template_name="colaboradores/mensagem.html", context={'m': m, 'tipo': tipo ,'u': u})
+        return redirect('utilizadores:mensagem',5) 
+    views.enviar_notificacao_automatica(request,"rejeitarCancelarTarefa",id)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+

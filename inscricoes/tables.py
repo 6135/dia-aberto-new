@@ -3,12 +3,14 @@ from .models import Inscricao, Escola
 from configuracao.models import Diaaberto, Departamento, Unidadeorganica, Campus
 from atividades.models import Atividade
 import itertools
-from django_tables2.utils import Accessor
+from django.utils.html import format_html
+from django.urls import reverse
 
 
 class DepartamentoTable(tables.Table):
     #nome = tables.Column(verbose_name='Departamento')
     sigla = tables.Column(verbose_name='Departamento')
+
     class Meta:
         model = Departamento
 
@@ -16,43 +18,72 @@ class DepartamentoTable(tables.Table):
         self.columns.hide('id')
         self.columns.hide('unidadeorganicaid')
         self.columns.hide('nome')
-        #self.columns.hide('atividadeid')
+        # self.columns.hide('atividadeid')
 
 
 class InscricoesTable(tables.Table):
-    
-    Grupo = tables.Column('Grupo', accessor='id')
-    #departamento = tables.Column(accessor='departamento.id')
+    grupo = tables.Column('Grupo', accessor='id')
+    #departamento = tables.Column(accessor='departamento__id')
     # dia = tables.Column()
     # hora = tables.Column()
-    Turma = tables.Column(accessor='turma')
-    Escola = tables.Column('Escola',accessor='escola.nome')
-    nalunos = tables.Column(verbose_name='Nº Alunos')
-    areacientifica = tables.Column(verbose_name='Área Científica')
+    nalunos = tables.Column(verbose_name='Qtd', attrs={
+                            "abbr": {"title": "Quantidade"}})
     #participante = tables.Column(accessor='participante.nome')
     #NumDocentes = tables.Column('Nº Docentes', accessor='inscricao.nresponsaveis')
     #nome = tables.Column('Departamento',accessor='departamento.nome')
-    
+    acoes = tables.Column('Ações', empty_values=(),
+                          orderable=False, attrs={"td": {"style": "width: 80px"}})
+    turma = tables.Column(empty_values=())
+
     class Meta:
         model = Inscricao
-        sequence = ('Grupo', 'Escola', 'areacientifica', 'ano', 'Turma',  'nalunos')
-        attrs = {"class": "paleblue"}
-      
+        sequence = ('grupo', 'dia', 'escola', 'areacientifica',
+                    'turma', 'nalunos', 'acoes')
+
     def before_render(self, request):
-        #self.columns.hide('areacientifica')
         self.columns.hide('id')
-        self.columns.hide('escola')
-        self.columns.hide('turma')
-    
+        self.columns.hide('ano')
+        self.columns.hide('areacientifica')
+        self.columns.hide('participante')
+        self.columns.hide('diaaberto')
+        self.columns.hide('meio_transporte')
+        self.columns.hide('hora_chegada')
+        self.columns.hide('local_chegada')
+        self.columns.hide('entrecampi')
+        self.columns.hide('individual')
 
+    def render_acoes(self, record):
+        return format_html(f"""
+        <div>
+            <a href='{reverse("inscricoes:alterar-inscricao", kwargs={"pk": record.pk})}'>
+                <span class="icon has-text-warning">
+                    <i class="mdi mdi-pencil mdi-24px"></i>
+                </span>
+            </a>
+            <a onclick="alert.render('Tem a certeza que pretende eliminar esta inscrição?','{reverse("inscricoes:apagar-inscricao", kwargs={"pk": record.pk})}')">
+                <span class="icon has-text-danger">
+                    <i class="mdi mdi-close-box mdi-24px"></i>
+                </span>
+            </a>
+        </div>
+        """)
 
+    def render_participante(self, value):
+        return format_html(f"{value.first_name} {value.last_name}")
+
+    def render_turma(self, value, record):
+        if not record.ano:
+            return format_html("(Individual)")
+        return format_html(f"{record.ano}º {value}, {record.areacientifica}")
 
 
 class DiaAbertoTable(tables.Table):
-    datadiaabertoinicio = tables.DateColumn(verbose_name='Dia/Hora', format ='d/m/Y, h:i' )
+    datadiaabertoinicio = tables.DateColumn(
+        verbose_name='Dia/Hora', format='d/m/Y, h:i')
+
     class Meta:
         model = Diaaberto
-    
+
     def before_render(self, request):
         self.columns.hide('id')
         self.columns.hide('enderecopaginaweb')
@@ -68,5 +99,3 @@ class DiaAbertoTable(tables.Table):
         self.columns.hide('precoalunos')
         self.columns.hide('precoprofessores')
         self.columns.hide('escalasessoes')
-    
-

@@ -14,7 +14,7 @@ from django.forms.models import modelformset_factory
 from django.forms.widgets import Select
 from atividades.forms import SessaoForm
 
-
+from notificacoes import views
 
 #-------------Diogo----------------------
 
@@ -127,6 +127,11 @@ def atividadescoordenador(request):
             context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm})
 
 def alterarAtividade(request,id):
+    user_check_var = user_check(request=request, user_profile=ProfessorUniversitario)
+    if user_check_var is not None: return user_check_var
+    activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
+    if activity_object.professoruniversitarioutilizadorid != ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
+        return redirect("utilizadores:home")
     #------atividade a alterar----
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
@@ -156,6 +161,7 @@ def alterarAtividade(request,id):
                 activity_object_formed.dataalteracao = datetime.now()
                 activity_object_formed.save()
                 materiais_object_form.save()
+                views.enviar_notificacao_automatica(request,"atividadeAlterada",id) #Enviar Notificacao Automatica !!!!!!
                 return redirect('atividades:inserirSessao',id)          
     return render(request=request,
                     template_name='atividades/proporAtividadeAtividade.html',
@@ -163,8 +169,15 @@ def alterarAtividade(request,id):
                     )
 
 def eliminarAtividade(request,id):
-    Atividade.objects.get(id=id).delete() #Dupla (sessao,atividade)
-    return HttpResponseRedirect('atividades:minhasatividades')
+    user_check_var = user_check(request=request, user_profile=ProfessorUniversitario)
+    if user_check_var is not None: return user_check_var
+    prof=Atividade.objects.get(id=id).professoruniversitarioutilizadorid
+    if prof == ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
+        Atividade.objects.get(id=id).delete() #Dupla (sessao,atividade)
+        views.enviar_notificacao_automatica(request,"atividadeApagada",id) #Enviar Notificacao Automatica !!!!!!
+    return redirect('atividades:minhasAtividades')
+    
+
 
 
 def eliminarSessao(request,id):
@@ -240,6 +253,7 @@ def proporatividade(request):
                 new_Horario= horario
             new_Sessao= Sessao(vagas=idAtividade.participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=new_Horario.id), atividadeid=idAtividade,dia=diasessao)
             new_Sessao.save()
+            views.enviar_notificacao_automatica(request,"validarAtividades",idAtividade) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
             return redirect('atividades:inserirSessao', idAtividade.id)
     else:
         material_object_form= MateriaisForm() 
@@ -376,7 +390,7 @@ def horariofim(inicio,duracao):
     hora=int(calculo/60)
     minutos= int(calculo%60)
     fim= str(hora)+":"+str(minutos)
-    return fim;
+    return fim
 
 def inserirsessao(request,id):
     is_empty = Sessao.objects.filter(atividadeid=id).count() < 2
@@ -591,8 +605,10 @@ def verhorarios(request):
 def validaratividade(request,id, action):
     atividade=Atividade.objects.get(id=id)
     if action==0:
+        views.enviar_notificacao_automatica(request,"rejeitarAtividade",id) #Enviar Notificacao Automatica !!!!!!
         atividade.estado='Recusada'
     if action==1:
+        views.enviar_notificacao_automatica(request,"confirmarAtividade",id) #Enviar Notificacao Automatica !!!!!!
         atividade.estado='Aceite'
     atividade.save()
     return redirect('minhasAtividades')

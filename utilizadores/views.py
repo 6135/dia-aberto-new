@@ -10,8 +10,31 @@ from django.conf import settings
 from django.contrib.auth.models import Group
 from configuracao.models import Unidadeorganica,Departamento,Curso
 from django.core.paginator import Paginator
+from notificacoes import views
 
+# Verifica se o utilizador que esta logado pertence a pelo menos um dos perfeis mencionados 
+# e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
+# Isto faz com que o user que esta logado possa ser qualquer um dos 3 perfeis.
 
+def user_check(request, user_profile = None):
+    print('check')
+    print(user_profile)
+    if not request.user.is_authenticated:
+        return {'exists': False, 'render': redirect('utilizadores:login')}
+    elif user_profile is not None:
+        matches_profile = False
+        for profile in user_profile:
+            if profile.objects.filter(utilizador_ptr_id = request.user.id).exists():
+                return {'exists': True, 'firstProfile': profile.objects.filter(utilizador_ptr_id = request.user.id).first()}
+        return {'exists': False, 
+                'render': render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para aceder a esta pagina!'
+                            })
+                }
+    raise Exception('Unknown Error!')
 
 # Carregar todos os departamentos para uma determinada faculdade 
 
@@ -216,9 +239,10 @@ def criar_utilizador(request, id):
                 p=1
             else:
                 user.valido = 'False'
+                recipient_id = user.id #Enviar Notificacao Automatica !!!!!!!!!
                 user.save()
                 p=0
-
+                views.enviar_notificacao_automatica(request,"validarRegistosPendentes",recipient_id) #Enviar Notificacao Automatica !!!!!!!!!
             if request.user.is_authenticated:    
                 user = get_user(request)
                 if user.groups.filter(name = "Coordenador").exists():
@@ -1009,7 +1033,7 @@ def mudar_perfil_admin(request,tipo,id):
             utilizador_form_object.id=id
             utilizador_form_object.save()  
             my_group.user_set.add(utilizador_form_object)
-            print(utilizador_form_object.id)
+            
             return redirect('utilizadores:mensagem',8) 
         else:
             msg=True
@@ -1136,15 +1160,20 @@ def mudar_perfil(request,tipo):
                 utilizador_form_object.faculdade = Unidadeorganica.objects.get(id=submitted_data['faculdade'])
                 utilizador_form_object.departamento = Departamento.objects.get(id=submitted_data['departamento'])
 
-            
-            utilizador_form_object.valido=utilizador_object.valido
+            if tipo == 1:
+                utilizador_form_object.valido="True"
+            else:
+                utilizador_form_object.valido="False"
             utilizador_form_object.password=utilizador_object.password
             utilizador_object.delete()
             utilizador_form_object.id=id
             utilizador_form_object.save()  
             my_group.user_set.add(utilizador_form_object)
-            print(utilizador_form_object.id)
-            return redirect('utilizadores:mensagem',8) 
+
+            if tipo == 2 or tipo == 3 or tipo == 4 or tipo == 5: #Enviar Notificacao Automatica !!!!!!!!!
+                recipient_id = utilizador_form_object.id #Enviar Notificacao Automatica !!!!!!!!!
+                views.enviar_notificacao_automatica(request,"validarAlteracoesPerfil",recipient_id) #Enviar Notificacao Automatica !!!!!!!!!
+            return redirect('utilizadores:logout') 
         else:
             msg=True
             return render(request=request,
