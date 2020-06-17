@@ -15,20 +15,9 @@ from django.forms.widgets import Select
 from atividades.forms import SessaoForm
 
 from notificacoes import views
+from utilizadores import views as uviews
 
 #-------------Diogo----------------------
-
-def user_check(request, user_profile = ProfessorUniversitario):
-    if not request.user.is_authenticated:
-        return redirect('utilizadores:login')
-    elif not user_profile.objects.filter(utilizador_ptr_id = request.user.id).exists():
-        return render(request=request,
-                    template_name='mensagem.html',
-                    context={
-                        'tipo':'error',
-                        'm':'Não tem permissões para aceder a esta pagina!'
-                    })
-    return None
 
 def filters(request):
     filters=[]
@@ -127,8 +116,8 @@ def atividadescoordenador(request):
             context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm})
 
 def alterarAtividade(request,id):
-    user_check_var = user_check(request=request, user_profile=ProfessorUniversitario)
-    if user_check_var is not None: return user_check_var
+    user_check_var = uviews.user_check(request=request, user_profile=ProfessorUniversitario)
+    if user_check_var.get('exists') == False: return user_check_var.get('render')
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     if activity_object.professoruniversitarioutilizadorid != ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
         return redirect("utilizadores:home")
@@ -169,8 +158,8 @@ def alterarAtividade(request,id):
                     )
 
 def eliminarAtividade(request,id):
-    user_check_var = user_check(request=request, user_profile=ProfessorUniversitario)
-    if user_check_var is not None: return user_check_var
+    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    if user_check_var.get('exists') == False: return user_check_var.get('render')
     prof=Atividade.objects.get(id=id).professoruniversitarioutilizadorid
     if prof == ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
         Atividade.objects.get(id=id).delete() #Dupla (sessao,atividade)
@@ -188,8 +177,8 @@ def eliminarSessao(request,id):
 
 def proporatividade(request):
     
-    user_check_var = user_check(request=request, user_profile=ProfessorUniversitario)
-    if user_check_var is not None: return user_check_var
+    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    if user_check_var.get('exists') == False: return user_check_var.get('render')
 
     today= datetime.now(timezone.utc) 
     diaabertopropostas=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
@@ -253,7 +242,7 @@ def proporatividade(request):
                 new_Horario= horario
             new_Sessao= Sessao(vagas=idAtividade.participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=new_Horario.id), atividadeid=idAtividade,dia=diasessao)
             new_Sessao.save()
-            views.enviar_notificacao_automatica(request,"validarAtividades",idAtividade) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
+            #views.enviar_notificacao_automatica(request,"validarAtividades",idAtividade) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
             return redirect('atividades:inserirSessao', idAtividade.id)
     else:
         material_object_form= MateriaisForm() 
@@ -301,8 +290,8 @@ def proporatividade(request):
 #    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
 #    dias_diaaberto = diaaberto.days_as_array()
 #
-#    user_check_var = user_check(request=request, user_profile=ProfessorUniversitario)
-#    if user_check_var is not None: return user_check_var
+#    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+#    if user_check_var.get('exists') == False: return user_check_var.get('render')
 #
 #    logged_prof = ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id)
 #    sessoes = ""
