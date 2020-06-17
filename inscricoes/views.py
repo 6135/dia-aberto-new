@@ -256,9 +256,10 @@ class InscricaoWizard(SessionWizardView):
                     sessao.save()
                 inscricao_sessao.save()
         responsaveis.inscricao = inscricao
-        almoco.inscricao = inscricao
         responsaveis.save()
-        almoco.save()
+        if almoco is not None:
+            almoco.inscricao = inscricao
+            almoco.save()
         # TODO: Construir PDF
         return render(self.request, 'inscricoes/inscricao_submetida.html', {'inscricaoid': inscricao.pk})
 
