@@ -78,7 +78,7 @@
                 tipos: JSON.parse("{{tipos|escapejs}}"),
                 maisFiltrosAtividade: false,
                 maisFiltrosSessao: false,
-                nalunos: {{nalunos}},
+                nalunos: parseInt("{{nalunos}}"),
             }
         },
         methods: {
@@ -192,7 +192,7 @@
     <nav aria-label="breadcrumbs" class="breadcrumb">
         <ul>
             <li><a href="/" class="router-link-active">Início</a></li>
-            <li class="is-active"><a href="/inscricao" class="router-link-exact-active router-link-active">Minha
+            <li class="is-active"><a href="/inscricao" class="router-link-exact-active router-link-active">Criar
                     Inscrição</a></li>
         </ul>
     </nav>
@@ -205,17 +205,17 @@
                     </span>
                 </div>
                 <div class="step-details">
-                    <p class="step-title">Responsáveis</p>
+                    <p class="step-title">{% if individual %}Responsável{% else %}Responsáveis{% endif %}</p>
                 </div>
             </div>
             <div class="step-item is-success is-completed" onclick="navigate_step('escola')">
                 <div class="step-marker">
                     <span class="icon">
-                        <i class="mdi mdi-school"></i>
+                        <i class="mdi {% if individual %}mdi-ballot{% else %}mdi-school{% endif %}"></i>
                     </span>
                 </div>
                 <div class="step-details">
-                    <p class="step-title">Escola</p>
+                    <p class="step-title">{% if individual %}Inscrição{% else %}Escola{% endif %}</p>
                 </div>
             </div>
             <div class="step-item is-success is-completed" onclick="navigate_step('transporte')">
@@ -264,13 +264,13 @@
             {% csrf_token %}
             {{ wizard.management_form }}
             {% if form.non_field_errors %}
-                <div style="margin: 20px 20px; text-align: center;">
-                    <div class="message is-danger">
-                        <div class="message-body">
-                            {{ form.non_field_errors }}
-                        </div>
+            <div style="margin: 20px 20px; text-align: center;">
+                <div class="message is-danger">
+                    <div class="message-body">
+                        {{ form.non_field_errors }}
                     </div>
                 </div>
+            </div>
             {% endif %}
             <div id="vue-app">
                 <input type="hidden" name="sessoes-sessoes" :value="JSON.stringify(inscritos)">
@@ -461,7 +461,8 @@
                         <b-table-column label="Inscritos">
                             <b-field>
                                 <b-numberinput v-model="inscritos[props.row.sessao.id]" min="0"
-                                    :max="Math.min(props.row.sessao.vagas, nalunos)" style="width: 10rem" controls-position="compact"
+                                    :max="Math.min(props.row.sessao.vagas, nalunos)" style="width: 10rem"
+                                    controls-position="compact"
                                     @blur="mudarInscritos(props.row.atividade, props.row.sessao)" />
                             </b-field>
                         </b-table-column>
@@ -479,13 +480,13 @@
                     </template>
                 </b-table>
                 {% if form.non_field_errors %}
-                    <div style="margin: 20px 20px; text-align: center;">
-                        <div class="message is-danger">
-                            <div class="message-body">
-                                {{ form.non_field_errors }}
-                            </div>
+                <div style="margin: 20px 20px; text-align: center;">
+                    <div class="message is-danger">
+                        <div class="message-body">
+                            {{ form.non_field_errors }}
                         </div>
                     </div>
+                </div>
                 {% endif %}
                 <hr />
                 <div class="column is-8 is-offset-2">

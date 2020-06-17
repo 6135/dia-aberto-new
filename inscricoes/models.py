@@ -17,16 +17,18 @@ class Escola(models.Model):
 
 
 class Inscricao(models.Model):
+    individual = models.BooleanField()
     nalunos = models.IntegerField()
     escola = models.ForeignKey(Escola, models.CASCADE)
     ano = models.IntegerField(
         validators=[
             validators.MinValueValidator(1),
             validators.MaxValueValidator(12)
-        ]
+        ], default=None, blank=True, null=True
     )
-    turma = models.CharField(max_length=1)
-    areacientifica = models.CharField(max_length=64)
+    turma = models.CharField(max_length=1, default=None, blank=True, null=True)
+    areacientifica = models.CharField(
+        max_length=64, default=None, blank=True, null=True)
     participante = models.ForeignKey(
         'utilizadores.Participante', models.CASCADE)
     dia = models.DateField()

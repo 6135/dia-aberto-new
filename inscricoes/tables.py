@@ -33,6 +33,7 @@ class InscricoesTable(tables.Table):
     #nome = tables.Column('Departamento',accessor='departamento.nome')
     acoes = tables.Column('Ações', empty_values=(),
                           orderable=False, attrs={"td": {"style": "width: 80px"}})
+    turma = tables.Column(empty_values=())
 
     class Meta:
         model = Inscricao
@@ -49,6 +50,7 @@ class InscricoesTable(tables.Table):
         self.columns.hide('hora_chegada')
         self.columns.hide('local_chegada')
         self.columns.hide('entrecampi')
+        self.columns.hide('individual')
 
     def render_acoes(self, record):
         return format_html(f"""
@@ -70,6 +72,8 @@ class InscricoesTable(tables.Table):
         return format_html(f"{value.first_name} {value.last_name}")
 
     def render_turma(self, value, record):
+        if not record.ano:
+            return format_html("(Individual)")
         return format_html(f"{record.ano}º {value}, {record.areacientifica}")
 
 
