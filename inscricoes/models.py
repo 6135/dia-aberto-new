@@ -67,6 +67,7 @@ class Inscricao(models.Model):
             if sessao.sessao.horarioid not in horarios:
                 horarios.append(
                     {'key': sessao.sessao.horarioid.fim, 'value': sessao.sessao.horarioid.fim})
+        #horarios.pop()
         return horarios
 
     def get_origem(self, dia, horario):
