@@ -120,6 +120,7 @@ class AlterarInscricaoWizard(SessionWizardView):
 
 class InscricaoWizard(SessionWizardView):
     form_list = [
+        ('info', forms.InfoForm),
         ('responsaveis', forms.ResponsavelForm),
         ('escola', forms.InscricaoForm),
         ('transporte', forms.TransporteForm),
@@ -183,6 +184,10 @@ class InscricaoWizard(SessionWizardView):
                 'departamentos': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Departamento.objects.all()))),
                 'tipos': json.dumps(list(map(lambda x: x[0], Atividade.tipos))),
                 'nalunos': self.get_cleaned_data_for_step('escola')['nalunos'],
+            })
+        if self.steps.current != 'info':
+            context.update({
+                'individual': self.get_cleaned_data_for_step('info')['individual']
             })
         visited = []
         for step in self.form_list:

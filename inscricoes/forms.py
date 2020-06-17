@@ -12,6 +12,10 @@ import pytz
 from datetime import datetime
 
 
+class InfoForm(forms.Form):
+    individual = forms.BooleanField(required=False)
+
+
 class ResponsavelForm(forms.ModelForm):
     class Meta:
         model = models.Responsavel
