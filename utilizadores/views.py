@@ -1176,7 +1176,7 @@ def mudar_perfil(request,tipo):
                 else: #Enviar Notificacao Automatica !!!!!!!!!
                     recipient_id = -1 #Enviar Notificacao Automatica !!!!!!!!!
                 views.enviar_notificacao_automatica(request,"validarAlteracoesPerfil",recipient_id) #Enviar Notificacao Automatica !!!!!!!!!
-            return redirect('utilizadores:mensagem',8) 
+            return redirect('utilizadores:logout') 
         else:
             msg=True
             return render(request=request,

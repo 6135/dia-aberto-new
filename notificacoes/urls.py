@@ -22,4 +22,6 @@ urlpatterns = [
          name='ler-notificacoes'),
     path('', views.detalhes,
          name='detalhes-automatica'),
+    path('notificar_teste/<str:sigla>/<int:id>', views.enviar_notificacao_automatica,
+         name='notificar'),
 ]

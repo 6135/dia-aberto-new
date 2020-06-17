@@ -205,31 +205,35 @@ def enviar_notificacao_automatica(request, sigla, id):
         titulo = "Validação de registos de utilizadores pendentes"
         descricao = "Foram feitos registos de utilizadores na plataforma que necessitam de ser validados."
         administradores = Administrador.objects.all()
+        user_sender = Utilizador.objects.get(id=user_sender.id)
         for x in administradores:
             user_recipient = Utilizador.objects.get(id=x.id)
             InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
-                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "register "+id , lido = False)
+                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "register "+str(id) , lido = False)
         if id != -1:
             coordenadores = Coordenador.objects.filter(departamento=Departamento.objects.get(id=id)) 
             for x in coordenadores: 
                 user_recipient = Utilizador.objects.get(id=x.id)
-                InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
-                                descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "register "+id , lido = False)
+                info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
+                                descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "register "+str(id) , lido = False)
+                info.save()
     # Enviar notificação quando há alterações de perfil de utilizador por validar - administrador e ao coordenador ( 5 dias depois de alterado se ainda tiver pendente )
     elif sigla == "validarAlteracoesPerfil":  # timezone.now() + timedelta(days=5)
         titulo = "Alterações de perfil de utilizadores por validar"
         descricao = "Foram feitas alterações de perfil de utilizadores que necessitam de ser validadas."
         administradores = Administrador.objects.all()
+        user_sender = Utilizador.objects.get(id=user_sender.id)
         for x in administradores:
             user_recipient = Utilizador.objects.get(id=x.id)
             InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
-                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "profile "+id , lido = False)
+                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "profile "+str(id) , lido = False)
         if id != -1:
             coordenadores = Coordenador.objects.filter(departamento=Departamento.objects.get(id=id)) 
             for x in coordenadores: 
                 user_recipient = Utilizador.objects.get(id=x.id)
-                InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
-                                descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "profile "+id , lido = False)
+                info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
+                                descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "profile "+str(id) , lido = False)
+                info.save()
     # Enviar notificação atividades por validar pendentes - coordenador (5 dias depois de criada a atividade se ainda tiver pendente)
     elif sigla == "validarAtividades":
         titulo = "Existem atividades por validar"
@@ -237,5 +241,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         descricao = "Foram criadas propostas de atividades que têm de ser validadas."
         user_recipient = Utilizador.objects.get(
             id=atividade.coordenadorutilizadorid.id)
-        InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
-                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "activitie "+id , lido = False)
+        user_sender = Utilizador.objects.get(id=user_sender.id)
+        info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
+                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "actividade "+str(id) , lido = False)
+        info.save()

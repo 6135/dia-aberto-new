@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.utils import timezone
 from notifications.base.models import AbstractNotification
 
 
@@ -36,7 +36,7 @@ class MensagemEnviada(models.Model):
 # em tempo real e é apaga desta tabela da base de dados
 class InformacaoNotificacao(models.Model):
     id = models.AutoField(db_column='id', primary_key=True)
-    data = models.DateTimeField(db_column='data')
+    data = models.DateTimeField(default=timezone.now, db_index=True)
     pendente = models.BooleanField(db_column='pendente', null=False)
     titulo 	= models.CharField(db_column='titulo', max_length=255)
     descricao = models.CharField(db_column='descricao', max_length=255)
