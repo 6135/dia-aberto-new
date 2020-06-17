@@ -12,10 +12,13 @@ from configuracao.models import Unidadeorganica,Departamento,Curso
 from django.core.paginator import Paginator
 from notificacoes import views
 
-# Verifica se o utilizador que esta logado pertence a pelo menos um dos perfeis mencionados e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
+# Verifica se o utilizador que esta logado pertence a pelo menos um dos perfeis mencionados 
+# e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
 # Isto faz com que o user que esta logado possa ser qualquer um dos 3 perfeis.
 
 def user_check(request, user_profile = None):
+    print('check')
+    print(user_profile)
     if not request.user.is_authenticated:
         return {'exists': False, 'render': redirect('utilizadores:login')}
     elif user_profile is not None:
@@ -31,8 +34,7 @@ def user_check(request, user_profile = None):
                                 'm':'Não tem permissões para aceder a esta pagina!'
                             })
                 }
-    return {'exists': False, 'render': render()}
-
+    raise Exception('Unknown Error!')
 
 # Carregar todos os departamentos para uma determinada faculdade 
 
