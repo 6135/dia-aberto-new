@@ -23,13 +23,12 @@
     <div class="navbar-start">
 
       {% if request.user|has_group:'Participante' %}
-      {% if request.user|inscrito %}
-      <a href="{% url 'inscricoes:alterar-inscricao' request.user|inscricao %}" class="navbar-item">
-        Minha Inscrição
-      </a>
-      {% else %}
       <a href="{% url 'inscricoes:criar-inscricao' %}" class="navbar-item">
         Criar Inscrição
+      </a>
+      {% if request.user|inscrito %}
+      <a href="{% url 'inscricoes:minhas-inscricoes' %}" class="navbar-item">
+        Minhas Inscrições
       </a>
       {% endif %}
       {% elif request.user|has_group:'Colaborador'%}

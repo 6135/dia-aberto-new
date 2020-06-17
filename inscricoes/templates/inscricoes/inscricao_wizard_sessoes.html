@@ -397,7 +397,7 @@
                                 :per-page="perPage" aria-next-label="Next page" aria-previous-label="Previous page"
                                 aria-page-label="Page" aria-current-label="Current page">
                                 <template slot-scope="props">
-                                    <b-table-column field="nome" label="Nome" sortable>
+                                    <b-table-column field="nome" label="Atividade" sortable>
                                         [[ props.row.nome ]]
                                     </b-table-column>
                                     <b-table-column field="tipo" label="Tipo" sortable>
@@ -406,11 +406,14 @@
                                     <b-table-column field="publicoalvo" label="Público Alvo" sortable>
                                         [[ props.row.publicoalvo ]]
                                     </b-table-column>
+                                    <b-table-column field="campus" label="Campus" sortable>
+                                        [[ props.row.campus ]]
+                                    </b-table-column>
                                 </template>
                                 <template slot="detail" slot-scope="props">
                                     <div class="content">
                                         <div style="font-size: 15px">
-                                            <p>[[ props.row.descricao ]]</p>
+                                            <p><strong>Descrição: </strong>[[ props.row.descricao ]]</p>
                                             {% comment %} <p><strong>Responsável:</strong> [[ props.row.creator ]]</p>
                                             {% endcomment %}
                                             <b-table :data="props.row.sessao_set" sort-icon="menu-up"

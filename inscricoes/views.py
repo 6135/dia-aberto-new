@@ -1,4 +1,4 @@
-from configuracao.models import Campus, Departamento, Unidadeorganica, Diaaberto
+from configuracao.models import Campus, Departamento, Diaaberto, Menu, Prato, Unidadeorganica
 from atividades.models import Atividade, Sessao
 import django_filters.rest_framework as djangofilters
 from rest_framework import filters, pagination
@@ -153,6 +153,29 @@ class InscricaoWizard(SessionWizardView):
                 'inicio': prox_diaaberto.datadiaabertoinicio.strftime("%d/%m/%Y"),
                 'fim': prox_diaaberto.datadiaabertofim.strftime("%d/%m/%Y"),
             })
+        elif self.steps.current == 'almoco':
+            diaaberto = Diaaberto.current()
+            campi = Campus.objects.all()
+            pratos_info = {}
+            for tipoid, tipo in Prato.tipos:
+                pratos_info[tipo] = {}
+                for campus in campi:
+                    pratos_info[tipo][campus] = []
+                    menu_filter = Menu.objects.filter(
+                        diaaberto=diaaberto, campus=campus)
+                    if menu_filter.exists():
+                        menu = menu_filter.first()
+                        for prato in menu.prato_set.filter(tipo=tipoid):
+                            pratos_info[tipo][campus].append(prato.__str__())
+            campi_str = list(map(lambda x: x.nome, Campus.objects.all()))
+            context.update({
+                'precoalunos': '%.2f' % diaaberto.precoalunos,
+                'precoprofessores': '%.2f' % diaaberto.precoprofessores,
+                'campi': campi_str,
+                'pratos_info': pratos_info,
+                'nalunos': self.get_cleaned_data_for_step('escola')['nalunos'],
+                'nresponsaveis': 1,
+            })
         elif self.steps.current == 'sessoes':
             context.update({
                 'campus': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Campus.objects.all()))),
@@ -195,6 +218,10 @@ class InscricaoWizard(SessionWizardView):
                         self.request.POST['escola-diaaberto'] = diaaberto.id
             except ValueError:
                 print(f"ValueError: {self.request.POST.get('escola-dia', '')}")
+        elif self.steps.current == 'almoco' or self.request.POST.get('inscricao_wizard-current_step', '') == 'almoco':
+            self.request.POST['almoco-nalunos'] = self.get_cleaned_data_for_step('escola')[
+                'nalunos']
+            self.request.POST['almoco-nresponsaveis'] = 1
         elif self.steps.current == 'sessoes' or self.request.POST.get('inscricao_wizard-current_step', '') == 'sessoes':
             self.request.POST['sessoes-nalunos'] = self.get_cleaned_data_for_step('escola')[
                 'nalunos']
@@ -237,7 +264,6 @@ class InscricaoWizard(SessionWizardView):
 
 
 class ConsultarInscricoesListView(SingleTableMixin, FilterView):
-    model = Inscricao
     table_class = InscricoesTable
     template_name = 'inscricoes/consultar_inscricoes.html'
 
@@ -246,6 +272,20 @@ class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     table_pagination = {
         'per_page': 8
     }
+
+
+class MinhasInscricoes(SingleTableMixin, FilterView):
+    table_class = InscricoesTable
+    template_name = 'inscricoes/minhas_inscricoes.html'
+
+    filterset_class = InscricaoFilter
+
+    table_pagination = {
+        'per_page': 8
+    }
+
+    def get_queryset(self):
+        return Inscricao.objects.filter(participante__user_ptr=self.request.user)
 
 
 def ApagarInscricao(request, pk):
