@@ -44,6 +44,9 @@ class InscricaoForm(forms.ModelForm):
             else:
                 raise ValidationError(
                     _(f"A data que escolheu não faz parte do Dia Aberto."))
+        if not cleaned_data.get('individual', False) and (not cleaned_data.get('ano', False) or not cleaned_data.get('turma', False) or not cleaned_data.get('areacientifica', False)):
+            raise ValidationError(
+                _("Por favor, introduza toda a informação da turma."))
 
     def save(self, commit=True):
         self.instance.escola = models.Escola.objects.get_or_create(
@@ -74,6 +77,7 @@ class AlmocoForm(forms.ModelForm):
     campus = CampusField(queryset=Campus.objects.all(), required=False)
     nalunos = forms.IntegerField()
     nresponsaveis = forms.IntegerField()
+    individual = forms.BooleanField(required=False)
 
     class Meta:
         model = models.Inscricaoprato
@@ -81,12 +85,20 @@ class AlmocoForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(AlmocoForm, self).clean()
-        if cleaned_data['npratosalunos'] > cleaned_data['nalunos']:
+        if (cleaned_data['npratosalunos'] > 0 or cleaned_data['npratosdocentes'] > 0) and not cleaned_data['campus']:
             raise forms.ValidationError(
-                _("O número de alunos inscritos no almoço excede o número de alunos disponíveis"))
-        if cleaned_data['npratosdocentes'] > cleaned_data['nresponsaveis']:
-            raise forms.ValidationError(
-                _("O número de docentes inscritos no almoço excede o número de docentes disponíveis"))
+                _("Por favor, indique o Campus se 1 ou mais pessoas pretendem almoçar na Universidade."))
+        if not cleaned_data['individual']:
+            if cleaned_data['npratosalunos'] > cleaned_data['nalunos']:
+                raise forms.ValidationError(
+                    _("O número de alunos inscritos no almoço excede o número de alunos disponíveis"))
+            if cleaned_data['npratosdocentes'] > cleaned_data['nresponsaveis']:
+                raise forms.ValidationError(
+                    _("O número de docentes inscritos no almoço excede o número de docentes disponíveis"))
+        else:
+            if cleaned_data['npratosalunos'] + cleaned_data['npratosdocentes'] > cleaned_data['nalunos']:
+                raise forms.ValidationError(
+                    _("O número de inscritos no almoço excede o número de pessoas disponíveis"))
 
     def save(self, commit=True):
         if self.cleaned_data['campus'] and (self.cleaned_data['npratosalunos'] > 0 or self.cleaned_data['npratosdocentes'] > 0):

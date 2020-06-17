@@ -105,17 +105,17 @@
                     </span>
                 </div>
                 <div class="step-details">
-                    <p class="step-title">Responsáveis</p>
+                    <p class="step-title">{% if individual %}Responsável{% else %}Responsáveis{% endif %}</p>
                 </div>
             </div>
             <div class="step-item is-success is-active">
                 <div class="step-marker">
                     <span class="icon">
-                        <i class="mdi mdi-school"></i>
+                        <i class="mdi {% if individual %}mdi-ballot{% else %}mdi-school{% endif %}"></i>
                     </span>
                 </div>
                 <div class="step-details">
-                    <p class="step-title">Escola</p>
+                    <p class="step-title">{% if individual %}Inscrição{% else %}Escola{% endif %}</p>
                 </div>
             </div>
             <div class="step-item is-success {% if visited.2 %}is-completed{% endif %}"
@@ -212,6 +212,7 @@
                         </div>
                     </div>
                 </div>
+                {% if not individual %}
                 <hr />
                 <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
                     Informação da Turma
@@ -244,6 +245,7 @@
 
                     </div>
                 </div>
+                {% endif %}
                 {% if form.non_field_errors %}
                 <div style="margin: 20px 20px; text-align: center;">
                     <div class="message is-danger">

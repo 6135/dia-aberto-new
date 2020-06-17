@@ -129,18 +129,16 @@ class InscricaoWizard(SessionWizardView):
     ]
 
     def dispatch(self, request, *args, **kwargs):
-        participante = Participante.objects.filter(
-            utilizador_ptr_id=request.user.id).first()
-        self.instance_dict = {
-            'responsaveis': Responsavel(nome=participante.username, email=participante.email, tel=participante.contacto)
-        }
+        from utilizadores.views import user_check
+        _user_check = user_check(request, [Participante])
+        if _user_check['exists']:
+            participante = _user_check['firstProfile']
+            self.instance_dict = {
+                'responsaveis': Responsavel(nome=f"{participante.first_name} {participante.last_name}", email=participante.email, tel=participante.contacto)
+            }
+        else:
+            return _user_check['render']
         return super(InscricaoWizard, self).dispatch(request, *args, **kwargs)
-
-    def get_form_step_data(self, form):
-        # print(f"DATA: {form.data}")
-        # if(self.steps.current == 'sessoes'):
-        #     print(f"SESSOES: {json.loads(form.data['sessoes-sessoes'])}")
-        return form.data
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
@@ -222,17 +220,18 @@ class InscricaoWizard(SessionWizardView):
                     if diaaberto:
                         self.request.POST['escola-diaaberto'] = diaaberto.id
             except ValueError:
-                print(f"ValueError: {self.request.POST.get('escola-dia', '')}")
+                pass
+            self.request.POST['escola-individual'] = self.get_cleaned_data_for_step('info')[
+                'individual']
         elif self.steps.current == 'almoco' or self.request.POST.get('inscricao_wizard-current_step', '') == 'almoco':
             self.request.POST['almoco-nalunos'] = self.get_cleaned_data_for_step('escola')[
                 'nalunos']
             self.request.POST['almoco-nresponsaveis'] = 1
+            self.request.POST['almoco-individual'] = self.get_cleaned_data_for_step('info')[
+                'individual']
         elif self.steps.current == 'sessoes' or self.request.POST.get('inscricao_wizard-current_step', '') == 'sessoes':
             self.request.POST['sessoes-nalunos'] = self.get_cleaned_data_for_step('escola')[
                 'nalunos']
-        # elif self.steps.current == 'almoco':
-        #     self.request.POST['almoco-nalunos'] = self.get_cleaned_data_for_step('almoco')[
-        #         'nalunos']
         self.request.POST._mutable = mutable
         print(self.request.POST)
         return super(InscricaoWizard, self).post(*args, **kwargs)
@@ -266,7 +265,10 @@ class InscricaoWizard(SessionWizardView):
             almoco.inscricao = inscricao
             almoco.save()
         # TODO: Construir PDF
-        return render(self.request, 'inscricoes/inscricao_submetida.html', {'inscricaoid': inscricao.pk})
+        return render(self.request, 'inscricoes/inscricao_submetida.html', {
+            'inscricaoid': inscricao.pk,
+            'individual': self.get_cleaned_data_for_step('info')['individual'],
+        })
 
 
 class ConsultarInscricoesListView(SingleTableMixin, FilterView):

@@ -91,17 +91,17 @@
                     </span>
                 </div>
                 <div class="step-details">
-                    <p class="step-title">Responsáveis</p>
+                    <p class="step-title">{% if individual %}Responsável{% else %}Responsáveis{% endif %}</p>
                 </div>
             </div>
             <div class="step-item is-success is-completed" onclick="navigate_step('escola')">
                 <div class="step-marker">
                     <span class="icon">
-                        <i class="mdi mdi-school"></i>
+                        <i class="mdi {% if individual %}mdi-ballot{% else %}mdi-school{% endif %}"></i>
                     </span>
                 </div>
                 <div class="step-details">
-                    <p class="step-title">Escola</p>
+                    <p class="step-title">{% if individual %}Inscrição{% else %}Escola{% endif %}</p>
                 </div>
             </div>
             <div class="step-item is-success is-active">
