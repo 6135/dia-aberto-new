@@ -33,7 +33,7 @@ class MensagemEnviada(models.Model):
 
 
 # Coloca temporariamente notificações geradas automaticamente com conteúdo informativo, quando passam 5 dias a notificação é enviada 
-# em tempo real e é apaga desta tabela da base de dados
+# em tempo real e é apagada desta tabela da base de dados
 class InformacaoNotificacao(models.Model):
     id = models.AutoField(db_column='id', primary_key=True)
     data = models.DateTimeField(default=timezone.now, db_index=True)
