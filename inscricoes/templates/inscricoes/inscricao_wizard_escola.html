@@ -92,7 +92,7 @@
     <nav aria-label="breadcrumbs" class="breadcrumb">
         <ul>
             <li><a href="/" class="router-link-active">Início</a></li>
-            <li class="is-active"><a href="/inscricao" class="router-link-exact-active router-link-active">Minha
+            <li class="is-active"><a href="/inscricao" class="router-link-exact-active router-link-active">Criar
                     Inscrição</a></li>
         </ul>
     </nav>
@@ -118,8 +118,8 @@
                     <p class="step-title">Escola</p>
                 </div>
             </div>
-            <div class="step-item is-success {% if visited.1 %}is-completed{% endif %}"
-                {% if visited.1 %}onclick="navigate_step('transporte')" {% endif %}>
+            <div class="step-item is-success {% if visited.2 %}is-completed{% endif %}"
+                {% if visited.2 %}onclick="navigate_step('transporte')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-train-car"></i>
@@ -129,8 +129,8 @@
                     <p class="step-title">Transporte</p>
                 </div>
             </div>
-            <div class="step-item is-success {% if visited.2 %}is-completed{% endif %}"
-                {% if visited.2 %}onclick="navigate_step('almoco')" {% endif %}>
+            <div class="step-item is-success {% if visited.3 %}is-completed{% endif %}"
+                {% if visited.3 %}onclick="navigate_step('almoco')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-food-apple"></i>
@@ -140,8 +140,8 @@
                     <p class="step-title">Almoço</p>
                 </div>
             </div>
-            <div class="step-item is-success {% if visited.3 %}is-completed{% endif %}"
-                {% if visited.3 %}onclick="navigate_step('sessoes')" {% endif %}>
+            <div class="step-item is-success {% if visited.4 %}is-completed{% endif %}"
+                {% if visited.4 %}onclick="navigate_step('sessoes')" {% endif %}>
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-calendar-check"></i>
