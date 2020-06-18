@@ -40,7 +40,7 @@
         Minhas Atividades
       </a>
       {% elif request.user|has_group:'Coordenador'%}
-      <a href="/minhasatividades" class="navbar-item">
+      <a href="{% url 'atividades:atividadesUOrganica' %}" class="navbar-item">
         Atividades dos Departamentos
       </a>
       <a href="/minhasatividades" class="navbar-item">
