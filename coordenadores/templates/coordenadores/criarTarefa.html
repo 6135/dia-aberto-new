@@ -86,7 +86,7 @@
       if(typeof ativiadeId === 'undefined') 
         atividadeId = '';
       $.ajax({                       
-        url: "{% url 'diasAtividade' %}", 
+        url: "{% url 'coordenadores:diasAtividade' %}", 
         method: 'POST',             
         data: {
             'atividadeid': atividadeId,
@@ -104,7 +104,7 @@
         var tipo=this.value;
 
         $.ajax({                       
-        url: "{% url 'tipoTarefa' %}", 
+        url: "{% url 'coordenadores:tipoTarefa' %}", 
         method: 'POST',             
         data: {
             'tipo' : tipo,
@@ -121,7 +121,7 @@
     function diasSelect(){
       var atividadeId = document.getElementById("id_atividades").value; 
       $.ajax({                       
-        url: "{% url 'diasAtividade' %}", 
+        url: "{% url 'coordenadores:diasAtividade' %}", 
         method: 'POST',             
         data: {
             'atividadeid': atividadeId,
@@ -138,7 +138,7 @@
       var dia = document.getElementById("id_dias").value; 
       var atividadeId = document.getElementById("id_atividades").value; 
       $.ajax({                       
-        url: "{% url 'sessoesAtividade' %}", 
+        url: "{% url 'coordenadores:sessoesAtividade' %}", 
         method: 'POST',             
         data: {
             'dia': dia,
@@ -154,7 +154,7 @@
     function colaboradoresSelect(){
       var sessao = document.getElementById("id_sessaoid").value;; 
       $.ajax({                       
-        url: "{% url 'colaboradoresAtividade' %}", 
+        url: "{% url 'coordenadores:colaboradoresAtividade' %}", 
         method: 'POST',             
         data: {
             'sessao': sessao,
@@ -170,7 +170,7 @@
     function grupoInfo(){
       var grupo_id = document.getElementById("id_inscricao").value;; 
       $.ajax({                       
-        url: "{% url 'grupoInfo' %}", 
+        url: "{% url 'coordenadores:grupoInfo' %}", 
         method: 'POST',             
         data: {
             'grupo_id': grupo_id,
@@ -185,7 +185,7 @@
     function diasGrupo(){
       var grupo_id = document.getElementById("id_inscricao").value; 
       $.ajax({                       
-        url: "{% url 'diasGrupo' %}", 
+        url: "{% url 'coordenadores:diasGrupo' %}", 
         method: 'POST',             
         data: {
             'grupo_id': grupo_id,
@@ -201,7 +201,7 @@
       var dia = document.getElementById("id_dia").value;
       var grupo_id = document.getElementById("id_inscricao").value; 
       $.ajax({                       
-        url: "{% url 'horarioGrupo' %}", 
+        url: "{% url 'coordenadores:horarioGrupo' %}", 
         method: 'POST',             
         data: {
             'dia': dia,
@@ -219,7 +219,7 @@
       var grupo_id = document.getElementById("id_inscricao").value; 
       var sessao_id = document.getElementById("id_horario").value;
       $.ajax({                       
-        url: "{% url 'locaisOrigem' %}", 
+        url: "{% url 'coordenadores:locaisOrigem' %}", 
         method: 'POST',             
         data: {
             'dia': dia,
@@ -238,7 +238,7 @@
       var grupo_id = document.getElementById("id_inscricao").value; 
       var sessao_id = document.getElementById("id_horario").value;
       $.ajax({                       
-        url: "{% url 'locaisDestino' %}", 
+        url: "{% url 'coordenadores:locaisDestino' %}", 
         method: 'POST',             
         data: {
             'dia': dia,
