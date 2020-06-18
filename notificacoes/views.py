@@ -76,7 +76,7 @@ def marcar_como_lida(request):
 # Página quando não existem notificacoes
 
 
-def semn_otificacoes(request, id):
+def sem_notificacoes(request, id):
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -235,7 +235,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         atividade = Atividade.objects.get(id=id)
         descricao = "Foi apagada a atividade \""+atividade.nome+"\""
         user_recipient = Utilizador.objects.get(
-            id=atividade.coordenadorutilizadorid.id)
+            id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
                     target=atividade, level="error", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação atividade alterada - coordenador
@@ -244,7 +244,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         atividade = Atividade.objects.get(id=id)
         descricao = "Foi feita uma alteração na atividade \""+atividade.nome+"\""
         user_recipient = Utilizador.objects.get(
-            id=atividade.coordenadorutilizadorid.id)
+            id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
                     target=atividade, level="warning", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação quando há registo de utilizador por validar - administrador e ao coordenador ( 5 dias depois de criado se ainda tiver pendente
@@ -289,7 +289,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         atividade = Atividade.objects.get(id=id)
         descricao = "Foram criadas propostas de atividades que têm de ser validadas."
         user_recipient = Utilizador.objects.get(
-            id=atividade.coordenadorutilizadorid.id)
+            id=atividade.get_coord().id)
         user_sender = Utilizador.objects.get(id=user_sender.id)
         info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
                               descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "actividade "+str(id) , lido = False)
