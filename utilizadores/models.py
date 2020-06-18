@@ -93,6 +93,8 @@ class ProfessorUniversitario(Utilizador):
     departamento = models.ForeignKey(
         'configuracao.Departamento', models.CASCADE)
 
+    def __str__(self):
+        return str(self.gabinete) + ' ' + str(self.faculdade) + ' ' + str(self.departamento)
     class Meta:
         db_table = 'ProfessorUniversitario'
 

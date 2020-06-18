@@ -30,6 +30,8 @@ class Tema(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     tema = models.CharField(db_column='Tema', max_length=64)  # Field name made lowercase.
 
+    def __str__(self):
+        return str(self.tema)
     class Meta:
         managed = False
         db_table = 'Tema'
@@ -78,6 +80,23 @@ class Atividade(models.Model):
         
     def get_coord(self):
         return self.professoruniversitarioutilizadorid.faculdade.coord_()
+
+    def __eq__(self,other):
+        return self.nome == other.nome and \
+        self.descricao == other.descricao and \
+        self.publicoalvo == other.publicoalvo and \
+        self.nrcolaboradoresnecessario == other.nrcolaboradoresnecessario and \
+        self.tipo == other.tipo and \
+        self.professoruniversitarioutilizadorid == other.professoruniversitarioutilizadorid and \
+        self.datasubmissao == other.datasubmissao and \
+        self.duracaoesperada == other.duracaoesperada and \
+        self.participantesmaximo == other.participantesmaximo and \
+        self.diaabertoid == other.diaabertoid and \
+        self.espacoid == other.espacoid and \
+        self.tema == other.tema
+        
+    def __ne__(self,other):
+        return False if self == other else True
     
 class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
