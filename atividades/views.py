@@ -177,7 +177,7 @@ def eliminarAtividade(request,id):
 
     if atividade.exists():
         atividade.delete()
-        nviews.enviar_notificacao_automatica(request,"atividadeApagada",id) #Enviar Notificacao Automatica !!!!!!
+        #nviews.enviar_notificacao_automatica(request,"atividadeApagada",id) #Enviar Notificacao Automatica !!!!!!
     return redirect('atividades:minhasAtividades')
     
 
