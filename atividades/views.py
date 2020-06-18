@@ -157,7 +157,10 @@ def alterarAtividade(request,id):
                 if  activity_object_formed.estado == "nsub":
                     activity_object_formed.estado = "nsub"
                 else:
-                    activity_object_formed.estado = "Pendente"
+                    print("hello")
+                    print(Atividade.objects.get(id=id) == activity_object_formed)
+                    if Atividade.objects.get(id=id) != activity_object_formed:
+                        activity_object_formed.estado = "Pendente"
                 activity_object_formed.dataalteracao = datetime.now()
                 activity_object_formed.save()
                 materiais_object_form.save()
