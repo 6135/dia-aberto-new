@@ -19,8 +19,7 @@
     <nav aria-label="breadcrumbs" class="breadcrumb">
         <ul>
             <li><a href="{% url 'home' %}">Início</a></li>
-            <li class="is-active"><a
-                    href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}">Notificações</a></li>
+            <li class="is-active"><a>Notificações</a></li>
         </ul>
     </nav>
     <div class="columns" id="mail-app">
@@ -33,183 +32,233 @@
                 </div>
                 <div class="main">
                     {% if categoria == 0 %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 %}" class="item active"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}" class="item active"><span
                             class="name">Tudo</span></a>
                     {% else %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 %}" class="item"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}" class="item"><span
                             class="name">Tudo</span></a>
                     {% endif %}
                     {% if categoria == 1 %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 1 %}" class="item active"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 1 0 %}" class="item active"><span
                             class="name">Não Lidas</span></a>
                     {% else %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 1 %}" class="item"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 1 0 %}" class="item"><span
                             class="name">Não Lidas</span></a>
                     {% endif %}
                     {% if categoria == 2 %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 2 %}" class="item active"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 2 0 %}" class="item active"><span
                             class="name">Lidas</span></a>
                     {% else %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 2 %}" class="item"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 2 0 %}" class="item"><span
                             class="name">Lidas</span></a>
                     {% endif %}
                     {% if categoria == 3 %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 3 %}" class="item active"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 3 0 %}" class="item active"><span
                             class="name">Individuais</span></a>
                     {% else %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 3 %}" class="item"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 3 0 %}" class="item"><span
                             class="name">Individuais</span></a>
                     {% endif %}
                     {% if categoria == 4 %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 4 %}" class="item active"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 4 0 %}" class="item active"><span
                             class="name">Grupos</span></a>
                     {% else %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 4 %}" class="item"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 4 0 %}" class="item"><span
                             class="name">Grupos</span></a>
                     {% endif %}
                     {% if categoria == 5 %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 5 %}" class="item active"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 5 0 %}" class="item active"><span
                             class="name">Informativas</span></a>
                     {% else %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 5 %}" class="item"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 5 0 %}" class="item"><span
                             class="name">Informativas</span></a>
                     {% endif %}
                     {% if categoria == 6 %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 6 %}" class="item active"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 6 0 %}" class="item active"><span
                             class="name">Alertas</span></a>
                     {% else %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 6 %}" class="item"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 6 0 %}" class="item"><span
                             class="name">Alertas</span></a>
                     {% endif %}
                     {% if categoria == 7 %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 7 %}" class="item active"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 7 0 %}" class="item active"><span
                             class="name">Cancelamentos</span></a>
                     {% else %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 7 %}" class="item"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 7 0 %}" class="item"><span
                             class="name">Cancelamentos</span></a>
                     {% endif %}
                     {% if categoria == 8 %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 8 %}" class="item active"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 8 0 %}" class="item active"><span
                             class="name">Validações</span></a>
                     {% else %}
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 8 %}" class="item"><span
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 8 0 %}" class="item"><span
                             class="name">Validações</span></a>
                     {% endif %}</d iv>
                 </div>
         </aside>
         <div class="column is-4 messages hero is-fullheight">
             <div class="action-buttons">
-
+                <div class="control is-grouped">
+                    <a class="button is-small"><i class="fa fa-chevron-down"></i></a>
+                    <a class="button is-small"><i class="fa fa-refresh"></i></a>
+                </div>
                 <div class="control is-grouped">
                     <a class="button is-small"><i class="fa fa-inbox"></i></a>
                     <a class="button is-small"><i class="fa fa-exclamation-circle"></i></a>
                     <a class="button is-small"><i class="fa fa-trash-o"></i></a>
                 </div>
 
+
                 <div class="control is-grouped pg">
-                    {% comment %} <div class="title">{{notificacoes.previous_page_number}}-{{ paginate.pointer.end }} of
-                        {{ page_obj.paginator.num_pages }}
-                    </div> {% endcomment %}
+                    <div class="title">{{ notificacoes.start_index }}-{{ notificacoes.end_index }} de
+                        {{ notificacoes|length }}
+                    </div>
+                    {% if utilizadores.has_previous %}
                     <a class="button is-link" href="?page={{notificacoes.previous_page_number}}"><i
                             class="fa fa-chevron-left"></i></a>
+                    {% else %}
+                    <a class="button is-link" href="#"><i class="fa fa-chevron-left"></i></a>
+                    {% endif %}
+                    {% if utilizadores.has_next %}
                     <a class="button is-link" href="?page={{notificacoes.next_page_number}}"><i
                             class="fa fa-chevron-right"></i></a>
+                    {% else %}
+                    <a class="button is-link" href="#"><i class="fa fa-chevron-right"></i></a>
+                    {% endif %}
                 </div>
             </div>
 
             <div class="inbox-messages" id="inbox-messages">
+
                 <div class="card">
+
                     <div class="card-content">
-                        <div class="msg-header">
-                            <div class="msg-subject">
-                                <span class="msg-subject"><strong
-                                        id="fake-subject-1">De: </strong>{{notificacao.actor_object_id|get_user_name}}
-                                    {% if notificacao.public == False %}<small>({{notificacao.actor_object_id|get_user_type}})</small>{% endif %}</span>
+                        {% for notificacao in notificacoes %}
+
+                        {% if notificacao.id == atual.id %}
+                        <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
+                            class="panel-block" style="background: Silver; ">
+                            {% elif notificacao.unread == False %}
+                            
+                                <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
+                                    class="panel-block">
+                                    {% else %}
+                                    
+                                        <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
+                                            class="panel-block" style=" background: Gainsboro; ">
+                                            {% endif %}
+
+
+
+
+                                            {% if notificacao.level == "info" %}
+                                            <span class="icon has-text-info">
+                                                <i class="fas fa-info-circle"></i>
+                                            </span>
+                                            {% elif notificacao.level == "success" %}
+                                            <span class="icon has-text-success">
+                                                <i class="fas fa-check-square"></i>
+                                            </span>
+                                            {% elif notificacao.level == "warning" %}
+                                            <span class="icon has-text-warning">
+                                                <i class="fas fa-exclamation-triangle"></i>
+                                            </span>
+                                            {% elif notificacao.level == "error" %}
+                                            <span class="icon has-text-danger">
+                                                <i class="fas fa-ban"></i>
+                                            </span>
+                                            {% endif %}
+                                            <p>
+                                                <strong>
+                                                    {{notificacao.description}}
+                                                </strong>
+                                            </p>
+
+                                        </a>
+                                    
+
+                                    {%endfor%}
+
                             </div>
 
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="column is-6 message hero is-fullheight is-active" id="message-pane">
+                <div class="action-buttons">
+                    <div class="control is-grouped">
+                        <a class="button is-small"><i class="fa fa-inbox"></i></a>
+                        <a class="button is-small"><i class="fa fa-exclamation-circle"></i></a>
+                        <a class="button is-small"><i class="fa fa-trash-o"></i></a>
+                    </div>
+                    <div class="control is-grouped">
+                        <a class="button is-small"><i>Confirmar</i></a>
+                        <a class="button is-small"><i>Rejeitar</i></a>
+                    </div>
+                </div>
+                <div class="box message-preview">
+                    <div class="top">
+                        <div class="avatar">
+                            <img src="{% static 'img/user.png' %}" alt="Dia Aberto">
                         </div>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="column is-6 message hero is-fullheight is-active" id="message-pane">
-            <div class="action-buttons">
-                <div class="control is-grouped">
-                    <a class="button is-small"><i class="fa fa-inbox"></i></a>
-                    <a class="button is-small"><i class="fa fa-exclamation-circle"></i></a>
-                    <a class="button is-small"><i class="fa fa-trash-o"></i></a>
-                </div>
-                <div class="control is-grouped">
-                    <a class="button is-small"><i class="fa fa-exclamation-circle"></i></a>
-                    <a class="button is-small"><i class="fa fa-trash-o"></i></a>
-                </div>
-                <div class="control is-grouped">
-                    <a class="button is-small"><i class="fa fa-folder"></i></a>
-                    <a class="button is-small"><i class="fa fa-tag"></i></a>
-                </div>
-            </div>
-            <div class="box message-preview">
-                <div class="top">
-                    <div class="avatar">
-                        <img src="{% static 'img/user.png' %}" alt="Dia Aberto">
-                    </div>
-                    <div class="address">
-                        <div class="name">{{notificacao.actor_object_id|get_user_name}}
-                            {% if notificacao.public == False %}
-                            <small>({{notificacao.actor_object_id|get_user_type}})</small>
+                        <div class="address">
+                            <div class="name">{{atual.actor_object_id|get_user_name}}
+                                {% if atual.public == False %}
+                                <small>({{atual.actor_object_id|get_user_type}})</small>
+                                {% endif %}
+                            </div>
+                            {% if atual.public == False %}
+                            <div class="email">{{atual.actor_object_id|get_email}}</div>
                             {% endif %}
                         </div>
-                        {% if notificacao.public == False %}
-                        <div class="email">{{notificacao.actor_object_id|get_email}}</div>
-                        {% endif %}
-                    </div>
-                    <hr>
-                    <div class="content">
-                        <div class="columns">
-                            <div class="column">
-                                <div>
+                        <hr>
+                        <div class="content">
+                            <div class="columns">
+                                <div class="column">
+                                    <div>
 
-                                    <div class="field is-horizontal">
-                                        <div class="field-label is-normal">
-                                            <label class="label">Data de Envio</label>
-                                        </div>
-                                        <div class="field-body">
-                                            <div class="field has-addons has-background-light">
-                                                <p class="control has-background-light" style="padding: 10px 30px">
-                                                    {{notificacao.timestamp}}
-                                                </p>
+                                        <div class="field is-horizontal">
+                                            <div class="field-label is-normal">
+                                                <label class="label">Data de Envio</label>
+                                            </div>
+                                            <div class="field-body">
+                                                <div class="field has-addons has-background-light">
+                                                    <p class="control has-background-light" style="padding: 10px 30px">
+                                                        {{atual.timestamp}}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="field is-horizontal">
-                                        <div class="field-label is-normal">
-                                            <label class="label">Título</label>
-                                        </div>
-                                        <div class="field-body">
-                                            <div class="field has-addons has-background-light">
-                                                <p class="control has-background-light" style="padding: 10px 30px">
-                                                    {{notificacao.description}}
-                                                </p>
+                                        <div class="field is-horizontal">
+                                            <div class="field-label is-normal">
+                                                <label class="label">Título</label>
+                                            </div>
+                                            <div class="field-body">
+                                                <div class="field has-addons has-background-light">
+                                                    <p class="control has-background-light" style="padding: 10px 30px">
+                                                        {{atual.description}}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="field is-horizontal">
-                                        <div class="field-label is-normal">
-                                            <label class="label">Mensagem</label>
-                                        </div>
-                                        <div class="field-body">
-                                            <div class="field has-addons has-background-light">
-                                                <p class="control" style="padding: 10px 30px">
-                                                    {{notificacao.verb}}
-                                                </p>
+                                        <div class="field is-horizontal">
+                                            <div class="field-label is-normal">
+                                                <label class="label">Mensagem</label>
+                                            </div>
+                                            <div class="field-body">
+                                                <div class="field has-addons has-background-light">
+                                                    <p class="control" style="padding: 10px 30px">
+                                                        {{atual.verb}}
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
+
+
+
                                     </div>
-
-
-
                                 </div>
                             </div>
                         </div>
@@ -218,6 +267,5 @@
             </div>
         </div>
     </div>
-</div>
 
-{% endblock content %}
+    {% endblock content %}
