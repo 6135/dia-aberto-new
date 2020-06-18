@@ -17,5 +17,6 @@ urlpatterns = [
     url(r'^versalas/$',views.versalas,name="verSalas"),
     url(r'^verhorarios/$',views.verhorarios,name="verHorarios"),
     url(r'^ajaxaddsessaorow/$',views.sessaoRow,name="ajaxAddSessaoRow"),
+    path('verresumo/<int:id>',views.verresumo,name='verResumo'),
 ]
 

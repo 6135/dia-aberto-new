@@ -195,12 +195,21 @@
          </button>
       </div>
       <div class="level-right">
-              <a id="concluir" onclick="alert.render('Tem a certeza que pretende finalizar esta proposta?  (Terá sempre possibilidade de a alterar até ao prazo das propostas terminar)','{% url 'atividades:minhasAtividades' %}')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
+      {% if check > 0 %}
+          <button id="concluir"  class="button is-large is-success is-outlined is-link" name="proximo" value="proximo">
+            <span>Proximo</span>
+            <span class="icon is-medium">
+                  <i class="mdi mdi-forward mdi-36px"></i>
+                </span>
+          </button>
+          {% else %}
+            <a id="concluir" onclick="alert.warning('A Atividade não pode ser criada sem sessoes !','{% url 'atividades:minhasAtividades' %}')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
             <span>Finalizar Proposta</span>
             <span class="icon is-medium">
               <i class="mdi fa fa-check mdi-36px"></i>
             </span>
           </a>
+          {% endif %}
         </div>
       </div>
     </div>
