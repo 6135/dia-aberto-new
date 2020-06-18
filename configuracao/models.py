@@ -10,6 +10,7 @@ from django.core import validators
 import time
 from time import mktime
 from datetime import datetime,timedelta, timezone
+from utilizadores.models import Coordenador
 class Transporte(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
@@ -358,6 +359,9 @@ class Unidadeorganica(models.Model):
 
     def dep_(self):
         return Departamento.objects.filter(unidadeorganicaid=self)
+        
+    def coord_(self):
+        return Coordenador.objects.filter(departamentoid__unidadeorganicaid=self)
 class Curso(models.Model):
 
     id = models.AutoField(db_column='ID', primary_key=True)
