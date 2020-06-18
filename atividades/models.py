@@ -126,17 +126,5 @@ class Sessao(models.Model):
     class Meta:
         db_table = 'Sessao'
 
-    def __str__(self):
-        return str(self.id)
-
-    def __eq__(self,other):
-        return self.ninscritos ==  other.ninscritos and \
-        self.vagas ==  other.vagas and \
-        self.atividadeid ==  other.atividadeid and \
-        self.dia ==  other.dia
-        
-    def __ne__(self,other):
-        return False if self == other else True
-    
 
 
