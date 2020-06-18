@@ -11,8 +11,8 @@ class Tarefa(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
     estado = models.CharField(max_length=64)
-    coord = models.ForeignKey('utilizadores.Coordenador', models.DO_NOTHING, db_column='CoordenadorUtilizadorID',null=True)  # Field name made lowercase.
-    colab = models.ForeignKey('utilizadores.Colaborador', models.DO_NOTHING, db_column='ColaboradorUtilizadorID',null=True,blank=True)  # Field name made lowercase.
+    coord = models.ForeignKey('utilizadores.Coordenador', models.CASCADE, db_column='CoordenadorUtilizadorID',null=True)  # Field name made lowercase.
+    colab = models.ForeignKey('utilizadores.Colaborador', models.CASCADE, db_column='ColaboradorUtilizadorID',null=True,blank=True)  # Field name made lowercase.
     tipo = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
 

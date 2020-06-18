@@ -29,6 +29,15 @@ def get_user_name(id):
         return "Esta notificação foi gerada automáticamente"
 
 
+@register.filter(name='get_email') 
+def get_email(id):
+    try:
+        user = User.objects.get(id=id)
+        email = user.email
+        return email  
+    except :
+        return ""
+
 @register.filter(name='get_user_type') 
 def get_user_type(id):
     try:

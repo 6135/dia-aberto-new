@@ -76,7 +76,7 @@
               <li class="is-active"><a href="#" aria-current="page">Tarefas</a></li>
             </ul>
           </nav>
-           <a href="{% url 'adicionarTarefa' %}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
+           <a href="{% url 'coordenadores:adicionarTarefa' %}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
@@ -167,7 +167,7 @@
                                         <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                                     </span>
                                 </a>
-                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
+                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'coordenadores:eliminarTarefa' tarefa.id %}')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                     </span>
@@ -212,7 +212,7 @@
                                             {{tarefa.coord.utilizador.nome}}
                                         </p>
                                         {% if tarefa.colab == NULL %}
-                                        <form action="{% url 'atribuirColaborador' tarefa.id%}" method='POST'>
+                                        <form action="{% url 'coordenadores:atribuirColaborador' tarefa.id%}" method='POST'>
                                         {% csrf_token %}
                                         <div class="columns">
                                           <div class="column is-6">
@@ -288,7 +288,7 @@
                                         <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                                     </span>
                                 </a>
-                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
+                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'coordenadores:eliminarTarefa' tarefa.id %}')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                     </span>
@@ -329,7 +329,7 @@
                                             {{tarefa.coord.utilizador.nome}}
                                         </p>
                                         {% if tarefa.colab == NULL %}
-                                        <form action="{% url 'atribuirColaborador' tarefa.id%}" method='POST'>
+                                        <form action="{% url 'coordenadores:atribuirColaborador' tarefa.id%}" method='POST'>
                                         {% csrf_token %}
                                         <div class="columns">
                                           <div class="column is-6">
@@ -403,7 +403,7 @@
                                         <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                                     </span>
                                 </a>
-                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'eliminarTarefa' tarefa.id %}')">
+                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'coordenadores:eliminarTarefa' tarefa.id %}')">
                                     <span class="icon has-text-danger">
                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                     </span>
@@ -436,7 +436,7 @@
                                             {{tarefa.coord.utilizador.nome}}
                                         </p>
                                         {% if tarefa.colab == NULL %}
-                                        <form action="{% url 'atribuirColaborador' tarefa.id%}" method='POST'>
+                                        <form action="{% url 'coordenadores:atribuirColaborador' tarefa.id%}" method='POST'>
                                         <div class="columns">
                                           <div class="column is-6">
                                             <div class="field" >

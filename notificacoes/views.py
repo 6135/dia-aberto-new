@@ -11,7 +11,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.models import Group
 
-
+from django.core.paginator import Paginator
 
 from notifications.signals import notify
 from django.utils import timezone
@@ -71,13 +71,6 @@ def marcar_como_lida(request):
     return redirect('notificacoes:detalhes-automatica')
 
 
-# Ver notificacoes automaticas quando são vistos os detalhes de uma notificação
-
-def detalhes(request):
-    return render(request, 'inicio.html', {
-        'notificacoes_ativas': " is-active"
-    })
-
 
 # Ver detalhes de uma notificação automática
 
@@ -89,7 +82,43 @@ def detalhes_notificacao_automatica(request, id):
     if notificacao == None:
         return redirect("utilizadores:mensagem", 5)
     return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
-        'notificacao': notificacao
+        'notificacao': notificacao, 'categoria': 0
+    })
+
+
+# Ver notificações automáticas por categorias
+
+
+def categorias_notificacao_automatica(request, id):
+    if id == 0:
+        notificacoes = user.notifications.all() 
+    elif id == 1:
+        notificacoes = user.notifications.unread() 
+    elif id ==2:
+        notificacoes = user.notifications.read() 
+    elif id == 3:
+        notificacoes = Notificacao.objects.filter(public=False)
+    elif id ==4:    
+        notificacoes = Notificacao.objects.filter(public=True)
+    elif id == 5:
+        notificacoes = Notificacao.objects.filter(level="info")
+    elif id ==6:  
+        notificacoes = Notificacao.objects.filter(level="warning")
+    elif id ==7: 
+        notificacoes = Notificacao.objects.filter(level="error")
+    elif id ==8:  
+        notificacoes = Notificacao.objects.filter(level="success")
+    paginator= Paginator(notificacoes,5)
+    page=request.GET.get('page')
+    notificacoes = paginator.get_page(page)
+
+    notificacao = user.notifications.read()
+    notificacao.unread = False
+    notificacao.save()
+    if notificacao == None:
+        return redirect("utilizadores:mensagem", 5)
+    return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
+        'notificacao': notificacao, 'notificacoes':notificacoes
     })
 
 
