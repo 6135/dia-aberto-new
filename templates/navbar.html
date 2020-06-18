@@ -36,11 +36,11 @@
         Minhas Tarefas
       </a>
       {% elif request.user|has_group:'ProfessorUniversitario'%}
-      <a href="/minhasatividades" class="navbar-item">
+      <a href="{% url 'atividades:minhasAtividades' %}" class="navbar-item">
         Minhas Atividades
       </a>
       {% elif request.user|has_group:'Coordenador'%}
-      <a href="/minhasatividades" class="navbar-item">
+      <a href="{% url 'atividades:atividadesUOrganica' %}" class="navbar-item">
         Atividades dos Departamentos
       </a>
       <a href="/minhasatividades" class="navbar-item">
@@ -70,7 +70,7 @@
       </a>
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">
-          Extra
+          Configurações
         </a>
 
         <div class="navbar-dropdown">
@@ -105,7 +105,7 @@
                       <span id="badge-inject" style="display:none;" title="Badge top right"
                         class="badge is-warning">{% live_notify_badge %}</span>
 
-                      {{request.user|atualizar_informacoes}}
+                      {{ request.user|atualizar_informacoes }}
                       <i class=" mdi mdi-bell mdi-24px"></i>
 
 
@@ -120,7 +120,7 @@
             </div>
           </div>
 
-          <div id="ver_notificacoes" class="modal{{notificacoes_ativas}}">
+          <div id="ver_notificacoes" class="modal">
             <div class="modal-background"></div>
             <div class="modal-card">
               <header class="modal-card-head">
@@ -142,10 +142,10 @@
                     {% for notificacao in request.user|notificacoes_lidas %}
                     <div data-tooltip="Click para ver detalhes">
                       {% if notificacao.unread == False %}
-                      <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
+                      <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
                         class="panel-block">
                         {% else %}
-                        <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
+                        <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
                           class="panel-block" style=" background: Gainsboro; ">
                           {% endif %}
 
@@ -179,10 +179,10 @@
                     {%endfor%}
                     {% if request.user|nr_notificacoes > 0 %}
                     <div class="panel-block">
-                      <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações?','{% url 'notificacoes:limpar-notificacoes' 0 %}')"
-                        role="listitem" tabindex="0" class="dropdown-item is-disabled">
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}"
+                          class="dropdown-item is-disabled">
                         <button class="button is-link is-outlined is-fullwidth">
-                          Limpar notificações
+                          Ver todas as notificações
                         </button>
                       </a>
                     </div>
@@ -216,7 +216,7 @@
                   <div id="Anteriores" style="display:none" class="tabcontent">
                     {% for notificacao in request.user|notificacoes_lidas %}
                     <div data-tooltip="Click para ver detalhes">
-                      <a href="{% url 'notificacoes:detalhes-notificacao-automatica' notificacao.id %}"
+                      <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
                         class="panel-block">
                         {% if notificacao.level == "info" %}
                         <span class="icon has-text-info">
@@ -463,7 +463,7 @@
 <script>
   function detalhes_url_notificacoes(item) {
     var tmp = String(item.id)
-    return "{% url 'notificacoes:detalhes-notificacao-automatica' 12345 %}".replace("12345", tmp);
+    return "{% url 'notificacoes:categorias-notificacao-automatica' 0 12345 %}".replace("12345", tmp);
   }
 </script>
 <script type="text/javascript" src="{% static 'js/notificacoes.js' %}"></script>

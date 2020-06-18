@@ -32,7 +32,7 @@ class AtividadeForm(ModelForm):
     duracaoesperada= ChoiceField(choices=get_choices_time())
     class Meta:  
         model = Atividade  
-        exclude = ['coordenadorutilizadorid', 'professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid','tema','espacoid',]
+        exclude = ['professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid','tema','espacoid',]
         widgets = {
             'nome': TextInput(attrs={'class': 'input'}),
             'tipo': Select(),
@@ -46,9 +46,14 @@ class AtividadeForm(ModelForm):
 
 
 class SessaoForm(ModelForm):
+    horarioid=CharField(widget=Select(attrs={'class':'input horario-sessao'}))   
+
     class Meta:
         model = Sessao
-        fields = ["dia"]
+        exclude = ['id','ninscritos','vagas','atividadeid','horarioid']
+        widgets={
+			'dia': Select(attrs={'class': 'input dia-sessao'}),
+        }
         
 
 class MateriaisForm(ModelForm):

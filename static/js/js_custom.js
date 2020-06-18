@@ -3,7 +3,7 @@
 var alert = new eliminar();
 function eliminar() {
     var operationRef_global = null;
-    this.render=function(txt,operationRef = None){
+    this.render=function(txt,operationRef = null){
         operationRef_global = operationRef;
         var msg = document.getElementById("msg");
         document.getElementById('text-00').innerHTML = txt;
@@ -107,6 +107,120 @@ function sortTable(n, isDate) {
   } else {
     x.className = "mdi mdi-menu-up";
   }
+
 }
 
+function getSchedules(field_id)
+{
+    var valuedia= $('#'+field_id).val();
+    var rowNum = Number(field_id.split('-')[1]);
+    console.log(rowNum)
+    var number = Number(document.getElementById('id_form-TOTAL_FORMS').value);
+    var horarioindisponivel=[]
+    for(var i = 0; i < number; i++){
+        if(i != rowNum) {
+            var diaId = "id_form-" + i + "-dia";
+            if(document.getElementById(diaId).value == valuedia){
+                var horarioId = "id_form-" + i + "-horarioid"
+                horarioindisponivel.push(document.getElementById(horarioId).value);
+            }
+        }
+    }
+    console.log(horarioindisponivel);
+    
+    $.ajax({
+        url:"/atividades/verhorarios/",
+        method: 'POST',
+        data: { 
+            'horarioindisponivel': JSON.stringify(horarioindisponivel),
+            'valuedia': valuedia,
+            'id': -1,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(data){
+            $('#'+field_id).closest('tr').find('.horario-sessao').html(data);
+            horarioindisponivel.forEach(function(item,index){
+                if(item != ''){
+                    var stringId = 'id_form-' + field_id.split('-')[1] + '-horarioid ' + 'option[value=\'' + item +'\']';
+                    $('#'+stringId).remove();
+                }
+            })
+        }
 
+    })
+    updateSchedules('id_form'+field_id.split('-')[1]+'-horarioid')
+};   
+$('.table-wrapper').on('change','.dia-sessao',function(){
+    var jqthis = $(this);
+    getSchedules(jqthis.attr('id'));
+    var id = jqthis.attr('id');
+    var number = Number(document.getElementById('id_form-TOTAL_FORMS').value);
+    for(var i = 0 ; i< number; i++){
+        if(Number(id.split('-')[1]) != i){
+            console.log('I: '+ i)
+            updateSchedules('id_form-'+id.split('-')[1]+'-horarioid',$('#id_form-'+i+'-dia').val());
+        }
+    }
+    
+});
+
+
+
+function updateSchedules(field_id,day=null)
+{
+    var splitFieldId = field_id.split('-'); //[0]=id_form [1]==Number() [2]==horarioid
+    var valuedia = (day == null) ? $('#'+splitFieldId[0]+'-'+splitFieldId[1]+'-dia').val() : day;
+    var rowNum = Number(field_id.split('-')[1]);
+    var number = Number(document.getElementById('id_form-TOTAL_FORMS').value);
+    var horarioindisponivel=[]
+    for(var i = 0; i < number; i++){
+        var diaId = "id_form-" + i + "-dia";
+        if(document.getElementById(diaId).value == valuedia){
+            var horarioId = "id_form-" + i + "-horarioid"
+            horarioindisponivel.push(document.getElementById(horarioId).value);
+        }
+    }
+    console.log(horarioindisponivel);
+    
+    $.ajax({
+        url:"/atividades/verhorarios/",
+        method: 'POST',
+        data: { 
+            'horarioindisponivel': JSON.stringify(horarioindisponivel),
+            'valuedia': valuedia,
+            'id': -1,
+            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+        success: function(data){
+            for(var i = 0; i < number; i++){
+                if(i != rowNum) {
+                    var diaId = "id_form-" + i + "-dia";
+                    if(document.getElementById(diaId).value == valuedia){
+                        var horarioId = "id_form-" + i + "-horarioid";
+                        var previousOptionPosition = document.getElementById(horarioId).selectedIndex;
+                        var previousOption = $('#'+horarioId).val();
+                        $('#'+horarioId).html(data);
+                        horarioindisponivel.forEach(function(item,index){
+                            if(item != ''){
+                                var stringId = 'id_form-' + i + '-horarioid ' + 'option[value=\'' + item +'\']';
+                                $('#'+stringId).remove();
+                            }
+                        });
+                        if(previousOption != ''){
+                            stringId = 'id_form-' + i + '-horarioid ' + 'option[value=\'' + previousOption + '\']';
+                            var opt = document.createElement('option');
+                            opt.value = previousOption;     opt.text = previousOption;
+                            document.getElementById('id_form-' + i + '-horarioid').options.add(opt,previousOptionPosition);
+                            document.getElementById('id_form-' + i + '-horarioid').selectedIndex = previousOptionPosition;
+                        }
+
+                    }
+                }
+            }
+
+
+        }
+
+    })
+
+};   

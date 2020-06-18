@@ -4,6 +4,7 @@ from utilizadores.models import *
 from configuracao.models import *
 from coordenadores.models import *
 from atividades.models import *
+import math
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import *
@@ -11,6 +12,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.models import Group
 
+from django.core.paginator import Paginator
 
 from notifications.signals import notify
 from django.utils import timezone
@@ -33,12 +35,12 @@ def DetalhesNotificacao(request, pk):
 
 # Apagar uma notificação automática
 
-def apagar_notificacao_automatica(request, id):
-    notificacao = Notificacao.objects.get(id=id)
+def apagar_notificacao_automatica(request, id ,nr):
+    notificacao = Notificacao.objects.get(id=nr)
     if notificacao == None:
         return redirect("utilizadores:mensagem", 5)
     notificacao.delete()
-    return redirect('notificacoes:detalhes-automatica')
+    return redirect('notificacoes:categorias-notificacao-automatica',id,0)
 
 # Apagar todas as notificações de um utilizadador
 
@@ -56,7 +58,7 @@ def limpar_notificacoes(request, id):
         anteriores_notificacoes = user.notifications.read()
         for x in anteriores_notificacoes:
             x.delete()
-    return redirect('notificacoes:detalhes-automatica')
+    return redirect('notificacoes:categorias-notificacao-automatica',0,0)
 
 
 # Marcar todas as notificações de um utilizador como lidas
@@ -67,28 +69,73 @@ def marcar_como_lida(request):
     else:
         return redirect('utilizadores:mensagem', 5)
     user.notifications.mark_all_as_read(user)
-    return redirect('notificacoes:detalhes-automatica')
+    return redirect('notificacoes:categorias-notificacao-automatica',0,0)
 
 
-# Ver notificacoes automaticas quando são vistos os detalhes de uma notificação
 
-def detalhes(request):
-    return render(request, 'inicio.html', {
-        'notificacoes_ativas': " is-active"
+# Página quando não existem notificacoes
+
+
+def sem_notificacoes(request, id):
+    if request.user.is_authenticated:
+        user = get_user(request)
+    else:
+        return redirect('utilizadores:mensagem', 5)
+
+    return render(request, 'notificacoes/sem_notificacoes.html', {
+        'categoria':id,
     })
 
+# Ver notificações automáticas por categorias
 
-# Ver detalhes de uma notificação automática
 
+def categorias_notificacao_automatica(request, id, nr):
+    if request.user.is_authenticated:
+        user = get_user(request)
+    else:
+        return redirect('utilizadores:mensagem', 5)
 
-def detalhes_notificacao_automatica(request, id):
-    notificacao = Notificacao.objects.get(id=id)
-    notificacao.unread = False
-    notificacao.save()
-    if notificacao == None:
+    if id == 0:
+        notificacoes = user.notifications.all().order_by('-id') 
+    elif id == 1:
+        notificacoes = user.notifications.unread().order_by('-id') 
+    elif id ==2:
+        notificacoes = user.notifications.read().order_by('-id') 
+    elif id == 3:
+        notificacoes = Notificacao.objects.filter(recipient_id=user , public=False).order_by('-id')
+    elif id ==4:    
+        notificacoes = Notificacao.objects.filter(recipient_id=user , public=True).order_by('-id')
+    elif id == 5:
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="info").order_by('-id')
+    elif id ==6:  
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="warning").order_by('-id')
+    elif id ==7: 
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="error").order_by('-id')
+    elif id ==8:  
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="success").order_by('-id')
+    
+    if nr!=0:
+        notificacao = Notificacao.objects.get(id=nr)
+        if notificacao == None:
+            return redirect("notificacoes:sem_notificacoes", 10) 
+    else:
+        x = len(notificacoes)
+        if x>0:
+            notificacao = notificacoes[0]
+        else:
+            return redirect("notificacoes:sem_notificacoes", 10)    
+    nr_notificacoes_por_pagina = 15
+    paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
+    page=request.GET.get('page')
+    notificacoes = paginator.get_page(page)
+
+    if notificacao != None:
+        notificacao.unread = False
+        notificacao.save()
+    else:
         return redirect("utilizadores:mensagem", 5)
     return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
-        'notificacao': notificacao
+        'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,
     })
 
 
@@ -108,7 +155,7 @@ def enviar_notificacao_mensagem(request, id):
 def enviar_notificacao_automatica(request, sigla, id):
     if request.user.is_authenticated:
         user_sender = get_user(request)
-    else:
+    elif sigla!="validarRegistosPendentes":
         return redirect('utilizadores:mensagem', 5)
     # Enviar notificacao ao cancelar tarefa - colaborador
     if sigla == "cancelarTarefa":
@@ -188,7 +235,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         atividade = Atividade.objects.get(id=id)
         descricao = "Foi apagada a atividade \""+atividade.nome+"\""
         user_recipient = Utilizador.objects.get(
-            id=atividade.coordenadorutilizadorid.id)
+            id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
                     target=atividade, level="error", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação atividade alterada - coordenador
@@ -197,7 +244,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         atividade = Atividade.objects.get(id=id)
         descricao = "Foi feita uma alteração na atividade \""+atividade.nome+"\""
         user_recipient = Utilizador.objects.get(
-            id=atividade.coordenadorutilizadorid.id)
+            id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
                     target=atividade, level="warning", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação quando há registo de utilizador por validar - administrador e ao coordenador ( 5 dias depois de criado se ainda tiver pendente
@@ -205,37 +252,45 @@ def enviar_notificacao_automatica(request, sigla, id):
         titulo = "Validação de registos de utilizadores pendentes"
         descricao = "Foram feitos registos de utilizadores na plataforma que necessitam de ser validados."
         administradores = Administrador.objects.all()
+        user_sender = Utilizador.objects.get(id=id)
         for x in administradores:
-            user_recipient = Utilizador.objects.get(id=x.id)
-            InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
-                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "register "+id , lido = False)
-        if id != -1:
-            coordenadores = Coordenador.objects.filter(departamento=Departamento.objects.get(id=id)) 
+            user_recipient = Utilizador.objects.get(user_ptr_id=x.utilizador_ptr_id)
+            info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
+                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "register "+str(id) , lido = False)
+            info.save()
+        if user_sender.getProfile() != "Administrador":
+            coordenadores = Coordenador.objects.filter(faculdade=Unidadeorganica.objects.get(id=user_sender.getUser().faculdade.id)) 
             for x in coordenadores: 
-                user_recipient = Utilizador.objects.get(id=x.id)
-                InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
-                                descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "register "+id , lido = False)
+                user_recipient = Utilizador.objects.get(user_ptr_id=x.utilizador_ptr_id)
+                info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
+                                descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "register "+str(id) , lido = False)
+                info.save()
     # Enviar notificação quando há alterações de perfil de utilizador por validar - administrador e ao coordenador ( 5 dias depois de alterado se ainda tiver pendente )
     elif sigla == "validarAlteracoesPerfil":  # timezone.now() + timedelta(days=5)
         titulo = "Alterações de perfil de utilizadores por validar"
         descricao = "Foram feitas alterações de perfil de utilizadores que necessitam de ser validadas."
         administradores = Administrador.objects.all()
+        user_sender = Utilizador.objects.get(id=id)
         for x in administradores:
-            user_recipient = Utilizador.objects.get(id=x.id)
-            InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
-                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "profile "+id , lido = False)
-        if id != -1:
-            coordenadores = Coordenador.objects.filter(departamento=Departamento.objects.get(id=id)) 
+            user_recipient = Utilizador.objects.get(user_ptr_id=x.utilizador_ptr_id)
+            info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
+                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "profile "+str(id) , lido = False)
+            info.save()
+        if user_sender.getProfile() != "Administrador":
+            coordenadores = Coordenador.objects.filter(faculdade=Unidadeorganica.objects.get(id=user_sender.getUser().faculdade.id)) 
             for x in coordenadores: 
                 user_recipient = Utilizador.objects.get(id=x.id)
-                InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
-                                descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "profile "+id , lido = False)
+                info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
+                                descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "profile "+str(id) , lido = False)
+                info.save()
     # Enviar notificação atividades por validar pendentes - coordenador (5 dias depois de criada a atividade se ainda tiver pendente)
     elif sigla == "validarAtividades":
         titulo = "Existem atividades por validar"
         atividade = Atividade.objects.get(id=id)
         descricao = "Foram criadas propostas de atividades que têm de ser validadas."
         user_recipient = Utilizador.objects.get(
-            id=atividade.coordenadorutilizadorid.id)
-        InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
-                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "activitie "+id , lido = False)
+            id=atividade.get_coord().id)
+        user_sender = Utilizador.objects.get(id=user_sender.id)
+        info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
+                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "actividade "+str(id) , lido = False)
+        info.save()

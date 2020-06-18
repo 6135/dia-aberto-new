@@ -1,7 +1,7 @@
 from django import template
 from utilizadores.models import *
 from notificacoes.models import *
-
+from coordenadores.models import *
 from distutils.version import StrictVersion  # pylint: disable=no-name-in-module,import-error
 
 from django import get_version
@@ -18,7 +18,6 @@ except ImportError:
 
 from datetime import date, timedelta
 import datetime
-from django.utils import timezone
 
 register = Library()
 
@@ -112,9 +111,22 @@ def atualizar_informacoes(user):
         info = InformacaoNotificacao.objects.filter(
                     recetor = utilizador_recetor)
         for x in info:
-            delta = abs(x.data - timezone.now()) 
-            if delta >= 5 and x.lido == False:
-                notify.send(sender=x.emissor, recipient=utilizador_recetor, verb=x.descricao, action_object=None,
-                    target=None, level="info", description=x.titulo, public=True, timestamp=timezone.now())
-                x.delete()
+            if timezone.now() >= x.data:
+                tmp = x.tipo
+                y = tmp.split()
+                type = y[0]
+                id = parseInt(y[1])
+                if type == "profile" or type == "register":
+                    u = Utilizador.objects.get(id = id)
+                    if u.valido == "False":
+                        pendente = True
+                    elif u.valido == "True":
+                        pendente = False
+                    else:
+                        x.delete()
+                        return ""
+                if pendente:
+                    notify.send(sender=x.emissor, recipient=utilizador_recetor, verb=x.descricao, action_object=None,
+                        target=None, level="info", description=x.titulo, public=True, timestamp=timezone.now())
+                    x.delete()
     return ""

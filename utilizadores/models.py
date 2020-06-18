@@ -34,6 +34,39 @@ class Utilizador(User):
     def firstProfile(self):
         return self.getProfiles().split(' ')[0]
 
+    def getUser(self):
+        user = User.objects.get(id=self.id)
+        if user.groups.filter(name = "Coordenador").exists():
+            result = Coordenador.objects.get(id=self.id)
+        elif user.groups.filter(name = "Administrador").exists():
+            result = Administrador.objects.get(id=self.id)
+        elif user.groups.filter(name = "ProfessorUniversitario").exists():
+            result = ProfessorUniversitario.objects.get(id=self.id)
+        elif user.groups.filter(name = "Colaborador").exists():
+            result = Colaborador.objects.get(id=self.id)
+        elif user.groups.filter(name = "Participante").exists():
+            result = Participante.objects.get(id=self.id)
+        else:
+            result = None
+        return result   
+
+
+    def getProfile(self):
+        user = User.objects.get(id=self.id)
+        if user.groups.filter(name = "Coordenador").exists():
+            result = "Coordenador"
+        elif user.groups.filter(name = "Administrador").exists():
+            result = "Administrador"
+        elif user.groups.filter(name = "ProfessorUniversitario").exists():
+            result = "ProfessorUniversitario"
+        elif user.groups.filter(name = "Colaborador").exists():
+            result = "Colaborador"
+        elif user.groups.filter(name = "Participante").exists():
+            result = "Participante"
+        else:
+            result = None
+        return result 
+        
     class Meta:
         db_table = 'Utilizador'
 
