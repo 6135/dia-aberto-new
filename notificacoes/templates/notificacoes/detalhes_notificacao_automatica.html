@@ -100,12 +100,17 @@
             <div class="action-buttons">
                 <div class="control is-grouped">
                     <a class="button is-small"><i class="fa fa-chevron-down"></i></a>
-                    <a class="button is-small"><i class="fa fa-refresh"></i></a>
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' categoria 0 %}" class="button is-small">
+                        <i class="mdi mdi-reload mdi-18px"></i>
+                    </a>
                 </div>
                 <div class="control is-grouped">
-                    <a class="button is-small"><i class="fa fa-inbox"></i></a>
-                    <a class="button is-small"><i class="fa fa-exclamation-circle"></i></a>
-                    <a class="button is-small"><i class="fa fa-trash-o"></i></a>
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}" class="button is-small"><i class="fa fa-inbox"></i></a>
+                    <a class="button is-small"><div data-tooltip="Click em Enviar Mensagem para comunicar diretamente com um utilizador"><i class="fa fa-exclamation-circle"></i></div></a>
+                    <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações','{% url 'notificacoes:limpar-notificacoes' 0 %}')"
+                        class="button is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-18px"></i>
+                    </a>
                 </div>
 
 
@@ -139,126 +144,132 @@
                         <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
                             class="panel-block" style="background: Silver; ">
                             {% elif notificacao.unread == False %}
-                            
+
+                            <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
+                                class="panel-block">
+                                {% else %}
+
                                 <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
-                                    class="panel-block">
-                                    {% else %}
-                                    
-                                        <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
-                                            class="panel-block" style=" background: Gainsboro; ">
-                                            {% endif %}
+                                    class="panel-block" style=" background: Gainsboro; ">
+                                    {% endif %}
 
 
 
 
-                                            {% if notificacao.level == "info" %}
-                                            <span class="icon has-text-info">
-                                                <i class="fas fa-info-circle"></i>
-                                            </span>
-                                            {% elif notificacao.level == "success" %}
-                                            <span class="icon has-text-success">
-                                                <i class="fas fa-check-square"></i>
-                                            </span>
-                                            {% elif notificacao.level == "warning" %}
-                                            <span class="icon has-text-warning">
-                                                <i class="fas fa-exclamation-triangle"></i>
-                                            </span>
-                                            {% elif notificacao.level == "error" %}
-                                            <span class="icon has-text-danger">
-                                                <i class="fas fa-ban"></i>
-                                            </span>
-                                            {% endif %}
-                                            <p>
-                                                <strong>
-                                                    {{notificacao.description}}
-                                                </strong>
-                                            </p>
+                                    {% if notificacao.level == "info" %}
+                                    <span class="icon has-text-info">
+                                        <i class="fas fa-info-circle"></i>
+                                    </span>
+                                    {% elif notificacao.level == "success" %}
+                                    <span class="icon has-text-success">
+                                        <i class="fas fa-check-square"></i>
+                                    </span>
+                                    {% elif notificacao.level == "warning" %}
+                                    <span class="icon has-text-warning">
+                                        <i class="fas fa-exclamation-triangle"></i>
+                                    </span>
+                                    {% elif notificacao.level == "error" %}
+                                    <span class="icon has-text-danger">
+                                        <i class="fas fa-ban"></i>
+                                    </span>
+                                    {% endif %}
+                                    <p>
+                                        <strong>
+                                            {{notificacao.description}}
+                                        </strong>
+                                    </p>
 
-                                        </a>
-                                    
+                                </a>
 
-                                    {%endfor%}
 
-                            </div>
+                                {%endfor%}
 
                     </div>
 
                 </div>
+
             </div>
+        </div>
 
-            <div class="column is-6 message hero is-fullheight is-active" id="message-pane">
-                <div class="action-buttons">
-                    <div class="control is-grouped">
-                        <a class="button is-small"><i class="fa fa-inbox"></i></a>
-                        <a class="button is-small"><i class="fa fa-exclamation-circle"></i></a>
-                        <a class="button is-small"><i class="fa fa-trash-o"></i></a>
-                    </div>
-                    <div class="control is-grouped">
-                        <a class="button is-small"><i>Confirmar</i></a>
-                        <a class="button is-small"><i>Rejeitar</i></a>
-                    </div>
+        <div class="column is-6 message hero is-fullheight is-active" id="message-pane">
+            <div class="action-buttons">
+                <div class="control is-grouped">
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}" class="button is-small"><i class="fa fa-inbox"></i></a>
+                    <a class="button is-small"><div data-tooltip="Click em Enviar Mensagem para comunicar diretamente com um utilizador"><i class="fa fa-exclamation-circle"></i></div></a>
+                    <a onclick="alert.render('Tem a certeza que pretende eliminar esta notificação?','{% url 'notificacoes:apagar-notificacao-automatica' atual.id %}')"
+                        class="button is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-18px"></i>
+                    </a>
                 </div>
-                <div class="box message-preview">
-                    <div class="top">
-                        <div class="avatar">
-                            <img src="{% static 'img/user.png' %}" alt="Dia Aberto">
-                        </div>
-                        <div class="address">
-                            <div class="name">{{atual.actor_object_id|get_user_name}}
-                                {% if atual.public == False %}
-                                <small>({{atual.actor_object_id|get_user_type}})</small>
-                                {% endif %}
-                            </div>
+                {% if atual.level == "error" %}
+                <div class="control is-grouped">
+                    <a href="{% url 'colaboradores:validar-cancelamento-tarefa' atual.id %}"
+                        class="button is-small"><i>Confirmar</i></a>
+                    <a onclick="alert.render('Tem a certeza que pretende rejeitar este pedido?','{% url 'colaboradores:rejeitar-cancelamento-tarefa' atual.id %}')"
+                        class="button is-small"><i>Rejeitar</i></a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="box message-preview">
+                <div class="top">
+                    <div class="avatar">
+                        <img src="{% static 'img/user.png' %}" alt="Dia Aberto">
+                    </div>
+                    <div class="address">
+                        <div class="name">{{atual.actor_object_id|get_user_name}}
                             {% if atual.public == False %}
-                            <div class="email">{{atual.actor_object_id|get_email}}</div>
+                            <small>({{atual.actor_object_id|get_user_type}})</small>
                             {% endif %}
                         </div>
-                        <hr>
-                        <div class="content">
-                            <div class="columns">
-                                <div class="column">
-                                    <div>
+                        {% if atual.public == False %}
+                        <div class="email">{{atual.actor_object_id|get_email}}</div>
+                        {% endif %}
+                    </div>
+                    <hr>
+                    <div class="content">
+                        <div class="columns">
+                            <div class="column">
+                                <div>
 
-                                        <div class="field is-horizontal">
-                                            <div class="field-label is-normal">
-                                                <label class="label">Data de Envio</label>
-                                            </div>
-                                            <div class="field-body">
-                                                <div class="field has-addons has-background-light">
-                                                    <p class="control has-background-light" style="padding: 10px 30px">
-                                                        {{atual.timestamp}}
-                                                    </p>
-                                                </div>
+                                    <div class="field is-horizontal">
+                                        <div class="field-label is-normal">
+                                            <label class="label">Data de Envio</label>
+                                        </div>
+                                        <div class="field-body">
+                                            <div class="field has-addons has-background-light">
+                                                <p class="control has-background-light" style="padding: 10px 30px">
+                                                    {{atual.timestamp}}
+                                                </p>
                                             </div>
                                         </div>
-                                        <div class="field is-horizontal">
-                                            <div class="field-label is-normal">
-                                                <label class="label">Título</label>
-                                            </div>
-                                            <div class="field-body">
-                                                <div class="field has-addons has-background-light">
-                                                    <p class="control has-background-light" style="padding: 10px 30px">
-                                                        {{atual.description}}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="field is-horizontal">
-                                            <div class="field-label is-normal">
-                                                <label class="label">Mensagem</label>
-                                            </div>
-                                            <div class="field-body">
-                                                <div class="field has-addons has-background-light">
-                                                    <p class="control" style="padding: 10px 30px">
-                                                        {{atual.verb}}
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-
-
-
                                     </div>
+                                    <div class="field is-horizontal">
+                                        <div class="field-label is-normal">
+                                            <label class="label">Título</label>
+                                        </div>
+                                        <div class="field-body">
+                                            <div class="field has-addons has-background-light">
+                                                <p class="control has-background-light" style="padding: 10px 30px">
+                                                    {{atual.description}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="field is-horizontal">
+                                        <div class="field-label is-normal">
+                                            <label class="label">Mensagem</label>
+                                        </div>
+                                        <div class="field-body">
+                                            <div class="field has-addons has-background-light">
+                                                <p class="control" style="padding: 10px 30px">
+                                                    {{atual.verb}}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
                                 </div>
                             </div>
                         </div>
@@ -267,5 +278,6 @@
             </div>
         </div>
     </div>
+</div>
 
-    {% endblock content %}
+{% endblock content %}
