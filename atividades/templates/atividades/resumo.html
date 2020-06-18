@@ -207,7 +207,7 @@
            
         <div class="level-right">
         {% if nsub == 1 %}
-          <a id="concluir" onclick= "alert.render('Tem a certeza que pretende finalizar esta proposta?(Terá sempre possibilidade de a alterar até ao prazo das propostas terminar)','{% url 'atividades:confirmarResumo' atividade.id %}')" class="button is-large is-success is-outlined is-link" name="save" value="save">
+          <a id="concluir" onclick= "alert.render('Tem a certeza que pretende finalizar esta proposta?(Terá sempre possibilidade de a alterar até ao prazo das propostas terminar)','{% url 'atividades:confirmarResumo' atividade.id %}')" class="button is-large is-success is-outlined is-link">
          
             <span>Submeter Proposta</span>
             <span class="icon is-medium">
@@ -215,12 +215,12 @@
                 </span>
           </a>
           {% else %}
-          <button id="concluir" class="button is-large is-success is-outlined is-link" name="save" value="save">
+          <a id="concluir" href= "{% url 'atividades:confirmarResumo' atividade.id %}" class="button is-large is-success is-outlined is-link">
             <span>Voltar para as minhas Atividades</span>
             <span class="icon is-medium">
-                  <i class="mdi mdi-check mdi-36px"></i>
+                  <i class="mdi mdi-forward mdi-36px"></i>
                 </span>
-          </button>
+          </a>
           {% endif %}
         </div>
           </div>

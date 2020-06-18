@@ -42,7 +42,7 @@ def minhasatividades(request):
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
 
-    atividades=Atividade.objects.filter(professoruniversitarioutilizadorid=ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id))
+    atividades=Atividade.objects.filter(professoruniversitarioutilizadorid=ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id)).exclude(estado="nsub")
     sessoes=Sessao.objects.all()
     materiais= Materiais.objects.all()
     if request.method == 'POST' or request.GET.get('searchAtividade'):
@@ -151,16 +151,21 @@ def alterarAtividade(request,id):
         activity_object.tema = Tema.objects.get(id=int(request.POST['tema']))
         activity_object_form = AtividadeForm(submitted_data, instance=activity_object)
         materiais_object_form = MateriaisForm(request.POST, instance=materiais_object)
-        if activity_object_form.is_valid():
+        if activity_object_form.is_valid() and materiais_object_form.is_valid():
                 #-------Guardar as mudancas a atividade em si------
                 activity_object_formed = activity_object_form.save(commit=False) 
                 if  activity_object_formed.estado == "nsub":
                     activity_object_formed.estado = "nsub"
+                    activity_object_formed.save()
+                    materiais_object_form.save()
                 else:
-                    activity_object_formed.estado = "Pendente"
-                activity_object_formed.dataalteracao = datetime.now()
-                activity_object_formed.save()
-                materiais_object_form.save()
+                    print("hello")
+                    print(Atividade.objects.get(id=id) == activity_object_formed)
+                    if Atividade.objects.get(id=id) != activity_object_formed or Materiais.objects.get(atividadeid=id) != materiais_object_form.instance:
+                        activity_object_formed.estado = "Pendente"
+                        activity_object_formed.dataalteracao = datetime.now()
+                        activity_object_formed.save()
+                        materiais_object_form.save()
                 #views.enviar_notificacao_automatica(request,"atividadeAlterada",id) #Enviar Notificacao Automatica !!!!!!
                 return redirect('atividades:inserirSessao',id)          
     return render(request=request,
@@ -187,11 +192,12 @@ def eliminarSessao(request,id):
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
-    sessao = Sessao.objects.filter(id=id,atividadeid__professoruniversitarioutilizadorid=userId)
+    sessoes = Sessao.objects.filter(id=id,atividadeid__professoruniversitarioutilizadorid=userId)
 
-    if sessao.exists():
-        atividadeid= sessao.atividadeid.id
-        sessao.delete()
+    if sessoes.exists():
+        sessaor=sessoes.first()
+        atividadeid= sessaor.atividadeid.id
+        sessaor.delete()
         return redirect('atividades:inserirSessao',atividadeid)
     return redirect('atividades:minhasAtividades')
 
@@ -307,6 +313,9 @@ def inserirsessao(request,id):
             else:
                 new_Horario= horario
             new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=new_Horario.id), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
+            if atividadeid.estado != "nsub":
+                atividadeid.estado= "Pendente"
+            atividadeid.save()
             new_Sessao.save()
             return redirect('atividades:inserirSessao', id)
     return render(request=request,
@@ -503,13 +512,6 @@ def verresumo(request,id):
         nsub= 1
     print(nsub)
     if request.method == "POST":
-        if 'save' in request.POST:  
-            if atividade.estado == "nsub":
-                atividade.estado= "Pendente"
-            else:
-                atividade.estado= "Pendente"
-            atividade.save()
-            return redirect("atividades:minhasAtividades")
         if 'anterior' in request.POST:
             return redirect('atividades:inserirSessao', id)
     sessions_activity= Sessao.objects.filter(atividadeid=atividade)
@@ -520,9 +522,7 @@ def confirmarResumo(request,id):
     atividade= Atividade.objects.get(id=id)
     if atividade.estado == "nsub":
         atividade.estado= "Pendente"
-    else:
-        atividade.estado= "Pendente"
-    atividade.save()
+        atividade.save()
     #nviews.enviar_notificacao_automatica(request,"validarAtividades",atividade.id) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
     return redirect("atividades:minhasAtividades")
 
