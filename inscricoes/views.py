@@ -31,6 +31,8 @@ from _datetime import date
 import pytz
 from django.views import View
 from django.urls import reverse
+from datetime import datetime
+from django.utils import timezone as tz
 
 
 class AtividadesAPIView(ListCreateAPIView):
@@ -66,12 +68,19 @@ class AtividadesAPIView(ListCreateAPIView):
     filterset_class = AtividadeFilter
 
 
+def add_vagas_sessao(sessaoid, vagas):
+    with transaction.atomic():
+        sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
+        sessao.vagas = F('vagas') + vagas
+        sessao.save()
+
+
 def init_form(step, inscricao, POST=None):
     if step == 'responsaveis':
         responsavel = inscricao.responsavel_set.first()
-        form = forms.ResponsavelForm(POST or None, instance=responsavel)
+        form = forms.ResponsavelForm(POST, instance=responsavel)
     elif step == 'escola':
-        form = forms.InscricaoForm(POST or None,
+        form = forms.InscricaoForm(POST,
                                    instance=inscricao,
                                    initial={
                                        'nome_escola': inscricao.escola.nome,
@@ -88,58 +97,94 @@ def init_form(step, inscricao, POST=None):
                 'hora_chegada': inscricao.hora_chegada.strftime("%H:%M"),
                 'local_chegada': inscricao.local_chegada,
             })
-        form = forms.TransporteForm(POST or None,
+        form = forms.TransporteForm(POST,
                                     initial=initial)
+    elif step == 'almoco':
+        form = forms.AlmocoForm(POST,
+                                instance=inscricao.inscricaoprato_set.first(),
+                                initial={
+                                    'nalunos': inscricao.nalunos,
+                                    'nresponsaveis': 1,
+                                    'individual': inscricao.individual,
+                                })
     return form
 
 
-def update_context(context, step, wizard=None):
+def update_context(context, step, wizard=None, inscricao=None):
     if step == 'escola':
-        from datetime import datetime
-        hoje = datetime.now(pytz.utc)
-        prox_diaaberto = Diaaberto.objects.filter(
-            datadiaabertoinicio__gte=hoje).first()
+        prox_diaaberto = Diaaberto.current()
         context.update({
             'escolas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Escola.objects.all()))),
             'inicio': prox_diaaberto.datadiaabertoinicio.strftime("%d/%m/%Y"),
             'fim': prox_diaaberto.datadiaabertofim.strftime("%d/%m/%Y"),
+        })
+    elif step == 'almoco':
+        diaaberto = Diaaberto.current()
+        campi = Campus.objects.all()
+        pratos_info = {}
+        for tipoid, tipo in Prato.tipos:
+            pratos_info[tipo] = {}
+            for campus in campi:
+                pratos_info[tipo][campus] = []
+                menu_filter = Menu.objects.filter(
+                    diaaberto=diaaberto, campus=campus)
+                if menu_filter.exists():
+                    menu = menu_filter.first()
+                    for prato in menu.prato_set.filter(tipo=tipoid):
+                        pratos_info[tipo][campus].append(prato.__str__())
+        campi_str = list(map(lambda x: x.nome, Campus.objects.all()))
+        context.update({
+            'precoalunos': '%.2f' % diaaberto.precoalunos,
+            'precoprofessores': '%.2f' % diaaberto.precoprofessores,
+            'campi': campi_str,
+            'pratos_info': pratos_info,
+            'nalunos': wizard.get_cleaned_data_for_step('escola')['nalunos'] if wizard else inscricao.nalunos,
+            'nresponsaveis': 1,
+        })
+    elif step == 'sessoes':
+        context.update({
+            'campus': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Campus.objects.all()))),
+            'unidades_organicas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Unidadeorganica.objects.all()))),
+            'departamentos': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Departamento.objects.all()))),
+            'tipos': json.dumps(list(map(lambda x: x[0], Atividade.tipos))),
+            'nalunos': wizard.get_cleaned_data_for_step('escola')['nalunos'] if wizard else inscricao.nalunos,
         })
 
 
 def update_post(step, POST, wizard=None, inscricao=None):
     mutable = POST._mutable
     POST._mutable = True
-    prefix = ''
-    if wizard:
-        prefix = f"{step}-"
+    prefix = f"{step}-" if wizard else ''
     if step == 'escola':
-        from datetime import datetime
-        from django.utils import timezone as tz
         try:
             dia = tz.make_aware(datetime.strptime(
                 POST[f'{prefix}dia'], "%d/%m/%Y"))
             diaaberto = Diaaberto.objects.filter(
                 datadiaabertoinicio__lte=dia.replace(hour=23), datadiaabertofim__gte=dia.replace(hour=0)).first()
-            POST[f'{prefix}diaaberto'] = diaaberto.id or None
+            if diaaberto:
+                POST[f'{prefix}diaaberto'] = diaaberto.id
         except ValueError:
             pass
-        if wizard:
-            POST[f'{prefix}individual'] = wizard.get_cleaned_data_for_step('info')[
-                'individual']
-        else:
-            POST[f'{prefix}individual'] = inscricao.individual
+        POST[f'{prefix}individual'] = wizard.get_cleaned_data_for_step('info')[
+            'individual'] if wizard else inscricao.individual
+    elif step == 'almoco':
+        POST[f'{prefix}nalunos'] = wizard.get_cleaned_data_for_step('escola')[
+            'nalunos'] if wizard else inscricao.nalunos
+        POST[f'{prefix}nresponsaveis'] = 1
+        POST[f'{prefix}individual'] = wizard.get_cleaned_data_for_step('info')[
+            'individual'] if wizard else inscricao.individual
+    elif step == 'sessoes':
+        POST[f'{prefix}nalunos'] = wizard.get_cleaned_data_for_step('escola')[
+            'nalunos'] if wizard else inscricao.individual
     POST._mutable = mutable
 
 
 def save_form(step, form, inscricao):
     if step == 'transporte':
         inscricao.meio_transporte = form.cleaned_data['meio']
-        if form.cleaned_data['meio'] == 'outro':
-            inscricao.hora_chegada = None
-            inscricao.local_chegada = None
-        else:
-            inscricao.hora_chegada = form.cleaned_data['hora_chegada']
-            inscricao.local_chegada = form.cleaned_data['local_chegada']
+        outro = form.cleaned_data['meio'] == 'outro'
+        inscricao.hora_chegada = form.cleaned_data['hora_chegada'] if not outro else None
+        inscricao.local_chegada = form.cleaned_data['local_chegada'] if not outro else None
         inscricao.entrecampi = form.cleaned_data['entrecampi']
         inscricao.save()
     else:
@@ -171,38 +216,6 @@ class InscricaoWizard(SessionWizardView):
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
         update_context(context, self.steps.current, self)
-        if self.steps.current == 'almoco':
-            diaaberto = Diaaberto.current()
-            campi = Campus.objects.all()
-            pratos_info = {}
-            for tipoid, tipo in Prato.tipos:
-                pratos_info[tipo] = {}
-                for campus in campi:
-                    pratos_info[tipo][campus] = []
-                    menu_filter = Menu.objects.filter(
-                        diaaberto=diaaberto, campus=campus)
-                    if menu_filter.exists():
-                        menu = menu_filter.first()
-                        for prato in menu.prato_set.filter(tipo=tipoid):
-                            pratos_info[tipo][campus].append(prato.__str__())
-            campi_str = list(map(lambda x: x.nome, Campus.objects.all()))
-            # TODO: Responsáveis
-            context.update({
-                'precoalunos': '%.2f' % diaaberto.precoalunos,
-                'precoprofessores': '%.2f' % diaaberto.precoprofessores,
-                'campi': campi_str,
-                'pratos_info': pratos_info,
-                'nalunos': self.get_cleaned_data_for_step('escola')['nalunos'],
-                'nresponsaveis': 1,
-            })
-        elif self.steps.current == 'sessoes':
-            context.update({
-                'campus': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Campus.objects.all()))),
-                'unidades_organicas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Unidadeorganica.objects.all()))),
-                'departamentos': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Departamento.objects.all()))),
-                'tipos': json.dumps(list(map(lambda x: x[0], Atividade.tipos))),
-                'nalunos': self.get_cleaned_data_for_step('escola')['nalunos'],
-            })
         if self.steps.current != 'info':
             context.update({
                 'individual': self.get_cleaned_data_for_step('info')['individual']
@@ -227,18 +240,6 @@ class InscricaoWizard(SessionWizardView):
         # Necessário para algumas validações especiais de backend, como verificar o número de alunos
         # inscritos para verificar inscritos nos almoços e nas sessões.
         update_post(self.steps.current, self.request.POST, self)
-        mutable = self.request.POST._mutable
-        self.request.POST._mutable = True
-        if self.steps.current == 'almoco' or self.request.POST.get('inscricao_wizard-current_step', '') == 'almoco':
-            self.request.POST['almoco-nalunos'] = self.get_cleaned_data_for_step('escola')[
-                'nalunos']
-            self.request.POST['almoco-nresponsaveis'] = 1
-            self.request.POST['almoco-individual'] = self.get_cleaned_data_for_step('info')[
-                'individual']
-        elif self.steps.current == 'sessoes' or self.request.POST.get('inscricao_wizard-current_step', '') == 'sessoes':
-            self.request.POST['sessoes-nalunos'] = self.get_cleaned_data_for_step('escola')[
-                'nalunos']
-        self.request.POST._mutable = mutable
         return super(InscricaoWizard, self).post(*args, **kwargs)
 
     def done(self, form_list, form_dict, **kwargs):
@@ -298,7 +299,7 @@ class ConsultarInscricao(View):
                         'individual': inscricao.individual,
                         'form': form,
                         })
-        update_context(context, self.step_names[step])
+        update_context(context, self.step_names[step], inscricao=inscricao)
         return render(request, f"{self.template_prefix}_{self.step_names[step]}.html", context)
 
     def post(self, request, pk, step=0, alterar=False):
@@ -315,7 +316,7 @@ class ConsultarInscricao(View):
                         'individual': inscricao.individual,
                         'form': form,
                         })
-        update_context(context, self.step_names[step])
+        update_context(context, self.step_names[step], inscricao=inscricao)
         return render(request, f"{self.template_prefix}_{self.step_names[step]}.html", context)
 
 
@@ -348,11 +349,8 @@ def ApagarInscricao(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)
     inscricaosessao_set = inscricao.inscricaosessao_set.all()
     for inscricaosessao in inscricaosessao_set:
-        sessao = inscricaosessao.sessao
+        sessaoid = inscricaosessao.sessao.id
         nparticipantes = inscricaosessao.nparticipantes
-        with transaction.atomic():
-            sessao = Sessao.objects.select_for_update().get(pk=sessao.id)
-            sessao.vagas = F('vagas') + nparticipantes
-            sessao.save()
+        add_vagas_sessao(sessaoid, nparticipantes)
     inscricao.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
