@@ -103,6 +103,12 @@ class Materiais(models.Model):
     atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
     nomematerial = models.CharField(db_column='nome',max_length=255, blank=True, null=True)
 
+    def __eq__(self,other):
+        return self.atividadeid == other.atividadeid and \
+        self.nomematerial == other.nomematerial
+    def __ne__(self,other):
+        return False if self == other else True
+
     class Meta:
         db_table = 'Materiais'
 
@@ -113,6 +119,7 @@ class Sessao(models.Model):
     atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
     dia = models.DateField(db_column='Dia', blank=True, null=True)  # Field name made lowercase.
     horarioid = models.ForeignKey('configuracao.Horario', models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
+
     def timeRange_(self, seperator = ' até '):
         return self.horarioid.inicio.strftime('%H:%M') + str(seperator) + self.horarioid.fim.strftime('%H:%M')
         
@@ -121,6 +128,15 @@ class Sessao(models.Model):
 
     def __str__(self):
         return str(self.id)
+
+    def __eq__(self,other):
+        return self.ninscritos ==  other.ninscritos and \
+        self.vagas ==  other.vagas and \
+        self.atividadeid ==  other.atividadeid and \
+        self.dia ==  other.dia
+        
+    def __ne__(self,other):
+        return False if self == other else True
     
 
 
