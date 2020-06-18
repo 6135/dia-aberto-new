@@ -76,7 +76,7 @@ def marcar_como_lida(request):
 # Página quando não existem notificacoes
 
 
-def semn_otificacoes(request, id):
+def sem_notificacoes(request, id):
     if request.user.is_authenticated:
         user = get_user(request)
     else:
