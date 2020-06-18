@@ -3,7 +3,7 @@
 var alert = new eliminar();
 function eliminar() {
     var operationRef_global = null;
-    this.render=function(txt,operationRef = None){
+    this.render=function(txt,operationRef = null){
         operationRef_global = operationRef;
         var msg = document.getElementById("msg");
         document.getElementById('text-00').innerHTML = txt;

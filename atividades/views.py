@@ -41,6 +41,7 @@ def minhasatividades(request):
     
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
+
     atividades=Atividade.objects.filter(professoruniversitarioutilizadorid=ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id))
     sessoes=Sessao.objects.all()
     materiais= Materiais.objects.all()
@@ -71,6 +72,7 @@ class Conflito:
 def atividadescoordenador(request):
     user_check_var = uviews.user_check(request=request, user_profile=[Coordenador])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
+
     atividades=Atividade.objects.filter(professoruniversitarioutilizadorid__faculdade_id=Coordenador.objects.get(utilizador_ptr_id = request.user.id).faculdade)
     sessoes=Sessao.objects.all()
     materiais= Materiais.objects.all()
@@ -118,6 +120,7 @@ def atividadescoordenador(request):
 def alterarAtividade(request,id):
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
+
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     if activity_object.professoruniversitarioutilizadorid != ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
         return redirect("utilizadores:home")
@@ -163,6 +166,7 @@ def alterarAtividade(request,id):
 def eliminarAtividade(request,id):
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
+    
     prof=Atividade.objects.get(id=id).professoruniversitarioutilizadorid
     if prof == ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
         Atividade.objects.get(id=id).delete() #Dupla (sessao,atividade)
@@ -622,5 +626,14 @@ def verresumo(request,id):
     sessions_activity= Sessao.objects.filter(atividadeid=atividade)
     return render(request=request, 
                 template_name="atividades/resumo.html",  context={"atividade": atividade, "sessions_activity": sessions_activity, "nsub": nsub} )
+
+def confirmarResumo(request,id):
+    atividade= Atividade.objects.get(id=id)
+    if atividade.estado == "nsub":
+        atividade.estado= "Pendente"
+    else:
+        atividade.estado= "Pendente"
+    atividade.save()
+
 #---------------------End David
     

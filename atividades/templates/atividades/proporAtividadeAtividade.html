@@ -183,7 +183,7 @@
                                                 {% if espaco != -1 %}
                                                     <option selected value="{{espaco.edificio.campus.id}}">{{espaco.edificio.campus.nome}}</option>
                                                 {% else %}
-                                                    <option value="">---------</option>
+                                                    <option selected value="">---------</option>
                                                 {% endif %}
                                                 {% for c in campus %}
                                                     <option  value="{{c.id}}" >{{c.nome}}</option>
