@@ -71,6 +71,7 @@ class Conflito:
 def atividadescoordenador(request):
     user_check_var = uviews.user_check(request=request, user_profile=[Coordenador])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
+
     atividades=Atividade.objects.filter(professoruniversitarioutilizadorid__faculdade_id=Coordenador.objects.get(utilizador_ptr_id = request.user.id).faculdade)
     sessoes=Sessao.objects.all()
     materiais= Materiais.objects.all()
@@ -118,6 +119,7 @@ def atividadescoordenador(request):
 def alterarAtividade(request,id):
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
+
     activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
     if activity_object.professoruniversitarioutilizadorid != ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
         return redirect("utilizadores:home")
@@ -163,9 +165,12 @@ def alterarAtividade(request,id):
 def eliminarAtividade(request,id):
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
-    prof=Atividade.objects.get(id=id).professoruniversitarioutilizadorid
-    if prof == ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
-        Atividade.objects.get(id=id).delete() #Dupla (sessao,atividade)
+
+    userId = user_check_var.get('firstProfile').utilizador_ptr_id
+    atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
+
+    if atividade.exists():
+        atividade.delete()
         #views.enviar_notificacao_automatica(request,"atividadeApagada",id) #Enviar Notificacao Automatica !!!!!!
     return redirect('atividades:minhasAtividades')
     
@@ -173,9 +178,16 @@ def eliminarAtividade(request,id):
 
 
 def eliminarSessao(request,id):
-    atividadeid=Sessao.objects.get(id=id).atividadeid.id
-    Sessao.objects.get(id=id).delete()
-    return redirect('atividades:inserirSessao',atividadeid)
+    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    if user_check_var.get('exists') == False: return user_check_var.get('render')
+    userId = user_check_var.get('firstProfile').utilizador_ptr_id
+    sessao = Sessao.objects.filter(id=id,atividadeid__professoruniversitarioutilizadorid=userId)
+
+    if sessao.exists():
+        atividadeid= sessao.atividadeid.id
+        sessao.delete()
+        return redirect('atividades:inserirSessao',atividadeid)
+    return redirect('atividades:minhasAtividades')
 #-----------------EndDiogo------------------
 
 def proporatividade(request):
@@ -385,6 +397,10 @@ def horariofim(inicio,duracao):
     return fim
 
 def inserirsessao(request,id):
+
+    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    if user_check_var.get('exists') == False: return user_check_var.get('render')
+
     today= datetime.now(timezone.utc) 
     diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
     diainicio= diaaberto.datadiaabertoinicio.date()
@@ -592,6 +608,10 @@ def verhorarios(request):
 
 
 def validaratividade(request,id, action):
+
+    user_check_var = uviews.user_check(request=request, user_profile=[Coordenador])
+    if user_check_var.get('exists') == False: return user_check_var.get('render')
+
     atividade=Atividade.objects.get(id=id)
     if action==0:
         #views.enviar_notificacao_automatica(request,"rejeitarAtividade",id) #Enviar Notificacao Automatica !!!!!!
