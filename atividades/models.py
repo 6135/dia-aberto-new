@@ -73,8 +73,11 @@ class Atividade(models.Model):
     def get_campus_str(self):
         return self.espacoid.edificio.campus.__str__()
 
-    #def get_uo(self):
-    #    return str(self.professoruniversitarioutilizadorid.faculdade)
+    def get_uo(self):
+        return self.professoruniversitarioutilizadorid.faculdade
+        
+    def get_coord(self):
+        return self.professoruniversitarioutilizadorid.faculdade.coord_()
     
 class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
