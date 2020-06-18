@@ -1,36 +1,86 @@
 {% extends 'app.html' %}
 {% block content %}
+{% load atividadestags %}
+<form method="POST" action="" id='frm'>
+<div id="id_removed_rows" style="display:none;"></div>
+<div id="proporatividade" style="display: content">
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
     <li><a href="{% url 'home' %}">Início</a></li>
     <li><a href="{% url 'atividades:minhasAtividades' %}">Minhas Atividades</a></li>
-    {% if  espaco != -1 %}
-    <li class="is-active"><a href="" aria-current="page">Alterar Atividade</a></li>
-    {% else %}
     <li class="is-active"><a href="" aria-current="page">Propor Atividade</a></li>
-    {% endif %}
-    
-    
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
-    <form method="POST" action="">
-        <div class="b-steps">
-        <div class="columns is-mobile is-centered">
-            <div class="column is-5 ">
-                <label class="label has-text-info is-centered">Atividade</label>
+         <div style="padding: 3rem 2vw 1rem;">
+
+        <div class="steps is-success">
+
+            <div class="step-item is-completed is-success">
+
+                <div class="step-marker">
+
+                    <span class="icon">
+
+                        <i class="mdi mdi-flask mdi-22px"></i>
+
+                    </span>
+
+                </div>
+
+                <div class="step-details">
+
+                    <p class="step-title">Criar Atividade</p>
+
+                </div>
+
             </div>
-            <div class="column is-1 ">
-                <label class="label has-text-info is-centered">Sessoes</label>
+
+            <div class="step-item is-success">
+
+                <div class="step-marker">
+
+                    <span class="icon">
+
+                        <i class="mdi mdi-calendar-check mdi-22px"></i>
+
+                    </span>
+
+                </div>
+
+                
+
+                <div class="step-details">
+
+                    <p class="step-title">Adicionar Sessoes</p>
+
+                </div>
+
             </div>
+
+
+
+            <div class="step-item is-success">
+
+                <div class="step-marker">
+
+                    <span class="icon">
+
+                        <i class="mdi mdi-check"></i>
+
+                    </span>
+
+                </div>
+
+                <div class="step-details">
+
+                    <p class="step-title">Concluir</p>
+
+                </div>
+
+            </div>
+
         </div>
-            <div class="columns is-mobile is-centered">
-            <div class="column is-four-fifths">
-            <progress class="progress is-success" value="50" max="100">
-        
-            </progress>
-            </div>
-            </div>
             <section class="step-content">
                 <div class="step-item">
                     <div style="padding: 1rem 2vw 0px">
@@ -151,7 +201,7 @@
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
                                             <select id="edificioid" name="edificioid">
-                                                {% if espaco != -1 %}
+                                                {% if espaco %}
                                                     <option selected value="{{espaco.edificio.id}}">{{espaco.edificio.nome}}</option>
                                                     {% for edi in edificios %}
                                                         <option  value="{{edi.id}}" >{{edi.nome}}</option>
@@ -181,7 +231,7 @@
                                     <div class="control is-expanded">
                                         <div class="select is-fullwidth">
                                             <select id="espacoid" name="espacoid" required>
-                                               {% if espaco != -1 %}
+                                               {% if espaco %}
                                                 <option selected value="{{espaco.id}}">{{espaco.nome}}</option>
                                                 {% for esp in espacos %}
                                                     <option  value="{{esp.id}}" >{{esp.nome}}</option>
@@ -207,7 +257,8 @@
                 <span>Cancelar</span>
               </a>
             </div>
-            <div class="level-right">
+           
+ <div class="level-right">
               <button type="submit" class="button is-large is-success is-outlined is-link">
                 <span>Próximo</span>
                 <span class="icon is-medium">
@@ -217,24 +268,10 @@
             </div>
           </div>
         </div>
-    {% if form.errors %}
-    {% for field in form %}
-        {% for error in field.errors %}
-            <div class="alert alert-danger">
-                <strong>{{field.label|escape}}{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endfor %}
-    {% for error in form.non_field_errors %}
-        <div class="alert alert-danger">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
-{% endif %}
-    {% csrf_token %}
-</form>
   </div>
 </div>
+{% csrf_token %}
+</form>
 <style>
   .label {
   font-weight: normal;

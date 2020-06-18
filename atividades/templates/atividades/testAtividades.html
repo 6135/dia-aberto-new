@@ -303,7 +303,7 @@
 
             </div>
 
-            <div class="step-item is-success">
+            <div class="step-item  is-completed is-success">
 
                 <div class="step-marker">
 
@@ -353,65 +353,104 @@
           <div style="padding: 1rem 2vw 0px;">
             <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Minhas Sessoes</h2>
 
-            <div class='table'>
-						<div class='table-wrapper'>
-							{{formset.management_form}}
-							<table class="table has-mobile-cards is-hoverable is-fullwidth" id='table01'>
-								<thead>
-									<tr>
-										<th style="cursor: pointer">Dia</th>
-										<th style="cursor: pointer">Horario</th>
-									</tr>
-								</thead>
-								<tbody id='tableBody-01'>
-								{% for form in formset %}
-								{{form.non_field_errors}}
-
-									<tr>
-										{{form.id}}
-										{% for field in form.visible_fields  %}
-											{% if field.name != "DELETE" %}
-                                                <td data-label="{{field.label}}">
-                                                    {% for error in field.errors %}
-                                                        <div class="alert alert-danger">
-                                                            <strong>{{field.label|escape}} {{ error|escape }}</strong>
-                                                        </div>
-                                                    {% endfor %}
-													
-													<span class="select is-fullwidth is-empty">
-														<select name="{{field.html_name}}"  id="{{field.auto_id}}" {{field|field_data|safe}} >
-                                                            <option value="">---------</option> 
-                                                            {% if field.name == "dia" %}
-                                                                {% for dia in dias %}
-                                                                    <option value="{{dia|date:'Y-m-d'}}">{{dia}}</option>
-                                                                {% endfor %}
-                                                            {% endif %}
+            <div class="table ">
+                            <div class="table-wrapper">
+                                <table class="table has-mobile-cards is-hoverable">
+                                    <thead>
+                                        <tr>
+                                            <th  style="width: 300px;">
+                                                <div class="th-wrap">
+                                                     Dia
+                                                    <span class="icon is-small">
+                                                        <i class="mdi mdi-menu-up"></i>
                                                     </span>
-												</td>
-												
-											{% endif %}
-										{% endfor %}
-									</tr>
-								{% endfor %}
-
-								</tbody>
-								
-							</table>
-							<a role="button" type="button" class="button" id="add-more-rows">
-								<span>Adicionar Linha</span>
-								<span class="icon is-small">
-									<i class="mdi mdi-plus mdi-24px"></i>
-								</span>
-							</a>
-							<a id="del-row" role="button" type="button" class="button">
-								<span>Remover Linha</span>
-								<span class="icon is-small">
-									<i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-								</span>
-							</a>
-						</div>
-					</div>
+                                                </div>
+                                            </th>
+                                            <th  style="width: 300px;">
+                                                <div class="th-wrap">
+                                                     Horário
+                                                    <span class="icon is-small">
+                                                        <i class="mdi mdi-menu-up"></i>
+                                                    </span>
+                                                </div>
+                                            </th>
+                                            <th style="width: 300px;">
+                                                Vagas
+                                                <span class="icon is-small">
+                                                    <i class="mdi mdi-menu-up"></i>
+                                                </span>
+                                            </th>
+                                            <th style=""></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>    
+                                        {% for sessao in sessions_activity %} 
+                                        <tr id="sessao.id" draggable="false">
+                                            <td data-label="Dia">{{sessao.dia}}</td>
+                                            <td data-label="Nome">{{sessao.horarioid.inicio}}</td>
+                                            <td data-label="Submetido a">{{sessao.vagas}}</td>  
+                                            <td>
+                                               <a onclick="alert.render('Tem a certeza que deseja eliminar a sessão?','{% url 'atividades:eliminarSessao' sessao.id%}')">
+                                                    <span class="icon has-text-danger">
+                                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                                                    </span>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %} 
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                         <hr/>
+            <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem; margin-bottom: 2rem;">Adicionar Sessao</h2>
+            <div class="columns">
+                    <div class="column is-2">
+                      <div class="field" >
+                        <label class="label">Dia</label>
+                        <div class="control">
+                          <div class="select is-fullwidth" >
+                            <select id="diasessao" name="diasessao">
+                              <option value="">---------</option>
+                              {% for dia in dias %}
+                              <option value="{{dia|date:'Y-m-d'}}">{{dia}}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                      <div class="column is-2">
+                      <div class="field" >
+                        <label class="label">Horário</label>
+                        <div class="control">
+                          <div class="select is-fullwidth" >
+                            <select id="horarioid" name="horarioid">
+                              <option value="">---------</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="column is-1">
+                        <div class="field" >
+                        <label class="label"></label>
+                        <br>
+                          <div class="control">
+                            <div class="has-text-centered">
+                                <button class="button is-success" name="new" value="new">
+                                    <span class="icon is-small">
+                                        <i class="mdi mdi-plus"></i>
+                                    </span>
+                                    <span>Adicionar Sessão</span>
+                                </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+              </div>
+        <hr>
         </div>     
     </section>
     <div class="column is-8 is-offset-2">
@@ -425,12 +464,12 @@
          </a>
       </div>
       <div class="level-right">
-        <button type="submit" id="concluir" class="button is-large is-success is-outlined is-link">
+        <a  class="button is-large is-success is-outlined is-link" onclick="alert.warning('Não poderá Finalizar sem inserir sessões')">
             <span>Finalizar Proposta</span>
             <span class="icon is-medium">
               <i class="mdi fa fa-check mdi-36px"></i>
             </span>
-        </button>
+        </a>
         </div>
       </div>
     </div>
@@ -463,8 +502,7 @@
 
 <script>
 
-
-$('#toValidate').click(function(e){
+    $('#toValidate').click(function(e){
     if ($("#frm")[0].checkValidity()) {
         console.log('vald')
         $('#proporatividade').hide();
@@ -475,49 +513,6 @@ $('#toValidate').click(function(e){
   //if you've gotten here - play on playa'
 });
 
-	$("#add-more-rows").click(function(){
-	var value = $("#id_form-TOTAL_FORMS").val();
-	value = Number(value) + Number('1');
-	document.getElementById("id_form-TOTAL_FORMS").value = value;
-	$.ajax({
-		url: "{% url 'atividades:ajaxAddSessaoRow' %}",
-		method: "POST",
-		data: {
-			'extra': value,
-			csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-		},
-		success: function(data){
-			$("#tableBody-01").append(data);
-		}
-	});
-})
-$('#del-row').click(function(e){
-	var value = $("#id_form-TOTAL_FORMS").val();
-	var initial = $("#id_form-INITIAL_FORMS").val();
-	var rowCount = $('#tableBody-01 tr').length;
-	if(Number(value) > Number(initial) && Number(value) > 1) {
-        var jqthis = $('.dia-sessao:last')
-        var id = jqthis.attr('id');
-        console.log(id)
-		$('#table01 tr:last').remove();
-		value = Number(value) - Number('1');
-		document.getElementById("id_form-TOTAL_FORMS").value = value;
-        for(var i = 0 ; i< Number(value); i++){
-            if(Number(id.split('-')[1]) != i){
-                console.log('I: '+ i)
-                updateSchedules('id_form-'+id.split('-')[1]+'-horarioid',$('#id_form-'+i+'-dia').val());
-            }
-        }
-	} else if(rowCount > 1){
-		var form_delete = 'form-'+Number(value-1)+'-DELETE';
-		var delete_ = "<input type='hidden' name='"+form_delete+"' id='id_"+form_delete+"' value='on'>";
-		$('#table01 tr:last').append(delete_);
-		$('#table01 tr:last').hide();
-		$('#table01 tr:last').appendTo("#id_removed_rows");
-	} else {
-		alert.warning("Não pode eliminar todas as sessoes");
-	}
-})
     $("#campusid").change(function()
     {
         var valuecampus= $(this).val();
@@ -554,7 +549,28 @@ $('#del-row').click(function(e){
         })
 
     })
-    
+
+     $("#diasessao").change(function()
+    {
+        var id= "{{id}}"
+        console.log(id)
+        var valuedia= $(this).val();
+        $.ajax({
+            url:"{% url 'atividades:verHorarios'%}",
+            method: 'POST',
+            data: { 
+                'valuedia': valuedia,
+                'id': id,
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+            },
+            success: function(data){
+                $("#horarioid").html(data)
+            }
+
+        })
+
+    })    
+
     function myFunction() {
     var x = document.getElementById("proporatividade");
     var x2 = document.getElementById("inserirsessao");
@@ -569,3 +585,4 @@ $('#del-row').click(function(e){
     
 </script>
 {% endblock scripts %}
+

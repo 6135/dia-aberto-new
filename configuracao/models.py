@@ -123,7 +123,7 @@ class Diaaberto(models.Model):
         time_lunch_end = 50400
         return [
             (time.strftime('%H:%M', time.gmtime(start_time_as_seconds + (n*self.escalasessoes.minute*60))))
-                for n in range(int((43200 - start_time_as_seconds)/(self.escalasessoes.minute*60))+1)
+                for n in range(int((43200 - start_time_as_seconds)/(self.escalasessoes.minute*60)))
         ] + [
             (time.strftime('%H:%M', time.gmtime(time_lunch_end + (n*self.escalasessoes.minute*60))))
                 for n in range(int((end_time_as_seconds - time_lunch_end)/(self.escalasessoes.minute*60))+1)
@@ -173,6 +173,15 @@ class Diaaberto(models.Model):
             return current.datapropostasatividadesincio <= now and current.dataporpostaatividadesfim > now
         else: return False
 
+    def days_as_array(self):
+        data_inicio = self.datadiaabertoinicio
+        data_fim = self.datadiaabertofim
+        total_dias= data_fim-data_inicio+timedelta(days=1)
+        return [(
+                    (data_inicio+timedelta(days=d)).date()
+                )  for d in range(total_dias.days)
+            ]
+            
     def __str__(self):
         return str(self.ano)
     class Meta:
@@ -324,6 +333,9 @@ class Horario(models.Model):
             horario = Horario(inicio=inicio,fim=fim).save()
             return horario.id
         return "Err!"
+    
+    def __str__(self):
+        return str(self.inicio) + ' até ' + str(self.fim)
 
     class Meta:
         managed = False
