@@ -840,7 +840,10 @@ def mensagem(request, id):
         tipo = "success" 
     elif id == 9:
         m = "Perfil criado com sucesso"
-        tipo = "success"                         
+        tipo = "success" 
+    elif id == 10:
+        m = "Não existem notificações"
+        tipo = "info"                              
     else:
         return redirect('utilizadores:login')
  

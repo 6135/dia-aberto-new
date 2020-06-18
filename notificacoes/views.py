@@ -4,6 +4,7 @@ from utilizadores.models import *
 from configuracao.models import *
 from coordenadores.models import *
 from atividades.models import *
+import math
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import *
@@ -34,12 +35,12 @@ def DetalhesNotificacao(request, pk):
 
 # Apagar uma notificação automática
 
-def apagar_notificacao_automatica(request, id):
-    notificacao = Notificacao.objects.get(id=id)
+def apagar_notificacao_automatica(request, id ,nr):
+    notificacao = Notificacao.objects.get(id=nr)
     if notificacao == None:
         return redirect("utilizadores:mensagem", 5)
     notificacao.delete()
-    return redirect('notificacoes:detalhes-automatica')
+    return redirect('notificacoes:categorias-notificacao-automatica',id,0)
 
 # Apagar todas as notificações de um utilizadador
 
@@ -57,7 +58,7 @@ def limpar_notificacoes(request, id):
         anteriores_notificacoes = user.notifications.read()
         for x in anteriores_notificacoes:
             x.delete()
-    return redirect('notificacoes:detalhes-automatica')
+    return redirect('notificacoes:categorias-notificacao-automatica',0,0)
 
 
 # Marcar todas as notificações de um utilizador como lidas
@@ -68,57 +69,73 @@ def marcar_como_lida(request):
     else:
         return redirect('utilizadores:mensagem', 5)
     user.notifications.mark_all_as_read(user)
-    return redirect('notificacoes:detalhes-automatica')
+    return redirect('notificacoes:categorias-notificacao-automatica',0,0)
 
 
 
-# Ver detalhes de uma notificação automática
+# Página quando não existem notificacoes
 
 
-def detalhes_notificacao_automatica(request, id):
-    notificacao = Notificacao.objects.get(id=id)
-    notificacao.unread = False
-    notificacao.save()
-    if notificacao == None:
-        return redirect("utilizadores:mensagem", 5)
-    return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
-        'notificacao': notificacao, 'categoria': 0
+def semn_otificacoes(request, id):
+    if request.user.is_authenticated:
+        user = get_user(request)
+    else:
+        return redirect('utilizadores:mensagem', 5)
+
+    return render(request, 'notificacoes/sem_notificacoes.html', {
+        'categoria':id,
     })
-
 
 # Ver notificações automáticas por categorias
 
 
-def categorias_notificacao_automatica(request, id):
+def categorias_notificacao_automatica(request, id, nr):
+    if request.user.is_authenticated:
+        user = get_user(request)
+    else:
+        return redirect('utilizadores:mensagem', 5)
+
     if id == 0:
-        notificacoes = user.notifications.all() 
+        notificacoes = user.notifications.all().order_by('-id') 
     elif id == 1:
-        notificacoes = user.notifications.unread() 
+        notificacoes = user.notifications.unread().order_by('-id') 
     elif id ==2:
-        notificacoes = user.notifications.read() 
+        notificacoes = user.notifications.read().order_by('-id') 
     elif id == 3:
-        notificacoes = Notificacao.objects.filter(public=False)
+        notificacoes = Notificacao.objects.filter(recipient_id=user , public=False).order_by('-id')
     elif id ==4:    
-        notificacoes = Notificacao.objects.filter(public=True)
+        notificacoes = Notificacao.objects.filter(recipient_id=user , public=True).order_by('-id')
     elif id == 5:
-        notificacoes = Notificacao.objects.filter(level="info")
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="info").order_by('-id')
     elif id ==6:  
-        notificacoes = Notificacao.objects.filter(level="warning")
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="warning").order_by('-id')
     elif id ==7: 
-        notificacoes = Notificacao.objects.filter(level="error")
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="error").order_by('-id')
     elif id ==8:  
-        notificacoes = Notificacao.objects.filter(level="success")
-    paginator= Paginator(notificacoes,5)
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="success").order_by('-id')
+    
+    if nr!=0:
+        notificacao = Notificacao.objects.get(id=nr)
+        if notificacao == None:
+            return redirect("notificacoes:sem_notificacoes", 10) 
+    else:
+        x = len(notificacoes)
+        if x>0:
+            notificacao = notificacoes[0]
+        else:
+            return redirect("notificacoes:sem_notificacoes", 10)    
+    nr_notificacoes_por_pagina = 15
+    paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
     page=request.GET.get('page')
     notificacoes = paginator.get_page(page)
 
-    notificacao = user.notifications.read()
-    notificacao.unread = False
-    notificacao.save()
-    if notificacao == None:
+    if notificacao != None:
+        notificacao.unread = False
+        notificacao.save()
+    else:
         return redirect("utilizadores:mensagem", 5)
     return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
-        'notificacao': notificacao, 'notificacoes':notificacoes
+        'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,
     })
 
 
