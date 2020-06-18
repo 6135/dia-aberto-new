@@ -7,6 +7,15 @@ from configuracao import views
 import json
 
 register = template.Library()
+
+@register.filter
+def atividades_count_dep(value):
+    return Atividade.objects.filter(professorutilizadorid__departamento_id=value).count()
+
+@register.filter
+def atividades_count_uo(value):
+    return Atividade.objects.filter(professorutilizadorid__departamento_id__unidadeorganicaid=value).count()
+
 @register.filter
 def get_atividades_count(value):
     return Atividade.objects.filter(tema=value).count()

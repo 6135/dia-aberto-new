@@ -41,10 +41,23 @@ urlpatterns = [
     path('editarTema/<int:id>', views.configurarTema, name='editarTema'),
     path('eliminarTema/<int:id>', views.eliminarTema,name='eliminarTema'),
 
+    path('departamentos', views.verDepartamentos, name='verDepartamentos'),
+    path('adicionarDepartamento', views.configurarDepartamento, name='adicionarDepartamento'),
+    path('editarDepartamento/<int:id>', views.configurarDepartamento, name='editarDepartamento'),
+    path('eliminarDepartamento/<int:id>', views.eliminarDepartamento,name='eliminarDepartamento'),
+
+    path('cursos', views.verCursos, name='verCursos'),
+    path('adicionarCurso', views.configurarCurso, name='adicionarCurso'),
+    path('editarCurso/<int:id>', views.configurarCurso, name='editarCurso'),
+    path('eliminarCurso/<int:id>', views.eliminarCurso,name='eliminarCurso'),
+
     #ajax ----------
     path('ajax/getDias', views.getDias, name='getDias'),
     path('ajax/addHorarioRow', views.newHorarioRow, name='ajaxAddHorarioRow'),
     path('ajax/addPratoRow', views.newPratoRow, name='ajaxAddPratoRow'),
     path('ajax/addEspacoRow', views.newEspacoRow, name='ajaxAddEspacoRow'),
+    path('ajax/addUORow', views.newUORow, name='ajaxAddUORow'),
+    path('ajax/addDepartamentoRow', views.newDepartamentoRow, name='ajaxAddDepartamentoRow'),
+    path('ajax/addCursoRow', views.newCursoRow, name='ajaxAddCursoRow'),
 
 ]

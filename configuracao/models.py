@@ -278,14 +278,15 @@ class Departamento(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
+    nome = models.CharField(
+        db_column='Nome', max_length=255, blank=True, null=True)
+    # Field name made lowercase.
     sigla = models.CharField(
         db_column='Sigla', max_length=32, blank=True, null=True)
     # Field name made lowercase.
     unidadeorganicaid = models.ForeignKey(
         'Unidadeorganica', models.CASCADE, db_column='UnidadeOrganicaID')
-    # Field name made lowercase.
-    nome = models.CharField(
-        db_column='Nome', max_length=255, blank=True, null=True)
+
 
     class Meta:
         db_table = 'Departamento'
@@ -365,13 +366,12 @@ class Unidadeorganica(models.Model):
 class Curso(models.Model):
 
     id = models.AutoField(db_column='ID', primary_key=True)
-
-    sigla = models.CharField(
-        db_column='Sigla', max_length=32, blank=True, null=True)
-
     nome = models.CharField(
         db_column='Nome', max_length=255, blank=True, null=True)
 
+    sigla = models.CharField(
+        db_column='Sigla', max_length=32, blank=True, null=True)\
+    
     unidadeorganicaid = models.ForeignKey(
         'Unidadeorganica', models.CASCADE, db_column='Unidadeorganica')
 
