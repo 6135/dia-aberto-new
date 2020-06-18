@@ -15,6 +15,8 @@ class Tarefa(models.Model):
     colab = models.ForeignKey('utilizadores.Colaborador', models.CASCADE, db_column='ColaboradorUtilizadorID',null=True,blank=True)  # Field name made lowercase.
     tipo = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
+    dia = models.DateField()
+    horario = models.TimeField(blank=False, null=False)
 
     class Meta:
         db_table = 'Tarefa'
@@ -32,9 +34,7 @@ class Tarefa(models.Model):
 class TarefaAcompanhar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
     origem = models.CharField(max_length=255, db_column='origem', blank=False, null=False)
-    destino = models.CharField(max_length=255, db_column='destino', blank=False, null=False)
-    dia = models.DateField()
-    horario = models.TimeField(blank=False, null=False)
+    destino = models.CharField(max_length=255, db_column='destino', blank=False, null=False) 
     inscricao = models.ForeignKey('inscricoes.Inscricao', models.CASCADE, db_column='inscricao')
     
     class Meta:
@@ -57,8 +57,6 @@ class TarefaAuxiliar(models.Model):
 class TarefaOutra(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
     descricao = models.TextField(db_column='descricao', blank=False, null=False)
-    horario = models.TimeField(blank=False, null=False)
-    dia = models.DateField()
 
     class Meta:
         db_table = 'TarefaOutra'
