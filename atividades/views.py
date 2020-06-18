@@ -39,7 +39,9 @@ def filters(request):
 
 def minhasatividades(request):
     
-    atividades=Atividade.objects.all()
+    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    if user_check_var.get('exists') == False: return user_check_var.get('render')
+    atividades=Atividade.objects.filter(professoruniversitarioutilizadorid=ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id))
     sessoes=Sessao.objects.all()
     materiais= Materiais.objects.all()
     if request.method == 'POST' or request.GET.get('searchAtividade'):
@@ -67,28 +69,25 @@ class Conflito:
         
 
 def atividadescoordenador(request):
-    atividades=Atividade.objects.all()
+    user_check_var = uviews.user_check(request=request, user_profile=[Coordenador])
+    if user_check_var.get('exists') == False: return user_check_var.get('render')
+    atividades=Atividade.objects.filter(professoruniversitarioutilizadorid__faculdade_id=Coordenador.objects.get(utilizador_ptr_id = request.user.id).faculdade)
     sessoes=Sessao.objects.all()
     materiais= Materiais.objects.all()
     conflito2= []
-    for atividade1 in atividades:
-        for atividade2 in atividades:
-            if atividade1.id!=atividade2.id:
-                if atividade1.espacoid== atividade2.espacoid:
-                    sessao1= Sessao.objects.filter(atividadeid=atividade1)
-                    sessao2= Sessao.objects.filter(atividadeid=atividade2)
-                    sessao1horario= []
-                    sessao2horario= []
-                    for s1 in sessao1:
-                        sessao1horario.append(s1.horarioid) 
-                    for s2 in sessao2:
-                        sessao2horario.append(s2.horarioid)
-                    for horario1 in sessao1horario:
-                        if horario1 in sessao2horario:
-                            C1=Conflito(atividade1,atividade2)
-                            conflito2.append(C1)
-    for c in conflito2:
-        print(c.atividade1)                
+    for sessao1 in sessoes:
+        for sessao2 in sessoes:
+            if sessao1.id!=sessao2.id and sessao1.atividadeid!= sessao2.atividadeid and sessao1.atividadeid.espacoid == sessao2.atividadeid.espacoid and sessao1.dia == sessao2.dia:     
+                    hora1inicio=sessao1.horarioid.inicio.hour*60+sessao1.horarioid.inicio.minute
+                    hora1fim=sessao1.horarioid.fim.hour*60+sessao1.horarioid.fim.minute
+                    hora2inicio=sessao2.horarioid.inicio.hour*60+sessao2.horarioid.inicio.minute
+                    hora2fim=sessao2.horarioid.fim.hour*60+sessao2.horarioid.fim.minute
+                    if hora1inicio<=hora2inicio < hora1fim or hora1inicio< hora2fim <= hora1fim:
+                        C1=Conflito(sessao1.atividadeid,sessao2.atividadeid)
+                        conflito2.append(C1)
+    conflito2= list(dict.fromkeys(conflito2))
+    #for c in conflito2:
+    #    print(c.atividade1)                
     if request.method == 'POST' or request.GET.get('searchAtividade'):
         today=datetime.now(timezone.utc)
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
@@ -114,6 +113,7 @@ def atividadescoordenador(request):
     return render(request=request,
 			template_name="atividades/atividadesUOrganica.html",
             context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm})
+
 
 def alterarAtividade(request,id):
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
@@ -600,7 +600,7 @@ def validaratividade(request,id, action):
         #views.enviar_notificacao_automatica(request,"confirmarAtividade",id) #Enviar Notificacao Automatica !!!!!!
         atividade.estado='Aceite'
     atividade.save()
-    return redirect('minhasAtividades')
+    return redirect('atividades:atividadesUOrganica')
 
 
 def verresumo(request,id):
