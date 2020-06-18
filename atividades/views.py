@@ -41,6 +41,7 @@ def minhasatividades(request):
     
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
+
     atividades=Atividade.objects.filter(professoruniversitarioutilizadorid=ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id))
     sessoes=Sessao.objects.all()
     materiais= Materiais.objects.all()
@@ -642,5 +643,14 @@ def verresumo(request,id):
     sessions_activity= Sessao.objects.filter(atividadeid=atividade)
     return render(request=request, 
                 template_name="atividades/resumo.html",  context={"atividade": atividade, "sessions_activity": sessions_activity, "nsub": nsub} )
+
+def confirmarResumo(request,id):
+    atividade= Atividade.objects.get(id=id)
+    if atividade.estado == "nsub":
+        atividade.estado= "Pendente"
+    else:
+        atividade.estado= "Pendente"
+    atividade.save()
+
 #---------------------End David
     
