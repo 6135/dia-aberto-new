@@ -53,9 +53,9 @@ class AtividadesAPIView(ListCreateAPIView):
             fields = '__all__'
 
     class AtividadesPagination(pagination.PageNumberPagination):
-        page_size = 1000
+        page_size = 10
         page_size_query_param = 'page_size'
-        max_page_size = 10000
+        max_page_size = 100
 
     search_fields = '__all__'
     ordering_fields = '__all__'
@@ -76,6 +76,7 @@ def add_vagas_sessao(sessaoid, vagas):
 
 
 def init_form(step, inscricao, POST=None):
+    form = None
     if step == 'responsaveis':
         responsavel = inscricao.responsavel_set.first()
         form = forms.ResponsavelForm(POST, instance=responsavel)
@@ -107,6 +108,32 @@ def init_form(step, inscricao, POST=None):
                                     'nresponsaveis': 1,
                                     'individual': inscricao.individual,
                                 })
+    elif step == 'sessoes':
+        inscricoes_sessao = inscricao.inscricaosessao_set.all()
+        sessoes = {}
+        sessoes_info = []
+        for inscricao_sessao in inscricoes_sessao:
+            sessao = inscricao_sessao.sessao
+            sessoes[sessao.id] = inscricao_sessao.nparticipantes
+            sessoes_info.append({
+                'atividade': {'nome': sessao.atividadeid.nome, 'sala': sessao.atividadeid.get_sala_str()},
+                'sessao': {
+                    'id': sessao.id,
+                    'vagas': sessao.vagas + inscricao_sessao.nparticipantes,
+                    'horario': {
+                        'inicio': sessao.horarioid.inicio.strftime("%H:%M:%S"),
+                        'fim': sessao.horarioid.fim.strftime("%H:%M:%S"),
+                    },
+                },
+            })
+        sessoes = json.dumps(sessoes)
+        sessoes_info = json.dumps(sessoes_info)
+        form = forms.SessoesForm(POST,
+                                 initial={
+                                     'sessoes': sessoes,
+                                     'sessoes_info': sessoes_info,
+                                     'nalunos': inscricao.nalunos,
+                                 })
     return form
 
 
@@ -149,6 +176,12 @@ def update_context(context, step, wizard=None, inscricao=None):
             'tipos': json.dumps(list(map(lambda x: x[0], Atividade.tipos))),
             'nalunos': wizard.get_cleaned_data_for_step('escola')['nalunos'] if wizard else inscricao.nalunos,
         })
+    elif step == 'submissao':
+        context.clear()
+        context.update({
+            'inscricaoid': inscricao.pk,
+            'individual': inscricao.individual,
+        })
 
 
 def update_post(step, POST, wizard=None, inscricao=None):
@@ -163,7 +196,7 @@ def update_post(step, POST, wizard=None, inscricao=None):
                 datadiaabertoinicio__lte=dia.replace(hour=23), datadiaabertofim__gte=dia.replace(hour=0)).first()
             if diaaberto:
                 POST[f'{prefix}diaaberto'] = diaaberto.id
-        except ValueError:
+        except:
             pass
         POST[f'{prefix}individual'] = wizard.get_cleaned_data_for_step('info')[
             'individual'] if wizard else inscricao.individual
@@ -175,7 +208,7 @@ def update_post(step, POST, wizard=None, inscricao=None):
             'individual'] if wizard else inscricao.individual
     elif step == 'sessoes':
         POST[f'{prefix}nalunos'] = wizard.get_cleaned_data_for_step('escola')[
-            'nalunos'] if wizard else inscricao.individual
+            'nalunos'] if wizard else inscricao.nalunos
     POST._mutable = mutable
 
 
@@ -187,6 +220,16 @@ def save_form(step, form, inscricao):
         inscricao.local_chegada = form.cleaned_data['local_chegada'] if not outro else None
         inscricao.entrecampi = form.cleaned_data['entrecampi']
         inscricao.save()
+    elif step == 'sessoes':
+        for inscricao_sessao in inscricao.inscricaosessao_set.all():
+            inscricao_sessao.delete()
+        sessoes = form.cleaned_data['sessoes']
+        for sessaoid in sessoes:
+            if sessoes[sessaoid] > 0:
+                inscricao_sessao = models.Inscricaosessao(sessao=Sessao.objects.get(
+                    pk=sessaoid), nparticipantes=sessoes[sessaoid], inscricao=inscricao)
+                add_vagas_sessao(sessaoid, -sessoes[sessaoid])
+                inscricao_sessao.save()
     else:
         form.save()
 
@@ -240,12 +283,12 @@ class InscricaoWizard(SessionWizardView):
         # Necessário para algumas validações especiais de backend, como verificar o número de alunos
         # inscritos para verificar inscritos nos almoços e nas sessões.
         update_post(self.steps.current, self.request.POST, self)
+        print(self.request.POST)
         return super(InscricaoWizard, self).post(*args, **kwargs)
 
     def done(self, form_list, form_dict, **kwargs):
         # Guardar na Base de Dados
         # TODO: Responsáveis
-        sessoes = form_dict['sessoes'].cleaned_data['sessoes']
         responsaveis = form_dict['responsaveis'].save(commit=False)
         almoco = form_dict['almoco'].save(commit=False)
         inscricao = form_dict['escola'].save(commit=False)
@@ -257,14 +300,12 @@ class InscricaoWizard(SessionWizardView):
             inscricao.local_chegada = form_dict['transporte'].cleaned_data['local_chegada']
         inscricao.entrecampi = form_dict['transporte'].cleaned_data['entrecampi']
         inscricao.save()
+        sessoes = form_dict['sessoes'].cleaned_data['sessoes']
         for sessaoid in sessoes:
             if sessoes[sessaoid] > 0:
                 inscricao_sessao = models.Inscricaosessao(sessao=Sessao.objects.get(
                     pk=sessaoid), nparticipantes=sessoes[sessaoid], inscricao=inscricao)
-                with transaction.atomic():
-                    sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
-                    sessao.vagas = F('vagas') - sessoes[sessaoid]
-                    sessao.save()
+                add_vagas_sessao(sessaoid, -sessoes[sessaoid])
                 inscricao_sessao.save()
         responsaveis.inscricao = inscricao
         responsaveis.save()
@@ -272,7 +313,7 @@ class InscricaoWizard(SessionWizardView):
             almoco.inscricao = inscricao
             almoco.save()
         # TODO: Construir PDF
-        return render(self.request, 'inscricoes/inscricao_submetida.html', {
+        return render(self.request, 'inscricoes/consultar_inscricao_submissao.html', {
             'inscricaoid': inscricao.pk,
             'individual': self.get_cleaned_data_for_step('info')['individual'],
         })
@@ -307,9 +348,18 @@ class ConsultarInscricao(View):
         inscricao = get_object_or_404(Inscricao, pk=pk)
         update_post(self.step_names[step], request.POST, inscricao=inscricao)
         form = init_form(self.step_names[step], inscricao, request.POST)
+        inscricoessessao = inscricao.inscricaosessao_set.all()
+        if self.step_names[step] == 'sessoes':
+            for inscricao_sessao in inscricoessessao:
+                add_vagas_sessao(inscricao_sessao.sessao.id,
+                                 inscricao_sessao.nparticipantes)
         if form.is_valid():
             save_form(self.step_names[step], form, inscricao)
             return HttpResponseRedirect(reverse('inscricoes:consultar-inscricao', args=[pk, step]))
+        if self.step_names[step] == 'sessoes':
+            for inscricao_sessao in inscricoessessao:
+                add_vagas_sessao(inscricao_sessao.sessao.id,
+                                 -inscricao_sessao.nparticipantes)
         context.update({'alterar': alterar,
                         'pk': pk,
                         'step': step,
