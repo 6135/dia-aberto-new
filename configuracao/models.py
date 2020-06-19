@@ -247,7 +247,6 @@ class Espaco(models.Model):
     descricao = models.CharField(db_column='Descricao', max_length=255, blank=True, null = True)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'Espaco'
 
 
@@ -259,7 +258,6 @@ class Edificio(models.Model):
     def espacos_(self):
         return Espaco.objects.filter(edificio=self)
     class Meta:
-        managed = False
         db_table = 'Edificio'
 
 
@@ -270,7 +268,6 @@ class Campus(models.Model):
     def __str__(self):
         return self.nome
     class Meta:
-        managed = False
         db_table = 'Campus'
 
 
@@ -340,7 +337,6 @@ class Horario(models.Model):
         return str(self.inicio) + ' até ' + str(self.fim)
 
     class Meta:
-        managed = False
         db_table = 'Horario'
 
 
@@ -352,7 +348,6 @@ class Unidadeorganica(models.Model):
     campusid = models.ForeignKey(Campus, models.DO_NOTHING, db_column='CampusID')  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'UnidadeOrganica'
 
     def __str__(self):
