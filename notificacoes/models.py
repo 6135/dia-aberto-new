@@ -10,6 +10,7 @@ class Notificacao(AbstractNotification):
     class Meta(AbstractNotification.Meta):
         abstract = False
         db_table = 'Notificacao'
+        app_label = 'notificacoes'
 
 
 
