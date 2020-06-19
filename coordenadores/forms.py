@@ -34,10 +34,14 @@ class CustomTimeWidget(TimeInput):
             self.format = '%H:%M'
 
 class TarefaForm(ModelForm):
-  
+    horarioTime = TimeField(widget=TimeInput(attrs={'class':'timepicker','type':'time','min':'09:00','max':'18:00'}))
+    horarioSelect = ChoiceField(widget=Select(),choices={'','Escolha o horario'},required=False)
     def clean(self):
         cleaned_data=super().clean()
-        
+        if cleaned_data.get('tipo') == 'tarefaOutra':
+            print(cleaned_data.get('tipo'))
+            if not cleaned_data.get('horarioSelect'):
+                raise ValidationError('Horario is required')
         estado = 'naoConcluida'
         if cleaned_data.get('colab') is None:
             estado = 'naoAtribuida'
@@ -54,9 +58,10 @@ class TarefaForm(ModelForm):
             self.instance.nome = nome[0:18] + '...'
     class Meta:  
         model = Tarefa 
-        exclude = ['coord','id','nome','created_at','estado','created_at']
+        exclude = ['coord','id','nome','created_at','estado','horario']
         widgets = {
             'tipo': RadioSelect(attrs={'class':'radio'},choices=[('tarefaAuxiliar','Auxiliar Atividade'),('tarefaAcompanhar','Acompanhar participantes'),('tarefaOutra','Outra')]),
+            'dia': Select(choices=[('','Escolha o dia')]+get_dias()),
             }
 
     def __init__(self,user,*args, **kwargs):
@@ -106,8 +111,6 @@ class TarefaAcompanharForm(ModelForm):
         model= TarefaAcompanhar
         exclude = ['tarefaid','inscricao','dias']
         widgets ={
-            'dia' : Select(choices=[('','Escolha o dia')],attrs={'onchange':'grupoHorario();'}),
-            'horario' : Select(choices=[('','Escolha a hora')],attrs={'onchange':'grupoLocal();'}),
             'origem' : Select(choices=[('','Escolha o local de encontro')],attrs={'onchange':'grupoDestino();'}),
             'destino' : Select(choices=[('','Escolha o local de destino')],)
         }
@@ -117,14 +120,11 @@ class TarefaAcompanharForm(ModelForm):
         self.instance.inscricao = Inscricao.objects.get(id=cleaned_data['inscricao']) 
         
 class TarefaOutraForm(ModelForm):
-    dia = ChoiceField(choices=[('','Escolha o dia')]+get_dias(),widget=Select())
-    #horario = DateField(widget=DateInput(attrs={'class':'timepicker'}))
     class Meta:
         model= TarefaOutra
         exclude = ['tarefaid']
         widgets = {
             'descricao' : Textarea(attrs={'class':'textarea'}),
-            'horario' : CustomTimeWidget(attrs={'class':'input'})
             }           
    
 
