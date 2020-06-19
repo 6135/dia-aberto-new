@@ -213,6 +213,15 @@ def update_post(step, POST, wizard=None, inscricao=None):
 
 
 def save_form(step, form, inscricao):
+    if step == 'almoco':
+        almoco = form.save(commit=False)
+        if almoco is not None:
+            almoco.inscricao = inscricao
+            almoco.save()
+        else:
+            inscricaoalmoco = inscricao.inscricaoalmoco_set.first()
+            if inscricaoalmoco:
+                inscricaoalmoco.delete()
     if step == 'transporte':
         inscricao.meio_transporte = form.cleaned_data['meio']
         outro = form.cleaned_data['meio'] == 'outro'
