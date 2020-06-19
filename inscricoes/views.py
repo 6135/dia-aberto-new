@@ -370,7 +370,7 @@ class ConsultarInscricao(View):
         return render(request, f"{self.template_prefix}_{self.step_names[step]}.html", context)
 
 
-class ConsultarInscricoesListView(SingleTableMixin, FilterView):
+class ConsultarInscricoes(SingleTableMixin, FilterView):
     table_class = InscricoesTable
     template_name = 'inscricoes/consultar_inscricoes.html'
 
@@ -381,16 +381,7 @@ class ConsultarInscricoesListView(SingleTableMixin, FilterView):
     }
 
 
-class MinhasInscricoes(SingleTableMixin, FilterView):
-    table_class = InscricoesTable
-    template_name = 'inscricoes/minhas_inscricoes.html'
-
-    filterset_class = InscricaoFilter
-
-    table_pagination = {
-        'per_page': 8
-    }
-
+class MinhasInscricoes(ConsultarInscricoes):
     def get_queryset(self):
         return Inscricao.objects.filter(participante__user_ptr=self.request.user)
 
