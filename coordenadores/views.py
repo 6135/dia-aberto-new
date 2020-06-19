@@ -22,6 +22,7 @@ def adicionartarefa(request, id = None):
     form_tarefa=TarefaForm(user=request.user.id,instance=tarefa)
     if request.method == 'POST':
         form_tarefa=TarefaForm(user=request.user.id,data=request.POST,instance=tarefa)
+        print(form_tarefa.errors)
         if form_tarefa.is_valid():
             form_tarefa.save()
             if request.POST['tipo'] == 'tarefaAuxiliar':        
@@ -61,6 +62,7 @@ def adicionartarefa(request, id = None):
     )
 
 def tipoTarefa(request):
+    tarefa = Tarefa()
     if request.method == 'POST':
         tipo = request.POST['tipo']
         if tipo == 'tarefaAuxiliar':
@@ -71,8 +73,9 @@ def tipoTarefa(request):
             template = 'coordenadores/tarefaAcompanhar.html'
         elif tipo == 'tarefaOutra':
             form = TarefaOutraForm()
+            tarefa = TarefaForm(user=request.user.id,data=request.POST,instance=tarefa)
             template = 'coordenadores/tarefaOutra.html'
-    return render(request=request,template_name=template,context={'form':form})
+    return render(request=request,template_name=template,context={'form':form,'tarefa':tarefa})
 
 def diasAtividade(request):
     default = {
