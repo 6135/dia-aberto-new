@@ -71,6 +71,9 @@ class Atividade(models.Model):
     def get_campus_str(self):
         return self.espacoid.edificio.campus.__str__()
 
+    def get_sala_str(self):
+        return f"{self.espacoid.edificio.nome} {self.espacoid.nome} - {self.espacoid.edificio.campus}"
+
     def get_uo(self):
         return self.professoruniversitarioutilizadorid.faculdade
         
