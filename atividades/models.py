@@ -14,7 +14,6 @@ class Anfiteatro(models.Model):
     espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'Anfiteatro'
 
    
@@ -23,7 +22,6 @@ class Arlivre(models.Model):
     espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'ArLivre'
 
 class Tema(models.Model):
@@ -31,7 +29,6 @@ class Tema(models.Model):
     tema = models.CharField(db_column='Tema', max_length=64)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'Tema'
 
 class Atividade(models.Model):
@@ -54,7 +51,6 @@ class Atividade(models.Model):
     tema = models.ForeignKey('Tema', models.CASCADE, db_column='Tema', blank=False, null=False)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'Atividade'
 
     def get_fields(self):
