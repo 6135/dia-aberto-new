@@ -41,8 +41,8 @@ class InformacaoNotificacao(models.Model):
     pendente = models.BooleanField(db_column='pendente', null=False)
     titulo 	= models.CharField(db_column='titulo', max_length=255)
     descricao = models.CharField(db_column='descricao', max_length=255)
-    emissor = models.ForeignKey('utilizadores.Utilizador', models.DO_NOTHING, db_column='emissorid', related_name='envia',null=True)  
-    recetor = models.ForeignKey('utilizadores.Utilizador', models.DO_NOTHING, db_column='recetorid', related_name='recebe',null=True,blank=True)  
+    emissor = models.ForeignKey('utilizadores.Utilizador', models.CASCADE, db_column='emissorid', related_name='envia',null=True)  
+    recetor = models.ForeignKey('utilizadores.Utilizador', models.CASCADE, db_column='recetorid', related_name='recebe',null=True,blank=True)  
     tipo = models.CharField(db_column='tipo', max_length=255)	
     lido = models.BooleanField(db_column='lido', null=False)	
     class Meta:
