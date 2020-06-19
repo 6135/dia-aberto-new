@@ -183,7 +183,7 @@ def enviar_notificacao_automatica(request, sigla, id):
             tarefa.getDescription()+"\" foi rejeitado."
         user_recipient = Utilizador.objects.get(id=tarefa.colab.id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=tarefa,
-                    target=None, level="error", description=titulo, public=False, timestamp=timezone.now())
+                    target=None, level="warning", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação atividade confirmada - professor universitario
     elif sigla == "confirmarAtividade":
         atividade = Atividade.objects.get(id=id)
@@ -219,7 +219,7 @@ def enviar_notificacao_automatica(request, sigla, id):
             "\", por esse motivo a tarefa deixou de lhe estar atribuída."
         user_recipient = Utilizador.objects.get(id=tarefa.colab.id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=tarefa,
-                    target=None, level="error", description=titulo, public=False, timestamp=timezone.now())
+                    target=None, level="warning", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação tarefa alterada - colaborador
     elif sigla == "tarefaAlterada":
         tarefa = Tarefa.objects.get(id=id)
@@ -228,25 +228,25 @@ def enviar_notificacao_automatica(request, sigla, id):
             descricao = "Foi alterada a tarefa \""+tarefa.getDescription()+"\""
             user_recipient = Utilizador.objects.get(id=tarefa.colab.id)
             notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=tarefa,
-                        target=None, level="warning", description=titulo, public=False, timestamp=timezone.now())
+                        target=None, level="info", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação atividade apagada - coordenador
     elif sigla == "atividadeApagada":
         titulo = "Foi apagada uma atividade"
         atividade = Atividade.objects.get(id=id)
         descricao = "Foi apagada a atividade \""+atividade.nome+"\""
         user_recipient = Utilizador.objects.get(
-            id=atividade.coordenadorutilizadorid.id)
+            id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
-                    target=atividade, level="error", description=titulo, public=False, timestamp=timezone.now())
+                    target=atividade, level="warning", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação atividade alterada - coordenador
     elif sigla == "atividadeAlterada":
         titulo = "Foi alterada uma atividade"
         atividade = Atividade.objects.get(id=id)
         descricao = "Foi feita uma alteração na atividade \""+atividade.nome+"\""
         user_recipient = Utilizador.objects.get(
-            id=atividade.coordenadorutilizadorid.id)
+            id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
-                    target=atividade, level="warning", description=titulo, public=False, timestamp=timezone.now())
+                    target=atividade, level="info", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação quando há registo de utilizador por validar - administrador e ao coordenador ( 5 dias depois de criado se ainda tiver pendente
     elif sigla == "validarRegistosPendentes":  # timezone.now() + timedelta(days=5)
         titulo = "Validação de registos de utilizadores pendentes"
@@ -289,7 +289,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         atividade = Atividade.objects.get(id=id)
         descricao = "Foram criadas propostas de atividades que têm de ser validadas."
         user_recipient = Utilizador.objects.get(
-            id=atividade.coordenadorutilizadorid.id)
+            id=atividade.get_coord().id)
         user_sender = Utilizador.objects.get(id=user_sender.id)
         info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
                               descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "actividade "+str(id) , lido = False)

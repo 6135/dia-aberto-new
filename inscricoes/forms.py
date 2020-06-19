@@ -63,7 +63,7 @@ class TransporteForm(forms.Form):
     def clean(self):
         cleaned_data = super(TransporteForm, self).clean()
         print(cleaned_data['hora_chegada'])
-        if cleaned_data['meio'] != 'outro' and not cleaned_data['hora_chegada'] and not cleaned_data['local_chegada']:
+        if cleaned_data['meio'] != 'outro' and (not cleaned_data['hora_chegada'] or not cleaned_data['local_chegada']):
             raise forms.ValidationError(
                 _("Por favor, indique a hora e o local de chegada."))
 

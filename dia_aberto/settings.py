@@ -39,7 +39,7 @@ MEDIA_URL = '/media/'
 SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env('DEBUG')
+DEBUG = True
 
 ALLOWED_HOSTS = ['dia-aberto.streamonion.com',
                  '77.68.24.178', 'localhost', '127.0.0.1']
@@ -84,7 +84,7 @@ INSTALLED_APPS = [
 DJANGO_NOTIFICATIONS_CONFIG = { 'USE_JSONFIELD': True}
 
 
-NOTIFICATIONS_NOTIFICATION_MODEL = 'notifications.Notificacao'
+NOTIFICATIONS_NOTIFICATION_MODEL = 'notificacoes.Notificacao'
 
 DJANGO_TABLES2_TEMPLATE = "bulma-table.html"
 

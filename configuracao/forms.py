@@ -66,10 +66,17 @@ class diaAbertoFilterForm(Form):
     ]
     showBy = ChoiceField(choices=showByChoices, widget=Select(), required=False)
 
-class menuForm(ModelForm):
+
+def get_diaaberto_choices():
     dia_choices = Diaaberto.objects.all()
-    diaaberto = ChoiceField(choices=[('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices],widget=Select())
-    campus = ChoiceField(choices=[(camp.id,camp.nome) for camp in Campus.objects.all()],widget=Select())
+    return [('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices]
+
+def get_campus_choices():
+    [(camp.id,camp.nome) for camp in Campus.objects.all()]
+
+class menuForm(ModelForm):
+    diaaberto = ChoiceField(choices=get_diaaberto_choices,widget=Select())
+    campus = ChoiceField(choices=get_campus_choices,widget=Select())
 
     def clean(self):
         cleaned_data = super().clean()
@@ -112,16 +119,19 @@ class transporteFilterForm(Form):
     filter_to = ChoiceField(choices = [(None,'Para'),('Gambelas','Para Gambelas'),('Penha','Para Penha'),('Terminal','Para Terminal')],
                             widget=Select(),required=False)
 
-class transporteForm(ModelForm):
+
+def get_dia_choices():
     dia_aberto = Diaaberto.objects.filter(datadiaabertoinicio__gte=datetime.now(timezone.utc)).order_by('datadiaabertoinicio').first()
-    #diaaberto = ChoiceField(choices=[('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices],widget=Select())
     dia_choices = []
     if dia_aberto is None:
         dia_choices = [('','')]
     else:
         dia_choices = dia_aberto.days_as_tuples()
-   
-    dia = ChoiceField(choices=dia_choices)
+    return dia_choices
+
+class transporteForm(ModelForm):
+    dia = ChoiceField(choices=get_dia_choices)
+    
     def clean(self):
         cleaned_data = super().clean()
         self.instance.diaaberto = self.dia_aberto

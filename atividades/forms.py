@@ -26,10 +26,12 @@ class DateTimeWidget(DateTimeInput):
         else: 
             self.format = '%Y-%m-%d'
 
+def get_tema_choices():
+    return [(tema.id,tema.tema) for tema in Tema.objects.all()]
 
 class AtividadeForm(ModelForm):
-    tema = ChoiceField(choices=[(tema.id,tema.tema) for tema in Tema.objects.all()])
-    duracaoesperada= ChoiceField(choices=get_choices_time())
+    tema = ChoiceField(choices=get_tema_choices)
+    duracaoesperada= ChoiceField(choices=get_choices_time)
     class Meta:  
         model = Atividade  
         exclude = ['professoruniversitarioutilizadorid','datasubmissao', 'dataalteracao','estado','id','diaabertoid','tema','espacoid',]
@@ -64,14 +66,16 @@ class MateriaisForm(ModelForm):
             'nomematerial': TextInput(attrs={'class': 'input'}),
             }
 
+def get_dep_choices():
+    return [(-1,'Mostra todos os Departamentos')] + [(departamento.id,departamento.nome) for departamento in Departamento.objects.all()]
+
 class atividadesFilterForm(Form):
     searchAtividade = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Atividade'}), required=False)
     Aceite=BooleanField(widget=CheckboxInput(),required=False)
     Recusada=BooleanField(widget=CheckboxInput(),required=False)
     Pendente=BooleanField(widget=CheckboxInput(),required=False)
     diaAbertoAtual=BooleanField(widget=CheckboxInput(),required=False)
-    dep=[(-1,'Mostra todos os Departamentos')] + [(departamento.id,departamento.nome) for departamento in Departamento.objects.all()]
-    departamentos = ChoiceField(choices=dep,widget=Select(), required=False)
+    departamentos = ChoiceField(choices=get_dep_choices,widget=Select(), required=False)
     tipo = ChoiceField(choices=[
         (" ", "Mostrar todos os tipos de Atividade"),
         ("Atividade Laboratorial", "Atividade Laboratorial"),
@@ -80,8 +84,11 @@ class atividadesFilterForm(Form):
      ],widget=Select())
 
 
+def get_campus_choices():
+    return Campus.objects.all()
+
 class CampusForm(Form):
-    campus= ChoiceField(choices= Campus.objects.all(),label='Campus')
+    campus= ChoiceField(choices=get_campus_choices,label='Campus')
 
     class Meta:
         fields=('campus')

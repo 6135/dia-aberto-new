@@ -190,13 +190,8 @@
                             <label for="{{ form.npratosalunos.id_for_label }}" class="label">{% if individual %}Nº
                                 Estudantes{% else %}Nº Alunos{% endif %}
                                 ({{precoalunos}}€)</label>
-
-                            <div class="field has-addons has-addons-right">
-                                <p class="control">
-                                    <b-numberinput v-model="npratosalunos" controls-position="compact" min="0"
-                                        name="almoco-npratosalunos" :max="nalunos" />
-                                </p>
-                            </div>
+                            <b-numberinput v-model="npratosalunos" controls-position="compact" min="0"
+                                name="almoco-npratosalunos" :max="nalunos" />
                             {{ form.npratosalunos.errors }}
                         </div>
                     </div>
@@ -207,8 +202,8 @@
                                 ({{precoprofessores}}€)</label>
                             <b-numberinput v-model="npratosdocentes" controls-position="compact" min="0"
                                 name="almoco-npratosdocentes" :max="nresponsaveis" />
+                            {{ form.npratosdocentes.errors }}
                         </div>
-                        {{ form.npratosdocentes.errors }}
                     </div>
                 </div>
                 {% if form.non_field_errors %}

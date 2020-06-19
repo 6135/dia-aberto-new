@@ -610,22 +610,188 @@ def configurarUO(request, id = None):
 	user_check_var = user_check(request=request, user_profile=[Administrador])
 	if user_check_var.get('exists') == False: return user_check_var.get('render')
 
-	if(id is None):
-		pass
-	
-	if(request.method == 'POST'):
-		pass
+	uOformSet = uOFormset()
+	uOforms = uOformSet(queryset=Unidadeorganica.objects.none())
+	uO = Unidadeorganica()
+	allowMore = True
+	allowDelete = True
 
-	if(id is None):
-		pass
-	else: 
-		pass
-	pass
+	if id is not None:
+		uO = Unidadeorganica.objects.get(id=id)
+		uOforms = uOformSet(queryset=Unidadeorganica.objects.filter(id=uO.id))
+		allowMore, allowDelete = False, False	
+
+	if(request.method == 'POST'):
+		uOforms = uOformSet(request.POST)
+		if uOforms.is_valid():
+			uOforms.save()
+		return redirect('configuracao:verUOs')
+
+	return render(request=request,
+				template_name='configuracao/criarUOs.html',
+				context={'formset': uOforms,
+					'allowMore': allowMore,
+					'allowDelete': allowDelete,
+				})
+
+def uOFormset(extra = 0, minVal = 1):
+	formSets = modelformset_factory(model=Unidadeorganica, exclude = ['id'],widgets={
+			'nome': TextInput(attrs={'class': 'input'}),
+			'sigla': TextInput(attrs={'class': 'input'}),
+			'campusid': Select(attrs={'class': 'input'}),
+		}, extra = extra, min_num = minVal, can_delete=True)
+	return formSets
+
+def newUORow(request):
+	value = int(request.POST.get('extra'))
+	data = {
+		'form_nome': "form-" + str(value-1) + "-nome",
+		'form_sigla': "form-" + str(value-1) + "-sigla",
+		'form_campusid': 'form-' + str(value-1) + '-campusid',
+		'form_id': 'form-' + str(value-1) + '-id',
+	}
+	return render(request=request, template_name='configuracao/UORow.html', context=data)
 
 def eliminarUO(request, id):
 
 	user_check_var = user_check(request=request, user_profile=[Administrador])
 	if user_check_var.get('exists') == False: return user_check_var.get('render')
 
-	Unidadeorganica.objects.get(id=id).delete()
-	return redirect('configuracao:veruos')
+	Unidadeorganica.objects.filter(id=id).delete()
+	return redirect('configuracao:verUOs')
+
+def verDepartamentos(request):
+
+	user_check_var = user_check(request=request, user_profile=[Administrador])
+	if user_check_var.get('exists') == False: return user_check_var.get('render')
+
+	deps = Departamento.objects.all()
+
+	return render(request=request,
+				template_name='configuracao/listaDepartamento.html',
+				context={'departamentos': deps})
+
+def configurarDepartamento(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=[Administrador])
+	if user_check_var.get('exists') == False: return user_check_var.get('render')
+
+	departamentoformSet = departamentoFormset()
+	departamentoforms = departamentoformSet(queryset=Departamento.objects.none())
+	departamento = Departamento()
+	allowMore = True
+	allowDelete = True
+
+	if id is not None:
+		departamento = Departamento.objects.get(id=id)
+		departamentoforms = departamentoformSet(queryset=Departamento.objects.filter(id=departamento.id))
+		allowMore, allowDelete = False, False	
+
+	if(request.method == 'POST'):
+		departamentoforms = departamentoformSet(request.POST)
+		if departamentoforms.is_valid():
+			departamentoforms.save()
+		else: return redirect('/err')
+		return redirect('configuracao:verDepartamentos')
+
+	return render(request=request,
+				template_name='configuracao/criarDepartamentos.html',
+				context={'formset': departamentoforms,
+					'allowMore': allowMore,
+					'allowDelete': allowDelete,
+				})
+
+def departamentoFormset(extra = 0, minVal = 1):
+	formSets = modelformset_factory(model=Departamento, exclude = ['id'],widgets={
+			'nome': TextInput(attrs={'class': 'input'}),
+			'sigla': TextInput(attrs={'class': 'input'}),
+			'unidadeorganicaid': Select(attrs={'class': 'input'}),
+		}, extra = extra, min_num = minVal, can_delete=True)
+	return formSets
+
+def newDepartamentoRow(request):
+	value = int(request.POST.get('extra'))
+	data = {
+		'form_nome': "form-" + str(value-1) + "-nome",
+		'form_sigla': "form-" + str(value-1) + "-sigla",
+		'form_unidadeorganicaid': 'form-' + str(value-1) + '-unidadeorganicaid',
+		'form_id': 'form-' + str(value-1) + '-id',
+		'options': Unidadeorganica.objects.all()
+	}
+	return render(request=request, template_name='configuracao/departamentoRow.html', context=data)
+
+def eliminarDepartamento(request, id):
+
+	user_check_var = user_check(request=request, user_profile=[Administrador])
+	if user_check_var.get('exists') == False: return user_check_var.get('render')
+
+	Departamento.objects.filter(id=id).delete()
+	return redirect('configuracao:verDepartamentos')
+
+def verCursos(request):
+
+	user_check_var = user_check(request=request, user_profile=[Administrador])
+	if user_check_var.get('exists') == False: return user_check_var.get('render')
+
+	deps = Curso.objects.all()
+
+	return render(request=request,
+				template_name='configuracao/listaCurso.html',
+				context={'departamentos': deps})
+
+def configurarCurso(request, id = None):
+
+	user_check_var = user_check(request=request, user_profile=[Administrador])
+	if user_check_var.get('exists') == False: return user_check_var.get('render')
+
+	departamentoformSet = departamentoFormset()
+	departamentoforms = departamentoformSet(queryset=Curso.objects.none())
+	departamento = Curso()
+	allowMore = True
+	allowDelete = True
+
+	if id is not None:
+		departamento = Curso.objects.get(id=id)
+		departamentoforms = departamentoformSet(queryset=Curso.objects.filter(id=departamento.id))
+		allowMore, allowDelete = False, False	
+
+	if(request.method == 'POST'):
+		departamentoforms = departamentoformSet(request.POST)
+		if departamentoforms.is_valid():
+			departamentoforms.save()
+		else: return redirect('/err')
+		return redirect('configuracao:verCursos')
+
+	return render(request=request,
+				template_name='configuracao/criarCursos.html',
+				context={'formset': departamentoforms,
+					'allowMore': allowMore,
+					'allowDelete': allowDelete,
+				})
+
+def departamentoFormset(extra = 0, minVal = 1):
+	formSets = modelformset_factory(model=Curso, exclude = ['id'],widgets={
+			'nome': TextInput(attrs={'class': 'input'}),
+			'sigla': TextInput(attrs={'class': 'input'}),
+			'unidadeorganicaid': Select(attrs={'class': 'input'}),
+		}, extra = extra, min_num = minVal, can_delete=True)
+	return formSets
+
+def newCursoRow(request):
+	value = int(request.POST.get('extra'))
+	data = {
+		'form_nome': "form-" + str(value-1) + "-nome",
+		'form_sigla': "form-" + str(value-1) + "-sigla",
+		'form_unidadeorganicaid': 'form-' + str(value-1) + '-unidadeorganicaid',
+		'form_id': 'form-' + str(value-1) + '-id',
+		'options': Unidadeorganica.objects.all()
+	}
+	return render(request=request, template_name='configuracao/departamentoRow.html', context=data)
+
+def eliminarCurso(request, id):
+
+	user_check_var = user_check(request=request, user_profile=[Administrador])
+	if user_check_var.get('exists') == False: return user_check_var.get('render')
+
+	Curso.objects.filter(id=id).delete()
+	return redirect('configuracao:verCursos')

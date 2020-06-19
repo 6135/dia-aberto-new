@@ -4,12 +4,11 @@
 {% load configuracao_tags %}
 <div class="columns">
     <div class="column is-3">
-        {% comment %}        
+        {% comment 'filter needs to be commented out first' %}
         <form method="POST" action="" id='filter'>
             {% csrf_token %}
-            
             <div class="menu">
-                <p class="menu-label">Filtros Unidades Org.</p>
+                <p class="menu-label">Filtros Edificios</p>
                 <ul class="menu-list">
                 <div class="field">
                     <!---->
@@ -62,14 +61,14 @@
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
               <li><a href="{% url 'home' %}">Início</a></li>
-              <li class="is-active"><a href="#" aria-current="page">Unidades Orgânicas</a></li>
+              <li class="is-active"><a href="#" aria-current="page">Cursos</a></li>
             </ul>
           </nav>
-        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'configuracao:adicionarUO'%}">     
+        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'configuracao:adicionarCurso'%}">     
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
-            <span>Configurar Unidades Orgânicas</span>
+            <span>Configurar Cursos</span>
         </a>   
 
         <div class="b-table">
@@ -79,42 +78,35 @@
                         <tr>
                             <th style="width: 30px;" ></th>
                             <th  onclick="sortTable(1,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Nome<span class="arrow active"><span></span><span></span></span>
+                                Curso<span class="arrow active"><span></span><span></span></span>
                             </th>
                             <th onclick="sortTable(2,false)" style=" cursor: pointer;" class="pre-arrow">
                                 Sigla<span class="arrow active"><span></span><span></span></span>
                             </th>
                             <th onclick="sortTable(2,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Campus<span class="arrow active"><span></span><span></span></span>
-                            </th>                            
-                            <th>
-                                Operações
-                            </th>                            
+                                Unidade Organica<span class="arrow active"><span></span><span></span></span>
+                            </th>
+                            <th>Operações</th>
                         </tr>
                     </thead>
                     <tbody> 
-                    {% for UO in UOs %}     
+                    {% for dep in departamentos %}     
                     <tr draggable="false">
                         <td class="chevron-cell">
-                            <a role="button" onclick="displayDetails({{UO.id}})">
-                                <span class="icon-expandable">
-                                    <i class="mdi mdi-chevron-right mdi-24px"></i>
-                                </span>
-                            </a>
                         </td>
                         <td data-label="Nome">
-                            {{UO.nome}}
-                        </td>
+                            {{dep.nome}}
+                       </td>                    
                         <td data-label="Sigla">
-                            {{UO.sigla}}
-                        </td>                      
-                        <td data-label="Campus">{{UO.campusid.nome  }}</td>
-                          
+                            {{dep.sigla}}
+                        </td>
+                         <td data-label="UO">
+                            {{dep.unidadeorganicaid}}
+                        </td>                                                       
                         <td data-label="Operações">
                             <div class="columns">
-                                
                                 <div class="column is-1">  
-                                    <a id='edit' href="{% url 'configuracao:editarUO' UO.id %}">
+                                    <a id='edit' href="{% url 'configuracao:editarCurso' dep.id %}">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                                         </span>
@@ -122,7 +114,7 @@
                                 </div>
                                 &nbsp;
                                 <div class="column is-1">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este UO?','{% url 'configuracao:eliminarUO' UO.id %}')">
+                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este tema?','{% url 'configuracao:eliminarCurso' dep.id %}')">
                                         <span class="icon is-small">
                                             <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                                         </span>
@@ -131,38 +123,7 @@
                             </div> 
                         </td>                     
                       </tr> 
-                      <tr class="detail" style="display: none" id='Details{{UO.id}}'>
-                        <td colspan="5">
-                            <div class="detail-container">
-                                <div class="table"> 
-                                    <div class="table-wrapper">
-                                        <table class="table is-stripped has-mobile-cards">
-                                            <thead id='tabble-details{{UO.id}}'>
-                                                <tr>
-                                                    <th class="th-wrap">Departamento:</th>
-                                                    <th class="th-wrap">Sigla</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for dep in UO.dep_ %}
-                                                <tr style="border-bottom: 1px solid #ddd">
-                                                    <td data-label='Dep:' style="font-weight: normal;">
-                                                        <span>{{dep.nome}}</span>
-                                                    </td>
-                                                    <td data-label='Sigla' style="font-weight: normal;">
-                                                        <span>{{dep.sigla}}</span>
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                       </tr> 
                     {% endfor %}
-                    
                     </tbody>
                 </table>
             </div>

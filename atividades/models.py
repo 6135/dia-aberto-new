@@ -14,7 +14,6 @@ class Anfiteatro(models.Model):
     espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'Anfiteatro'
 
    
@@ -23,15 +22,15 @@ class Arlivre(models.Model):
     espacoedificio = models.CharField(db_column='EspacoEdificio', max_length=255)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'ArLivre'
 
 class Tema(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     tema = models.CharField(db_column='Tema', max_length=64)  # Field name made lowercase.
 
+    def __str__(self):
+        return str(self.tema)
     class Meta:
-        managed = False
         db_table = 'Tema'
 
 class Atividade(models.Model):
@@ -54,7 +53,6 @@ class Atividade(models.Model):
     tema = models.ForeignKey('Tema', models.CASCADE, db_column='Tema', blank=False, null=False)  # Field name made lowercase.
 
     class Meta:
-        managed = False
         db_table = 'Atividade'
 
     def get_fields(self):
@@ -73,13 +71,39 @@ class Atividade(models.Model):
     def get_campus_str(self):
         return self.espacoid.edificio.campus.__str__()
 
-    #def get_uo(self):
-    #    return str(self.professoruniversitarioutilizadorid.faculdade)
+    def get_uo(self):
+        return self.professoruniversitarioutilizadorid.faculdade
+        
+    def get_coord(self):
+        return self.professoruniversitarioutilizadorid.faculdade.coord_()
+
+    def __eq__(self,other):
+        return self.nome == other.nome and \
+        self.descricao == other.descricao and \
+        self.publicoalvo == other.publicoalvo and \
+        self.nrcolaboradoresnecessario == other.nrcolaboradoresnecessario and \
+        self.tipo == other.tipo and \
+        self.professoruniversitarioutilizadorid == other.professoruniversitarioutilizadorid and \
+        self.datasubmissao == other.datasubmissao and \
+        self.duracaoesperada == other.duracaoesperada and \
+        self.participantesmaximo == other.participantesmaximo and \
+        self.diaabertoid == other.diaabertoid and \
+        self.espacoid == other.espacoid and \
+        self.tema == other.tema
+        
+    def __ne__(self,other):
+        return False if self == other else True
     
 class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
     nomematerial = models.CharField(db_column='nome',max_length=255, blank=True, null=True)
+
+    def __eq__(self,other):
+        return self.atividadeid == other.atividadeid and \
+        self.nomematerial == other.nomematerial
+    def __ne__(self,other):
+        return False if self == other else True
 
     class Meta:
         db_table = 'Materiais'
@@ -91,14 +115,12 @@ class Sessao(models.Model):
     atividadeid = models.ForeignKey(Atividade, models.DO_NOTHING, db_column='AtividadeID')  # Field name made lowercase.
     dia = models.DateField(db_column='Dia', blank=True, null=True)  # Field name made lowercase.
     horarioid = models.ForeignKey('configuracao.Horario', models.DO_NOTHING, db_column='HorarioID')  # Field name made lowercase.
+
     def timeRange_(self, seperator = ' até '):
         return self.horarioid.inicio.strftime('%H:%M') + str(seperator) + self.horarioid.fim.strftime('%H:%M')
         
     class Meta:
         db_table = 'Sessao'
 
-    def __str__(self):
-        return str(self.id)
-    
 
 

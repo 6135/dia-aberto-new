@@ -121,11 +121,19 @@
                                             <td data-label="Nome">{{sessao.horarioid.inicio}}</td>
                                             <td data-label="Submetido a">{{sessao.vagas}}</td>  
                                             <td>
+                                            {% if check != 1 %}
                                                <a onclick="alert.render('Tem a certeza que deseja eliminar a sessão?','{% url 'atividades:eliminarSessao' sessao.id%}')">
                                                     <span class="icon has-text-danger">
                                                         <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                                     </span>
                                                 </a>
+                                                {% else %}
+                                                <a onclick="alert.warning('A atividade não poderá ficar sem sessões')">
+                                                    <span class="icon has-text-danger">
+                                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                                                    </span>
+                                                </a>
+                                                {% endif %}
                                             </td>
                                         </tr>
                                         {% endfor %} 
