@@ -74,9 +74,11 @@ class TarefaForm(ModelForm):
         elif self.instance.pk:
             self.fields['colab'].queryset = Colaborador.objects.none()
 
+def get_atividades_choices():
+    return [(" ",'Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]
+
 class TarefaAuxiliarForm(ModelForm):
-    ativ=[(" ",'Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]
-    atividades= ChoiceField(choices=ativ,widget=Select(attrs={'onchange':'diasSelect();'}))
+    atividades= ChoiceField(choices=get_atividades_choices,widget=Select(attrs={'onchange':'diasSelect();'}))
     dias=DateField(widget=Select(attrs={'onchange':'sessoesSelect();'}))
     class Meta:
         model= TarefaAuxiliar
@@ -98,10 +100,11 @@ class TarefaAuxiliarForm(ModelForm):
         elif self.instance.pk:
             self.fields['sessaoid'].queryset = Sessao.objects.none()
             
+def get_inscricao_choices():
+    return [('','Escolha um grupo')]+[(grupo.id,'Grupo '+str(grupo.id)) for grupo in Inscricao.objects.filter(nalunos__gt=1)]
 
 class TarefaAcompanharForm(ModelForm):
-    grupos = [('','Escolha um grupo')]+[(grupo.id,'Grupo '+str(grupo.id)) for grupo in Inscricao.objects.filter(nalunos__gt=1)]
-    inscricao =  ChoiceField(choices=grupos,widget=Select(attrs={'onchange':'grupoInfo();diasGrupo();'}))
+    inscricao =  ChoiceField(choices=get_inscricao_choices,widget=Select(attrs={'onchange':'grupoInfo();diasGrupo();'}))
     class Meta:
         model= TarefaAcompanhar
         exclude = ['tarefaid','inscricao','dias']
@@ -116,8 +119,11 @@ class TarefaAcompanharForm(ModelForm):
         cleaned_data=super().clean()
         self.instance.inscricao = Inscricao.objects.get(id=cleaned_data['inscricao']) 
         
+def get_dia_choices():
+    return [('','Escolha o dia')]+get_dias()
+
 class TarefaOutraForm(ModelForm):
-    dia = ChoiceField(choices=[('','Escolha o dia')]+get_dias(),widget=Select())
+    dia = ChoiceField(choices=get_dia_choices,widget=Select())
     #horario = DateField(widget=DateInput(attrs={'class':'timepicker'}))
     class Meta:
         model= TarefaOutra
@@ -128,13 +134,15 @@ class TarefaOutraForm(ModelForm):
             }           
    
 
+def get_dep_choices():
+    return [(-1,'Mostra todos os Departamentos')] + [(departamento.id,departamento.nome) for departamento in Departamento.objects.all()]
+
 class tarefaFilterForm(Form):
     searchTarefa = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Pesquisa'}), required=False)
     Concluida=BooleanField(widget=CheckboxInput(),required=False)
     naoConcluida=BooleanField(widget=CheckboxInput(),required=False)
     naoAtribuida=BooleanField(widget=CheckboxInput(),required=False)
-    dep=[(-1,'Mostra todos os Departamentos')] + [(departamento.id,departamento.nome) for departamento in Departamento.objects.all()]
-    departamentos = ChoiceField(choices=dep,widget=Select(), required=False)
+    departamentos = ChoiceField(choices=get_dep_choices,widget=Select(), required=False)
     tipo = ChoiceField(choices=[
         (" ", "Mostrar todos os tipos de Tarefa"),
         ("tarefaAcompanhar", "Acompanhar"),
