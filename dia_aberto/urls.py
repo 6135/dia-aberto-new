@@ -21,6 +21,7 @@ from utilizadores import views
 import notifications.urls
 from django.conf.urls import handler404,handler500,handler403,handler400
 
+
 handler404 = 'dia_aberto.views.error404'
 handler403 = 'dia_aberto.views.error403'
 handler400 = 'dia_aberto.views.error400'

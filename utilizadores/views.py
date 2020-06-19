@@ -791,6 +791,8 @@ def concluir_registo(request,id):
 #Template de mensagens informativas/erro/sucesso
 
 def mensagem(request, id):
+    
+
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -852,12 +854,12 @@ def mensagem(request, id):
         m = "Esta pagina não existe"
         tipo = "error"                                     
 
+    
+    continuar = "on" 
     if id == 400 or id == 500:
-        botao = "off" 
-    else:
-        botao: "on"       
+        continuar = "off" 
     return render(request=request,
-        template_name="utilizadores/mensagem.html", context={'m': m, 'tipo': tipo ,'u': u, 'botao':botao})
+        template_name="utilizadores/mensagem.html", context={'m': m, 'tipo': tipo ,'u': u, 'continuar': continuar,})
 
 
 
