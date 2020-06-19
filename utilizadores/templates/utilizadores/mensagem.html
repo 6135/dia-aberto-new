@@ -44,12 +44,13 @@
         </article>  
     {% endif %}
 </div>
-    
+    {% if botao == "on" %}
     <div style="text-align: center;position:center;margin-top:4%">
         <a href="{% url 'home' %}">
             <button  class="button">Continuar</button>
         </a>
     </div>
+    {% endif %}
     {% endblock content %}
 
 </div>

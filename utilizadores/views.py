@@ -809,7 +809,11 @@ def mensagem(request, id):
         u=""
 
 
-    if id == 1:
+    if id == 400 or id == 500:
+        user = get_user(request)
+        m = "Erro no servidor"
+        tipo = "error"
+    elif id == 1:
         user = get_user(request)
         m = "Bem vindo(a) "+user.first_name
         tipo = "info"
@@ -843,12 +847,17 @@ def mensagem(request, id):
         tipo = "success" 
     elif id == 10:
         m = "Não existem notificações"
-        tipo = "info"                              
+        tipo = "info" 
+    else :
+        m = "Esta pagina não existe"
+        tipo = "error"                                     
+
+    if id == 400 or id == 500:
+        botao = "off" 
     else:
-        return redirect('utilizadores:login')
- 
+        botao: "on"       
     return render(request=request,
-        template_name="utilizadores/mensagem.html", context={'m': m, 'tipo': tipo ,'u': u})
+        template_name="utilizadores/mensagem.html", context={'m': m, 'tipo': tipo ,'u': u, 'botao':botao})
 
 
 

@@ -19,10 +19,12 @@ from django.contrib.auth import views as auth_views
 from utilizadores.forms import EmailValidationOnForgotPassword
 from utilizadores import views
 import notifications.urls
-from django.conf.urls import handler404
+from django.conf.urls import handler404,handler500,handler403,handler400
 
 handler404 = 'dia_aberto.views.error404'
-
+handler403 = 'dia_aberto.views.error403'
+handler400 = 'dia_aberto.views.error400'
+handler500 = 'dia_aberto.views.error500'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('atividades/', include('atividades.urls')),
