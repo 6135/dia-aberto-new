@@ -435,7 +435,7 @@ def atribuirTransporte(request, id):
 	inscricoestotais = Inscricao.objects.filter(nalunos__lte=transportevagas)
 	dadoschepart= []
 	inscricoes= []
-
+	chepart= 0
 	for t in inscricaotransporte:
 		inscricoesindisponiveis.append(t.inscricao)
 	
