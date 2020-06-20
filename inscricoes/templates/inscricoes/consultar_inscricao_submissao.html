@@ -1,7 +1,7 @@
 {% extends 'app.html' %}
 {% load static %}
 
-{% block title %}Inscrição{% endblock title %}
+{% block title %}- Inscrição{% endblock title %}
 
 {% block scripts %}
 <script>
@@ -12,7 +12,7 @@
     };
 
     function navigate_step(step) {
-        location.href = "{% url 'inscricoes:consultar-inscricao' pk=inscricaoid step=12345 %}".replace(/12345/, step
+        location.href = "{% url 'inscricoes:consultar-inscricao' pk=inscricao.pk step=12345 %}".replace(/12345/, step
             .toString());
     }
 </script>
@@ -99,14 +99,21 @@
         <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
             Resumo da Inscrição
         </h2>
-        <p>Dados Pessoais, Dados da escola, Sessões escolhidas, etc...</p>
+        <p>A sua inscrição no Dia Aberto está concluída!</p>
         <br />
-        <p>Um e-mail de confirmação será enviado para [e-mails].</p>
+        <p>Um e-mail de confirmação foi enviado para o e-mail
+            <strong>{{inscricao.responsavel_set.first.email}}</strong>.</p>
+        <br />
+        <p>Foi criado um ficheiro PDF com as informações da sua inscrição, pronto a imprimir.</p>
+        <br />
+        <button type="button" class="button is-danger" onclick="location.href='{% url 'inscricoes:inscricao-pdf' inscricao.pk %}';"><span class="icon is-small"><i
+                    class="mdi mdi-download"></i></span> <span> Obter PDF </span>
+        </button>
         <hr />
         <div class="column is-8 is-offset-2">
             <div class="level">
                 <div class="level-left">
-                    <a class="button is-outlined" href="{% url 'inscricoes:consultar-inscricao' inscricaoid %}">
+                    <a class="button is-outlined" href="{% url 'inscricoes:consultar-inscricao' inscricao.pk %}">
                         <span class=" icon is-small"><i class="mdi mdi-chevron-left"></i></span>
                         <span>Consultar ou Alterar Inscrição</span>
                     </a>
