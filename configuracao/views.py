@@ -455,9 +455,9 @@ def atribuirTransporte(request, id):
 					chepart= ChegadaPartida(inscricao.id, inscricao.nalunos,inscricao.local_chegada, isessaopartidahorario, 1)
 			else:
 				isessaochegadalocal= isessaochegada.sessao.atividadeid.espacoid.edificio.campus.nome
-				horachegada= (transportehorario.horaChegada.hour*60 + transportehorario.horaChegada.minute )- (inscricao.horariochegada.hour*60 + inscricao.horariochegada.minute)
+				horachegada= (transportehorario.horaChegada.hour*60 + transportehorario.horaChegada.minute )- (inscricao.hora_chegada.hour*60 + inscricao.hora_chegada.minute)
 				if isessaochegadalocal == transportehorario.chegada and horachegada <=60:
-					chepart= ChegadaPartida(inscricao.id,inscricao.nalunos,inscricao.local_chegada,inscricao.horariochegada, 0)
+					chepart= ChegadaPartida(inscricao.id,inscricao.nalunos,inscricao.local_chegada,inscricao.hora_chegada, 0)
 
 			dadoschepart.append(chepart)
 			dadoschepart=list(dict.fromkeys(dadoschepart))
