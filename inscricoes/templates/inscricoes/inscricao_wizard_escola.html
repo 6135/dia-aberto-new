@@ -37,6 +37,7 @@
                 escolas: [],
                 escola: "{{ form.nome_escola.value|default_if_none:'' }}",
                 nalunos: parseInt("{{form.nalunos.value|default_if_none:'0'}}"),
+                moment: moment,
             }
         },
         computed: {
@@ -175,8 +176,9 @@
                 <div class="columns">
                     <div class="column">
                         <b-field label="Dia da Visita">
-                            <b-datepicker v-model="dia" placeholder="Clique para selecionar..." required
-                                name="escola-dia" :min-date="inicio" :max-date="fim" :focused-date="inicio">
+                            <b-datepicker v-model="dia" :date-formatter="(d) => {moment(d).format('DD/MM/YYYY')}"
+                                editable placeholder="Clique para selecionar..." required name="escola-dia"
+                                :min-date="inicio" :max-date="fim" :focused-date="inicio">
                             </b-datepicker>
                         </b-field>
                         {{ form.dia.errors }}
