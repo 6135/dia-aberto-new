@@ -4,7 +4,7 @@ import django_filters.rest_framework as djangofilters
 from rest_framework import filters, pagination
 from rest_framework.generics import ListCreateAPIView
 from inscricoes.models import Escola, Responsavel
-from utilizadores.models import Participante
+from utilizadores.models import Administrador, Participante, ProfessorUniversitario
 from formtools.wizard.views import SessionWizardView
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 import json
@@ -39,6 +39,7 @@ from django.template.loader import get_template
 from django.contrib.staticfiles import finders
 from dia_aberto import settings
 import os
+from utilizadores.views import user_check
 
 
 def link_callback(uri, rel):
@@ -90,6 +91,10 @@ def render_pdf(template_path, context={}, filename="file.pdf"):
 
 
 def InscricaoPDF(request, pk):
+    user_check_var = user_check(request=request, user_profile=[
+                                ProfessorUniversitario, Participante, Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
     inscricao = get_object_or_404(Inscricao, pk=pk)
     ano = inscricao.diaaberto.ano
     context = {
@@ -317,7 +322,6 @@ class InscricaoWizard(SessionWizardView):
     ]
 
     def dispatch(self, request, *args, **kwargs):
-        from utilizadores.views import user_check
         _user_check = user_check(request, [Participante])
         if _user_check['exists']:
             participante = _user_check['firstProfile']
