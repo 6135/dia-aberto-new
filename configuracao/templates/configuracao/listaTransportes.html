@@ -135,6 +135,11 @@
                         </td>
                         <td data-label="Operações">
                             <div class="columns">
+                            {% if horarioTra.origem == "Gambelas" and horarioTra.chegada == "Penha" or horarioTra.origem == "Penha" and horarioTra.chegada == "Gambelas" %}
+                             <div class="column is-1"> 
+                             </div>
+                              &nbsp;
+                            {% else %}
                                 <div class="column is-1">  
                                     <a id='assign' href="{% url 'configuracao:atribuirTransporte' horarioTra.id %}">
                                         <span class="icon is-small">
@@ -143,6 +148,7 @@
                                     </a>
                                 </div>
                                 &nbsp;
+                                {% endif %}
                                 <div class="column is-1">  
                                     <a id='edit' href="{% url 'configuracao:editarTransporte' horarioTra.transporte.id%}">
                                         <span class="icon is-small">
