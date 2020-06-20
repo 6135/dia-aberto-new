@@ -174,7 +174,9 @@
     <input type="hidden" name="{{form.sessoes_info.name}}" :value="JSON.stringify(sessoesEscolhidas)">
     {% if alterar %}
     <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-        Sessões Disponíveis
+        Sessões Disponíveis <abbr
+            title="Pode consultar nesta tabela todas as atividades disponíveis para inscrição e os seus horários. Deve selecionar as atividades que deseja para ver detalhes e escolher quantos alunos quer inscrever na sessão."><span
+                class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
     </h2>
     <div>
         <div class="columns">
@@ -319,7 +321,8 @@
                                             "HH:mm:ss").format("HH:mm") ]]
                                         </b-table-column>
                                         <b-table-column field="vagas" label="Vagas">
-                                            [[ init_inscritos[session_props.row.id] ? session_props.row.vagas + init_inscritos[session_props.row.id] : session_props.row.vagas]]
+                                            [[ init_inscritos[session_props.row.id] ? session_props.row.vagas +
+                                            init_inscritos[session_props.row.id] : session_props.row.vagas]]
                                         </b-table-column>
                                         <b-table-column label="Inscrever">
                                             <b-field>
@@ -342,7 +345,9 @@
     <hr />
     {% endif %}
     <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-        Sessões Escolhidas
+        Sessões Escolhidas <abbr
+            title="Aqui pode consultar a lista das sessões que escolheu inscrever-se. Se pretender remover a inscrição clique na cruz vermelha à direita da sessão."><span
+                class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
     </h2>
     <!-- TABELA ESCOLHIDAS -->
     <b-table :data="sessoesEscolhidas" sort-icon="menu-up" default-sort="sessao.horario.inicio">

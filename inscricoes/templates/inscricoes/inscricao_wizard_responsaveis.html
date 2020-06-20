@@ -18,14 +18,14 @@
 </script>
 {% endblock scripts %}
 
-{% block title %}Inscrição{% endblock title %}
+{% block title %}- Inscrição{% endblock title %}
 
 {% block content %}
 <div>
     <nav aria-label="breadcrumbs" class="breadcrumb">
         <ul>
-            <li><a href="/" class="router-link-active">Início</a></li>
-            <li class="is-active"><a href="/inscricao" class="router-link-exact-active router-link-active">Criar
+            <li><a href="{% url 'home' %}" class="router-link-active">Início</a></li>
+            <li class="is-active"><a href="" class="router-link-exact-active router-link-active">Criar
                     Inscrição</a></li>
         </ul>
     </nav>
@@ -102,6 +102,8 @@
             {{ wizard.management_form }}
             <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
                 {% if individual %}Dados do Participante Responsável{% else %}Docente Responsável 1{% endif %}
+                <abbr title="Deve fornecer os dados necessários para o contacto do participante ou do responsável"><span
+                        class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
             </h2>
             <div class="columns">
                 <div class="column">

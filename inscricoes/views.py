@@ -4,7 +4,7 @@ import django_filters.rest_framework as djangofilters
 from rest_framework import filters, pagination
 from rest_framework.generics import ListCreateAPIView
 from inscricoes.models import Escola, Responsavel
-from utilizadores.models import Participante
+from utilizadores.models import Administrador, Participante, ProfessorUniversitario
 from formtools.wizard.views import SessionWizardView
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 import json
@@ -38,7 +38,9 @@ from io import BytesIO
 from django.template.loader import get_template
 from django.contrib.staticfiles import finders
 from dia_aberto import settings
+from django.core.mail import BadHeaderError, EmailMessage, send_mail
 import os
+from utilizadores.views import user_check
 
 
 def link_callback(uri, rel):
@@ -73,10 +75,10 @@ def link_callback(uri, rel):
     return path
 
 
-def render_pdf(template_path, context={}, filename="file.pdf"):
+def render_pdf(template_path, context={}, filename="file.pdf", send=False):
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'filename="{filename}"'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     # find the template and render it.
     template = get_template(template_path)
     html = template.render(context)
@@ -89,7 +91,32 @@ def render_pdf(template_path, context={}, filename="file.pdf"):
     return response
 
 
+def enviar_mail_confirmacao_inscricao(pk):
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    ano = inscricao.diaaberto.ano
+    context = {
+        'inscricao': inscricao,
+        'ano': ano,
+    }
+    subject = f'Confirmação da Inscrição no Dia Aberto de {ano} da Universidade do Algarve.'
+    message = f'Exmo(a). {inscricao.responsavel_set.first().nome},\n\n'
+    message += 'A sua inscrição no Dia Aberto da Universidade do Algarve foi efectuada com sucesso!\n'
+    message += 'Segue em anexo um ficheiro PDF com toda a informação relativa à sua inscricão.\n\n'
+    message += 'Cumprimentos, Dia Aberto UAlg.'
+    source = settings.EMAIL_HOST_USER
+    recipient_list = [inscricao.responsavel_set.first().email, ]
+    pdf = render_pdf("inscricoes/pdf.html", context,
+                     f"dia_aberto_ualg_{ano}.pdf", True).content
+    email = EmailMessage(subject, message, source, recipient_list, attachments=[
+                         (f"dia_aberto_ualg_{ano}.pdf", pdf, 'application/pdf')])
+    email.send()
+
+
 def InscricaoPDF(request, pk):
+    user_check_var = user_check(request=request, user_profile=[
+                                ProfessorUniversitario, Participante, Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
     inscricao = get_object_or_404(Inscricao, pk=pk)
     ano = inscricao.diaaberto.ano
     context = {
@@ -243,8 +270,7 @@ def update_context(context, step, wizard=None, inscricao=None):
     elif step == 'submissao':
         context.clear()
         context.update({
-            'inscricaoid': inscricao.pk,
-            'individual': inscricao.individual,
+            'inscricao': inscricao,
         })
 
 
@@ -318,7 +344,6 @@ class InscricaoWizard(SessionWizardView):
     ]
 
     def dispatch(self, request, *args, **kwargs):
-        from utilizadores.views import user_check
         _user_check = user_check(request, [Participante])
         if _user_check['exists']:
             participante = _user_check['firstProfile']
@@ -385,10 +410,9 @@ class InscricaoWizard(SessionWizardView):
         if almoco is not None:
             almoco.inscricao = inscricao
             almoco.save()
-        # TODO: Construir PDF
+        enviar_mail_confirmacao_inscricao(inscricao.pk)
         return render(self.request, 'inscricoes/consultar_inscricao_submissao.html', {
-            'inscricaoid': inscricao.pk,
-            'individual': self.get_cleaned_data_for_step('info')['individual'],
+            'inscricao': inscricao,
         })
 
 

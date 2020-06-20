@@ -47,6 +47,11 @@ class Inscricao(models.Model):
     class Meta:
         db_table = 'Inscricao'
 
+    def get_departamentos(self):
+        departamentos = []
+
+        return
+
     def get_grupo(self):
         return self.id
 
@@ -140,6 +145,7 @@ class Inscricaosessao(models.Model):
     class Meta:
         db_table = 'InscricaoSessao'
         unique_together = (('inscricao', 'sessao'),)
+        ordering = ['sessao__horarioid__inicio']
 
 
 class Inscricaotransporte(models.Model):

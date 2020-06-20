@@ -18,14 +18,14 @@
 </script>
 {% endblock scripts %}
 
-{% block title %}Inscrição{% endblock title %}
+{% block title %}- Inscrição{% endblock title %}
 
 {% block content %}
 <div>
     <nav aria-label="breadcrumbs" class="breadcrumb">
         <ul>
-            <li><a href="/" class="router-link-active">Início</a></li>
-            <li class="is-active"><a href="/inscricao" class="router-link-exact-active router-link-active">Criar
+            <li><a href="{% url 'home' %}" class="router-link-active">Início</a></li>
+            <li class="is-active"><a href="" class="router-link-exact-active router-link-active">Criar
                     Inscrição</a></li>
         </ul>
     </nav>
