@@ -436,24 +436,24 @@ def validar_utilizador(request, id):
     else:
         return redirect('utilizadores:mensagem',5) 
         
-    try:
-        u = Utilizador.objects.get(id = id)
-        u.valido = 'True'           
-        u.save()   
-        subject = 'Validação do registo do na plataforma do dia aberto'
-        message = 'Caro(a) '+u.first_name+"\n\n"
-        message+='O seu registo na plataforma do dia aberto foi bem sucedido!'+",\n\n"
-        message+='Equipa do dia aberto da Ualg'
-        email_from = settings.EMAIL_HOST_USER
-        recipient_list = [u.email,]
-        send_mail( subject, message, email_from, recipient_list )
+    # try:
+    u = Utilizador.objects.get(id = id)
+    u.valido = 'True'           
+    u.save()   
+    subject = 'Validação do registo do na plataforma do dia aberto'
+    message = 'Caro(a) '+u.first_name+"\n\n"
+    message+='O seu registo na plataforma do dia aberto foi bem sucedido!'+",\n\n"
+    message+='Equipa do dia aberto da Ualg'
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [u.email,]
+    send_mail( subject, message, email_from, recipient_list )
 
 
-    except User.DoesNotExist:
-        return redirect('utilizadores:mensagem',5)
+    # except User.DoesNotExist:
+    #     return redirect('utilizadores:mensagem',5)
 
-    except Exception as e: 
-        return redirect('utilizadores:mensagem',5)
+    # except Exception as e: 
+    #     return redirect('utilizadores:mensagem',5)
 
     return redirect('utilizadores:consultar-utilizadores')
 
