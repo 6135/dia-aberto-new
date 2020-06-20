@@ -48,9 +48,7 @@ class Inscricao(models.Model):
         db_table = 'Inscricao'
 
     def get_departamentos(self):
-        departamentos = []
-
-        return
+        return {inscricaosessao.sessao.atividadeid.get_departamento() for inscricaosessao in self.inscricaosessao_set.all()}
 
     def get_grupo(self):
         return self.id
@@ -151,7 +149,8 @@ class Inscricaosessao(models.Model):
 class Inscricaotransporte(models.Model):
     inscricao = models.ForeignKey(
         Inscricao, models.CASCADE)
-    transporte = models.ForeignKey('configuracao.Transportehorario', models.CASCADE)
+    transporte = models.ForeignKey(
+        'configuracao.Transportehorario', models.CASCADE)
     npassageiros = models.IntegerField(
         validators=[
             validators.MinValueValidator(1),
