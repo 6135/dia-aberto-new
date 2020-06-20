@@ -76,7 +76,9 @@
 {% block step_content %}
 <div id="vue-app">
     <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-        Informação da Inscrição
+        Informação da Inscrição <abbr
+            title="Deve selecionar o dia da visita e o número de alunos que vão participar"><span class="icon"
+                style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
     </h2>
     <div class="columns">
         <div class="column">
@@ -114,7 +116,8 @@
     </div>
     <hr />
     <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-        Informação da Escola
+        Informação da Escola <abbr title="Deve fornecer o nome e a localidade da sua escola"><span class="icon"
+                style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
     </h2>
     <div class="columns">
         <div class="column">
@@ -143,7 +146,8 @@
     {% if not individual %}
     <hr />
     <h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">
-        Informação da Turma
+        Informação da Turma <abbr title="Deve fornecer o ano, turma e área cientifica dos participantes"><span
+                class="icon" style="font-size: 1rem"><i class="mdi mdi-help-circle"></i></span></abbr>
     </h2>
     <div class="columns">
         <div class="column is-half">

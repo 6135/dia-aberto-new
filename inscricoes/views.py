@@ -38,6 +38,7 @@ from io import BytesIO
 from django.template.loader import get_template
 from django.contrib.staticfiles import finders
 from dia_aberto import settings
+from django.core.mail import BadHeaderError, send_mail
 import os
 from utilizadores.views import user_check
 
@@ -470,3 +471,15 @@ def ApagarInscricao(request, pk):
         add_vagas_sessao(sessaoid, nparticipantes)
     inscricao.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def enviar_mail(request, id):
+    user = Utilizador.objects.get(id=id)
+
+    subject = 'Confirmação da Inscrição no Dia Aberto da Universidade do Algarve.'
+    message = 'Exmo(a). '+user.first_name+'\n'
+    message += 'A sua inscrição no Dia Aberto da Universidade do Algarve foi efectuada com sucesso!\n'
+    message += 'Cumprimentos, Dia Aberto UAlg.'
+    source = settings.EMAIL_HOST_USER
+    recipient_list = [u.email, ]
+    send_mail(subject, message, source, recipient_list)
