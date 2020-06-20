@@ -101,8 +101,6 @@
 
                 const url = `{% url 'inscricoes:api-atividades' %}?${params}`;
 
-                console.log(url);
-
                 this.loading = true;
                 axios.get(url)
                     .then(response => {
@@ -153,8 +151,18 @@
                     return;
                 }
                 info = {
-                    atividade,
-                    sessao
+                    atividade: {
+                        nome: atividade.nome,
+                        sala: atividade.sala,
+                    },
+                    sessao: {
+                        id: sessao.id,
+                        vagas: sessao.vagas,
+                        horario: {
+                            inicio: sessao.horario.inicio,
+                            fim: sessao.horario.fim,
+                        }
+                    }
                 }
                 index = this.sessoesEscolhidas.findIndex(obj => sessao.id === obj.sessao.id);
                 if (index !== -1) this.sessoesEscolhidas[index] = info;
@@ -466,8 +474,11 @@
                                     @blur="mudarInscritos(props.row.atividade, props.row.sessao)" />
                             </b-field>
                         </b-table-column>
-                        <b-table-column field="atividade" label="Atividade">
+                        <b-table-column field="atividade.nome" label="Atividade">
                             [[ props.row.atividade.nome ]]
+                        </b-table-column>
+                        <b-table-column field="atividade.sala" label="Sala">
+                            [[ props.row.atividade.sala ]]
                         </b-table-column>
                         <b-table-column label="Ações" centered>
                             <a

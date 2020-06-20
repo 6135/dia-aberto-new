@@ -3,8 +3,7 @@
 {% block content %}
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><a href="{% url 'inicio' %}">Início</a></li>
-    <li><a href="{% url 'adminpage' %}">Administrador</a></li>
+    <li><a href="{% url 'home' %}">Início</a></li>
     <li class="is-active"><a href="" aria-current="page">Atribuir Transporte</a></li>
   </ul>
 </nav>
@@ -111,7 +110,7 @@
                                   <td data-label="Grupo">{{insctransporte.inscricao.id}}</td>
                                   <td data-label="Npassageiros">{{insctransporte.npassageiros}}</td>  
                                   <td>
-                                    <a onclick="alert.render('Tem a certeza que deseja eliminar este grupo?','{% url 'eliminarAtribuicao' insctransporte.id %}')">
+                                    <a onclick="alert.render('Tem a certeza que deseja eliminar este grupo?','{% url 'configuracao:eliminarAtribuicao' insctransporte.id %}')">
                                           <span class="icon has-text-danger">
                                               <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                           </span>
@@ -136,9 +135,10 @@
                             <select id="gruposid" name="gruposid">
                                 <option value="">---------</option>
                                   {% for cp in chegadapartida %}
-                                      {% if cp.check %}
+                                      {% if cp.check == 1 %}
                                         <option  value="{{cp.id}}" >Grupo: {{cp.id}}&nbsp&nbsp&nbsp Local do destino: {{cp.local}} &nbsp&nbsp&nbsp Fim da ultima Sessao: {{cp.horario}}&nbsp&nbsp&nbsp Numero de Pesssoas: {{cp.nparticipantes}} </option>
-                                        {% else %}
+                                      {% endif %}
+                                      {% if cp.check == 0 %}
                                          <option  value="{{cp.id}}" >Grupo: {{cp.id}}&nbsp&nbsp&nbsp Local de chegada a Faro: {{cp.local}} &nbsp&nbsp&nbsp Chegada a Faro: {{cp.horario}} &nbsp&nbsp&nbsp Numero de Pesssoas: {{cp.nparticipantes}} </option>
                                       {% endif %}
                                     {% endfor %}
@@ -171,17 +171,17 @@
     <div class="column is-8 is-offset-2">
       <div class="level">
         <div class="level-left">
-          <a class="button is-outlined" type="button" href="{% url 'verTransportes' %}">
+          <a class="button is-outlined" type="button" href="{% url 'configuracao:verTransportes' %}">
             <span>Cancelar</span>
           </a>
         </div>
         <div class="level-right">
-          <button class="button is-large is-success is-outlined is-link" type="submit">
-            <span>Continuar</span>
+          <a class="button is-large is-success is-outlined is-link" href="{% url 'configuracao:verTransportes' %}">
+            <span>Ver Transportes</span>
             <span class="icon is-medium">
               <i class="mdi mdi-forward mdi-36px"></i>
             </span>
-          </button>
+          </a>
         </div>
       </div>
     </div>

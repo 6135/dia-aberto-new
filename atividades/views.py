@@ -126,52 +126,58 @@ def alterarAtividade(request,id):
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
 
-    activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
-    if activity_object.professoruniversitarioutilizadorid != ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
-        return redirect("utilizadores:home")
-    #------atividade a alterar----
-    activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
-    activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
-    espaco= Espaco.objects.get(id=activity_object.espacoid.id)
-    materiais_object= Materiais.objects.get(atividadeid=id)
-    new_material = Materiais(atividadeid=activity_object, nomematerial= materiais_object)
-    materiais_object_form= MateriaisForm(instance=materiais_object)
-    campusid= espaco.edificio.campus.id
-    campus= Campus.objects.all().exclude(id=campusid)
+    userId = user_check_var.get('firstProfile').utilizador_ptr_id
+    atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
 
-    edificioid= espaco.edificio.id
-    edificios= Edificio.objects.filter(campus=campusid).exclude(id=edificioid)
+    if atividade.exists():  
+        activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
+        if activity_object.professoruniversitarioutilizadorid != ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
+            return redirect("utilizadores:home")
+        #------atividade a alterar----
+        activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
+        activity_object_form = AtividadeForm(instance=activity_object) #Formulario instanciado pela atividade a mudar
+        espaco= Espaco.objects.get(id=activity_object.espacoid.id)
+        materiais_object= Materiais.objects.get(atividadeid=id)
+        new_material = Materiais(atividadeid=activity_object, nomematerial= materiais_object)
+        materiais_object_form= MateriaisForm(instance=materiais_object)
+        campusid= espaco.edificio.campus.id
+        campus= Campus.objects.all().exclude(id=campusid)
 
-    espacos= Espaco.objects.filter(edificio=edificioid).exclude(id=espaco.id)
-    #print(espaco)
-    #print(espacos)
-    #-----------------------------
-    if request.method == 'POST':    #Se estivermos a receber um request com formulario  
-        submitted_data = request.POST.copy()
-        activity_object.tema = Tema.objects.get(id=int(request.POST['tema']))
-        activity_object_form = AtividadeForm(submitted_data, instance=activity_object)
-        materiais_object_form = MateriaisForm(request.POST, instance=materiais_object)
-        if activity_object_form.is_valid() and materiais_object_form.is_valid():
-                #-------Guardar as mudancas a atividade em si------
-                activity_object_formed = activity_object_form.save(commit=False) 
-                if  activity_object_formed.estado == "nsub":
-                    activity_object_formed.estado = "nsub"
-                    activity_object_formed.save()
-                    materiais_object_form.save()
-                else:
-                    print("hello")
-                    print(Atividade.objects.get(id=id) == activity_object_formed)
-                    if Atividade.objects.get(id=id) != activity_object_formed or Materiais.objects.get(atividadeid=id) != materiais_object_form.instance:
-                        activity_object_formed.estado = "Pendente"
-                        activity_object_formed.dataalteracao = datetime.now()
+        edificioid= espaco.edificio.id
+        edificios= Edificio.objects.filter(campus=campusid).exclude(id=edificioid)
+
+        espacos= Espaco.objects.filter(edificio=edificioid).exclude(id=espaco.id)
+        #print(espaco)
+        #print(espacos)
+        #-----------------------------
+        if request.method == 'POST':    #Se estivermos a receber um request com formulario  
+            submitted_data = request.POST.copy()
+            activity_object.tema = Tema.objects.get(id=int(request.POST['tema']))
+            activity_object_form = AtividadeForm(submitted_data, instance=activity_object)
+            materiais_object_form = MateriaisForm(request.POST, instance=materiais_object)
+            if activity_object_form.is_valid() and materiais_object_form.is_valid():
+                    #-------Guardar as mudancas a atividade em si------
+                    activity_object_formed = activity_object_form.save(commit=False) 
+                    if  activity_object_formed.estado == "nsub":
+                        activity_object_formed.estado = "nsub"
                         activity_object_formed.save()
                         materiais_object_form.save()
-                #views.enviar_notificacao_automatica(request,"atividadeAlterada",id) #Enviar Notificacao Automatica !!!!!!
-                return redirect('atividades:inserirSessao',id)          
-    return render(request=request,
-                    template_name='atividades/proporAtividadeAtividade.html',
-                    context={'form': activity_object_form, 'espaco':espaco,'espacos':espacos, "edificios": edificios, "campus":campus, "materiais":materiais_object_form}
-                    )
+                    else:
+                        print("hello")
+                        print(Atividade.objects.get(id=id) == activity_object_formed)
+                        if Atividade.objects.get(id=id) != activity_object_formed or Materiais.objects.get(atividadeid=id) != materiais_object_form.instance:
+                            activity_object_formed.estado = "Pendente"
+                            activity_object_formed.dataalteracao = datetime.now()
+                            activity_object_formed.save()
+                            materiais_object_form.save()
+                    #views.enviar_notificacao_automatica(request,"atividadeAlterada",id) #Enviar Notificacao Automatica !!!!!!
+                    return redirect('atividades:inserirSessao',id)          
+        return render(request=request,
+                        template_name='atividades/proporAtividadeAtividade.html',
+                        context={'form': activity_object_form, 'espaco':espaco,'espacos':espacos, "edificios": edificios, "campus":campus, "materiais":materiais_object_form}
+                        )
+    else:
+        return redirect('atividades:minhasAtividades')
 
 def eliminarAtividade(request,id):
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
@@ -280,50 +286,56 @@ def inserirsessao(request,id):
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
 
-    today= datetime.now(timezone.utc) 
-    diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
-    diainicio= diaaberto.datadiaabertoinicio.date()
-    diafim= diaaberto.datadiaabertofim.date()
-    totaldias= diafim-diainicio+timedelta(days=1)
-    dias_diaaberto= []
-    for d in range(totaldias.days):
-        dias_diaaberto.append(diainicio+timedelta(days=d))
-    horariosindisponiveis= []
-    disp= []
-    atividadeid=Atividade.objects.get(id=id)
-    sessoes=Sessao.objects.all().filter(atividadeid=id)
-    check= len(sessoes)
-    if request.method == "POST":
-        if 'proximo' in request.POST:
-            return redirect('atividades:verResumo', id)
-        if 'anterior' in request.POST :
-            return redirect('atividades:alterarAtividade',id)
-        if 'new' in request.POST:
-            diasessao=request.POST["diasessao"]
-            print(diasessao)
-            inicio= request.POST['horarioid']
-            splitinicio=inicio.split(":")
-            print(splitinicio)
-            duracaoesperada= atividadeid.duracaoesperada
-            hfim= horariofim(splitinicio,duracaoesperada)
-            horario= Horario.objects.filter(inicio= request.POST['horarioid'], fim=hfim).first()
-            if horario is None:
-                new_Horario= Horario(inicio=inicio, fim=hfim)
-                new_Horario.save()
-            else:
-                new_Horario= horario
-            new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=new_Horario.id), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
-            if atividadeid.estado != "nsub":
-                atividadeid.estado= "Pendente"
-            atividadeid.save()
-            new_Sessao.save()
-            return redirect('atividades:inserirSessao', id)
-    return render(request=request,
-                  template_name='atividades/proporAtividadeSessao.html',
-                  context={'horarios': "" , 
-                           'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 
-                           'dias': dias_diaaberto,
-                           'check': check, "id":id})     
+    userId = user_check_var.get('firstProfile').utilizador_ptr_id
+    atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
+
+    if atividade.exists():  
+        today= datetime.now(timezone.utc) 
+        diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
+        diainicio= diaaberto.datadiaabertoinicio.date()
+        diafim= diaaberto.datadiaabertofim.date()
+        totaldias= diafim-diainicio+timedelta(days=1)
+        dias_diaaberto= []
+        for d in range(totaldias.days):
+            dias_diaaberto.append(diainicio+timedelta(days=d))
+        horariosindisponiveis= []
+        disp= []
+        atividadeid=Atividade.objects.get(id=id)
+        sessoes=Sessao.objects.all().filter(atividadeid=id)
+        check= len(sessoes)
+        if request.method == "POST":
+            if 'proximo' in request.POST:
+                return redirect('atividades:verResumo', id)
+            if 'anterior' in request.POST :
+                return redirect('atividades:alterarAtividade',id)
+            if 'new' in request.POST:
+                diasessao=request.POST["diasessao"]
+                print(diasessao)
+                inicio= request.POST['horarioid']
+                splitinicio=inicio.split(":")
+                print(splitinicio)
+                duracaoesperada= atividadeid.duracaoesperada
+                hfim= horariofim(splitinicio,duracaoesperada)
+                horario= Horario.objects.filter(inicio= request.POST['horarioid'], fim=hfim).first()
+                if horario is None:
+                    new_Horario= Horario(inicio=inicio, fim=hfim)
+                    new_Horario.save()
+                else:
+                    new_Horario= horario
+                new_Sessao= Sessao(vagas=Atividade.objects.get(id= id).participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=new_Horario.id), atividadeid=Atividade.objects.get(id=id),dia=diasessao)
+                if atividadeid.estado != "nsub":
+                    atividadeid.estado= "Pendente"
+                atividadeid.save()
+                new_Sessao.save()
+                return redirect('atividades:inserirSessao', id)
+        return render(request=request,
+                      template_name='atividades/proporAtividadeSessao.html',
+                      context={'horarios': "" , 
+                               'sessions_activity': Sessao.objects.all().filter(atividadeid= id), 
+                               'dias': dias_diaaberto,
+                               'check': check, "id":id})
+    else:
+        return redirect('atividades:minhasAtividades')    
 
 
 class TimeC():
@@ -506,25 +518,46 @@ def validaratividade(request,id, action):
 
 
 def verresumo(request,id):
-    atividade= Atividade.objects.get(id=id)
-    nsub= 0
-    if atividade.estado == "nsub":
-        nsub= 1
-    print(nsub)
-    if request.method == "POST":
-        if 'anterior' in request.POST:
-            return redirect('atividades:inserirSessao', id)
-    sessions_activity= Sessao.objects.filter(atividadeid=atividade)
-    return render(request=request, 
-                template_name="atividades/resumo.html",  context={"atividade": atividade, "sessions_activity": sessions_activity, "nsub": nsub} )
+
+    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    if user_check_var.get('exists') == False: return user_check_var.get('render')
+
+    userId = user_check_var.get('firstProfile').utilizador_ptr_id
+    atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
+
+    if atividade.exists():  
+        atividade= Atividade.objects.get(id=id)
+        nsub= 0
+        if atividade.estado == "nsub":
+            nsub= 1
+        print(nsub)
+        if request.method == "POST":
+            if 'anterior' in request.POST:
+                return redirect('atividades:inserirSessao', id)
+        sessions_activity= Sessao.objects.filter(atividadeid=atividade)
+        return render(request=request, 
+                    template_name="atividades/resumo.html",  context={"atividade": atividade, "sessions_activity": sessions_activity, "nsub": nsub} )
+    else:
+        return redirect('atividades:minhasAtividades')
+
 
 def confirmarResumo(request,id):
-    atividade= Atividade.objects.get(id=id)
-    if atividade.estado == "nsub":
-        atividade.estado= "Pendente"
-        atividade.save()
-    #nviews.enviar_notificacao_automatica(request,"validarAtividades",atividade.id) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
-    return redirect("atividades:minhasAtividades")
+    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    if user_check_var.get('exists') == False: return user_check_var.get('render')
+
+    userId = user_check_var.get('firstProfile').utilizador_ptr_id
+    atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
+
+    if atividade.exists():  
+        atividade= Atividade.objects.get(id=id)
+        if atividade.estado == "nsub":
+            atividade.estado= "Pendente"
+            atividade.save()
+        print(atividade.id)
+        nviews.enviar_notificacao_automatica(request,"validarAtividades",atividade.id) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
+        return redirect("atividades:minhasAtividades")
+    else:
+        return redirect('atividades:minhasAtividades')
 
 #---------------------End David
     

@@ -36,8 +36,7 @@ class InscricaoForm(forms.ModelForm):
         # Verificar se o dia escolhido faz parte do Dia Aberto
         if not cleaned_data.get('diaaberto', ''):
             hoje = datetime.now(pytz.utc)
-            prox_diaaberto = Diaaberto.objects.filter(
-                datadiaabertoinicio__gte=hoje).first()
+            prox_diaaberto = Diaaberto.current()
             if prox_diaaberto:
                 raise ValidationError(
                     _(f"""A data que escolheu não faz parte do Dia Aberto. Próximo dia aberto: de {prox_diaaberto.datadiaabertoinicio.strftime("%d/%m/%Y às %H:%M")}, até {prox_diaaberto.datadiaabertofim.strftime("%d/%m/%Y às %H:%M")}."""))
@@ -47,6 +46,16 @@ class InscricaoForm(forms.ModelForm):
         if not cleaned_data.get('individual', False) and (not cleaned_data.get('ano', False) or not cleaned_data.get('turma', False) or not cleaned_data.get('areacientifica', False)):
             raise ValidationError(
                 _("Por favor, introduza toda a informação da turma."))
+        if self.instance:
+            inscricaoprato = self.instance.inscricaoprato_set.first()
+            if inscricaoprato and inscricaoprato.nalunos + inscricaoprato.ndocentes > cleaned_data.get('nalunos', 0) + 5:
+                raise ValidationError(
+                    _("As inscrições nos almoços excedem o número de participantes disponíveis."))
+            inscricoes_sessao = self.instance.inscricaosessao_set.all()
+            for inscricao_sessao in inscricoes_sessao:
+                if inscricao_sessao.nparticipantes > cleaned_data.get('nalunos', 0):
+                    raise ValidationError(
+                        _("As inscrições nas sessões excedem o número de participantes disponíveis."))
 
     def save(self, commit=True):
         self.instance.escola = models.Escola.objects.get_or_create(
@@ -92,7 +101,7 @@ class AlmocoForm(forms.ModelForm):
             if cleaned_data['npratosalunos'] > cleaned_data['nalunos']:
                 raise forms.ValidationError(
                     _("O número de alunos inscritos no almoço excede o número de alunos disponíveis"))
-            if cleaned_data['npratosdocentes'] > cleaned_data['nresponsaveis']:
+            if cleaned_data['npratosdocentes'] > cleaned_data['nresponsaveis'] + 5:
                 raise forms.ValidationError(
                     _("O número de docentes inscritos no almoço excede o número de docentes disponíveis"))
         else:

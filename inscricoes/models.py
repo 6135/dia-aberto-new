@@ -145,7 +145,7 @@ class Inscricaosessao(models.Model):
 class Inscricaotransporte(models.Model):
     inscricao = models.ForeignKey(
         Inscricao, models.CASCADE)
-    transporte = models.ForeignKey('configuracao.Transporte', models.CASCADE)
+    transporte = models.ForeignKey('configuracao.Transportehorario', models.CASCADE)
     npassageiros = models.IntegerField(
         validators=[
             validators.MinValueValidator(1),

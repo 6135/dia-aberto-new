@@ -32,7 +32,7 @@ class InscricoesTable(tables.Table):
     #NumDocentes = tables.Column('Nº Docentes', accessor='inscricao.nresponsaveis')
     #nome = tables.Column('Departamento',accessor='departamento.nome')
     acoes = tables.Column('Ações', empty_values=(),
-                          orderable=False, attrs={"td": {"style": "width: 80px"}})
+                          orderable=False, attrs={"td": {"style": "min-width: 104px;"}})
     turma = tables.Column(empty_values=())
 
     class Meta:
@@ -55,7 +55,12 @@ class InscricoesTable(tables.Table):
     def render_acoes(self, record):
         return format_html(f"""
         <div>
-            <a href='{reverse("inscricoes:alterar-inscricao", kwargs={"pk": record.pk})}'>
+            <a href='{reverse("inscricoes:consultar-inscricao", kwargs={"pk": record.pk, "step": 5})}'>
+                <span class="icon has-text-info">
+                    <i class="mdi mdi-eye mdi-24px"></i>
+                </span>
+            </a>
+            <a href='{reverse("inscricoes:consultar-inscricao", kwargs={"pk": record.pk})}'>
                 <span class="icon has-text-warning">
                     <i class="mdi mdi-pencil mdi-24px"></i>
                 </span>
