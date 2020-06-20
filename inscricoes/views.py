@@ -2,7 +2,7 @@ from configuracao.models import Campus, Departamento, Diaaberto, Menu, Prato, Un
 from atividades.models import Atividade, Sessao
 import django_filters.rest_framework as djangofilters
 from rest_framework import filters, pagination
-from rest_framework.generics import ListCreateAPIView
+from rest_framework.generics import ListAPIView
 from inscricoes.models import Escola, Inscricaosessao, Responsavel
 from utilizadores.models import Administrador, Coordenador, Participante
 from formtools.wizard.views import SessionWizardView
@@ -155,7 +155,7 @@ def InscricaoPDF(request, pk):
     return render_pdf("inscricoes/pdf.html", context, f"dia_aberto_ualg_{ano}.pdf")
 
 
-class AtividadesAPIView(ListCreateAPIView):
+class AtividadesAPIView(ListAPIView):
 
     class AtividadeFilter(djangofilters.FilterSet):
         nome = djangofilters.CharFilter(
