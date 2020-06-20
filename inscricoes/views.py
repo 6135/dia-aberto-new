@@ -38,7 +38,7 @@ from io import BytesIO
 from django.template.loader import get_template
 from django.contrib.staticfiles import finders
 from dia_aberto import settings
-from django.core.mail import BadHeaderError, send_mail
+from django.core.mail import BadHeaderError, EmailMessage, send_mail
 import os
 from utilizadores.views import user_check
 
@@ -75,7 +75,7 @@ def link_callback(uri, rel):
     return path
 
 
-def render_pdf(template_path, context={}, filename="file.pdf"):
+def render_pdf(template_path, context={}, filename="file.pdf", send=False):
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
@@ -89,6 +89,27 @@ def render_pdf(template_path, context={}, filename="file.pdf"):
     if pisa_status.err:
         return HttpResponseBadRequest()
     return response
+
+
+def enviar_mail_confirmacao_inscricao(pk):
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    ano = inscricao.diaaberto.ano
+    context = {
+        'inscricao': inscricao,
+        'ano': ano,
+    }
+    subject = f'Confirmação da Inscrição no Dia Aberto de {ano} da Universidade do Algarve.'
+    message = f'Exmo(a). {inscricao.responsavel_set.first().nome},\n\n'
+    message += 'A sua inscrição no Dia Aberto da Universidade do Algarve foi efectuada com sucesso!\n'
+    message += 'Segue em anexo um ficheiro PDF com toda a informação relativa à sua inscricão.\n\n'
+    message += 'Cumprimentos, Dia Aberto UAlg.'
+    source = settings.EMAIL_HOST_USER
+    recipient_list = [inscricao.responsavel_set.first().email, ]
+    pdf = render_pdf("inscricoes/pdf.html", context,
+                     f"dia_aberto_ualg_{ano}.pdf", True).content
+    email = EmailMessage(subject, message, source, recipient_list, attachments=[
+                         (f"dia_aberto_ualg_{ano}.pdf", pdf, 'application/pdf')])
+    email.send()
 
 
 def InscricaoPDF(request, pk):
@@ -389,7 +410,7 @@ class InscricaoWizard(SessionWizardView):
         if almoco is not None:
             almoco.inscricao = inscricao
             almoco.save()
-        # TODO: Construir PDF
+        enviar_mail_confirmacao_inscricao(inscricao.pk)
         return render(self.request, 'inscricoes/consultar_inscricao_submissao.html', {
             'inscricao': inscricao,
         })
@@ -471,15 +492,3 @@ def ApagarInscricao(request, pk):
         add_vagas_sessao(sessaoid, nparticipantes)
     inscricao.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
-
-def enviar_mail(request, id):
-    user = Utilizador.objects.get(id=id)
-
-    subject = 'Confirmação da Inscrição no Dia Aberto da Universidade do Algarve.'
-    message = 'Exmo(a). '+user.first_name+'\n'
-    message += 'A sua inscrição no Dia Aberto da Universidade do Algarve foi efectuada com sucesso!\n'
-    message += 'Cumprimentos, Dia Aberto UAlg.'
-    source = settings.EMAIL_HOST_USER
-    recipient_list = [u.email, ]
-    send_mail(subject, message, source, recipient_list)
