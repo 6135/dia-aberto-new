@@ -2,9 +2,17 @@
 {% block content %}
 {% load l10n %}
 {% load configuracao_tags %}
-<div class='image has-ratio' style='max-width:50%'>
+<div class='image has-ratio center' style='max-width:50%'>
     <img src='{{img.url}}'>
 </div>
+<style>
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+</style>
 {% endblock content %}
 {% block scripts %}
 {% endblock scripts %}
+
+
