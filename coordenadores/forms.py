@@ -39,9 +39,11 @@ class TarefaForm(ModelForm):
     def clean(self):
         cleaned_data=super().clean()
         if cleaned_data.get('tipo') == 'tarefaOutra':
-            print(cleaned_data.get('tipo'))
-            if not cleaned_data.get('horarioSelect'):
-                raise ValidationError('Horario is required')
+            self.instance.horario = cleaned_data.get('horarioTime')
+        else:
+            self.fields['horarioSelect'].required = True
+            self.fields['horarioTime'].required = False
+            self.instance.horario = cleaned_data.get('horarioSelect')
         estado = 'naoConcluida'
         if cleaned_data.get('colab') is None:
             estado = 'naoAtribuida'
@@ -67,7 +69,7 @@ class TarefaForm(ModelForm):
     def __init__(self,user,*args, **kwargs):
         super().__init__(*args, **kwargs)
         coordenador = Coordenador.objects.get(user_ptr_id=user)
-        self.fields['colab'].queryset =  Colaborador.objects.filter(faculdade = coordenador.faculdade).order_by('utilizador_ptr_id__user_ptr_id__first_name')
+        self.fields['colab'].queryset =  Colaborador.objects.filter(faculdade = coordenador.faculdade,utilizador_ptr_id__valido=True).order_by('utilizador_ptr_id__user_ptr_id__first_name')
         self.instance.coord = Coordenador.objects.get(utilizador_ptr_id__user_ptr_id=user)
 
         if 'sessaoid' in self.data:
@@ -84,7 +86,6 @@ def get_atividades_choices():
 
 class TarefaAuxiliarForm(ModelForm):
     atividades= ChoiceField(choices=get_atividades_choices,widget=Select(attrs={'onchange':'diasSelect();'}))
-    dias=DateField(widget=Select(attrs={'onchange':'sessoesSelect();'}))
     class Meta:
         model= TarefaAuxiliar
         exclude = ['tarefaid']
