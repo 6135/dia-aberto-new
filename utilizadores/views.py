@@ -69,6 +69,7 @@ def consultar_utilizadores(request):
 
 
     if request.method == 'POST':
+        
         formFilter = UtilizadorFiltro(request.POST)
         current = request.POST.get('current')
 
@@ -114,9 +115,7 @@ def consultar_utilizadores(request):
                     utilizadores = Utilizador.objects.filter(first_name=nome[0]).filter(
                         last_name=nome[1]).order_by('first_name')
         elif estado_utilizadores == "":
-            if tipo_utilizadores == "Utilizador":
-                utilizadores = Utilizador.objects.all().order_by('first_name')
-            elif tipo_utilizadores == "Participante":
+            if tipo_utilizadores == "Participante":
                 utilizadores = Participante.objects.all().order_by('first_name')
             elif tipo_utilizadores == "ProfessorUniversitario":
                 utilizadores = ProfessorUniversitario.objects.all().order_by('first_name')
@@ -124,11 +123,10 @@ def consultar_utilizadores(request):
                 utilizadores = Coordenador.objects.all().order_by('first_name')
             elif tipo_utilizadores == "Colaborador":
                 utilizadores = Colaborador.objects.all().order_by('first_name')
+            else:
+                utilizadores = Utilizador.objects.all().order_by('first_name')
         else:
-            if tipo_utilizadores == "Utilizador":
-                utilizadores = Utilizador.objects.filter(
-                    valido=estado).order_by('first_name')
-            elif tipo_utilizadores == "Participante":
+            if tipo_utilizadores == "Participante":
                 utilizadores = Participante.objects.filter(
                     valido=estado).order_by('first_name')
             elif tipo_utilizadores == "ProfessorUniversitario":
@@ -140,6 +138,10 @@ def consultar_utilizadores(request):
             elif tipo_utilizadores == "Colaborador":
                 utilizadores = Colaborador.objects.filter(
                     valido=estado).order_by('first_name')
+            else:
+                utilizadores = Utilizador.objects.filter(
+                    valido=estado).order_by('first_name')
+
     else:
         formFilter = UtilizadorFiltro()
         current = ""

@@ -189,6 +189,12 @@
                     {% else %}
                     <p id="sem-mensagens" style="text-align:center;margin-top:2%;"><strong>Não tem nenhuma
                         notificação.</strong></p>
+                      <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}"
+                          class="dropdown-item is-disabled">
+                        <button class="button is-link is-outlined is-fullwidth">
+                          Caixa de entrada
+                        </button>
+                      </a>
                     {% endif %}
 
                   </div>
