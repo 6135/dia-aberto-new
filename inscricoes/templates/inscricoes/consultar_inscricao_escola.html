@@ -85,8 +85,8 @@
             {% if alterar %}
             <b-field label="Dia da Visita">
                 <b-datepicker v-model="dia" placeholder="Clique para selecionar..." editable
-                    :date-formatter="(d) => {moment(d).format('DD/MM/YYYY')}" required name="{{form.dia.name}}"
-                    :date-parser="(date) => moment(date, 'DD/MM/YYYY')" :min-date="inicio" :max-date="fim"
+                    :date-formatter="(d) => moment(d).format('DD/MM/YYYY')" required name="{{form.dia.name}}"
+                    :date-parser="(date) => moment(date, 'DD/MM/YYYY').toDate()" :min-date="inicio" :max-date="fim"
                     :focused-date="inicio">
                 </b-datepicker>
             </b-field>
