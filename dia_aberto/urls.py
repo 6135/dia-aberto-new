@@ -20,6 +20,8 @@ from utilizadores.forms import EmailValidationOnForgotPassword
 from utilizadores import views
 import notifications.urls
 from django.conf.urls import handler404,handler500,handler403,handler400
+from dia_aberto import settings
+from django.conf.urls.static import static
 
 
 handler404 = 'dia_aberto.views.error404'
@@ -49,3 +51,7 @@ urlpatterns = [
 
     path('', include("notifications.urls", namespace='notifications')),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL,
+                          document_root=settings.MEDIA_ROOT)
