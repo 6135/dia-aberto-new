@@ -554,6 +554,21 @@ def eliminarEdificio(request,id):
 	Edificio.objects.get(id=id).delete()
 	return redirect('configuracao:verEdificios')
 
+
+def verEdificioImagem(request,id = None):
+
+	if id is None:
+		return redirect('verEdificios')
+	edifi = Edificio.objects.filter(id=id)
+	if edifi.exists():
+		edifi = Edificio.objects.get(id=id)
+		img = edifi.image
+
+	return render(request=request,
+				template_name='configuracao/verImagem.html',
+				context={'img': img})
+
+
 def verTemas(request):
 	user_check_var = user_check(request=request, user_profile=[Administrador])
 	if user_check_var.get('exists') == False: return user_check_var.get('render')

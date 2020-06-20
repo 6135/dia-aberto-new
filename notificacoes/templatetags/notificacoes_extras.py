@@ -2,6 +2,7 @@ from django import template
 from utilizadores.models import *
 from notificacoes.models import *
 from coordenadores.models import *
+from atividades.models import *
 from distutils.version import StrictVersion  # pylint: disable=no-name-in-module,import-error
 
 from django import get_version
@@ -111,22 +112,43 @@ def atualizar_informacoes(user):
         info = InformacaoNotificacao.objects.filter(
                     recetor = utilizador_recetor)
         for x in info:
-            if timezone.now() >= x.data:
+            if True:# timezone.now() >= x.data:
                 tmp = x.tipo
                 y = tmp.split()
                 type = y[0]
-                id = parseInt(y[1])
+                id = int(y[1])
                 if type == "profile" or type == "register":
                     u = Utilizador.objects.get(id = id)
                     if u.valido == "False":
                         pendente = True
                     elif u.valido == "True":
                         pendente = False
+                        x.delete()
                     else:
                         x.delete()
+
+                    if pendente:
+                        notify.send(sender=x.emissor, recipient=utilizador_recetor, verb=x.descricao, action_object=None,
+                            target=None, level="info", description=x.titulo, public=True, timestamp=timezone.now())
+                        x.delete()
                         return ""
-                if pendente:
-                    notify.send(sender=x.emissor, recipient=utilizador_recetor, verb=x.descricao, action_object=None,
-                        target=None, level="info", description=x.titulo, public=True, timestamp=timezone.now())
+                elif type == "atividade":
+                    a = Atividade.objects.get(id = id)
+                    if a.estado == "Pendente":
+                        pendente = True
+                    else:
+                        pendente = False  
+                        x.delete()  
+                    
+                    if pendente:
+                        notify.send(sender=x.emissor, recipient=utilizador_recetor, verb=x.descricao, action_object=None,
+                            target=None, level="info", description=x.titulo, public=False, timestamp=timezone.now())
+                        x.delete()
+                        return ""
+
+                else:
                     x.delete()
+                    return ""   
+
+
     return ""

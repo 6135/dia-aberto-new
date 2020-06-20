@@ -38,9 +38,9 @@ def adicionartarefa(request, id = None):
                 outra_form = TarefaOutraForm(request.POST,instance=TarefaOutra(tarefaid=form_tarefa.instance)) 
                 if outra_form.is_valid():
                     outra_form.save()
-                    if temp == "atribuir": #Enviar Notificacao Automatica !!!!!!
+                    if temp == "atribuir" and form_tarefa.instance.colab: #Enviar Notificacao Automatica !!!!!!
                         views.enviar_notificacao_automatica(request,"tarefaAtribuida",id) #Enviar Notificacao Automatica !!!!!!
-                    elif temp == "alterar": #Enviar Notificacao Automatica !!!!!!
+                    elif temp == "alterar" and form_tarefa.instance.colab: #Enviar Notificacao Automatica !!!!!!
                         views.enviar_notificacao_automatica(request,"tarefaAlterada",id) #Enviar Notificacao Automatica !!!!!!
                     return redirect('coordenadores:consultarTarefa') 
             elif request.POST['tipo'] == 'tarefaAcompanhar': 
@@ -66,6 +66,7 @@ def tipoTarefa(request):
     if request.method == 'POST':
         tipo = request.POST['tipo']
         if tipo == 'tarefaAuxiliar':
+            tarefa = TarefaForm(user=request.user.id,data=request.POST,instance=tarefa)
             form = TarefaAuxiliarForm()
             template = 'coordenadores/tarefaAuxiliar.html'
         elif tipo == 'tarefaAcompanhar':
