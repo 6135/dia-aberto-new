@@ -436,24 +436,24 @@ def validar_utilizador(request, id):
     else:
         return redirect('utilizadores:mensagem',5) 
         
-    try:
-        u = Utilizador.objects.get(id = id)
-        u.valido = 'True'           
-        u.save()   
-        subject = 'Validação do registo do na plataforma do dia aberto'
-        message = 'Caro(a) '+u.first_name+"\n\n"
-        message+='O seu registo na plataforma do dia aberto foi bem sucedido!'+",\n\n"
-        message+='Equipa do dia aberto da Ualg'
-        email_from = settings.EMAIL_HOST_USER
-        recipient_list = [u.email,]
-        send_mail( subject, message, email_from, recipient_list )
+    # try:
+    u = Utilizador.objects.get(id = id)
+    u.valido = 'True'           
+    u.save()   
+    subject = 'Validação do registo do na plataforma do dia aberto'
+    message = 'Caro(a) '+u.first_name+"\n\n"
+    message+='O seu registo na plataforma do dia aberto foi bem sucedido!'+",\n\n"
+    message+='Equipa do dia aberto da Ualg'
+    email_from = settings.EMAIL_HOST_USER
+    recipient_list = [u.email,]
+    send_mail( subject, message, email_from, recipient_list )
 
 
-    except User.DoesNotExist:
-        return redirect('utilizadores:mensagem',5)
+    # except User.DoesNotExist:
+    #     return redirect('utilizadores:mensagem',5)
 
-    except Exception as e: 
-        return redirect('utilizadores:mensagem',5)
+    # except Exception as e: 
+    #     return redirect('utilizadores:mensagem',5)
 
     return redirect('utilizadores:consultar-utilizadores')
 
@@ -791,6 +791,8 @@ def concluir_registo(request,id):
 #Template de mensagens informativas/erro/sucesso
 
 def mensagem(request, id):
+    
+
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -809,7 +811,11 @@ def mensagem(request, id):
         u=""
 
 
-    if id == 1:
+    if id == 400 or id == 500:
+        user = get_user(request)
+        m = "Erro no servidor"
+        tipo = "error"
+    elif id == 1:
         user = get_user(request)
         m = "Bem vindo(a) "+user.first_name
         tipo = "info"
@@ -843,12 +849,17 @@ def mensagem(request, id):
         tipo = "success" 
     elif id == 10:
         m = "Não existem notificações"
-        tipo = "info"                              
-    else:
-        return redirect('utilizadores:login')
- 
+        tipo = "info" 
+    else :
+        m = "Esta pagina não existe"
+        tipo = "error"                                     
+
+    
+    continuar = "on" 
+    if id == 400 or id == 500:
+        continuar = "off" 
     return render(request=request,
-        template_name="utilizadores/mensagem.html", context={'m': m, 'tipo': tipo ,'u': u})
+        template_name="utilizadores/mensagem.html", context={'m': m, 'tipo': tipo ,'u': u, 'continuar': continuar,})
 
 
 
