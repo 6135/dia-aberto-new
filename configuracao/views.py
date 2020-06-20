@@ -430,7 +430,7 @@ def atribuirTransporte(request, id):
 	ocupadas=0
 	for ocp in inscricaotransporte:
 		ocupadas+=ocp.npassageiros
-	print(ocupadas)
+	#print(ocupadas)
 	transportevagas= transportehorario.transporte.transporteuniversitario.capacidade - ocupadas
 	inscricoestotais = Inscricao.objects.filter(nalunos__lte=transportevagas)
 	dadoschepart= []
@@ -452,12 +452,12 @@ def atribuirTransporte(request, id):
 				isessaopartidahorario= isessaopartida.sessao.horarioid.fim #horario de fim da ultima sessao
 				horapartida= (transportehorario.horaPartida.hour*60 + transportehorario.horaPartida.minute) - (isessaopartidahorario.hour*60 + isessaopartidahorario.minute) # diferença entre horario transporte e da ultima sessao
 				if isessaopartidalocal == transportehorario.origem  and horapartida <=60:
-					chepart= ChegadaPartida(inscricao.id, inscricao.nalunos,inscricao.localchegada, isessaopartidahorario, True)
+					chepart= ChegadaPartida(inscricao.id, inscricao.nalunos,inscricao.local_chegada, isessaopartidahorario, True)
 			else:
 				isessaochegadalocal= isessaochegada.sessao.atividadeid.espacoid.edificio.campus.nome
 				horachegada= (transportehorario.horaChegada.hour*60 + transportehorario.horaChegada.minute )- (inscricao.horariochegada.hour*60 + inscricao.horariochegada.minute)
 				if isessaochegadalocal == transportehorario.chegada and horachegada <=60:
-					chepart= ChegadaPartida(inscricao.id,inscricao.nalunos,inscricao.localchegada,inscricao.horariochegada, False)
+					chepart= ChegadaPartida(inscricao.id,inscricao.nalunos,inscricao.local_chegada,inscricao.horariochegada, False)
 
 			dadoschepart.append(chepart)
 
@@ -469,6 +469,7 @@ def atribuirTransporte(request, id):
 		gruposid=request.POST["gruposid"]
 		if "new" in request.POST:
 			grupo= Inscricao.objects.get(id=gruposid)
+			print(grupo)
 			new_inscricaotransporte= Inscricaotransporte(transporte=transportehorario, npassageiros=grupo.nalunos, inscricao= grupo)
 			new_inscricaotransporte.save()
 			return redirect('configuracao:atribuirTransporte', id)

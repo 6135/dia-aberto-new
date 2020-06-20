@@ -3,8 +3,7 @@
 {% block content %}
 <nav class="breadcrumb" aria-label="breadcrumbs">
   <ul>
-    <li><a href="{% url 'inicio' %}">Início</a></li>
-    <li><a href="{% url 'adminpage' %}">Administrador</a></li>
+    <li><a href="{% url 'home' %}">Início</a></li>
     <li class="is-active"><a href="" aria-current="page">Atribuir Transporte</a></li>
   </ul>
 </nav>
@@ -111,7 +110,7 @@
                                   <td data-label="Grupo">{{insctransporte.inscricao.id}}</td>
                                   <td data-label="Npassageiros">{{insctransporte.npassageiros}}</td>  
                                   <td>
-                                    <a onclick="alert.render('Tem a certeza que deseja eliminar este grupo?','{% url 'eliminarAtribuicao' insctransporte.id %}')">
+                                    <a onclick="alert.render('Tem a certeza que deseja eliminar este grupo?','{% url 'configuracao:eliminarAtribuicao' insctransporte.id %}')">
                                           <span class="icon has-text-danger">
                                               <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                                           </span>
@@ -171,7 +170,7 @@
     <div class="column is-8 is-offset-2">
       <div class="level">
         <div class="level-left">
-          <a class="button is-outlined" type="button" href="{% url 'verTransportes' %}">
+          <a class="button is-outlined" type="button" href="{% url 'configuracao:verTransportes' %}">
             <span>Cancelar</span>
           </a>
         </div>
