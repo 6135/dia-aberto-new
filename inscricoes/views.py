@@ -6,7 +6,7 @@ from rest_framework.generics import ListCreateAPIView
 from inscricoes.models import Escola, Responsavel
 from utilizadores.models import Participante
 from formtools.wizard.views import SessionWizardView
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 import json
 from django.forms.formsets import formset_factory
 from django.views.generic import CreateView, DetailView, TemplateView
@@ -33,6 +33,70 @@ from django.views import View
 from django.urls import reverse
 from datetime import datetime
 from django.utils import timezone as tz
+from xhtml2pdf import pisa
+from io import BytesIO
+from django.template.loader import get_template
+from django.contrib.staticfiles import finders
+from dia_aberto import settings
+import os
+
+
+def link_callback(uri, rel):
+    """
+    Convert HTML URIs to absolute system paths so xhtml2pdf can access those
+    resources
+    """
+    result = finders.find(uri)
+    if result:
+        if not isinstance(result, (list, tuple)):
+            result = [result]
+        result = list(os.path.realpath(path) for path in result)
+        path = result[0]
+    else:
+        sUrl = settings.STATIC_URL        # Typically /static/
+        sRoot = settings.STATIC_ROOT      # Typically /home/userX/project_static/
+        mUrl = settings.MEDIA_URL         # Typically /media/
+        mRoot = settings.MEDIA_ROOT       # Typically /home/userX/project_static/media/
+
+        if uri.startswith(mUrl):
+            path = os.path.join(mRoot, uri.replace(mUrl, ""))
+        elif uri.startswith(sUrl):
+            path = os.path.join(sRoot, uri.replace(sUrl, ""))
+        else:
+            return uri
+
+    # make sure that file exists
+    if not os.path.isfile(path):
+        raise Exception(
+            'media URI must start with %s or %s' % (sUrl, mUrl)
+        )
+    return path
+
+
+def render_pdf(template_path, context={}, filename="file.pdf"):
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'filename="{filename}"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+        html, dest=response, link_callback=link_callback)
+    # if error then show some funy view
+    if pisa_status.err:
+        return HttpResponseBadRequest()
+    return response
+
+
+def InscricaoPDF(request, pk):
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    ano = inscricao.diaaberto.ano
+    context = {
+        'inscricao': inscricao,
+        'ano': ano,
+    }
+    return render_pdf("inscricoes/pdf.html", context, f"dia_aberto_ualg_{ano}.pdf")
 
 
 class AtividadesAPIView(ListCreateAPIView):
@@ -213,6 +277,15 @@ def update_post(step, POST, wizard=None, inscricao=None):
 
 
 def save_form(step, form, inscricao):
+    if step == 'almoco':
+        almoco = form.save(commit=False)
+        if almoco is not None:
+            almoco.inscricao = inscricao
+            almoco.save()
+        else:
+            inscricaoalmoco = inscricao.inscricaoalmoco_set.first()
+            if inscricaoalmoco:
+                inscricaoalmoco.delete()
     if step == 'transporte':
         inscricao.meio_transporte = form.cleaned_data['meio']
         outro = form.cleaned_data['meio'] == 'outro'

@@ -97,14 +97,14 @@
         <input type="hidden" name="{{form.nalunos.name}}" :value="nalunos">
         <div class="column">
             {% if alterar %}
-            <b-field label="Número de alunos">
+            <b-field label="Número de participantes">
                 <b-numberinput v-model="nalunos" required controls-position="compact" min="1">
                 </b-numberinput>
             </b-field>
             {{ form.nalunos.errors }}
             {% else %}
             <div class="field">
-                <div class="label">Número de alunos</div>
+                <div class="label">Número de participantes</div>
                 <input type="text" class="input" value="{{form.nalunos.value}}" readonly>
             </div>
             {% endif %}

@@ -1,3 +1,6 @@
+import base64
+from io import StringIO
+import urllib
 from django import template
 from ..models import Inscricao
 from utilizadores.models import Participante
@@ -11,5 +14,12 @@ def inscrito(user):
 
 
 @register.filter
-def inscricao(user):
-    return Inscricao.objects.filter(participante=user.id).first().id
+def get64(url):
+    """
+    Method returning base64 image data instead of URL
+    """
+    if url.startswith("http"):
+        image = StringIO(urllib.urlopen(url).read())
+        return 'data:image/jpg;base64,' + base64.b64encode(image.read())
+
+    return url

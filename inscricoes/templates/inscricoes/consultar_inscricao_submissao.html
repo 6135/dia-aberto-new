@@ -3,6 +3,21 @@
 
 {% block title %}Inscrição{% endblock title %}
 
+{% block scripts %}
+<script>
+    window.onpageshow = function (event) {
+        if (event.persisted) {
+            window.location.reload();
+        }
+    };
+
+    function navigate_step(step) {
+        location.href = "{% url 'inscricoes:consultar-inscricao' pk=inscricaoid step=12345 %}".replace(/12345/, step
+            .toString());
+    }
+</script>
+{% endblock scripts %}
+
 {% block content %}
 <div>
     <nav aria-label="breadcrumbs" class="breadcrumb">
@@ -14,7 +29,8 @@
     </nav>
     <div style="padding: 3rem 2vw 1rem;">
         <div class="steps is-success">
-            <div class="step-item is-success is-completed">
+            <div class="step-item is-success{% if step == 0 %} is-active{% else %} is-completed{% endif %}"
+                onclick="navigate_step(0)">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-account"></i>
@@ -24,7 +40,8 @@
                     <p class="step-title">{% if individual %}Responsável{% else %}Responsáveis{% endif %}</p>
                 </div>
             </div>
-            <div class="step-item is-success is-completed">
+            <div class="step-item is-success{% if step == 1 %} is-active{% else %} is-completed{% endif %}"
+                onclick="navigate_step(1)">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi {% if individual %}mdi-ballot{% else %}mdi-school{% endif %}"></i>
@@ -34,7 +51,8 @@
                     <p class="step-title">{% if individual %}Inscrição{% else %}Escola{% endif %}</p>
                 </div>
             </div>
-            <div class="step-item is-success is-completed">
+            <div class="step-item is-success{% if step == 2 %} is-active{% else %} is-completed{% endif %}"
+                onclick="navigate_step(2)">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-train-car"></i>
@@ -44,7 +62,8 @@
                     <p class="step-title">Transporte</p>
                 </div>
             </div>
-            <div class="step-item is-success is-completed">
+            <div class="step-item is-success{% if step == 3 %} is-active{% else %} is-completed{% endif %}"
+                onclick="navigate_step(3)">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-food-apple"></i>
@@ -54,7 +73,8 @@
                     <p class="step-title">Almoço</p>
                 </div>
             </div>
-            <div class="step-item is-success is-completed">
+            <div class="step-item is-success{% if step == 4 %} is-active{% else %} is-completed{% endif %}"
+                onclick="navigate_step(4)">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-calendar-check"></i>
@@ -64,7 +84,7 @@
                     <p class="step-title">Sessões</p>
                 </div>
             </div>
-            <div class="step-item is-success is-active">
+            <div class="step-item is-success is-active" onclick="navigate_step(5)">
                 <div class="step-marker">
                     <span class="icon">
                         <i class="mdi mdi-check"></i>

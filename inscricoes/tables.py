@@ -55,7 +55,7 @@ class InscricoesTable(tables.Table):
     def render_acoes(self, record):
         return format_html(f"""
         <div>
-            <a href='{reverse("inscricoes:consultar-inscricao", kwargs={"pk": record.pk})}'>
+            <a href='{reverse("inscricoes:consultar-inscricao", kwargs={"pk": record.pk, "step": 5})}'>
                 <span class="icon has-text-info">
                     <i class="mdi mdi-eye mdi-24px"></i>
                 </span>
