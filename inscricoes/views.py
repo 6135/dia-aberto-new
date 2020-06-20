@@ -3,8 +3,8 @@ from atividades.models import Atividade, Sessao
 import django_filters.rest_framework as djangofilters
 from rest_framework import filters, pagination
 from rest_framework.generics import ListCreateAPIView
-from inscricoes.models import Escola, Responsavel
-from utilizadores.models import Administrador, Participante, ProfessorUniversitario
+from inscricoes.models import Escola, Inscricaosessao, Responsavel
+from utilizadores.models import Administrador, Coordenador, Participante
 from formtools.wizard.views import SessionWizardView
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect, JsonResponse
 import json
@@ -26,7 +26,7 @@ from datetime import timezone
 from .filters import InscricaoFilter
 from django_filters.views import FilterView
 from django.db import transaction
-from django.db.models import F
+from django.db.models import Exists, F, OuterRef
 from _datetime import date
 import pytz
 from django.views import View
@@ -112,12 +112,41 @@ def enviar_mail_confirmacao_inscricao(pk):
     email.send()
 
 
-def InscricaoPDF(request, pk):
+def coordenador_e_inscricao_nao_do_departamento(request, inscricao):
+    user_check_var = user_check(request=request, user_profile=[Coordenador])
+    if user_check_var.get('exists'):
+        coordenador = Coordenador.objects.get(user_ptr=request.user)
+        if coordenador.departamento not in inscricao.get_departamentos():
+            return user_check_var.get('render')
+    return False
+
+
+def participante_e_inscricao_doutro(request, inscricao):
+    user_check_var = user_check(request=request, user_profile=[Participante])
+    if user_check_var.get('exists'):
+        participante = Participante.objects.get(user_ptr=request.user)
+        if inscricao.participante != participante:
+            return user_check_var.get('render')
+    return False
+
+
+def nao_tem_permissoes(request, inscricao):
     user_check_var = user_check(request=request, user_profile=[
-                                ProfessorUniversitario, Participante, Administrador])
+                                Coordenador, Participante, Administrador])
     if not user_check_var.get('exists'):
         return user_check_var.get('render')
+    if coordenador_e_inscricao_nao_do_departamento(request, inscricao):
+        return user_check_var.get('render')
+    if participante_e_inscricao_doutro(request, inscricao):
+        return user_check_var.get('render')
+    return False
+
+
+def InscricaoPDF(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)
+    erro_permissoes = nao_tem_permissoes(request, inscricao)
+    if erro_permissoes:
+        return erro_permissoes
     ano = inscricao.diaaberto.ano
     context = {
         'inscricao': inscricao,
@@ -428,6 +457,10 @@ class ConsultarInscricao(View):
     ]
 
     def get(self, request, pk, step=0, alterar=False):
+        inscricao = get_object_or_404(Inscricao, pk=pk)
+        erro_permissoes = nao_tem_permissoes(request, inscricao)
+        if erro_permissoes:
+            return erro_permissoes
         context = {}
         inscricao = get_object_or_404(Inscricao, pk=pk)
         form = init_form(self.step_names[step], inscricao)
@@ -441,6 +474,10 @@ class ConsultarInscricao(View):
         return render(request, f"{self.template_prefix}_{self.step_names[step]}.html", context)
 
     def post(self, request, pk, step=0, alterar=False):
+        inscricao = get_object_or_404(Inscricao, pk=pk)
+        erro_permissoes = nao_tem_permissoes(request, inscricao)
+        if erro_permissoes:
+            return erro_permissoes
         context = {}
         inscricao = get_object_or_404(Inscricao, pk=pk)
         update_post(self.step_names[step], request.POST, inscricao=inscricao)
@@ -479,12 +516,38 @@ class ConsultarInscricoes(SingleTableMixin, FilterView):
 
 
 class MinhasInscricoes(ConsultarInscricoes):
+    def dispatch(self, request, *args, **kwargs):
+        user_check_var = user_check(
+            request=request, user_profile=[Participante])
+        if not user_check_var.get('exists'):
+            return user_check_var.get('render')
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self):
         return Inscricao.objects.filter(participante__user_ptr=self.request.user)
 
 
+class InscricoesDepartamento(ConsultarInscricoes):
+    def dispatch(self, request, *args, **kwargs):
+        user_check_var = user_check(request=request, user_profile=[
+            Coordenador, Participante, Administrador])
+        if not user_check_var.get('exists'):
+            return user_check_var.get('render')
+        coordenador = Coordenador.objects.get(user_ptr=self.request.user)
+        self.queryset = Inscricao.objects.filter(
+            Exists(Inscricaosessao.objects.filter(
+                inscricao=OuterRef('pk'),
+                sessao__atividadeid__professoruniversitarioutilizadorid__departamento=coordenador.departamento
+            ))
+        )
+        return super().dispatch(request, *args, **kwargs)
+
+
 def ApagarInscricao(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)
+    erro_permissoes = nao_tem_permissoes(request, inscricao)
+    if erro_permissoes:
+        return erro_permissoes
     inscricaosessao_set = inscricao.inscricaosessao_set.all()
     for inscricaosessao in inscricaosessao_set:
         sessaoid = inscricaosessao.sessao.id

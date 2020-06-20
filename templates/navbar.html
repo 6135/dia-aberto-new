@@ -43,7 +43,7 @@
       <a href="{% url 'atividades:atividadesUOrganica' %}" class="navbar-item">
         Atividades dos Departamentos
       </a>
-      <a href="/minhasatividades" class="navbar-item">
+      <a href="{% url 'inscricoes:consultar-inscricoes-departamento' %}" class="navbar-item">
         Inscrições
       </a>
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
@@ -179,8 +179,8 @@
                     {%endfor%}
                     {% if request.user|nr_notificacoes > 0 %}
                     <div class="panel-block">
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}"
-                          class="dropdown-item is-disabled">
+                      <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}"
+                        class="dropdown-item is-disabled">
                         <button class="button is-link is-outlined is-fullwidth">
                           Ver todas as notificações
                         </button>

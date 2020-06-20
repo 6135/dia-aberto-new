@@ -14,6 +14,8 @@ urlpatterns = [
          name='inscricao-pdf'),
     path('minhasinscricoes', views.MinhasInscricoes.as_view(),
          name='minhas-inscricoes'),
+    path('inscricoesdepartamento', views.InscricoesDepartamento.as_view(),
+         name='consultar-inscricoes-departamento'),
     path('<int:pk>', views.ConsultarInscricao.as_view(),
          name='consultar-inscricao'),
     path('<int:pk>/<int:step>', views.ConsultarInscricao.as_view(),
