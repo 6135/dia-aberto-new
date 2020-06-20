@@ -95,9 +95,7 @@ def categorias_notificacao_automatica(request, id, nr):
     else:
         return redirect('utilizadores:mensagem', 5)
 
-    if id == 0:
-        notificacoes = user.notifications.all().order_by('-id') 
-    elif id == 1:
+    if id == 1:
         notificacoes = user.notifications.unread().order_by('-id') 
     elif id ==2:
         notificacoes = user.notifications.read().order_by('-id') 
@@ -113,17 +111,19 @@ def categorias_notificacao_automatica(request, id, nr):
         notificacoes = Notificacao.objects.filter(recipient_id=user , level="error").order_by('-id')
     elif id ==8:  
         notificacoes = Notificacao.objects.filter(recipient_id=user , level="success").order_by('-id')
+    else:
+        notificacoes = user.notifications.all().order_by('-id')
     
     if nr!=0:
         notificacao = Notificacao.objects.get(id=nr)
         if notificacao == None:
-            return redirect("notificacoes:sem_notificacoes", 10) 
+            return redirect("notificacoes:sem-notificacoes", 10) 
     else:
         x = len(notificacoes)
         if x>0:
             notificacao = notificacoes[0]
         else:
-            return redirect("notificacoes:sem_notificacoes", 10)    
+            return redirect("notificacoes:sem-notificacoes", 10)    
     nr_notificacoes_por_pagina = 15
     paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
     page=request.GET.get('page')
@@ -292,5 +292,5 @@ def enviar_notificacao_automatica(request, sigla, id):
             id=atividade.get_coord().id)
         user_sender = Utilizador.objects.get(id=user_sender.id)
         info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = titulo,
-                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "actividade "+str(id) , lido = False)
+                              descricao = descricao, emissor = user_sender , recetor = user_recipient, tipo = "atividade "+str(id) , lido = False)
         info.save()
