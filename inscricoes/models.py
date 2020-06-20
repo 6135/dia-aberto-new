@@ -140,6 +140,7 @@ class Inscricaosessao(models.Model):
     class Meta:
         db_table = 'InscricaoSessao'
         unique_together = (('inscricao', 'sessao'),)
+        ordering = ['sessao__horarioid__inicio']
 
 
 class Inscricaotransporte(models.Model):

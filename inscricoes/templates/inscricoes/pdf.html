@@ -297,18 +297,14 @@
             </tr>
         </thead>
         <tbody>
+            {% for inscricaosessao in inscricao.inscricaosessao_set.all %}
             <tr>
-                <td>9:20 - 9:50</td>
-                <td width="45%">Python é fixe</td>
-                <td>26</td>
-                <td width="30%">CP 1.51 - Gambelas</td>
+                <td>{{inscricaosessao.sessao.horarioid.inicio}} - {{inscricaosessao.sessao.horarioid.fim}}</td>
+                <td width="45%">{{inscricaosessao.sessao.atividadeid.nome}}</td>
+                <td>{{inscricaosessao.nparticipantes}}</td>
+                <td width="30%">{{inscricaosessao.sessao.atividadeid.get_sala_str}}</td>
             </tr>
-            <tr>
-                <td>10:30 - 11:00</td>
-                <td width="45%">Observação Miscroscópica</td>
-                <td>21</td>
-                <td width="30%">CP Anf. 3 - Gabelas</td>
-            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </body>
