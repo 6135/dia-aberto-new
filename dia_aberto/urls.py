@@ -49,7 +49,7 @@ urlpatterns = [
     path('utilizadores/reset/done/', auth_views.PasswordResetCompleteView.as_view(template_name='registration/password_reset_complete.html'),
          name='password_reset_complete'),
 
-    path('inbox/notifications/', include("notifications.urls", namespace='notifications')),
+    path('', include("notifications.urls", namespace='notifications')),
 ]
 
 if settings.DEBUG:
