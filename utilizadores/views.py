@@ -17,8 +17,6 @@ from notificacoes import views
 # Isto faz com que o user que esta logado possa ser qualquer um dos 3 perfeis.
 
 def user_check(request, user_profile = None):
-    print('check')
-    print(user_profile)
     if not request.user.is_authenticated:
         return {'exists': False, 'render': redirect('utilizadores:login')}
     elif user_profile is not None:
