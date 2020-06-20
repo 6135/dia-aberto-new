@@ -76,7 +76,7 @@ def link_callback(uri, rel):
 def render_pdf(template_path, context={}, filename="file.pdf"):
     # Create a Django response object, and specify content_type as pdf
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = f'filename="{filename}"'
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
     # find the template and render it.
     template = get_template(template_path)
     html = template.render(context)
@@ -243,8 +243,7 @@ def update_context(context, step, wizard=None, inscricao=None):
     elif step == 'submissao':
         context.clear()
         context.update({
-            'inscricaoid': inscricao.pk,
-            'individual': inscricao.individual,
+            'inscricao': inscricao,
         })
 
 
@@ -387,8 +386,7 @@ class InscricaoWizard(SessionWizardView):
             almoco.save()
         # TODO: Construir PDF
         return render(self.request, 'inscricoes/consultar_inscricao_submissao.html', {
-            'inscricaoid': inscricao.pk,
-            'individual': self.get_cleaned_data_for_step('info')['individual'],
+            'inscricao': inscricao,
         })
 
 
