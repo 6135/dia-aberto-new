@@ -11,6 +11,8 @@ import time
 from time import mktime
 from datetime import datetime,timedelta, timezone
 from utilizadores.models import Coordenador
+from django.shortcuts import redirect
+from django.utils.safestring import mark_safe
 class Transporte(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
@@ -254,9 +256,15 @@ class Edificio(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=64)  # Field name made lowercase.
     campus = models.ForeignKey('Campus', models.DO_NOTHING, db_column='Campus', blank=True, null=False)  # Field name made lowercase.
+    image = models.ImageField(upload_to='images/edifi',db_column='image', blank=True, null=True)
 
     def espacos_(self):
         return Espaco.objects.filter(edificio=self)
+
+    def __str__(self):
+        if self.image:
+            return mark_safe('<img src=\'' + self.image.url + '\' style="max-height:300px; max-width:300px">')
+        else: return self.nome
     class Meta:
         db_table = 'Edificio'
 
