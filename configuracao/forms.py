@@ -134,7 +134,7 @@ class transporteForm(ModelForm):
     
     def clean(self):
         cleaned_data = super().clean()
-        self.instance.diaaberto = self.dia_aberto
+        self.instance.diaaberto = Diaaberto().current()
 
     class Meta:
         model = Transporte
