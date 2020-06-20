@@ -26,6 +26,7 @@ urlpatterns = [
     path('eliminaratribuicao/<int:id>', views.eliminarAtribuicao, name='eliminarAtribuicao'),
     path('eliminartransporte/<int:id>', views.eliminarTransporte, name='eliminarTransporte'),
     #-Utility
+    path('imagens/edificio/<int:id>', views.verEdificioImagem, name='verEdificioImagem'),
     path('edificios', views.verEdificios, name='verEdificios'),
     path('adicionaredificio', views.configurarEdificio, name='adicionarEdificio'),
     path('editaredificio/<int:id>', views.configurarEdificio, name='editarEdificio'),
