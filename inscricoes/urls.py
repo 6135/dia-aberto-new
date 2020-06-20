@@ -10,6 +10,8 @@ urlpatterns = [
     path('api/atividades', views.AtividadesAPIView.as_view(), name="api-atividades"),
     path('criar', views.InscricaoWizard.as_view(),
          name='criar-inscricao'),
+    path('<int:pk>/pdf', views.InscricaoPDF,
+         name='pdf'),
     path('minhasinscricoes', views.MinhasInscricoes.as_view(),
          name='minhas-inscricoes'),
     path('<int:pk>', views.ConsultarInscricao.as_view(),
