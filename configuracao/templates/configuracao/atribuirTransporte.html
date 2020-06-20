@@ -135,9 +135,10 @@
                             <select id="gruposid" name="gruposid">
                                 <option value="">---------</option>
                                   {% for cp in chegadapartida %}
-                                      {% if cp.check %}
+                                      {% if cp.check == 1 %}
                                         <option  value="{{cp.id}}" >Grupo: {{cp.id}}&nbsp&nbsp&nbsp Local do destino: {{cp.local}} &nbsp&nbsp&nbsp Fim da ultima Sessao: {{cp.horario}}&nbsp&nbsp&nbsp Numero de Pesssoas: {{cp.nparticipantes}} </option>
-                                        {% else %}
+                                      {% endif %}
+                                      {% if cp.check == 0 %}
                                          <option  value="{{cp.id}}" >Grupo: {{cp.id}}&nbsp&nbsp&nbsp Local de chegada a Faro: {{cp.local}} &nbsp&nbsp&nbsp Chegada a Faro: {{cp.horario}} &nbsp&nbsp&nbsp Numero de Pesssoas: {{cp.nparticipantes}} </option>
                                       {% endif %}
                                     {% endfor %}
@@ -175,12 +176,12 @@
           </a>
         </div>
         <div class="level-right">
-          <button class="button is-large is-success is-outlined is-link" type="submit">
-            <span>Continuar</span>
+          <a class="button is-large is-success is-outlined is-link" href="{% url 'configuracao:verTransportes' %}">
+            <span>Ver Transportes</span>
             <span class="icon is-medium">
               <i class="mdi mdi-forward mdi-36px"></i>
             </span>
-          </button>
+          </a>
         </div>
       </div>
     </div>

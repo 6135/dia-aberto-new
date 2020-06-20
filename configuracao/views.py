@@ -432,7 +432,7 @@ def atribuirTransporte(request, id):
 		ocupadas+=ocp.npassageiros
 	#print(ocupadas)
 	transportevagas= transportehorario.transporte.transporteuniversitario.capacidade - ocupadas
-	inscricoestotais = Inscricao.objects.filter(nalunos__lte=transportevagas)
+	inscricoestotais = Inscricao.objects.filter(nalunos__lte=transportevagas,dia=transportehorario.transporte.dia)
 	dadoschepart= []
 	inscricoes= []
 	chepart= 0
@@ -444,7 +444,7 @@ def atribuirTransporte(request, id):
 					inscricoes.append(inscricao)
 		
 	for inscricao in inscricoes:
-		isessaochegada=Inscricaosessao.objects.filter(inscricao=inscricao.id).order_by('sessao__horarioid__inicio').first()
+		isessaochegada=Inscricaosessao.objects.filter(inscricao=inscricao).order_by('sessao__horarioid__inicio').first()
 		if isessaochegada.sessao.dia == transportehorario.transporte.dia:
 			if transportehorario.origem == "Gambelas" or transportehorario.origem == "Penha":
 				isessaopartida=Inscricaosessao.objects.filter(inscricao=inscricao.id).order_by('-sessao__horarioid__inicio').first() # ultima sessao da inscricao
@@ -452,15 +452,15 @@ def atribuirTransporte(request, id):
 				isessaopartidahorario= isessaopartida.sessao.horarioid.fim #horario de fim da ultima sessao
 				horapartida= (transportehorario.horaPartida.hour*60 + transportehorario.horaPartida.minute) - (isessaopartidahorario.hour*60 + isessaopartidahorario.minute) # diferença entre horario transporte e da ultima sessao
 				if isessaopartidalocal == transportehorario.origem  and horapartida <=60:
-					chepart= ChegadaPartida(inscricao.id, inscricao.nalunos,inscricao.local_chegada, isessaopartidahorario, True)
+					chepart= ChegadaPartida(inscricao.id, inscricao.nalunos,inscricao.local_chegada, isessaopartidahorario, 1)
 			else:
 				isessaochegadalocal= isessaochegada.sessao.atividadeid.espacoid.edificio.campus.nome
 				horachegada= (transportehorario.horaChegada.hour*60 + transportehorario.horaChegada.minute )- (inscricao.horariochegada.hour*60 + inscricao.horariochegada.minute)
 				if isessaochegadalocal == transportehorario.chegada and horachegada <=60:
-					chepart= ChegadaPartida(inscricao.id,inscricao.nalunos,inscricao.local_chegada,inscricao.horariochegada, False)
+					chepart= ChegadaPartida(inscricao.id,inscricao.nalunos,inscricao.local_chegada,inscricao.horariochegada, 0)
 
 			dadoschepart.append(chepart)
-
+			dadoschepart=list(dict.fromkeys(dadoschepart))
 
 
 
