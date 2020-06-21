@@ -1,8 +1,6 @@
 from django.shortcuts import get_object_or_404, render
 from inscricoes.models import Inscricao, Inscricaosessao, Responsavel
 from inscricoes.utils import add_vagas_sessao, enviar_mail_confirmacao_inscricao, init_form, nao_tem_permissoes, render_pdf, save_form, update_context, update_post
-from django_filters import filters
-import django_filters
 from atividades.models import Atividade, Sessao
 from atividades.serializers import AtividadeSerializer
 from atividades.filters import AtividadeFilter
@@ -14,6 +12,14 @@ from django.urls import reverse
 from inscricoes.tables import InscricoesTable
 from inscricoes.filters import InscricaoFilter
 from django.db.models import Exists, OuterRef
+from rest_framework.generics import ListAPIView
+from rest_framework.pagination import PageNumberPagination
+from formtools.wizard.views import SessionWizardView
+from django.views import View
+from django_tables2 import SingleTableMixin
+from django_filters.rest_framework.backends import DjangoFilterBackend
+from rest_framework.filters import OrderingFilter, SearchFilter
+from django_filters.views import FilterView
 
 
 def InscricaoPDF(request, pk):
@@ -32,7 +38,7 @@ def InscricaoPDF(request, pk):
 
 class AtividadesAPIView(ListAPIView):
 
-    class AtividadesPagination(pagination.PageNumberPagination):
+    class AtividadesPagination(PageNumberPagination):
         page_size = 10
         page_size_query_param = 'page_size'
         max_page_size = 100
@@ -40,8 +46,8 @@ class AtividadesAPIView(ListAPIView):
     search_fields = '__all__'
     ordering_fields = '__all__'
     ordering = 'nome'
-    filter_backends = (filters.SearchFilter,
-                       filters.OrderingFilter, django_filters.DjangoFilterBackend)
+    filter_backends = (SearchFilter,
+                       OrderingFilter, DjangoFilterBackend)
     queryset = Atividade.objects.all()
     serializer_class = AtividadeSerializer
     pagination_class = AtividadesPagination
