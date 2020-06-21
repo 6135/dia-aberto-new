@@ -112,43 +112,44 @@ def atualizar_informacoes(user):
         info = InformacaoNotificacao.objects.filter(
                     recetor = utilizador_recetor)
         for x in info:
-            if timezone.now() >= x.data:
-                tmp = x.tipo
-                y = tmp.split()
-                type = y[0]
-                id = int(y[1])
-                if type == "profile" or type == "register":
-                    u = Utilizador.objects.get(id = id)
-                    if u.valido == "False":
-                        pendente = True
-                    elif u.valido == "True":
-                        pendente = False
-                        x.delete()
+            try:
+                if timezone.now() >= x.data:
+                    tmp = x.tipo
+                    y = tmp.split()
+                    type = y[0]
+                    id = int(y[1])
+                    if type == "profile" or type == "register":
+                        u = Utilizador.objects.get(id = id)
+                        if u.valido == "False":
+                            pendente = True
+                        elif u.valido == "True":
+                            pendente = False
+                            x.delete()
+                        else:
+                            x.delete()
+
+                        if pendente:
+                            notify.send(sender=x.emissor, recipient=utilizador_recetor, verb=x.descricao, action_object=None,
+                                target=None, level="info", description=x.titulo, public=True, timestamp=timezone.now())
+                            x.delete()
+                            return ""
+                    elif type == "atividade":
+                        a = Atividade.objects.get(id = id)
+                        if a.estado == "Pendente":
+                            pendente = True
+                        else:
+                            pendente = False  
+                            x.delete()  
+                        
+                        if pendente:
+                            notify.send(sender=x.emissor, recipient=utilizador_recetor, verb=x.descricao, action_object=None,
+                                target=None, level="info", description=x.titulo, public=False, timestamp=timezone.now())
+                            x.delete()
+                            return ""
                     else:
                         x.delete()
-
-                    if pendente:
-                        notify.send(sender=x.emissor, recipient=utilizador_recetor, verb=x.descricao, action_object=None,
-                            target=None, level="info", description=x.titulo, public=True, timestamp=timezone.now())
-                        x.delete()
-                        return ""
-                elif type == "atividade":
-                    a = Atividade.objects.get(id = id)
-                    if a.estado == "Pendente":
-                        pendente = True
-                    else:
-                        pendente = False  
-                        x.delete()  
-                    
-                    if pendente:
-                        notify.send(sender=x.emissor, recipient=utilizador_recetor, verb=x.descricao, action_object=None,
-                            target=None, level="info", description=x.titulo, public=False, timestamp=timezone.now())
-                        x.delete()
-                        return ""
-
-                else:
-                    x.delete()
-                    return ""   
-
-
+                        return ""   
+            except :
+                x.delete()
+                return "" 
     return ""
