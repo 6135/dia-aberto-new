@@ -462,9 +462,9 @@ def atribuirTransporte(request, id):
 			dadoschepart.append(chepart)
 			dadoschepart=list(dict.fromkeys(dadoschepart))
 
+	
 
-
-	print(inscricoes)
+	print(dadoschepart)
 	if request.method == "POST":
 		gruposid=request.POST["gruposid"]
 		if "new" in request.POST:
@@ -514,12 +514,11 @@ def configurarEdificio(request, id = None):
 
 
 	if request.method == 'POST':
-		edificioForm = EdificioForm(data=request.POST,instance=edificio)
+		edificioForm = EdificioForm(request.POST,request.FILES,instance=edificio)
 		formSet = espacoFormSet(request.POST)
 		if edificioForm.is_valid() and formSet.is_valid():
-			print("valid")
+			print(edificioForm.instance.image)
 			edificio = edificioForm.save()
-
 			instances = formSet.save(commit=False)
 
 			for instance in instances:

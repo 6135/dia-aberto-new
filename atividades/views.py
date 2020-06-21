@@ -4,7 +4,7 @@ from .models import *
 from configuracao.models import Horario
 from .models import Atividade, Sessao, Tema, Materiais
 from utilizadores.models import ProfessorUniversitario, Coordenador
-from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
+from configuracao.models import Campus, Departamento, Diaaberto, Edificio, Espaco, Horario
 from django.http import HttpResponseRedirect
 from datetime import datetime, date,timezone
 from _datetime import timedelta
@@ -77,8 +77,10 @@ def atividadescoordenador(request):
     print(today)
     Atividade.objects.filter(estado="nsub",datasubmissao__lte=today).delete()
         
-
     atividades=Atividade.objects.filter(professoruniversitarioutilizadorid__faculdade_id=Coordenador.objects.get(utilizador_ptr_id = request.user.id).faculdade).exclude(estado="nsub")
+    departamentos= Departamento.objects.filter(unidadeorganicaid= Coordenador.objects.get(utilizador_ptr_id = request.user.id).faculdade)
+    dep= -1
+
     sessoes=Sessao.objects.all()
     materiais= Materiais.objects.all()
     conflito2= []
@@ -103,6 +105,10 @@ def atividadescoordenador(request):
         atividades=atividades.filter(nome__icontains=nome)
         tipo=str(request.POST.get('tipo'))
         departamento=str(request.POST.get('departamentos'))
+        if request.POST.get('departamentos') is not "":
+            dep=Departamento.objects.filter(id=request.POST.get('departamentos')).first()
+        if dep is None:
+            dep= -1
         if tipo != ' ' and tipo != 'None':
             atividades=atividades.filter(tipo=tipo)
         if departamento != 'None' and departamento > '-1':
@@ -119,7 +125,7 @@ def atividadescoordenador(request):
 
     return render(request=request,
 			template_name="atividades/atividadesUOrganica.html",
-            context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm})
+            context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm, "dep":dep,"departamentos":departamentos})
 
 
 def alterarAtividade(request,id):

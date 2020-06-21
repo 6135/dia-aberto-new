@@ -13,7 +13,16 @@
                     <div class="field">
                         <div class="control is-expanded">
                             <div class="select is-fullwidth">
-                                {{filter.departamentos}}
+                                <select id="departamentos" name="departamentos" >
+                                {% if dep != -1 %}
+                                    <option selected value="{{dep.id}}">{{dep.nome}}</option>
+                                    {% else %}
+                                    <option selected value="">Mostra todos os Departamentos</option>
+                                    {% endif %}
+                                     {% for deps in departamentos %}
+                                         <option  value="{{deps.id}}" >{{deps.nome}}</option>
+                                     {% endfor %}
+                                </select>
                             </div>
                         </div>
                     </div>
@@ -64,7 +73,7 @@
                     </div>
                 </div>
                 <div class="field">
-                    <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
+                    <button onclick="resetForm()" type="submit" class="button is-danger is-outlined" name="limpar">
                         <span class="icon is-left">
                             <i class="mdi mdi-trash-can-outline mdi-24px"></i>
                         </span>

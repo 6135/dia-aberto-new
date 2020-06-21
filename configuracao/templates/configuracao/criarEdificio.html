@@ -10,7 +10,7 @@
 	</ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
-	<form method="POST" action="">
+	<form method="post" enctype="multipart/form-data">
 		<div id="id_removed_rows" style="display:none;"></div>
 		{% csrf_token %}
 		{{ form.non_field_errors }}
@@ -21,7 +21,7 @@
 						<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Edificio</h2>
 
 						<div class="columns">
-							<div class="column is-half">
+							<div class="column">
 								<strong>{{form.nome.errors}}</strong>
 								<div class="field">
 									<label class="label">Nome</label>
@@ -41,7 +41,28 @@
 								</div>
 								</div>
 							</div>
+							<div class="column ">
+							<label class="label">Imagem</label>
+								<div id="file-js-example" class="file has-name ">
+								<label class="file-label">
+									<input class="file-input" type="file" name="image" accept="image/*" id="id_image">
+									<span class="file-cta">
+									<span class="file-icon">
+										<i class="fas fa-upload"></i>
+									</span>
+									<span class="file-label">
+										Escolha uma imagem…
+									</span>
+									</span>
+									<span class="file-name">
+									Nenhuma imagem escolhida...
+									</span>
+								</label>
+								</div>
+							</div>
 						</div>
+						<hr>
+						
 						<hr>
 						<h2 class="title has-text-grey is-uppercase" style="font-size: 0.9rem">Espaços</h2>
 						<div class='table'>
@@ -120,7 +141,6 @@
 		</div>
 	</form>
 </div>
-
 <style>
 	.label {
 	font-weight: normal;
@@ -166,5 +186,13 @@ $('#del-row').click(function(e){
 		alert.warning("Não pode eliminar todas as rotas");
 	}
 })
+  const fileInput = document.querySelector('#file-js-example input[type=file]');
+  fileInput.onchange = () => {
+    if (fileInput.files.length > 0) {
+      const fileName = document.querySelector('#file-js-example .file-name');
+      fileName.textContent = fileInput.files[0].name;
+    }
+  }
+
 </script>
 {% endblock scripts %}
