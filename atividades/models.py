@@ -6,6 +6,8 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from django.utils.safestring import mark_safe
+from django.urls import reverse
 
 
 class Anfiteatro(models.Model):
@@ -108,8 +110,12 @@ class Atividade(models.Model):
     def get_campus_str(self):
         return self.espacoid.edificio.campus.nome
 
-    def get_sala_str(self):
-        return f"{self.espacoid.edificio.nome} {self.espacoid.nome} - {self.espacoid.edificio.campus}"
+    def get_sala_str(self, request=None):
+        if request is None:
+            return mark_safe('<a href="' + reverse('configuracao:verEdificioImagem', kwargs={'id': self.espacoid.edificio.id}) + '" target="_blank">' + self.espacoid.edificio.nome + ' ' + self.espacoid.nome + ' - ' + self.espacoid.edificio.campus.nome + '</a>')
+        img_full_url = request.build_absolute_uri(reverse(
+            'configuracao:verEdificioImagem', kwargs={'id': self.espacoid.edificio.id}))
+        return mark_safe('<a href="' + img_full_url + '" target="_blank">' + self.espacoid.edificio.nome + ' ' + self.espacoid.nome + ' - ' + self.espacoid.edificio.campus.nome + '</a>')
 
     def get_uo(self):
         return self.professoruniversitarioutilizadorid.faculdade

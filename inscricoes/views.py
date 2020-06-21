@@ -149,6 +149,7 @@ def InscricaoPDF(request, pk):
         return erro_permissoes
     ano = inscricao.diaaberto.ano
     context = {
+        'request': request,
         'inscricao': inscricao,
         'ano': ano,
     }
