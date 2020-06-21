@@ -225,6 +225,7 @@ def update_context(context, step, wizard=None, inscricao=None):
             'unidades_organicas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Unidadeorganica.objects.all()))),
             'departamentos': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Departamento.objects.all()))),
             'tipos': json.dumps(list(map(lambda x: x[0], Atividade.tipos))),
+            'publicos_alvo': json.dumps(list(map(lambda x: x[0], Atividade.publicosalvo))),
             'nalunos': wizard.get_cleaned_data_for_step('escola')['nalunos'] if wizard else inscricao.nalunos,
             'dia': wizard.get_cleaned_data_for_step('escola')['dia'].strftime("%d/%m/%Y") if wizard else inscricao.dia.strftime("%d/%m/%Y"),
         })
@@ -238,8 +239,8 @@ def update_context(context, step, wizard=None, inscricao=None):
 def update_post(step, POST, wizard=None, inscricao=None):
     mutable = POST._mutable
     POST._mutable = True
-    prefix = f"{step}-" if wizard else ''
-    if step == 'escola':
+    prefix = f"{POST.get('inscricao_wizard-current_step', step)}-" if wizard else ''
+    if step == 'escola' or wizard and POST.get('inscricao_wizard-current_step', '') == 'escola':
         try:
             dia = datetime.strptime(POST[f'{prefix}dia'], "%d/%m/%Y")
             diaaberto = Diaaberto.objects.filter(
@@ -250,13 +251,13 @@ def update_post(step, POST, wizard=None, inscricao=None):
             pass
         POST[f'{prefix}individual'] = wizard.get_cleaned_data_for_step('info')[
             'individual'] if wizard else inscricao.individual
-    elif step == 'almoco':
+    elif step == 'almoco' or wizard and POST.get('inscricao_wizard-current_step', '') == 'almoco':
         POST[f'{prefix}nalunos'] = wizard.get_cleaned_data_for_step('escola')[
             'nalunos'] if wizard else inscricao.nalunos
         POST[f'{prefix}nresponsaveis'] = 1
         POST[f'{prefix}individual'] = wizard.get_cleaned_data_for_step('info')[
             'individual'] if wizard else inscricao.individual
-    elif step == 'sessoes':
+    elif step == 'sessoes' or wizard and POST.get('inscricao_wizard-current_step', '') == 'sessoes':
         POST[f'{prefix}nalunos'] = wizard.get_cleaned_data_for_step('escola')[
             'nalunos'] if wizard else inscricao.nalunos
         POST[f'{prefix}dia'] = wizard.get_cleaned_data_for_step('escola')[
