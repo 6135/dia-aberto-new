@@ -94,7 +94,7 @@ def categorias_notificacao_automatica(request, id, nr):
         user = get_user(request)
     else:
         return redirect('utilizadores:mensagem', 5)
-
+    x = 0   
     if id == 1:
         notificacoes = user.notifications.unread().order_by('-id') 
     elif id ==2:
@@ -114,12 +114,12 @@ def categorias_notificacao_automatica(request, id, nr):
     else:
         notificacoes = user.notifications.all().order_by('-id')
     
+    x = len(notificacoes)
     if nr!=0:
         notificacao = Notificacao.objects.get(id=nr)
         if notificacao == None:
             return redirect("notificacoes:sem-notificacoes", 10) 
     else:
-        x = len(notificacoes)
         if x>0:
             notificacao = notificacoes[0]
         else:
@@ -128,14 +128,14 @@ def categorias_notificacao_automatica(request, id, nr):
     paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
     page=request.GET.get('page')
     notificacoes = paginator.get_page(page)
-
+    total = x
     if notificacao != None:
         notificacao.unread = False
         notificacao.save()
     else:
         return redirect("utilizadores:mensagem", 5)
     return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
-        'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,
+        'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,'total':total
     })
 
 
@@ -201,7 +201,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         user_recipient = Utilizador.objects.get(
             id=atividade.professoruniversitarioutilizadorid.id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
-                    target=atividade, level="success", description=titulo, public=False, timestamp=timezone.now())
+                    target=atividade, level="error", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificacao tarefa atribuida - colaborador
     elif sigla == "tarefaAtribuida":
         tarefa = Tarefa.objects.get(id=id)
@@ -237,7 +237,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         user_recipient = Utilizador.objects.get(
             id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
-                    target=atividade, level="warning", description=titulo, public=False, timestamp=timezone.now())
+                    target=None, level="warning", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação atividade alterada - coordenador
     elif sigla == "atividadeAlterada":
         titulo = "Foi alterada uma atividade"
@@ -246,7 +246,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         user_recipient = Utilizador.objects.get(
             id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
-                    target=atividade, level="info", description=titulo, public=False, timestamp=timezone.now())
+                    target=atividade, level="warning", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação quando há registo de utilizador por validar - administrador e ao coordenador ( 5 dias depois de criado se ainda tiver pendente
     elif sigla == "validarRegistosPendentes":  # timezone.now() + timedelta(days=5)
         titulo = "Validação de registos de utilizadores pendentes"
