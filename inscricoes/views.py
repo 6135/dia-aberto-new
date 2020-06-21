@@ -139,7 +139,7 @@ class InscricaoWizard(SessionWizardView):
         if almoco is not None:
             almoco.inscricao = inscricao
             almoco.save()
-        enviar_mail_confirmacao_inscricao(inscricao.pk)
+        enviar_mail_confirmacao_inscricao(self.request, inscricao.pk)
         return render(self.request, 'inscricoes/consultar_inscricao_submissao.html', {
             'inscricao': inscricao,
         })
