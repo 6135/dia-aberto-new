@@ -43,12 +43,16 @@ class TarefaForm(ModelForm):
         cleaned_data=super().clean()
         if cleaned_data.get('tipo') == 'tarefaOutra':
             self.instance.horario = cleaned_data.get('horarioTime')
-            print(cleaned_data.get('diasTodos'))
             self.instance.dia = cleaned_data.get('diasTodos')
         else:
             self.fields['horarioSelect'].required = True
             self.fields['horarioTime'].required = False
             self.instance.horario = cleaned_data.get('horarioSelect')
+
+            self.fields['diasDependentes'].required = True
+            self.fields['diasTodos'].required = False
+            self.instance.dia = cleaned_data.get('diasDependentes')
+
         estado = 'naoConcluida'
         if cleaned_data.get('colab') is None:
             estado = 'naoAtribuida'
@@ -63,6 +67,7 @@ class TarefaForm(ModelForm):
         elif cleaned_data.get('tipo') == 'tarefaOutra':
             nome = self.data.get('descricao')
             self.instance.nome = nome[0:18] + '...'
+            
     class Meta:  
         model = Tarefa 
         exclude = ['coord','id','nome','created_at','estado','horario','dia']
