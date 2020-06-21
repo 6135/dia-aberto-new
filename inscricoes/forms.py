@@ -48,7 +48,7 @@ class InscricaoForm(forms.ModelForm):
                 _("Por favor, introduza toda a informação da turma."))
         if self.instance:
             inscricaoprato = self.instance.inscricaoprato_set.first()
-            if inscricaoprato and inscricaoprato.nalunos + inscricaoprato.ndocentes > cleaned_data.get('nalunos', 0) + 5:
+            if inscricaoprato and inscricaoprato.npratosalunos + inscricaoprato.npratosdocentes > cleaned_data.get('nalunos', 0) + 5:
                 raise ValidationError(
                     _("As inscrições nos almoços excedem o número de participantes disponíveis."))
             inscricoes_sessao = self.instance.inscricaosessao_set.all()
@@ -119,7 +119,7 @@ def horarios_intersetam(t1start, t1end, t2start, t2end):
     return (t1start <= t2start < t1end) or (t2start <= t1start < t2end)
 
 
-def verificar_vagas(sessoes, nalunos):
+def verificar_vagas(sessoes, nalunos, dia):
     """
     Retorna ValidationError caso haja conflitos em relação ao número de inscritos nas sessões.
     """
@@ -143,6 +143,9 @@ def verificar_vagas(sessoes, nalunos):
         except:
             raise forms.ValidationError(
                 _("Ocorreu um erro inesperado. Por favor, tente submeter uma nova inscrição."))
+        if sessao_obj.dia != dia:
+            raise forms.ValidationError(
+                _(f"A seguinte sessão não faz parte do dia da inscrição: \"{sessao_obj.atividadeid.nome}\", dia {sessao_obj.dia}, das {sessao_obj.horarioid.inicio.strftime('%H:%M')} às {sessao_obj.horarioid.fim.strftime('%H:%M')}. Dia da inscrição: {dia}"))
         if sessoes[sessao] > sessao_obj.vagas:
             raise forms.ValidationError(
                 _(f"O número de inscritos na sessão da atividade \"{sessao_obj.atividadeid.nome}\", das {sessao_obj.horarioid.inicio.strftime('%H:%M')} às {sessao_obj.horarioid.fim.strftime('%H:%M')} ({sessoes[sessao]} inscritos) excede o nº de vagas para essa sessão ({sessao_obj.vagas} vagas). Este erro pode ter ocorrido porque foi submetida entretanto uma outra inscrição que ocupou as vagas pretendidas. Por favor, atualize as suas inscrições nas sessões."))
@@ -164,6 +167,7 @@ class SessoesForm(forms.Form):
     sessoes = forms.CharField()
     sessoes_info = forms.CharField()
     nalunos = forms.IntegerField(min_value=1)
+    dia = forms.DateField()
 
     def clean(self):
         cleaned_data = super(SessoesForm, self).clean()
@@ -180,4 +184,5 @@ class SessoesForm(forms.Form):
         if not cleaned_data['sessoes']:
             raise forms.ValidationError(
                 _("Deve inscrever-se, no mínimo, em uma sessão."))
-        verificar_vagas(cleaned_data['sessoes'], cleaned_data['nalunos'])
+        verificar_vagas(cleaned_data['sessoes'],
+                        cleaned_data['nalunos'], cleaned_data['dia'])

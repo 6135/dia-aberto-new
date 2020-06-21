@@ -303,7 +303,7 @@
                 <td>{{inscricaosessao.sessao.horarioid.inicio}} - {{inscricaosessao.sessao.horarioid.fim}}</td>
                 <td width="45%">{{inscricaosessao.sessao.atividadeid.nome}}</td>
                 <td>{{inscricaosessao.nparticipantes}}</td>
-                <td width="30%">{{inscricaosessao.sessao.atividadeid.get_sala_str}}</td>
+                <td width="30%">{% sala request inscricaosessao.sessao.atividadeid %}</td>
             </tr>
             {% endfor %}
         </tbody>
