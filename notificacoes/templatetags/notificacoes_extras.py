@@ -112,7 +112,7 @@ def atualizar_informacoes(user):
         info = InformacaoNotificacao.objects.filter(
                     recetor = utilizador_recetor)
         for x in info:
-            if True:# timezone.now() >= x.data:
+            if timezone.now() >= x.data:
                 tmp = x.tipo
                 y = tmp.split()
                 type = y[0]
