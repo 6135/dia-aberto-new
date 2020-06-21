@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from inscricoes.models import Inscricao, Inscricaosessao, Responsavel
 from inscricoes.utils import add_vagas_sessao, enviar_mail_confirmacao_inscricao, init_form, nao_tem_permissoes, render_pdf, save_form, update_context, update_post
 from atividades.models import Atividade, Sessao
@@ -20,6 +20,8 @@ from django_tables2 import SingleTableMixin
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.views import FilterView
+from configuracao.models import Diaaberto
+from django.utils import timezone
 
 
 def InscricaoPDF(request, pk):
@@ -68,6 +70,13 @@ class InscricaoWizard(SessionWizardView):
         _user_check = user_check(request, [Participante])
         if _user_check['exists']:
             participante = _user_check['firstProfile']
+            diaaberto = Diaaberto.current()
+            if diaaberto is None:
+                return redirect('utilizadores:mensagem', 11)
+            if timezone.now() < diaaberto.datainscricaoatividadesinicio or timezone.now() > diaaberto.datainscricaoatividadesfim:
+                m = f"Período de abertura das inscrições: {diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
+                return render(request=request,
+                              template_name="utilizadores/mensagem.html", context={'m': m, 'tipo': 'error', 'continuar': 'on'})
             self.instance_dict = {
                 'responsaveis': Responsavel(nome=f"{participante.first_name} {participante.last_name}", email=participante.email, tel=participante.contacto)
             }
@@ -155,6 +164,9 @@ class ConsultarInscricao(View):
             return erro_permissoes
         context = {}
         inscricao = get_object_or_404(Inscricao, pk=pk)
+        if user_check(request, [Participante])['exists'] and timezone.now() > inscricao.diaaberto.datainscricaoatividadesfim:
+            m = f"Não pode alterar a inscrição fora do período: {inscricao.diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {inscricao.diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
+            return render(request=request, template_name="utilizadores/mensagem.html", context={'m': m, 'tipo': 'error', 'continuar': 'on'})
         form = init_form(self.step_names[step], inscricao)
         context.update({'alterar': alterar,
                         'pk': pk,
@@ -172,6 +184,9 @@ class ConsultarInscricao(View):
             return erro_permissoes
         context = {}
         inscricao = get_object_or_404(Inscricao, pk=pk)
+        if user_check(request, [Participante])['exists'] and timezone.now() > inscricao.diaaberto.datainscricaoatividadesfim:
+            m = f"Não pode alterar a inscrição fora do período: {inscricao.diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {inscricao.diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
+            return render(request=request, template_name="utilizadores/mensagem.html", context={'m': m, 'tipo': 'error', 'continuar': 'on'})
         update_post(self.step_names[step], request.POST, inscricao=inscricao)
         form = init_form(self.step_names[step], inscricao, request.POST)
         inscricoessessao = inscricao.inscricaosessao_set.all()
