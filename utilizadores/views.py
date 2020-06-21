@@ -856,7 +856,7 @@ def mensagem(request, id, *args, **kwargs):
     elif id == 12:
         m = "Ainda não é permitido criar inscrições"
         tipo = "error"
-    else :
+    else:
         m = "Esta pagina não existe"
         tipo = "error"                                     
 
