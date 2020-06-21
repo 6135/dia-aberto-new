@@ -81,12 +81,19 @@
                 nalunos: parseInt("{{nalunos}}"),
             }
         },
+        computed: {
+            dia: () => {
+                let result = moment("{{ dia|default_if_none:'null' }}", "DD/MM/YYYY").format("YYYY-MM-DD")
+                return result;
+            },
+        },
         methods: {
             loadAsyncData() {
                 let params = [
                     `ordering=${this.sortOrder == 'desc' ? '-' : ''}${this.sortField}`,
                     `page=${this.page}`,
-                    `page_size=${this.perPage}`
+                    `page_size=${this.perPage}`,
+                    `dia=${this.dia}`,
                 ].join('&');
 
                 // Filtrar por string (e.g. Nome da Atividade)
@@ -167,7 +174,10 @@
                 index = this.sessoesEscolhidas.findIndex(obj => sessao.id === obj.sessao.id);
                 if (index !== -1) this.sessoesEscolhidas[index] = info;
                 else this.sessoesEscolhidas.push(info);
-            }
+            },
+            sessaoFilter(sessoes) {
+                return sessoes.filter(sessao => sessao.dia == this.dia);
+            },
         },
         mounted() {
             this.loadAsyncData()
@@ -426,7 +436,7 @@
                                             <p><strong>Descrição: </strong>[[ props.row.descricao ]]</p>
                                             {% comment %} <p><strong>Responsável:</strong> [[ props.row.creator ]]</p>
                                             {% endcomment %}
-                                            <b-table :data="props.row.sessao_set" sort-icon="menu-up"
+                                            <b-table :data="sessaoFilter(props.row.sessao_set)" sort-icon="menu-up"
                                                 default-sort="horario.inicio">
                                                 <template slot-scope="session_props">
                                                     <b-table-column field="horario.inicio" label="Horário" sortable>

@@ -16,7 +16,6 @@ from inscricoes.forms import AlmocoForm, InscricaoForm, ResponsavelForm, Sessoes
 import json
 from configuracao.models import Campus, Departamento, Diaaberto, Menu, Prato, Unidadeorganica
 from django.utils.datetime_safe import datetime
-from django.utils import timezone
 
 
 def link_callback(uri, rel):
@@ -225,6 +224,7 @@ def update_context(context, step, wizard=None, inscricao=None):
             'departamentos': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Departamento.objects.all()))),
             'tipos': json.dumps(list(map(lambda x: x[0], Atividade.tipos))),
             'nalunos': wizard.get_cleaned_data_for_step('escola')['nalunos'] if wizard else inscricao.nalunos,
+            'dia': wizard.get_cleaned_data_for_step('escola')['dia'] if wizard else inscricao.dia.strftime("%d/%m/%Y"),
         })
     elif step == 'submissao':
         context.clear()
@@ -239,8 +239,7 @@ def update_post(step, POST, wizard=None, inscricao=None):
     prefix = f"{step}-" if wizard else ''
     if step == 'escola':
         try:
-            dia = timezone.make_aware(datetime.strptime(
-                POST[f'{prefix}dia'], "%d/%m/%Y"))
+            dia = datetime.strptime(POST[f'{prefix}dia'], "%d/%m/%Y")
             diaaberto = Diaaberto.objects.filter(
                 datadiaabertoinicio__lte=dia.replace(hour=23), datadiaabertofim__gte=dia.replace(hour=0)).first()
             if diaaberto:
@@ -258,6 +257,8 @@ def update_post(step, POST, wizard=None, inscricao=None):
     elif step == 'sessoes':
         POST[f'{prefix}nalunos'] = wizard.get_cleaned_data_for_step('escola')[
             'nalunos'] if wizard else inscricao.nalunos
+        POST[f'{prefix}dia'] = wizard.get_cleaned_data_for_step('escola')[
+            'dia'] if wizard else inscricao.dia
     POST._mutable = mutable
 
 
