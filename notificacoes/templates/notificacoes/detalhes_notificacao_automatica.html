@@ -100,7 +100,7 @@
             <div class="action-buttons">
                 <div class="control is-grouped">
                     <a class="button is-small"><i class="fa fa-chevron-down"></i></a>
-                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' categoria 0 %}" class="button is-small">
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' categoria atual.id %}" class="button is-small">
                         <i class="mdi mdi-reload mdi-18px"></i>
                     </a>
                 </div>
@@ -116,15 +116,15 @@
 
                 <div class="control is-grouped pg">
                     <div class="title">{{ notificacoes.start_index }}-{{ notificacoes.end_index }} de
-                        {{ notificacoes|length }}
+                        {{ total }}
                     </div>
-                    {% if utilizadores.has_previous %}
+                    {% if notificacoes.has_previous %}
                     <a class="button is-link" href="?page={{notificacoes.previous_page_number}}"><i
                             class="fa fa-chevron-left"></i></a>
                     {% else %}
                     <a class="button is-link" href="#"><i class="fa fa-chevron-left"></i></a>
                     {% endif %}
-                    {% if utilizadores.has_next %}
+                    {% if notificacoes.has_next %}
                     <a class="button is-link" href="?page={{notificacoes.next_page_number}}"><i
                             class="fa fa-chevron-right"></i></a>
                     {% else %}
@@ -141,15 +141,15 @@
                         {% for notificacao in notificacoes %}
 
                         {% if notificacao.id == atual.id %}
-                        <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
-                            class="panel-block" style="background: Silver; ">
+                        <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}?page={{notificacoes.number}}"
+                            class="panel-block" style="background: #A0A0A0; ">
                             {% elif notificacao.unread == False %}
 
-                            <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
+                            <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}?page={{notificacoes.number}}"
                                 class="panel-block">
                                 {% else %}
 
-                                <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
+                                <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}?page={{notificacoes.number}}"
                                     class="panel-block" style=" background: Gainsboro; ">
                                     {% endif %}
 
@@ -201,7 +201,7 @@
                         <i class="mdi mdi-trash-can-outline mdi-18px"></i>
                     </a>
                 </div>
-                {% if atual.level == "error" %}
+                {% if atual.description == "Pedido de cancelamento da tarefa" %}
                 <div class="control is-grouped">
                     <a href="{% url 'colaboradores:validar-cancelamento-tarefa' atual.id %}"
                         class="button is-small"><i>Confirmar</i></a>

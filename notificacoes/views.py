@@ -94,7 +94,7 @@ def categorias_notificacao_automatica(request, id, nr):
         user = get_user(request)
     else:
         return redirect('utilizadores:mensagem', 5)
-
+    x = 0   
     if id == 1:
         notificacoes = user.notifications.unread().order_by('-id') 
     elif id ==2:
@@ -114,12 +114,12 @@ def categorias_notificacao_automatica(request, id, nr):
     else:
         notificacoes = user.notifications.all().order_by('-id')
     
+    x = len(notificacoes)
     if nr!=0:
         notificacao = Notificacao.objects.get(id=nr)
         if notificacao == None:
             return redirect("notificacoes:sem-notificacoes", 10) 
     else:
-        x = len(notificacoes)
         if x>0:
             notificacao = notificacoes[0]
         else:
@@ -128,14 +128,14 @@ def categorias_notificacao_automatica(request, id, nr):
     paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
     page=request.GET.get('page')
     notificacoes = paginator.get_page(page)
-
+    total = x
     if notificacao != None:
         notificacao.unread = False
         notificacao.save()
     else:
         return redirect("utilizadores:mensagem", 5)
     return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
-        'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,
+        'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,'total':total
     })
 
 
