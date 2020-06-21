@@ -218,13 +218,14 @@ def update_context(context, step, wizard=None, inscricao=None):
             'nresponsaveis': 1,
         })
     elif step == 'sessoes':
+        print()
         context.update({
             'campus': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Campus.objects.all()))),
             'unidades_organicas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Unidadeorganica.objects.all()))),
             'departamentos': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Departamento.objects.all()))),
             'tipos': json.dumps(list(map(lambda x: x[0], Atividade.tipos))),
             'nalunos': wizard.get_cleaned_data_for_step('escola')['nalunos'] if wizard else inscricao.nalunos,
-            'dia': wizard.get_cleaned_data_for_step('escola')['dia'] if wizard else inscricao.dia.strftime("%d/%m/%Y"),
+            'dia': wizard.get_cleaned_data_for_step('escola')['dia'].strftime("%d/%m/%Y") if wizard else inscricao.dia.strftime("%d/%m/%Y"),
         })
     elif step == 'submissao':
         context.clear()
