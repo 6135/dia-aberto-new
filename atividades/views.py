@@ -170,7 +170,7 @@ def alterarAtividade(request,id):
                             activity_object_formed.dataalteracao = datetime.now()
                             activity_object_formed.save()
                             materiais_object_form.save()
-                    #views.enviar_notificacao_automatica(request,"atividadeAlterada",id) #Enviar Notificacao Automatica !!!!!!
+                            views.enviar_notificacao_automatica(request,"atividadeAlterada",activity_object_formed.id) #Enviar Notificacao Automatica !!!!!!
                     return redirect('atividades:inserirSessao',id)          
         return render(request=request,
                         template_name='atividades/proporAtividadeAtividade.html',
@@ -188,7 +188,7 @@ def eliminarAtividade(request,id):
 
     if atividade.exists():
         atividade.delete()
-        #nviews.enviar_notificacao_automatica(request,"atividadeApagada",id) #Enviar Notificacao Automatica !!!!!!
+        nviews.enviar_notificacao_automatica(request,"atividadeApagada",id) #Enviar Notificacao Automatica !!!!!!
     return redirect('atividades:minhasAtividades')
     
 
