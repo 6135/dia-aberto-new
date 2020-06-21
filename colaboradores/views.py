@@ -154,10 +154,13 @@ def validar_cancelamento_tarefa(request, id):
             return redirect('utilizadores:mensagem',5) 
     else:
         return redirect('utilizadores:mensagem',5) 
-    tarefa = Tarefa.objects.get(id=id)
-    tarefa.estado="Cancelada"
-    tarefa.save()
-    views.enviar_notificacao_automatica(request,"confirmarCancelarTarefa",id)
+    try:
+        tarefa = Tarefa.objects.get(id=id)
+        tarefa.estado="Cancelada"
+        tarefa.save()
+        views.enviar_notificacao_automatica(request,"confirmarCancelarTarefa",id)
+    except:
+        return redirect('utilizadores:mensagem',11)    
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 def rejeitar_cancelamento_tarefa(request, id):
@@ -169,7 +172,11 @@ def rejeitar_cancelamento_tarefa(request, id):
             return redirect('utilizadores:mensagem',5) 
     else:
         return redirect('utilizadores:mensagem',5) 
-    views.enviar_notificacao_automatica(request,"rejeitarCancelarTarefa",id)
+    try:
+        tarefa = Tarefa.objects.get(id=id)    
+        views.enviar_notificacao_automatica(request,"rejeitarCancelarTarefa",id)
+    except:
+        return redirect('utilizadores:mensagem',11)      
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
