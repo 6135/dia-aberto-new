@@ -1,5 +1,5 @@
-from atividades.models import Atividade, Sessao
 from configuracao.models import Horario
+from atividades.models import Atividade, Sessao
 from rest_framework import serializers
 
 
