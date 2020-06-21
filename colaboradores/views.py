@@ -145,7 +145,7 @@ def cancelar_tarefa(request, id):
     views.enviar_notificacao_automatica(request,"cancelarTarefa",id)
     return redirect('notificacoes:notificar',id) 
 
-def validar_cancelamento_tarefa(request, id):
+def validar_cancelamento_tarefa(request, id_notificacao):
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -155,15 +155,19 @@ def validar_cancelamento_tarefa(request, id):
     else:
         return redirect('utilizadores:mensagem',5) 
     try:
-        tarefa = Tarefa.objects.get(id=id)
+        notificacao = Notificacao.objects.get(id=id_notificacao)
+        notificacao.deleted = True
+        id_tarefa = notificacao.action_object.id
+        notificacao.save()
+        tarefa = Tarefa.objects.get(id=id_tarefa)
         tarefa.estado="Cancelada"
         tarefa.save()
-        views.enviar_notificacao_automatica(request,"confirmarCancelarTarefa",id)
+        views.enviar_notificacao_automatica(request,"confirmarCancelarTarefa",id_tarefa)
     except:
         return redirect('utilizadores:mensagem',11)    
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
-def rejeitar_cancelamento_tarefa(request, id):
+def rejeitar_cancelamento_tarefa(request, id_notificacao):
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -173,8 +177,11 @@ def rejeitar_cancelamento_tarefa(request, id):
     else:
         return redirect('utilizadores:mensagem',5) 
     try:
-        tarefa = Tarefa.objects.get(id=id)    
-        views.enviar_notificacao_automatica(request,"rejeitarCancelarTarefa",id)
+        notificacao = Notificacao.objects.get(id=id_notificacao)
+        notificacao.deleted = True
+        id_tarefa = notificacao.action_object.id
+        notificacao.save() 
+        views.enviar_notificacao_automatica(request,"rejeitarCancelarTarefa",id_tarefa)
     except:
         return redirect('utilizadores:mensagem',11)      
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
