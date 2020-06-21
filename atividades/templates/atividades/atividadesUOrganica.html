@@ -244,14 +244,13 @@
                                             </table>
                                             {% if atividade.estado != "Aceite" %}
                                             <p class="has-text-danger">
-                                                {% for conf in conflitos %}
-                                                {% if atividade.id == conf.atividade1.id  %}
-                                                    <span class="icon is-left has-text-danger">
+                                            <span class="icon is-left has-text-danger">
                                                         <i class="fas fa-exclamation-triangle"></i>
                                                     </span>
                                                     <strong class="has-text-danger">Conflitos nos horarios com a atividade:</strong>
-                                                    {{conf.atividade2.nome}}
-                                                    <br>
+                                                {% for conf in conflitos %}
+                                                {% if atividade.id == conf.atividade1.id  %}
+                                                    {{conf.atividade2.nome}} , 
                                                     {% endif %}
                                                 {% endfor %}
                                             </p>
@@ -264,6 +263,7 @@
                                             </div>
                                         {% endif %}
                                     </div>
+                                    <hr>
                                 </div>
                             </div>                        
                         </td>                
