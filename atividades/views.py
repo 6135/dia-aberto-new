@@ -193,8 +193,9 @@ def eliminarAtividade(request,id):
     atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
 
     if atividade.exists():
-        atividade.delete()
         nviews.enviar_notificacao_automatica(request,"atividadeApagada",id) #Enviar Notificacao Automatica !!!!!!
+        atividade.delete()
+        
     return redirect('atividades:minhasAtividades')
     
 

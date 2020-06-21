@@ -232,7 +232,8 @@ def enviar_notificacao_automatica(request, sigla, id):
     # Enviar notificação atividade apagada - coordenador
     elif sigla == "atividadeApagada":
         titulo = "Foi apagada uma atividade"
-        descricao = "Foi apagada a atividade \""+id+"\""
+        atividade = Atividade.objects.get(id=id)
+        descricao = "Foi apagada a atividade \""+atividade.nome+"\""
         user_recipient = Utilizador.objects.get(
             id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
