@@ -12,7 +12,7 @@ from configuracao.models import Unidadeorganica,Departamento,Curso
 from django.core.paginator import Paginator
 from notificacoes import views
 
-# Verifica se o utilizador que esta logado pertence a pelo menos um dos perfeis mencionados 
+# Verifica se o utilizador que esta logado pertence a pelo menos um dos perfis mencionados 
 # e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
 # Isto faz com que o user que esta logado possa ser qualquer um dos 3 perfeis.
 
@@ -29,7 +29,7 @@ def user_check(request, user_profile = None):
                             template_name='mensagem.html',
                             context={
                                 'tipo':'error',
-                                'm':'Não tem permissões para aceder a esta pagina!'
+                                'm':'Não tem permissões para aceder a esta página!'
                             })
                 }
     raise Exception('Unknown Error!')
@@ -409,8 +409,8 @@ def rejeitar_utilizador(request, id):
     except User.DoesNotExist:
         return redirect('utilizadores:mensagem',5)
 
-    except Exception as e: 
-        return redirect('utilizadores:mensagem',5)
+    # except Exception as e: 
+    #     return redirect('utilizadores:mensagem',5)
 
     return redirect('utilizadores:consultar-utilizadores')
 
@@ -436,21 +436,21 @@ def validar_utilizador(request, id):
     else:
         return redirect('utilizadores:mensagem',5) 
         
-    # try:
-    u = Utilizador.objects.get(id = id)
-    u.valido = 'True'           
-    u.save()   
-    subject = 'Validação do registo do na plataforma do dia aberto'
-    message = 'Caro(a) '+u.first_name+"\n\n"
-    message+='O seu registo na plataforma do dia aberto foi bem sucedido!'+",\n\n"
-    message+='Equipa do dia aberto da Ualg'
-    email_from = settings.EMAIL_HOST_USER
-    recipient_list = [u.email,]
-    send_mail( subject, message, email_from, recipient_list )
+    try:
+        u = Utilizador.objects.get(id = id)
+        u.valido = 'True'           
+        u.save()   
+        subject = 'Validação do registo do na plataforma do dia aberto'
+        message = 'Caro(a) '+u.first_name+"\n\n"
+        message+='O seu registo na plataforma do dia aberto foi bem sucedido!'+",\n\n"
+        message+='Equipa do dia aberto da Ualg'
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [u.email,]
+        send_mail( subject, message, email_from, recipient_list )
 
 
-    # except User.DoesNotExist:
-    #     return redirect('utilizadores:mensagem',5)
+    except User.DoesNotExist:
+        return redirect('utilizadores:mensagem',5)
 
     # except Exception as e: 
     #     return redirect('utilizadores:mensagem',5)
@@ -850,6 +850,9 @@ def mensagem(request, id):
     elif id == 10:
         m = "Não existem notificações"
         tipo = "info" 
+    elif id == 11:
+        m = "Esta tarefa foi apaga"
+        tipo = "error"         
     else :
         m = "Esta pagina não existe"
         tipo = "error"                                     
