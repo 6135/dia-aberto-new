@@ -462,9 +462,9 @@ def atribuirTransporte(request, id):
 			dadoschepart.append(chepart)
 			dadoschepart=list(dict.fromkeys(dadoschepart))
 
+	
 
-
-	print(inscricoes)
+	print(dadoschepart)
 	if request.method == "POST":
 		gruposid=request.POST["gruposid"]
 		if "new" in request.POST:
