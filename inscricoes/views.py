@@ -116,7 +116,6 @@ class InscricaoWizard(SessionWizardView):
 
     def done(self, form_list, form_dict, **kwargs):
         # Guardar na Base de Dados
-        # TODO: Responsáveis
         responsaveis = form_dict['responsaveis'].save(commit=False)
         almoco = form_dict['almoco'].save(commit=False)
         inscricao = form_dict['escola'].save(commit=False)
