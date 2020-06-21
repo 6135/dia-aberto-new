@@ -45,7 +45,7 @@ class TarefaAcompanhar(models.Model):
         return msg
 class TarefaAuxiliar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
-    sessaoid = models.ForeignKey('atividades.Sessao', models.CASCADE, db_column='sessaoid')
+    atividade = models.ForeignKey('atividades.Atividade', models.CASCADE, db_column='atividade')
 
     class Meta:
         db_table = 'TarefaAuxiliar'

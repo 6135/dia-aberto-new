@@ -72,7 +72,7 @@ class InscricaoWizard(SessionWizardView):
             participante = _user_check['firstProfile']
             diaaberto = Diaaberto.current()
             if diaaberto is None:
-                return redirect('utilizadores:mensagem', 11)
+                return redirect('utilizadores:mensagem', 12)
             if timezone.now() < diaaberto.datainscricaoatividadesinicio or timezone.now() > diaaberto.datainscricaoatividadesfim:
                 m = f"Período de abertura das inscrições: {diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
                 return render(request=request,

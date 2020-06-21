@@ -36,14 +36,23 @@ class CustomTimeWidget(TimeInput):
 class TarefaForm(ModelForm):
     horarioTime = TimeField(widget=TimeInput(attrs={'class':'timepicker','type':'time','min':'09:00','max':'18:00'}))
     horarioSelect = ChoiceField(widget=Select(),choices={'','Escolha o horario'},required=False)
+    diasTodos = ChoiceField(widget=Select(),choices=[('','Escolha o dia')]+get_dias())
+    diasDependentes = ChoiceField(widget=Select(),choices=[('','Escolha o dia')],required=False)
+     
     def clean(self):
         cleaned_data=super().clean()
         if cleaned_data.get('tipo') == 'tarefaOutra':
             self.instance.horario = cleaned_data.get('horarioTime')
+            self.instance.dia = cleaned_data.get('diasTodos')
         else:
             self.fields['horarioSelect'].required = True
             self.fields['horarioTime'].required = False
             self.instance.horario = cleaned_data.get('horarioSelect')
+
+            self.fields['diasDependentes'].required = True
+            self.fields['diasTodos'].required = False
+            self.instance.dia = cleaned_data.get('diasDependentes')
+
         estado = 'naoConcluida'
         if cleaned_data.get('colab') is None:
             estado = 'naoAtribuida'
@@ -58,12 +67,12 @@ class TarefaForm(ModelForm):
         elif cleaned_data.get('tipo') == 'tarefaOutra':
             nome = self.data.get('descricao')
             self.instance.nome = nome[0:18] + '...'
+            
     class Meta:  
         model = Tarefa 
-        exclude = ['coord','id','nome','created_at','estado','horario']
+        exclude = ['coord','id','nome','created_at','estado','horario','dia']
         widgets = {
             'tipo': RadioSelect(attrs={'class':'radio'},choices=[('tarefaAuxiliar','Auxiliar Atividade'),('tarefaAcompanhar','Acompanhar participantes'),('tarefaOutra','Outra')]),
-            'dia': Select(choices=[('','Escolha o dia')]+get_dias()),
             }
 
     def __init__(self,user,*args, **kwargs):
@@ -127,8 +136,6 @@ def get_dia_choices():
     return [('','Escolha o dia')]+get_dias()
 
 class TarefaOutraForm(ModelForm):
-    dia = ChoiceField(choices=get_dia_choices,widget=Select())
-    #horario = DateField(widget=DateInput(attrs={'class':'timepicker'}))
     class Meta:
         model= TarefaOutra
         exclude = ['tarefaid']

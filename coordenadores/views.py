@@ -36,6 +36,7 @@ def adicionartarefa(request, id = None):
                     return redirect('coordenadores:consultarTarefa') 
             elif request.POST['tipo'] == 'tarefaOutra': 
                 outra_form = TarefaOutraForm(request.POST,instance=TarefaOutra(tarefaid=form_tarefa.instance)) 
+                print(outra_form.errors)
                 if outra_form.is_valid():
                     outra_form.save()
                     if temp == "atribuir" and form_tarefa.instance.colab: #Enviar Notificacao Automatica !!!!!!

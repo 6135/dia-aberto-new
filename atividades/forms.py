@@ -75,7 +75,7 @@ class atividadesFilterForm(Form):
     Recusada=BooleanField(widget=CheckboxInput(),required=False)
     Pendente=BooleanField(widget=CheckboxInput(),required=False)
     diaAbertoAtual=BooleanField(widget=CheckboxInput(),required=False)
-    departamentos = ChoiceField(choices=get_dep_choices,widget=Select(), required=False)
+    #departamentos = ChoiceField(choices=get_dep_choices,widget=Select(), required=False)
     tipo = ChoiceField(choices=[
         (" ", "Mostrar todos os tipos de Atividade"),
         ("Atividade Laboratorial", "Atividade Laboratorial"),
