@@ -201,7 +201,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         user_recipient = Utilizador.objects.get(
             id=atividade.professoruniversitarioutilizadorid.id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
-                    target=atividade, level="success", description=titulo, public=False, timestamp=timezone.now())
+                    target=atividade, level="error", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificacao tarefa atribuida - colaborador
     elif sigla == "tarefaAtribuida":
         tarefa = Tarefa.objects.get(id=id)
@@ -232,12 +232,11 @@ def enviar_notificacao_automatica(request, sigla, id):
     # Enviar notificação atividade apagada - coordenador
     elif sigla == "atividadeApagada":
         titulo = "Foi apagada uma atividade"
-        atividade = Atividade.objects.get(id=id)
-        descricao = "Foi apagada a atividade \""+atividade.nome+"\""
+        descricao = "Foi apagada a atividade \""+id+"\""
         user_recipient = Utilizador.objects.get(
             id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
-                    target=atividade, level="warning", description=titulo, public=False, timestamp=timezone.now())
+                    target=None, level="warning", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação atividade alterada - coordenador
     elif sigla == "atividadeAlterada":
         titulo = "Foi alterada uma atividade"
