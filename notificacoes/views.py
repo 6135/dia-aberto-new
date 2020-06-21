@@ -246,7 +246,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         user_recipient = Utilizador.objects.get(
             id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
-                    target=atividade, level="info", description=titulo, public=False, timestamp=timezone.now())
+                    target=atividade, level="warning", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação quando há registo de utilizador por validar - administrador e ao coordenador ( 5 dias depois de criado se ainda tiver pendente
     elif sigla == "validarRegistosPendentes":  # timezone.now() + timedelta(days=5)
         titulo = "Validação de registos de utilizadores pendentes"
