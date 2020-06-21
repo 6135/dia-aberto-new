@@ -154,7 +154,6 @@ class transporteUniversitarioForm(ModelForm):
         }
 
 class EdificioForm(ModelForm):
-    
     class Meta:
         model = Edificio
         exclude = ['id']

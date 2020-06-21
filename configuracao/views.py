@@ -514,12 +514,11 @@ def configurarEdificio(request, id = None):
 
 
 	if request.method == 'POST':
-		edificioForm = EdificioForm(data=request.POST,instance=edificio)
+		edificioForm = EdificioForm(request.POST,request.FILES,instance=edificio)
 		formSet = espacoFormSet(request.POST)
 		if edificioForm.is_valid() and formSet.is_valid():
-			print("valid")
+			print(edificioForm.instance.image)
 			edificio = edificioForm.save()
-
 			instances = formSet.save(commit=False)
 
 			for instance in instances:
@@ -553,6 +552,21 @@ def eliminarEdificio(request,id):
 
 	Edificio.objects.get(id=id).delete()
 	return redirect('configuracao:verEdificios')
+
+
+def verEdificioImagem(request,id = None):
+
+	if id is None:
+		return redirect('verEdificios')
+	edifi = Edificio.objects.filter(id=id)
+	if edifi.exists():
+		edifi = Edificio.objects.get(id=id)
+		img = edifi.image
+
+	return render(request=request,
+				template_name='configuracao/verImagem.html',
+				context={'img': img})
+
 
 def verTemas(request):
 	user_check_var = user_check(request=request, user_profile=[Administrador])
