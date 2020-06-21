@@ -66,10 +66,11 @@ def render_pdf(template_path, context={}, filename="file.pdf", send=False):
     return response
 
 
-def enviar_mail_confirmacao_inscricao(pk):
+def enviar_mail_confirmacao_inscricao(request, pk):
     inscricao = get_object_or_404(Inscricao, pk=pk)
     ano = inscricao.diaaberto.ano
     context = {
+        'request': request,
         'inscricao': inscricao,
         'ano': ano,
     }
