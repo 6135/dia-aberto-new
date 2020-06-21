@@ -790,7 +790,7 @@ def concluir_registo(request,id):
 
 #Template de mensagens informativas/erro/sucesso
 
-def mensagem(request, id):
+def mensagem(request, id, *args, **kwargs):
     
 
     if request.user.is_authenticated:    
@@ -849,11 +849,14 @@ def mensagem(request, id):
         tipo = "success" 
     elif id == 10:
         m = "Não existem notificações"
-        tipo = "info" 
+        tipo = "info"
     elif id == 11:
-        m = "Esta tarefa foi apaga"
-        tipo = "error"         
-    else :
+        m = "Esta tarefa foi apagada"
+        tipo = "error"
+    elif id == 12:
+        m = "Ainda não é permitido criar inscrições"
+        tipo = "error"
+    else:
         m = "Esta pagina não existe"
         tipo = "error"                                     
 
