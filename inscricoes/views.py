@@ -269,19 +269,15 @@ class InscricoesAdmin(ConsultarInscricoes):
         return super().dispatch(request, *args, **kwargs)
 
 
-def apagar_inscricao(inscricao):
+def ApagarInscricao(request, pk):
+    inscricao = get_object_or_404(Inscricao, pk=pk)
+    erro_permissoes = nao_tem_permissoes(request, inscricao)
+    if erro_permissoes:
+        return erro_permissoes
     inscricaosessao_set = inscricao.inscricaosessao_set.all()
     for inscricaosessao in inscricaosessao_set:
         sessaoid = inscricaosessao.sessao.id
         nparticipantes = inscricaosessao.nparticipantes
         add_vagas_sessao(sessaoid, nparticipantes)
     inscricao.delete()
-
-
-def ApagarInscricao(request, pk):
-    inscricao = get_object_or_404(Inscricao, pk=pk)
-    erro_permissoes = nao_tem_permissoes(request, inscricao)
-    if erro_permissoes:
-        return erro_permissoes
-    apagar_inscricao(inscricao)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

@@ -12,7 +12,9 @@ from configuracao.models import Unidadeorganica,Departamento,Curso
 from django.core.paginator import Paginator
 from notificacoes import views
 from inscricoes.models import Inscricao
-from inscricoes.views import apagar_inscricao
+from django.db import transaction
+from atividades.models import Sessao
+from django.db.models import F
 
 # Verifica se o utilizador que esta logado pertence a pelo menos um dos perfis mencionados 
 # e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
@@ -488,7 +490,15 @@ def apagar_utilizador(request, id):
     elif user.groups.filter(name="Participante").exists():
         u = Participante.objects.filter(id=id)
         for inscricao in Inscricao.objects.filter(participante=u):
-            apagar_inscricao(inscricao)
+            inscricaosessao_set = inscricao.inscricaosessao_set.all()
+            for inscricaosessao in inscricaosessao_set:
+                sessaoid = inscricaosessao.sessao.id
+                nparticipantes = inscricaosessao.nparticipantes
+                with transaction.atomic():
+                    sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
+                    sessao.vagas = F('vagas') + nparticipantes
+                    sessao.save()
+            inscricao.delete()
     else:
         u= user     
 
