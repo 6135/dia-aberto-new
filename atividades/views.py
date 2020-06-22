@@ -81,7 +81,7 @@ def atividadescoordenador(request):
     departamentos= Departamento.objects.filter(unidadeorganicaid= Coordenador.objects.get(utilizador_ptr_id = request.user.id).faculdade)
     dep= -1
 
-    sessoes=Sessao.objects.all()
+    sessoes=Sessao.objects.all().exclude(atividadeid__estado = 'nsub')
     materiais= Materiais.objects.all()
     conflito2= []
     for sessao1 in sessoes:
