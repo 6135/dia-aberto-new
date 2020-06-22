@@ -3,11 +3,14 @@
 {% block table-wrapper %}
 {% block table %}
 <div class="table-wrapper">
-    <table class="table has-mobile-cards is-fullwidth is-striped" {% render_attrs table.attrs %}>
+    <table class="main-table table has-mobile-cards is-fullwidth is-striped {% block table_class %}{% endblock table_class %}"
+        {% render_attrs table.attrs %}>
         {% block table.thead %}
         {% if table.show_header %}
         <thead {{ table.attrs.thead.as_html }}>
             <tr>
+                {% block seta_th %}
+                {% endblock seta_th %}
                 {% for column in table.columns %}
                 <th {% if column.orderable %}class="orderable
                     {% if request.GET.sort == column.order_by_alias %}is-sorting{% endif %}" {% endif %}
@@ -35,6 +38,8 @@
             {% for row in table.paginated_rows %}
             {% block table.tbody.row %}
             <tr {{ row.attrs.as_html }}>
+                {% block seta_tr %}
+                {% endblock seta_tr %}
                 {% for column, cell in row.items %}
                 <td {{ column.attrs.td.as_html }} data-label="{{column.header}}">
                     {% if column.localize == None %}{{ cell }}{% else %}{% if column.localize %}{{ cell|localize }}{% else %}{{ cell|unlocalize }}{% endif %}{% endif %}
@@ -42,6 +47,8 @@
                 {% endfor %}
             </tr>
             {% endblock table.tbody.row %}
+            {% block detail %}
+            {% endblock detail %}
             {% empty %}
             {% if table.empty_text %}
             {% block table.tbody.empty_text %}
@@ -109,6 +116,8 @@
     </div>
 </div>
 {% endblock pagination %}
+{% block scripts %}
+{% endblock scripts %}
 {% endblock table-wrapper %}
 
 <head>
@@ -202,4 +211,6 @@
             }
         }
     </style>
+    {% block style %}
+    {% endblock style %}
 </head>

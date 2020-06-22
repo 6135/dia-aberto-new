@@ -3,6 +3,7 @@
 
 {% block load %}
 <link rel="stylesheet" href="{% static 'css/buefy.css' %}">
+<link rel="stylesheet" href="{% static 'css/bulma.css' %}">
 {{ wizard.form.media }}
 {% endblock %}
 
@@ -80,7 +81,7 @@
                     </span>
                 </div>
                 <div class="step-details">
-                    <p class="step-title">{% if individual %}Responsável{% else %}Responsáveis{% endif %}</p>
+                    <p class="step-title">Responsável</p>
                 </div>
             </div>
             <div class="step-item is-success is-completed" onclick="navigate_step('escola')">

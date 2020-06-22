@@ -35,9 +35,9 @@ class CustomTimeWidget(TimeInput):
 
 class TarefaForm(ModelForm):
     horarioTime = TimeField(widget=TimeInput(attrs={'class':'timepicker','type':'time','min':'09:00','max':'18:00'}))
-    horarioSelect = ChoiceField(widget=Select(),choices={'','Escolha o horario'},required=False)
+    horarioSelect = ChoiceField(widget=Select(attrs={'id':'dia','onchange':'dropdownDependencies({% url '"coordenadores:sessoesAtividade"' %})'}),choices={'','Escolha o horario'},required=False)
     diasTodos = ChoiceField(widget=Select(),choices=[('','Escolha o dia')]+get_dias())
-    diasDependentes = ChoiceField(widget=Select(),choices=[('','Escolha o dia')],required=False)
+    diasDependentes = ChoiceField(widget=Select(attrs={'id':'horario'}),choices=[('','Escolha o dia')],required=False)
      
     def clean(self):
         cleaned_data=super().clean()
@@ -94,26 +94,19 @@ def get_atividades_choices():
     return [(" ",'Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.objects.filter(nrcolaboradoresnecessario__gt=0)]
 
 class TarefaAuxiliarForm(ModelForm):
-    atividades= ChoiceField(choices=get_atividades_choices,widget=Select(attrs={'onchange':'diasSelect();'}))
+    atividade= ChoiceField(choices=get_atividades_choices,widget=Select(attrs={'onchange':'dropdownDependencies(coordenadores:diasAtividade);','id':'identifier'}))
+
+    def clean(self):
+        cleaned_data=super().clean()
+        atividade = Atividade.objects.get(id=self.fields.get('atividade'),nrcolaboradoresnecessario__gt=0)
+        self.instance.atividade = atividade
+
     class Meta:
         model= TarefaAuxiliar
-        exclude = ['tarefaid']
+        exclude = ['tarefaid','atividade']
         widgets = {         
-            'sessaoid' : Select(attrs={'onchange':'colaboradoresSelect();'})
         }
-     
-
-    def __init__(self,*args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['sessaoid'].queryset =  Sessao.objects.all()
-        if 'dias' in self.data:
-            try:
-                dia = self.data.get('dias')
-                self.fields['sessaoid'].queryset = Sessao.objects.filter(dia=dia)
-            except (ValueError, TypeError):
-                pass  
-        elif self.instance.pk:
-            self.fields['sessaoid'].queryset = Sessao.objects.none()
+    
             
 def get_inscricao_choices():
     return [('','Escolha um grupo')]+[(grupo.id,'Grupo '+str(grupo.id)) for grupo in Inscricao.objects.filter(nalunos__gt=1)]

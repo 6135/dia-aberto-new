@@ -3,6 +3,7 @@
 
 {% block step_load %}
 <link rel="stylesheet" href="{% static 'css/buefy.css' %}">
+<link rel="stylesheet" href="{% static 'css/bulma.css' %}">
 <style>
     .table.is-hoverable tbody>tr:not(.is-selected):not(.detail):hover {
         cursor: pointer;
@@ -57,6 +58,7 @@
                 perPage: 10,
                 filtros: {
                     tipo: null,
+                    publicoalvo: null,
                     nome: null,
                 },
                 filtros_id: {
@@ -64,12 +66,15 @@
                     unidade_organica: null,
                     departamento: null,
                 },
+                sessao_dia: moment("{{ dia|default_if_none:'null' }}", "DD/MM/YYYY").format("YYYY-MM-DD"),
+                sessao_vagas: 0,
+                sessao_de: null,
+                sessao_ate: null,
                 campus: JSON.parse("{{campus|escapejs}}"),
                 unidades_organicas: JSON.parse("{{unidades_organicas|escapejs}}"),
                 departamentos: JSON.parse("{{departamentos|escapejs}}"),
                 tipos: JSON.parse("{{tipos|escapejs}}"),
-                maisFiltrosAtividade: false,
-                maisFiltrosSessao: false,
+                publicos_alvo: JSON.parse("{{publicos_alvo|escapejs}}"),
                 nalunos: parseInt("{{nalunos}}"),
             }
         },
@@ -78,7 +83,7 @@
                 let params = [
                     `ordering=${this.sortOrder == 'desc' ? '-' : ''}${this.sortField}`,
                     `page=${this.page}`,
-                    `page_size=${this.perPage}`
+                    `page_size=${this.perPage}`,
                 ].join('&');
 
                 // Filtrar por string (e.g. Nome da Atividade)
@@ -90,6 +95,17 @@
                 for (filtro in this.filtros_id)
                     if (this.filtros_id[filtro])
                         params += `&${filtro}_id=${this.filtros_id[filtro].id}`;
+
+                // Filtrar sessões por dia, vagas e hora
+                let dia = ''
+                let vagas = ''
+                let de = ''
+                let ate = ''
+                if (this.sessao_dia) dia = this.sessao_dia;
+                if (this.sessao_vagas) vagas = this.sessao_vagas;
+                if (this.sessao_de) de = moment(this.sessao_de).format('HH:mm');
+                if (this.sessao_ate) ate = moment(this.sessao_ate).format('HH:mm');
+                params += `&sessoes=${dia}_${vagas}_${de}_${ate}`;
 
                 const url = `{% url 'inscricoes:api-atividades' %}?${params}`;
 
@@ -159,7 +175,19 @@
                 index = this.sessoesEscolhidas.findIndex(obj => sessao.id === obj.sessao.id);
                 if (index !== -1) this.sessoesEscolhidas[index] = info;
                 else this.sessoesEscolhidas.push(info);
-            }
+            },
+            sessaoFilter(sessoes) {
+                filtradas = sessoes.filter(sessao => sessao.dia == this.sessao_dia);
+                if (this.sessao_vagas)
+                    filtradas = filtradas.filter(sessao => sessao.vagas >= this.sessao_vagas);
+                if (this.sessao_de)
+                    filtradas = filtradas.filter(sessao => moment(sessao.horario.inicio, 'HH:mm:ss')
+                        .isSameOrAfter(moment(this.sessao_de, 'HH:mm')));
+                if (this.sessao_ate)
+                    filtradas = filtradas.filter(sessao => moment(sessao.horario.fim, 'HH:mm:ss')
+                        .isSameOrBefore(moment(this.sessao_ate, 'HH:mm')));
+                return filtradas;
+            },
         },
         mounted() {
             this.loadAsyncData()
@@ -238,49 +266,45 @@
                             </b-select>
                         </b-field>
                         <b-field>
+                            <b-select id="publicoalvo" placeholder="Público Alvo" expanded icon="magnify"
+                                v-model="filtros['publicoalvo']"
+                                @input="value => {if(value == 'Qualquer') { filtros['publicoalvo'] = ''; jQuery('select#publicoalvo').parent().addClass('is-empty'); } else jQuery('select#publicoalvo').parent().removeClass('is-empty'); this.loadAsyncData();}">
+                                <option disabled="disabled" value="" hidden="hidden">
+                                    Tipo
+                                </option>
+                                <option>
+                                    Qualquer
+                                </option>
+                                <option v-for="(opcao, index) in publicos_alvo" :value="opcao" :key="index">
+                                    [[ opcao ]]
+                                </option>
+                            </b-select>
+                        </b-field>
+                        <b-field>
                             <b-input placeholder="Nome da Atividade" icon="magnify" v-model="filtros['nome']"
                                 @input="value => {this.loadAsyncData();}">
                             </b-input>
                         </b-field>
-                        <b-menu-item class="is-not-menu" :expanded="maisFiltrosAtividade"
-                            @click="maisFiltrosAtividade = !maisFiltrosAtividade">
-                            <template slot="label" slot-scope="props">
-                                <small>Mais Filtros de Atividade</small>
-                                <b-icon class="is-pulled-right" :icon="props.expanded ? 'minus' : 'plus'" />
-                            </template>
-                            <b-field>
-                                <b-datepicker placeholder="Submetido depois de..." icon="calendar-today">
-                                </b-datepicker>
-                            </b-field>
-                            <b-field>
-                                <b-datepicker placeholder="Submetido antes de..." icon="calendar-today">
-                                </b-datepicker>
-                            </b-field>
-                        </b-menu-item>
                     </b-menu-list>
                 </b-menu>
                 <b-menu>
                     <b-menu-list label="Filtros Sessão">
                         <div class="columns" style="margin-bottom: 0">
                             <b-field class="column" style="margin-bottom: 0">
-                                <b-timepicker placeholder="De" icon="clock" editable :increment-minutes="30">
+                                <b-timepicker placeholder="De" icon="clock" editable v-model="sessao_de"
+                                    @input="value => {this.loadAsyncData();}" :increment-minutes="5">
                                 </b-timepicker>
                             </b-field>
                             <b-field class="column">
-                                <b-timepicker placeholder="Até" icon="clock" editable :increment-minutes="30">
+                                <b-timepicker placeholder="Até" icon="clock" editable v-model="sessao_ate"
+                                    @input="value => {this.loadAsyncData();}" :increment-minutes="5">
                                 </b-timepicker>
                             </b-field>
                         </div>
                         <b-field label="Mínimo de vagas">
-                            <b-numberinput controls-position="compact" min="0" />
+                            <b-numberinput v-model="sessao_vagas" @input="value => {this.loadAsyncData();}"
+                                controls-position="compact" min="0" />
                         </b-field>
-                        <b-menu-item class="is-not-menu" :expanded="maisFiltrosSessao"
-                            @click="maisFiltrosSessao = !maisFiltrosSessao">
-                            <template slot="label" slot-scope="props">
-                                <small>Mais Filtros de Sessão</small>
-                                <b-icon class="is-pulled-right" :icon="props.expanded ? 'minus' : 'plus'" />
-                            </template>
-                        </b-menu-item>
                     </b-menu-list>
                 </b-menu>
             </div>
@@ -311,7 +335,8 @@
                                 <p><strong>Descrição: </strong>[[ props.row.descricao ]]</p>
                                 {% comment %} <p><strong>Responsável:</strong> [[ props.row.creator ]]</p>
                                 {% endcomment %}
-                                <b-table :data="props.row.sessao_set" sort-icon="menu-up" default-sort="horario.inicio">
+                                <b-table :data="sessaoFilter(props.row.sessao_set)" sort-icon="menu-up"
+                                    default-sort="horario.inicio">
                                     <template slot-scope="session_props">
                                         <b-table-column field="horario.inicio" label="Horário" sortable>
                                             [[ moment(session_props.row.horario.inicio,
@@ -371,7 +396,7 @@
                 [[ props.row.atividade.nome ]]
             </b-table-column>
             <b-table-column field="atividade.sala" label="Sala">
-                [[ props.row.atividade.sala ]]
+                <span v-html="props.row.atividade.sala"></span>
             </b-table-column>
             {% if alterar %}
             <b-table-column label="Ações" centered>

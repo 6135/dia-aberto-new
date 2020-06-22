@@ -216,6 +216,9 @@
                                                         <th><div class="th-wrap">Dia</div></th>
                                                         <th><div class="th-wrap" style="width:150px">Hora</div></th>
                                                         <th><div class="th-wrap" style="width:150px">Vagas</div></th>
+                                                        {% if atividade.estado == "Aceite" and atividade.nrcolaboradoresnecessario > 0 %}
+                                                        <th><div class="th-wrap" style="width:200px">Colaborador Atribuido</div></th>
+                                                        {% endif %}
                                                     </tr>
                                                 </thead>
                                                 {% for  sessao in  sessoes%}
@@ -225,6 +228,13 @@
                                                                 <td data-label="Dia">{{sessao.dia}}</td>
                                                                 <td data-label="Hora">{{sessao.horarioid.inicio}} até {{sessao.horarioid.fim}}</td>
                                                                 <td data-label="Vagas">{{sessao.vagas}}</td>
+                                                                {% if atividade.estado == "Aceite" and atividade.nrcolaboradoresnecessario > 0 %}
+                                                                    {% for col in colaboradores %}
+                                                                        {% if col.sessao.id == sessao.id %}
+                                                                        <td data-label="Colaborador">{{col.tarefaid.colab.utilizador_ptr_id.user_ptr_id.first_name}} {{col.tarefaid.colab.utilizador_ptr_id.user_ptr_id.last_name}}</td> 
+                                                                        {% endif %} 
+                                                                    {% endfor %}
+                                                                {% endif %}
                                                             </tr>
                                                         </tbody>
                                                     {% endif %}

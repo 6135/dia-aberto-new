@@ -1,10 +1,6 @@
 function definicoes() {
     var x = document.getElementById("dropdown_definicoes");
-    if (x.className === "dropdown is-right") {
-      x.className = "dropdown is-right is-active";
-    } else {
-      x.className = "dropdown is-right";
-    }
+      x.classList.toggle("is-active");
   }
 
   function notificacoes() {
