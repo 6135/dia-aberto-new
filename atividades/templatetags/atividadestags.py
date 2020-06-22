@@ -1,9 +1,8 @@
 from django import template
 from django.core.exceptions import ObjectDoesNotExist
-from configuracao.forms import *
-from configuracao.models import *
-from configuracao import views
 import json
+from django.urls.base import reverse
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -14,3 +13,11 @@ def field_data(value):
     if value.name == 'horarioid':
         result += ' onchange="updateSchedules(\'' + str(value.auto_id) + '\')"'
     return result
+
+
+@register.simple_tag
+def has_conflict(value,activity_id):
+    for conf in value:
+        if conf.atividade1.atividadeid.id == activity_id:
+            return mark_safe("<a type=\"button\" onclick=\"alert.render(\'A Atividade tem conflitos, tem a certeza que desenja proceder?\'," + "/atividades/validaratividade/"+ str(activity_id) +'/'+'0' + ");\"  class=\" button is-success\" style=\"margin-right: 10px;\" ><span class=\"icon is-small\"><i class=\"mdi mdi-check\"></i></span><span>Aceitar</span></a>")
+    return mark_safe("<a type=\"button\" href=\" " + "/atividades/validaratividade/"+ str(activity_id) +'/'+'0' + "\" class=\" button is-success\" style=\"margin-right: 10px;\" ><span class=\"icon is-small\"><i class=\"mdi mdi-check\"></i></span><span>Aceitar</span></a>")

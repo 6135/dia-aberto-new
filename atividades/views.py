@@ -92,7 +92,7 @@ def atividadescoordenador(request):
                     hora2inicio=sessao2.horarioid.inicio.hour*60+sessao2.horarioid.inicio.minute
                     hora2fim=sessao2.horarioid.fim.hour*60+sessao2.horarioid.fim.minute
                     if hora1inicio<=hora2inicio < hora1fim or hora1inicio< hora2fim <= hora1fim:
-                        C1=Conflito(sessao1.atividadeid,sessao2.atividadeid)
+                        C1=Conflito(sessao1,sessao2)
                         conflito2.append(C1)
     conflito2= list(dict.fromkeys(conflito2))
     #for c in conflito2:
@@ -105,7 +105,7 @@ def atividadescoordenador(request):
         atividades=atividades.filter(nome__icontains=nome)
         tipo=str(request.POST.get('tipo'))
         departamento=str(request.POST.get('departamentos'))
-        if request.POST.get('departamentos') is not "":
+        if request.POST.get('departamentos') != "":
             dep=Departamento.objects.filter(id=request.POST.get('departamentos')).first()
         if dep is None:
             dep= -1
