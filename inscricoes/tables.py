@@ -9,20 +9,6 @@ from django.db.models import Max, Min, OuterRef, Subquery
 from inscricoes.models import Inscricaosessao
 
 
-class DepartamentoTable(tables.Table):
-    # nome = tables.Column(verbose_name='Departamento')
-    sigla = tables.Column(verbose_name='Departamento')
-
-    class Meta:
-        model = Departamento
-
-    def before_render(self, request):
-        self.columns.hide('id')
-        self.columns.hide('unidadeorganicaid')
-        self.columns.hide('nome')
-        # self.columns.hide('atividadeid')
-
-
 class InscricoesTable(tables.Table):
     grupo = tables.Column('Grupo', accessor='id')
     horario = tables.Column(verbose_name='Horário')
@@ -83,27 +69,3 @@ class InscricoesTable(tables.Table):
             </a>
         </div>
         """)
-
-
-class DiaAbertoTable(tables.Table):
-    datadiaabertoinicio = tables.DateColumn(
-        verbose_name='Dia/Hora', format='d/m/Y, h:i')
-
-    class Meta:
-        model = Diaaberto
-
-    def before_render(self, request):
-        self.columns.hide('id')
-        self.columns.hide('enderecopaginaweb')
-        self.columns.hide('descricao')
-        self.columns.hide('emaildiaaberto')
-        self.columns.hide('ano')
-        self.columns.hide('datainscricaoatividadesinicio')
-        self.columns.hide('datapropostasatividadesincio')
-        self.columns.hide('dataporpostaatividadesfim')
-        self.columns.hide('administradorutilizadorid')
-        self.columns.hide('datainscricaoatividadesfim')
-        self.columns.hide('datadiaabertofim')
-        self.columns.hide('precoalunos')
-        self.columns.hide('precoprofessores')
-        self.columns.hide('escalasessoes')
