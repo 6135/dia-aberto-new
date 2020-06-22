@@ -28,7 +28,7 @@
 
 {% block scripts %}
 <script>
-    $('tr:not(detail)').click(function (e) {
+    $('tr:not(.detail)').click(function (e) {
         $('tr.detail').not($(this).next()).removeClass('is-active');
         $('tr:not(.detail)').not($(this)).find('td.chevron-cell .icon').removeClass('is-expanded');
         $(this).next().toggleClass('is-active');
@@ -51,6 +51,10 @@
 
     tr.detail .detail-container {
         padding: 1rem;
+    }
+
+    tr.detail:hover {
+        background-color: #fafafa !important;
     }
 
     tr.detail:not(.is-active) {
