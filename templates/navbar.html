@@ -4,15 +4,13 @@
 {% load inscricoes_extras %}
 {% load notifications_tags %}
 
-
-<nav class="navbar" role="navigation" aria-label="main navigation">
+<nav id="main-navbar" class="navbar" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <a class="navbar-item logo" href="{% url 'home' %}">
       <img src="{% static 'img/logo-navbar.png' %}" alt="Dia Aberto">
     </a>
 
-    <a role="button" class="navbar-burger burger" onclick="document.querySelector('.navbar-menu').classList.toggle('is-active');" aria-label="menu" aria-expanded="false"
-      data-target="navbarBasicExample">
+    <a role="button" class="navbar-burger burger" onclick="onclick_burger(event)" data-target="navbarBasicExample">
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
       <span aria-hidden="true"></span>
@@ -189,12 +187,12 @@
                     {% else %}
                     <p id="sem-mensagens" style="text-align:center;margin-top:2%;"><strong>Não tem nenhuma
                         notificação.</strong></p>
-                      <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}"
-                          class="dropdown-item is-disabled">
-                        <button class="button is-link is-outlined is-fullwidth">
-                          Caixa de entrada
-                        </button>
-                      </a>
+                    <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}"
+                      class="dropdown-item is-disabled">
+                      <button class="button is-link is-outlined is-fullwidth">
+                        Caixa de entrada
+                      </button>
+                    </a>
                     {% endif %}
 
                   </div>
@@ -274,7 +272,8 @@
             </div>
           </div>
 
-          <div class="dropdown is-right" onclick="event.currentTarget.classList.toggle('is-active')">
+          <div id="mensagens-dropdown" class="dropdown is-right"
+            onclick="event.currentTarget.classList.toggle('is-active')">
             <div class="dropdown-trigger">
               <span role="button" aria-haspopup="true" aria-controls="dropdown-menu6">
                 <div type="button" data-badge="0" class="button has-badge-rounded has-badge-warning is-text"
@@ -475,4 +474,15 @@
 <script type="text/javascript" src="{% static 'js/notificacoes.js' %}"></script>
 <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
 {% register_notify callbacks='fill_notification_badge,lista_notificacoes,my_special_notification_callback' %}
+
+<script>
+  function onclick_burger(e) {
+    document.querySelector('#main-navbar > .navbar-menu').classList.toggle('is-active');
+    $('#dropdown_definicoes').toggleClass('is-right');
+    $('#dropdown_definicoes').toggleClass('is-left');
+    $('#mensagens-dropdown').toggleClass('is-right');
+    $('#mensagens-dropdown').toggleClass('is-left');
+  }
+</script>
+
 {% endblock scripts %}
