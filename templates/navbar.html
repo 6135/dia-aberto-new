@@ -92,7 +92,7 @@
         <div class="dropdown is-bottom-left is-mobile-modal">
 
           <div onclick="notificacoes()">
-            <div role="button" class="dropdown-trigger">
+            <div id="notificacoes_trigger" role="button" class="dropdown-trigger">
               <span role="button">
 
                 <div type="button" data-badge="0" class="button has-badge-rounded has-badge-warning is-text"
@@ -473,16 +473,31 @@
 </script>
 <script type="text/javascript" src="{% static 'js/notificacoes.js' %}"></script>
 <script src="{% static 'notifications/notify.js' %}" type="text/javascript"></script>
+<script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
 {% register_notify callbacks='fill_notification_badge,lista_notificacoes,my_special_notification_callback' %}
 
 <script>
+
+  $('#dropdown_definicoes').click(function(e) {
+    $('#mensagens-dropdown').removeClass('is-active');
+  })
+
+  $('#mensagens-dropdown').click(function(e) {
+    $('#dropdown_definicoes').removeClass('is-active');
+  })
+
+  $('#notificacoes_trigger').click(function(e) {
+    $('#dropdown_definicoes').removeClass('is-active');
+    $('#mensagens-dropdown').removeClass('is-active');
+  })
+
   function onclick_burger(e) {
-    document.querySelector('#main-navbar > .navbar-menu').classList.toggle('is-active');
+    $('#main-navbar > .navbar-menu').toggleClass('is-active');
     $('#dropdown_definicoes').toggleClass('is-right');
     $('#dropdown_definicoes').toggleClass('is-left');
     $('#mensagens-dropdown').toggleClass('is-right');
     $('#mensagens-dropdown').toggleClass('is-left');
-  }
+  };
 </script>
 
 {% endblock scripts %}
