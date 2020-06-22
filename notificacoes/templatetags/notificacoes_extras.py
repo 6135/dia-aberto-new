@@ -30,7 +30,7 @@ register = template.Library()
 @register.filter(name='notificacoes_lidas') 
 def notificacoes_lidas(user):
     if user.is_authenticated:    
-            return user.notifications.read()  
+            return user.notifications.read()[:7]
     else:
         return None
 

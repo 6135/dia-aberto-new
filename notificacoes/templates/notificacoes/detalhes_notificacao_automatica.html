@@ -107,7 +107,7 @@
                 <div class="control is-grouped">
                     <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}" class="button is-small"><i class="fa fa-inbox"></i></a>
                     <a class="button is-small"><div data-tooltip="Click em Enviar Mensagem para comunicar diretamente com um utilizador"><i class="fa fa-exclamation-circle"></i></div></a>
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações','{% url 'notificacoes:limpar-notificacoes' 0 %}')"
+                    <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações desta categoria?','{% url 'notificacoes:limpar-notificacoes' categoria %}')"
                         class="button is-small">
                         <i class="mdi mdi-trash-can-outline mdi-18px"></i>
                     </a>
@@ -196,16 +196,16 @@
                 <div class="control is-grouped">
                     <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}" class="button is-small"><i class="fa fa-inbox"></i></a>
                     <a class="button is-small"><div data-tooltip="Esta mensagem foi gerada automáticamente"><i class="fa fa-exclamation-circle"></i></div></a>
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar esta notificação?','{% url 'notificacoes:apagar-notificacao-automatica' categoria atual.id %}')"
+                    <a onclick="alert.render('Tem a certeza que pretende eliminar esta notificação?','{% url 'notificacoes:apagar-notificacao-automatica' categoria atual.id %}?page={{notificacoes.number}}')"
                         class="button is-small">
                         <i class="mdi mdi-trash-can-outline mdi-18px"></i>
                     </a>
                 </div>
-                {% if atual.description == "Pedido de cancelamento da tarefa" %}
+                {% if atual.description == "Pedido de cancelamento da tarefa" and atual.deleted == False %}
                 <div class="control is-grouped">
-                    <a href="{% url 'colaboradores:validar-cancelamento-tarefa' atual.id %}"
+                    <a href="{% url 'colaboradores:validar-cancelamento-tarefa' atual.id %}?page={{notificacoes.number}}"
                         class="button is-small"><i>Confirmar</i></a>
-                    <a onclick="alert.render('Tem a certeza que pretende rejeitar este pedido?','{% url 'colaboradores:rejeitar-cancelamento-tarefa' atual.id %}')"
+                    <a onclick="alert.render('Tem a certeza que pretende rejeitar este pedido?','{% url 'colaboradores:rejeitar-cancelamento-tarefa' atual.id %}?page={{notificacoes.number}}')"
                         class="button is-small"><i>Rejeitar</i></a>
                 </div>
                 {% endif %}

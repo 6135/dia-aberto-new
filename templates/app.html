@@ -104,12 +104,6 @@
   <script type="text/javascript" src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/animated-arrows.js' %}"></script>
   <script type="text/javascript" src="{% static 'js/js_custom.js' %}"></script>
-  <script>
-    // Clear all dropdowns on clicking reset form button
-    $("input[type='reset']").click(() => {
-      $("option[selected]").removeAttr("selected");
-    })
-  </script>
   {% block scripts %}
   {% endblock scripts %}
 </body>

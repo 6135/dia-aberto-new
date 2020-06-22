@@ -8,7 +8,6 @@ import math
 
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import *
-from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.models import Group
 
@@ -36,11 +35,58 @@ def DetalhesNotificacao(request, pk):
 # Apagar uma notificação automática
 
 def apagar_notificacao_automatica(request, id ,nr):
+    if request.user.is_authenticated:
+        user = get_user(request)
+    else:
+        return redirect('utilizadores:mensagem', 5)
     notificacao = Notificacao.objects.get(id=nr)
     if notificacao == None:
         return redirect("utilizadores:mensagem", 5)
     notificacao.delete()
-    return redirect('notificacoes:categorias-notificacao-automatica',id,0)
+    x = 0 
+    nr = 0  
+    if id == 1:
+        notificacoes = user.notifications.unread().order_by('-id') 
+    elif id ==2:
+        notificacoes = user.notifications.read().order_by('-id') 
+    elif id == 3:
+        notificacoes = Notificacao.objects.filter(recipient_id=user , public=False).order_by('-id')
+    elif id ==4:    
+        notificacoes = Notificacao.objects.filter(recipient_id=user , public=True).order_by('-id')
+    elif id == 5:
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="info").order_by('-id')
+    elif id ==6:  
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="warning").order_by('-id')
+    elif id ==7: 
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="error").order_by('-id')
+    elif id ==8:  
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="success").order_by('-id')
+    else:
+        notificacoes = user.notifications.all().order_by('-id')
+    
+    x = len(notificacoes)
+    if nr!=0:
+        notificacao = Notificacao.objects.get(id=nr)
+        if notificacao == None:
+            return redirect("notificacoes:sem-notificacoes", 10) 
+    else:
+        if x>0:
+            notificacao = notificacoes[0]
+        else:
+            return redirect("notificacoes:sem-notificacoes", 10)    
+    nr_notificacoes_por_pagina = 15
+    paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
+    page=request.GET.get('page')
+    notificacoes = paginator.get_page(page)
+    total = x
+    if notificacao != None:
+        notificacao.unread = False
+        notificacao.save()
+    else:
+        return redirect("utilizadores:mensagem", 5)
+    return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
+        'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,'total':total
+    })
 
 # Apagar todas as notificações de um utilizadador
 
@@ -50,14 +96,27 @@ def limpar_notificacoes(request, id):
         user = get_user(request)
     else:
         return redirect('utilizadores:mensagem', 5)
-    if id == 0:
-        todas_notificacoes = user.notifications.all()
-        for x in todas_notificacoes:
-            x.delete()
-    elif id == 1:
-        anteriores_notificacoes = user.notifications.read()
-        for x in anteriores_notificacoes:
-            x.delete()
+    if id == 1:
+        notificacoes = user.notifications.unread() 
+    elif id ==2:
+        notificacoes = user.notifications.read() 
+    elif id == 3:
+        notificacoes = Notificacao.objects.filter(recipient_id=user , public=False)
+    elif id ==4:    
+        notificacoes = Notificacao.objects.filter(recipient_id=user , public=True)
+    elif id == 5:
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="info")
+    elif id ==6:  
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="warning")
+    elif id ==7: 
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="error")
+    elif id ==8:  
+        notificacoes = Notificacao.objects.filter(recipient_id=user , level="success")
+    else:
+        notificacoes = user.notifications.all()
+    for x in notificacoes:
+        x.delete()
+
     return redirect('notificacoes:categorias-notificacao-automatica',0,0)
 
 
