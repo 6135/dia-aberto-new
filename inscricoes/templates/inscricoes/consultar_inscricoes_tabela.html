@@ -1,0 +1,12 @@
+{% extends 'bulma_table_details.html' %}
+
+
+{% block details_content %}
+
+<p><strong>Grupo:</strong> {{row.record.id}}</p>
+
+<p><strong>Dia:</strong> {{row.record.dia}}</p>
+
+<p><strong>Horário:</strong> {{row.record.horario}}</p>
+
+{% endblock details_content %}
