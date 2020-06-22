@@ -20,7 +20,7 @@ from django_tables2 import SingleTableMixin
 from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.views import FilterView
-from configuracao.models import Diaaberto
+from configuracao.models import Departamento, Diaaberto
 from django.utils import timezone
 
 
@@ -217,8 +217,14 @@ class ConsultarInscricoes(SingleTableMixin, FilterView):
     filterset_class = InscricaoFilter
 
     table_pagination = {
-        'per_page': 8
+        'per_page': 10
     }
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["departamentos"] = list(map(lambda x: (x.id, x.nome), Departamento.objects.all()))
+        return context
+    
 
 
 class MinhasInscricoes(ConsultarInscricoes):

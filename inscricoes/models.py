@@ -3,6 +3,7 @@ from django.core import validators
 from phonenumber_field.modelfields import PhoneNumberField
 from datetime import datetime, time, timedelta
 from configuracao.models import Horario
+from django.db.models import Max, Min
 
 
 class Escola(models.Model):
@@ -11,6 +12,7 @@ class Escola(models.Model):
 
     class Meta:
         db_table = 'Escola'
+        ordering = ['nome', 'local']
 
     def __str__(self):
         return self.nome
@@ -46,6 +48,14 @@ class Inscricao(models.Model):
 
     class Meta:
         db_table = 'Inscricao'
+
+    @property
+    def horario(self):
+        aggr = self.inscricaosessao_set.all().aggregate(
+            Min('sessao__horarioid__inicio'), Max('sessao__horarioid__fim'))
+        inicio = aggr['sessao__horarioid__inicio__min']
+        fim = aggr['sessao__horarioid__fim__max']
+        return f"{inicio.strftime('%H:%M')} - {fim.strftime('%H:%M')}"
 
     def get_departamentos(self):
         return {inscricaosessao.sessao.atividadeid.get_departamento() for inscricaosessao in self.inscricaosessao_set.all()}

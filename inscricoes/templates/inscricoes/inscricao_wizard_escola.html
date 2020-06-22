@@ -179,7 +179,7 @@
                             <b-datepicker v-model="dia" :date-formatter="(d) => moment(d).format('DD/MM/YYYY')"
                                 :date-parser="(date) => moment(date, 'DD/MM/YYYY').toDate()" editable
                                 placeholder="Clique para selecionar..." required name="escola-dia" :min-date="inicio"
-                                :max-date="fim" :focused-date="inicio">
+                                :max-date="fim" :focused-date="inicio" icon="calendar-today">
                             </b-datepicker>
                         </b-field>
                         {{ form.dia.errors }}

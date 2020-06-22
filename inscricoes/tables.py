@@ -5,10 +5,12 @@ from atividades.models import Atividade
 import itertools
 from django.utils.html import format_html
 from django.urls import reverse
+from django.db.models import Max, Min, OuterRef, Subquery
+from inscricoes.models import Inscricaosessao
 
 
 class DepartamentoTable(tables.Table):
-    #nome = tables.Column(verbose_name='Departamento')
+    # nome = tables.Column(verbose_name='Departamento')
     sigla = tables.Column(verbose_name='Departamento')
 
     class Meta:
@@ -23,21 +25,16 @@ class DepartamentoTable(tables.Table):
 
 class InscricoesTable(tables.Table):
     grupo = tables.Column('Grupo', accessor='id')
-    #departamento = tables.Column(accessor='departamento__id')
-    # dia = tables.Column()
-    # hora = tables.Column()
+    horario = tables.Column(verbose_name='Horário')
     nalunos = tables.Column(verbose_name='Qtd', attrs={
                             "abbr": {"title": "Quantidade"}})
-    #participante = tables.Column(accessor='participante.nome')
-    #NumDocentes = tables.Column('Nº Docentes', accessor='inscricao.nresponsaveis')
-    #nome = tables.Column('Departamento',accessor='departamento.nome')
     acoes = tables.Column('Ações', empty_values=(),
                           orderable=False, attrs={"td": {"style": "min-width: 104px;"}})
     turma = tables.Column(empty_values=())
 
     class Meta:
         model = Inscricao
-        sequence = ('grupo', 'dia', 'escola', 'areacientifica',
+        sequence = ('grupo', 'dia', 'horario', 'escola', 'areacientifica',
                     'turma', 'nalunos', 'acoes')
 
     def before_render(self, request):
@@ -51,6 +48,20 @@ class InscricoesTable(tables.Table):
         self.columns.hide('local_chegada')
         self.columns.hide('entrecampi')
         self.columns.hide('individual')
+
+    def order_horario(self, queryset, is_descending):
+        queryset = queryset.annotate(inicio=Subquery(
+            Inscricaosessao.objects.filter(inscricao=OuterRef('pk'))
+            .values('inscricao')
+            .annotate(inicio=Min('sessao__horarioid__inicio'))
+            .values('inicio')
+        )).order_by(("-" if is_descending else "") + "inicio")
+        return (queryset, True)
+
+    def render_turma(self, value, record):
+        if not record.ano:
+            return format_html("(Individual)")
+        return format_html(f"{record.ano}º {value}, {record.areacientifica}")
 
     def render_acoes(self, record):
         return format_html(f"""
@@ -72,14 +83,6 @@ class InscricoesTable(tables.Table):
             </a>
         </div>
         """)
-
-    def render_participante(self, value):
-        return format_html(f"{value.first_name} {value.last_name}")
-
-    def render_turma(self, value, record):
-        if not record.ano:
-            return format_html("(Individual)")
-        return format_html(f"{record.ano}º {value}, {record.areacientifica}")
 
 
 class DiaAbertoTable(tables.Table):
