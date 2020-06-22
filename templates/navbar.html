@@ -25,7 +25,7 @@
         Criar Inscrição
       </a>
       {% if request.user|inscrito %}
-      <a href="{% url 'inscricoes:minhas-inscricoes' %}" class="navbar-item">
+      <a href="{% url 'inscricoes:consultar-inscricoes-participante' %}" class="navbar-item">
         Minhas Inscrições
       </a>
       {% endif %}
@@ -57,7 +57,7 @@
       <a href="{% url 'configuracao:verTransportes' %}" class="navbar-item">
         Transportes
       </a>
-      <a href="{% url 'inscricoes:consultar-inscricoes' %}" class="navbar-item">
+      <a href="{% url 'inscricoes:consultar-inscricoes-admin' %}" class="navbar-item">
         Inscrições
       </a>
       <a href="{% url 'configuracao:verMenus' %}" class="navbar-item">
@@ -477,16 +477,15 @@
 {% register_notify callbacks='fill_notification_badge,lista_notificacoes,my_special_notification_callback' %}
 
 <script>
-
-  $('#dropdown_definicoes').click(function(e) {
+  $('#dropdown_definicoes').click(function (e) {
     $('#mensagens-dropdown').removeClass('is-active');
   })
 
-  $('#mensagens-dropdown').click(function(e) {
+  $('#mensagens-dropdown').click(function (e) {
     $('#dropdown_definicoes').removeClass('is-active');
   })
 
-  $('#notificacoes_trigger').click(function(e) {
+  $('#notificacoes_trigger').click(function (e) {
     $('#dropdown_definicoes').removeClass('is-active');
     $('#mensagens-dropdown').removeClass('is-active');
   })
