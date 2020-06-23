@@ -2,60 +2,61 @@
 {% block content %}
 {% load l10n %}
 {% load configuracao_tags %}
+{% load django_tables2 %}
 <div class="columns">
     <div class="column is-3">
-        {% comment 'filter needs to be commented out first' %}
-        <form method="POST" action="" id='filter'>
-            {% csrf_token %}
+        <form method="get">
             <div class="menu">
-                <p class="menu-label">Filtros Edificios</p>
+                <p class="menu-label">Filtros Edificio</p>
                 <ul class="menu-list">
-                <div class="field">
-                    <!---->
-                    <div class="control has-icons-left is-clearfix">
-                        {{form.searchAno}}
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify mdi-24px"></i>
-                        </span>
+                    <div class="field">
+                        <!---->
+                        <div class="control has-icons-left is-clearfix">
+                            <input class='input' id='id_nome' type='text' name='nome' value="{{filter.form.nome.value|default_if_none:''}}" placeholder="Nome">
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                        <!---->
                     </div>
-                    <!---->
-                </div>
-                <div class="field">
-                    <label class="checkbox">
-                        {{form.penha}}
-                        Penha
-                    </label>
-                </div>
-                <div class="field">
-                    <label class="checkbox">
-                        {{form.gambelas}}
-                            Gambelas
-                    </label>
-                </div>
-                <div class="field">
-                    <label class="checkbox">
-                        {{form.portimao}}
-                            Portimao
-                    </label>
-                </div>
-                <div class="field">
-                    <button type="submit" onClick="resetForm()" class="button is-danger is-outlined">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                        </span>
-                        <span>Limpar pesquisa</span>
-                    </button>
-                    <button type="Submit" class="button is-success is-outlined">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify mdi-24px"></i>
-                        </span>
-                        <span>Pesquisar</span>
-                    </button>
-                </div>
+                    <div class="field">
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select name="{{ filter.form.campus.name }}"
+                                    value="{{filter.form.campus.value}}">
+                                    <option value="">Qualquer Campi</option>
+                                    {% for value, campus in campi %}
+                                        {% if value != "" %}
+                                        <option value="{{ value }}"
+                                            {% if value|stringformat:'s' == filter.form.campus.value %} selected
+                                            {% endif %}>
+                                            {{ campus }}
+                                        </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                    </div>
                 </ul>
+                <div class='field is-grouped' style='margin-top: 5px'>
+                        <p class="control is-expanded">
+                            <a type="button" role="button" href="{% url 'configuracao:verEdificios' %}" class="button is-light is-fullwidth">Limpar</a>
+                        </p>
+                        <p class="control is-expanded">
+                            <button class="button is-primary is-fullwidth" type="submit">
+                                <span class="icon">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                                <span>Pesquisar</span>
+                            </button>
+                        </p>
+                </div>
             </div>     
         </form>
-        {% endcomment %}
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -70,111 +71,7 @@
             </span>
             <span>Configurar Edificio</span>
         </a>   
-
-        <div class="b-table">
-            <div class="table-wrapper">
-                <table id="table01" class="table has-mobile-cards is-hoverable is-fullwidth">
-                    <thead>
-                        <tr>
-                            <th style="width: 30px;" ></th>
-                            <th  onclick="sortTable(1,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Nome<span class="arrow active"><span></span><span></span></span>
-                            </th>
-                            <th onclick="sortTable(2,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Campus<span class="arrow active"><span></span><span></span></span>
-                            </th>
-                            <th onclick="sortTable(2,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Numero de Salas<span class="arrow active"><span></span><span></span></span>
-                            </th>                            
-                            <th>
-                                Operações
-                            </th>                            
-                        </tr>
-                    </thead>
-                    <tbody> 
-                    {% for edificio in edificios %}     
-                    <tr draggable="false">
-                        <td class="chevron-cell">
-                            <a role="button" onclick="displayDetails({{edificio.id}})">
-                                <span class="icon-expandable">
-                                    <i class="mdi mdi-chevron-right mdi-24px"></i>
-                                </span>
-                            </a>
-                        </td>
-                        <td data-label="Nome">
-                            {{edificio}}
-                        </td>                    
-                        <td data-label="Campus">{{edificio.campus.nome}}</td>
-                        <td data-label="# Salas">
-                            {{edificio|get_salas_count}}
-                        </td>                            
-                        <td data-label="Operações">
-                            <div class="columns">
-                                
-                                <div class="column is-1">  
-                                    <a id='edit' href="{% url 'configuracao:editarEdificio' edificio.id %}">
-                                        <span class="icon is-small">
-                                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                                &nbsp;
-                                <div class="column is-1">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este edificio?','{% url 'configuracao:eliminarEdificio' edificio.id %}')">
-                                        <span class="icon is-small">
-                                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                                        </span>
-                                    </a> 
-                                </div>
-                            </div> 
-                        </td>                     
-                      </tr> 
-                      <tr class="detail" style="display: none" id='Details{{edificio.id}}'>
-                        <td colspan="5">
-                            <div class="detail-container">
-                                <div class="table"> 
-                                    <div class="table-wrapper">
-                                        <table class="table is-stripped has-mobile-cards is-fullwidth">
-                                            <thead id='tabble-details{{edificio.id}}'>
-                                                <tr>
-                                                    <th class="th-wrap">Nome:</th>
-                                                    <th class="th-wrap">Andar:</th>
-                                                    <th class="th-wrap">Descrição:</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {% for espaco in edificio.espacos_ %}
-                                                <tr style="border-bottom: 1px solid #ddd">
-                                                    <td data-label='Nome:' style="font-weight: normal;">
-                                                        <span>{{espaco}}</span>
-                                                    </td>
-                                                    <td data-label='Andar:' style="font-weight: normal;">
-                                                        <span>{{espaco.andar}}</span>
-                                                    </td>
-                                                    <td data-label='Descrição:' style="font-weight: normal;">
-                                                        <span>
-                                                            {% if espaco.descricao != None %}
-                                                                {{espaco.descricao}}
-                                                            {% else %}
-                                                                N/E
-                                                            {% endif %}
-                                                        </span>
-                                                    </td>
-                                                </tr>
-                                                {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </div>
-                        </td>
-                       </tr> 
-                    {% endfor %}
-                    
-                    </tbody>
-                </table>
-            </div>
-        </div>
+        {% render_table table 'configuracao/verEdificioTabela.html' %}
     </div>
 </div>
 {% endblock content %}

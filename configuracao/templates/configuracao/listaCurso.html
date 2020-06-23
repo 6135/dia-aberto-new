@@ -2,60 +2,71 @@
 {% block content %}
 {% load l10n %}
 {% load configuracao_tags %}
+{% load django_tables2 %}
 <div class="columns">
     <div class="column is-3">
-        {% comment 'filter needs to be commented out first' %}
-        <form method="POST" action="" id='filter'>
-            {% csrf_token %}
+        <form method="get">
             <div class="menu">
-                <p class="menu-label">Filtros Edificios</p>
+                <p class="menu-label">Filtros Tema</p>
                 <ul class="menu-list">
-                <div class="field">
-                    <!---->
-                    <div class="control has-icons-left is-clearfix">
-                        {{form.searchAno}}
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify mdi-24px"></i>
-                        </span>
+                    <div class="field">
+                        <!---->
+                        <div class="control has-icons-left is-clearfix">
+                            <input class='input' id='id_nome' type='text' name='nome' value="{{filter.form.nome.value|default_if_none:''}}" placeholder="Nome">
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                        <!---->
                     </div>
-                    <!---->
-                </div>
-                <div class="field">
-                    <label class="checkbox">
-                        {{form.penha}}
-                        Penha
-                    </label>
-                </div>
-                <div class="field">
-                    <label class="checkbox">
-                        {{form.gambelas}}
-                            Gambelas
-                    </label>
-                </div>
-                <div class="field">
-                    <label class="checkbox">
-                        {{form.portimao}}
-                            Portimao
-                    </label>
-                </div>
-                <div class="field">
-                    <button type="submit" onClick="resetForm()" class="button is-danger is-outlined">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                        </span>
-                        <span>Limpar pesquisa</span>
-                    </button>
-                    <button type="Submit" class="button is-success is-outlined">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify mdi-24px"></i>
-                        </span>
-                        <span>Pesquisar</span>
-                    </button>
-                </div>
+                    <div class="field">
+                        <!---->
+                        <div class="control has-icons-left is-clearfix">
+                            <input class='input' id='id_sigla' type='text' name='sigla' value="{{filter.form.sigla.value|default_if_none:''}}" placeholder="Sigla">
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                        <!---->
+                    </div>
+                    <div class="field">
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select name="{{ filter.form.unidadeorganicaid.name }}"
+                                    value="{{filter.form.unidadeorganicaid.value}}">
+                                    <option value="">Qualquer Faculdade</option>
+                                    {% for value, fac in faculdades %}
+                                        {% if value != "" %}
+                                        <option value="{{ value }}"
+                                            {% if value|stringformat:'s' == filter.form.unidadeorganicaid.value %} selected
+                                            {% endif %}>
+                                            {{ fac }}
+                                        </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                    </div>
                 </ul>
+                <div class='field is-grouped' style='margin-top: 5px'>
+                        <p class="control is-expanded">
+                            <a type="button" class="button is-light is-fullwidth" role="button" href="{% url 'configuracao:verTemas' %}">Limpar</a>
+                        </p>
+                        <p class="control is-expanded">
+                            <button class="button is-primary is-fullwidth" type="submit">
+                                <span class="icon">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                                <span>Pesquisar</span>
+                            </button>
+                        </p>
+                </div>
             </div>     
         </form>
-        {% endcomment %}
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -70,64 +81,9 @@
             </span>
             <span>Configurar Cursos</span>
         </a>   
+        
+        {% render_table table %}
 
-        <div class="b-table">
-            <div class="table-wrapper">
-                <table id="table01" class="table has-mobile-cards is-hoverable is-fullwidth">
-                    <thead>
-                        <tr>
-                            <th style="width: 30px;" ></th>
-                            <th  onclick="sortTable(1,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Curso<span class="arrow active"><span></span><span></span></span>
-                            </th>
-                            <th onclick="sortTable(2,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Sigla<span class="arrow active"><span></span><span></span></span>
-                            </th>
-                            <th onclick="sortTable(2,false)" style=" cursor: pointer;" class="pre-arrow">
-                                Unidade Organica<span class="arrow active"><span></span><span></span></span>
-                            </th>
-                            <th>Operações</th>
-                        </tr>
-                    </thead>
-                    <tbody> 
-                    {% for dep in departamentos %}     
-                    <tr draggable="false">
-                        <td class="chevron-cell">
-                        </td>
-                        <td data-label="Nome">
-                            {{dep.nome}}
-                       </td>                    
-                        <td data-label="Sigla">
-                            {{dep.sigla}}
-                        </td>
-                         <td data-label="UO">
-                            {{dep.unidadeorganicaid}}
-                        </td>                                                       
-                        <td data-label="Operações">
-                            <div class="columns">
-                                <div class="column is-1">  
-                                    <a id='edit' href="{% url 'configuracao:editarCurso' dep.id %}">
-                                        <span class="icon is-small">
-                                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                                &nbsp;
-                                <div class="column is-1">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este tema?','{% url 'configuracao:eliminarCurso' dep.id %}')">
-                                        <span class="icon is-small">
-                                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                                        </span>
-                                    </a> 
-                                </div>
-                            </div> 
-                        </td>                     
-                      </tr> 
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock content %}
