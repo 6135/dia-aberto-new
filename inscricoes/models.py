@@ -4,6 +4,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 from datetime import datetime, time, timedelta
 from configuracao.models import Horario
 from django.db.models import Max, Min
+from collections import OrderedDict
 
 
 class Escola(models.Model):
@@ -77,17 +78,17 @@ class Inscricao(models.Model):
         horarios.append({'key': inscricao_sessoes.first().sessao.horarioid.inicio,
                          'value': inscricao_sessoes.first().sessao.horarioid.inicio})
         for sessao in inscricao_sessoes:
-            if sessao.sessao.horarioid not in horarios:
+            if sessao.sessao.horarioid.fim not in horarios:
                 horarios.append(
                     {'key': sessao.sessao.horarioid.fim, 'value': sessao.sessao.horarioid.fim})
         horarios.pop()
+        horarios = sorted(horarios, key=lambda k: k['key']) 
         return horarios
 
     def get_origem(self, dia, horario):
         first_session = Inscricaosessao.objects.filter(
             inscricao=self, sessao__dia=dia).order_by('sessao__horarioid__inicio').first()
         origem = []
-        print(horario)
         if horario == time.strftime(first_session.sessao.horarioid.inicio, "%H:%M"):
             origem.append({'key': 'Check in', 'value': 'Check in'})
         else:
@@ -104,14 +105,19 @@ class Inscricao(models.Model):
         destino = []
 
         if horario == time.strftime(inscricao_sessoes.first().sessao.horarioid.inicio, "%H:%M"):
-            destino.append({'key': inscricao_sessoes.first().sessao.atividadeid.espacoid.id,
-                            'value': inscricao_sessoes.first().sessao.atividadeid.espacoid.nome})
+            for local in inscricao_sessoes:
+                if time.strftime(local.sessao.horarioid.inicio,"%H:%M") == horario:
+                        destino.append({'key': local.sessao.atividadeid.espacoid.nome,
+                                    'value': local.sessao.atividadeid.espacoid.nome})
         else:
             inscricao_sessoes = Inscricaosessao.objects.filter(inscricao=self).filter(
                 sessao__dia=dia, sessao__horarioid__inicio=horario).order_by('sessao__horarioid__inicio')
             for local in inscricao_sessoes:
                 destino.append({'key': local.sessao.atividadeid.espacoid.nome,
                                 'value': local.sessao.atividadeid.espacoid.nome})
+        if len(destino) == 0:
+            destino.append({'key': inscricao_sessoes.last().sessao.atividadeid.espacoid.id.nome,
+                            'value': inscricao_sessoes.last().sessao.atividadeid.espacoid.nome})
         return destino
 
 
