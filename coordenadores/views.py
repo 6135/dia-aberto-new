@@ -81,6 +81,7 @@ def adicionartarefa(request,id=None):
                 return redirect('coordenadores:consultarTarefa')
         if request.POST['tipo']=='tarefaOutra':
             form = TarefaOutraForm(request.POST)
+            print(form.errors)
             if form.is_valid():
                 coord = Coordenador.objects.get(id=request.user.id)
                 form.save(user=coord)
