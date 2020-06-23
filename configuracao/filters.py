@@ -94,3 +94,62 @@ class MenuFilter(django_filters.FilterSet):
     class Meta:
         model = Menu
         fields = ['campus', 'dia']
+
+class TransporteFilter(django_filters.FilterSet):
+    identificador = django_filters.CharFilter(
+        field_name="transporte__identificador", lookup_expr='icontains')
+    de = django_filters.CharFilter(
+        field_name="origem", lookup_expr='icontains')
+    para = django_filters.CharFilter(
+        field_name="chegada", lookup_expr='icontains')     
+
+    class Meta:
+        model = Transportehorario
+        fields = '__all__'
+
+def get_dia(queryset, name, value):
+        return queryset.filter(
+            Exists(Diaaberto.objects.filter(
+                id=OuterRef('pk'),
+                datadiaabertoinicio__date=value
+            ))
+        )   
+def get_dia_end(queryset, name, value):
+        return queryset.filter(
+            Exists(Diaaberto.objects.filter(
+                id=OuterRef('pk'),
+                datadiaabertofim__date=value
+            ))
+        )   
+
+class DiaAbertoFilter(django_filters.FilterSet):
+    ano = django_filters.CharFilter(field_name="ano",lookup_expr='icontains')
+    diainicio = django_filters.DateFilter(method=get_dia,label="Inicio")
+    diafim = django_filters.DateFilter(method=get_dia_end,label="Fim")
+    class Meta:
+        model = Diaaberto
+        fields = '__all__'
+
+# precoalunos = models.FloatField(db_column='PrecoAlunos')
+#    precoprofessores = models.FloatField(
+#        db_column='PrecoProfessores', blank=True, null=True)
+#    id = models.AutoField(db_column='ID', primary_key=True)
+#    enderecopaginaweb = models.CharField(
+#        db_column='EnderecoPaginaWeb', max_length=255)
+#    descricao = models.TextField(db_column='Descricao')
+#    emaildiaaberto = models.CharField(
+#        db_column='EmailDiaAberto', max_length=255)
+#    ano = models.IntegerField(db_column='Ano')  # Field name made lowercase.
+#    datadiaabertoinicio = models.DateTimeField(db_column='DataDiaAbertoInicio')
+#    datadiaabertofim = models.DateTimeField(db_column='DataDiaAbertoFim')
+#    datainscricaoatividadesinicio = models.DateTimeField(
+#        db_column='DataInscricaoAtividadesInicio')  
+#    datainscricaoatividadesfim = models.DateTimeField(
+#        db_column='DataInscricaoAtividadesFim')
+#    datapropostasatividadesincio = models.DateTimeField(
+#        db_column='DataPropostasAtividadesIncio')
+#    dataporpostaatividadesfim = models.DateTimeField(
+#        db_column='DataPorpostaAtividadesFim')
+#    administradorutilizadorid = models.ForeignKey(
+#        'utilizadores.Administrador', models.SET_NULL, db_column='AdministradorUtilizadorID',null=True)
+#    escalasessoes = models.TimeField(db_column='EscalaSessoes')

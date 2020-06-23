@@ -1,393 +1,681 @@
+from django.contrib.auth.models import User, Permission, Group
 from django.test import TestCase
+from .models import *
+
+# class UtilizadorGrupoAdministradorTestes(TestCase):
+#     ''' Testes unitarios para a componente utilizadores - Testes para o grupo Administrador '''
+#     def setUp(self):
+#         group_name = "Administrador"
+#         self.group = Group(name=group_name)
+#         self.group.save()
+#         self.user_admin1 = Utilizador(username="admin1", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt",contacto="+351967321393",valido="True")
+#         self.user_coordenador1 = Utilizador(username="coordenador1", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt",contacto="+351967321393",valido="True")
+#         self.user_prof_universitario1 = Utilizador(username="prof_universitario1", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt",contacto="+351967321393",valido="True")
+#         self.user_colaborador1 = Utilizador(username="colaborador1", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt",contacto="+351967321393",valido="True")
+#         self.user_participante1 = Utilizador(username="participante1", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt",contacto="+351967321393",valido="True")
+#         self.user_user_admin1.save()
+#         self.user_coordenador1.save()
+#         self.user_prof_universitario1.save()
+#         self.user_colaborador1.save()
+#         self.user_participante1.save()
+
+#     def test_user_cannot_access(self):
+#         """Teste quando o grupo não tem acesso
+#         """
+#         self.c.login(username='test', password='test')
+#         response = self.c.get("/")
+#         self.assertEqual(response.status_code, 302, u'Grupo de administrador tem acesso')
+        
+        
+#     def test_user_can_access(self):
+#         """Teste quando o grupo tem acesso
+#         """
+#         self.user.groups.add(self.group)
+#         self.user.save()
+#         self.c.login(username='test', password='test')
+#         response = self.c.get("/")
+#         self.assertEqual(response.status_code, 200, u'Grupo de administrador não tem acesso')
 
 
-class UtilizadorClass(TestCase):
-    def setUp(self):
-        # Setup run before every test method.
-        pass
 
-    def tearDown(self):
-        # Clean up run after every test method.
-        pass
+# ### 
 
-    def test_something_that_will_pass(self):
-        self.assertFalse(False)
 
-    def test_something_that_will_fail(self):
-        self.assertTrue(False)
+# from django.contrib.admin.sites import AdminSite
+# from django.contrib.auth.models import User, Group
+# request = MockRequest()
 
-# from unittest import SkipTest
+# ###
 
+
+
+# from unittest import mock
+
+# from django.conf.global_settings import PASSWORD_HASHERS
 # from django.contrib.auth import get_user_model
+# from django.contrib.auth.backends import ModelBackend
+# from django.contrib.auth.base_user import AbstractBaseUser
+# from django.contrib.auth.hashers import get_hasher
+# from django.contrib.auth.models import (
+#     AbstractUser, AnonymousUser, Group, Permission, User, UserManager,
+# )
+# from django.contrib.contenttypes.models import ContentType
 # from django.core import mail
-# from django.test import TestCase
-# from django.test.utils import override_settings
-# from django.urls import reverse
-# from django.utils import timezone
-# from django.utils.six import with_metaclass
+# from django.db.models.signals import post_save
+# from django.test import SimpleTestCase, TestCase, override_settings
 
-# from ..forms import PasswordRecoveryForm, PasswordResetForm
-# from .models import CustomUser, ExtensionUser
+# from .models import IntegerUsernameUser
+# from .models.with_custom_email_field import CustomEmailField
 
 
-# class CustomUserVariants(type):
-#     def __new__(cls, name, bases, dct):
-#         for custom_user in ['tests.CustomUser', 'tests.ExtensionUser']:
-#             suffix = custom_user.lower().replace('.', '_')
-#             for key, fn in list(dct.items()):
-#                 if key.startswith('test') and '_CUSTOM_' not in key:
-#                     name = '{0}_CUSTOM_{1}'.format(key, suffix)
-#                     dct[name] = override_settings(
-#                         AUTH_USER_MODEL=custom_user)(fn)
-#         return super(CustomUserVariants, cls).__new__(cls, name, bases, dct)
+# #########################################################
 
 
-# def create_user():
-#     email = 'bar@example.com'
-#     password = 'pass'
-#     username = 'foo'
-#     model = get_user_model()
-#     kwargs = {}
-#     args = username, email, password
-#     if model is CustomUser:
-#         args = email, timezone.now(), password
-#     elif model is ExtensionUser:
-#         kwargs = {'date_of_birth': timezone.now()}
-#     return get_user_model()._default_manager.create_user(*args, **kwargs)
 
 
-# class FormTests(with_metaclass(CustomUserVariants, TestCase)):
-#     def test_username_input(self):
-#         User = get_user_model()
-#         if User is CustomUser:
-#             raise SkipTest('No username field')
+# class ExampleGroupPermissionsTests(TestCase):
 
-#         form = PasswordRecoveryForm()
-#         self.assertFalse(form.is_valid())
+#     def setUp(self):
+#         #create permissions group
+#         group_name = "My Test Group"
+#         self.group = Group(name=group_name)
+#         self.group.save()
+#         # self.c = Client()
+#         # self.user = User.objects.create_user(username="test", email="test@test.com", password="test")
 
-#         form = PasswordRecoveryForm(data={'username_or_email': 'inexisting'})
-#         self.assertFalse(form.is_valid())
-#         self.assertEqual(form.errors['username_or_email'],
-#                          ["Sorry, this user doesn't exist."])
+#     def tearDown(self):
+#         self.user.delete()
+#         self.group.delete()
 
-#         create_user()
+#     def test_user_cannot_access(self):
+#         """user NOT in group should not have access
+#         """
+#         self.c.login(username='test', password='test')
+#         response = self.c.get("/my_view")
+#         self.assertEqual(response.status_code, 302, u'user in group should have access')
+        
+        
+#     def test_user_can_access(self):
+#         """user in group should have access
+#         """
+#         self.user.groups.add(self.group)
+#         self.user.save()
+#         self.c.login(username='test', password='test')
+#         response = self.c.get("/my_view")
+#         self.assertEqual(response.status_code, 200, u'user in group should have access')
 
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'foo',
-#         })
-#         self.assertTrue(form.is_valid())
 
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'FOO',
-#         })
-#         self.assertFalse(form.is_valid())
 
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'FOO',
-#         }, case_sensitive=False)
-#         self.assertTrue(form.is_valid())
+# #################################
 
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'bar@example.com',
-#         })
-#         self.assertTrue(form.is_valid())
 
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'bar@example.COM',
-#         })
-#         self.assertFalse(form.is_valid())
+# class ModelAdminTests(TestCase):
 
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'bar@example.COM',
-#         }, case_sensitive=False)
-#         self.assertTrue(form.is_valid())
+#     def setUp(self):
+#         self.group = Group.objects.create(
+#             name='admins',
+#         )
 
-#     def test_inactive_user_password_recovery(self):
-#         user = create_user()
+#         self.site = AdminSite()
 
-#         if hasattr(user, 'is_active'):
-#             user.is_active = False
-#             user.save()
-
-#             form = PasswordRecoveryForm(data={'username_or_email': user.email})
-#             self.assertTrue(form.is_valid(),
-#                             'Password from inactive should be recovered')
-
-#             with self.settings(RECOVER_ONLY_ACTIVE_USERS=True):
-#                 form = PasswordRecoveryForm(data={
-#                     'username_or_email': user.email})
-#                 self.assertFalse(form.is_valid(),
-#                                  'Password from inactive user should '
-#                                  'not be recovered')
-
-#                 self.assertEqual(form.errors['username_or_email'],
-#                                  [u"Sorry, inactive users can't recover "
-#                                  "their password."])
-
-#     def test_form_custom_search(self):
-#         # Searching only for email does some extra validation
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'barexample.com',
-#         }, search_fields=['email'])
-#         self.assertFalse(form.is_valid())
-#         self.assertTrue(form.errors['username_or_email'] in [
-#             ['Enter a valid email address.'],
-#             ['Enter a valid e-mail address.'],
-#         ])
-
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'bar@example.com',
-#         }, search_fields=['email'])
-#         self.assertFalse(form.is_valid())
-#         self.assertEqual(form.errors['username_or_email'],
-#                          ["Sorry, this user doesn't exist."])
-
-#         user = create_user()
-
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'test@example.com',
-#         }, search_fields=['email'])
-#         self.assertFalse(form.is_valid())
-#         self.assertEqual(form.errors['username_or_email'],
-#                          ["Sorry, this user doesn't exist."])
-
-#         # Search by actual email works
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'bar@example.com',
-#         }, search_fields=['email'])
-#         self.assertTrue(form.is_valid(), form.errors)
-
-#         if not hasattr(user, 'username'):
-#             return  # skip if no username field
-
-#         # Now search by username
-#         user.username = 'username'
+#         user = User.objects.create_user('admin', 'admin@example.com',
+#                                         'password')
+#         user.is_staff = True
+#         user.is_superuser = True
 #         user.save()
+#         self.admin = user
 
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'foo@example.com',
-#         }, search_fields=['username'])
-#         self.assertFalse(form.is_valid())
-#         self.assertEqual(form.errors['username_or_email'],
-#                          ["Sorry, this user doesn't exist."])
+#         self.client.login(username='admin', password='password')
 
-#         form = PasswordRecoveryForm(data={
-#             'username_or_email': 'username',
-#         }, search_fields=['username'])
-#         self.assertTrue(form.is_valid())
+#     def test_default_fields(self):
+#         ga = GroupAdmin(Group, self.site)
 
-#     def test_password_reset_form(self):
-#         user = create_user()
-#         old_sha = user.password
+#         self.assertEqual(list(ga.get_form(request).base_fields),
+#                          ['name', 'permissions', 'users'])
+#         self.assertEqual(list(ga.get_fields(request)),
+#                          ['name', 'permissions', 'users'])
+#         self.assertEqual(list(ga.get_fields(request, self.group)),
+#                          ['name', 'permissions', 'users'])
+#         # self.assertIsNone(ga.get_exclude(request, self.band))
 
-#         form = PasswordResetForm(user=user)
-#         self.assertFalse(form.is_valid())
+#     def test_form_add(self):
+#         # GET the import form
+#         response = self.client.get('/admin/auth/group/add/')
+#         self.assertEqual(response.status_code, 200)
 
-#         form = PasswordResetForm(user=user, data={'password1': 'foo'})
-#         self.assertFalse(form.is_valid())
-#         self.assertEqual(form.errors['password2'],
-#                          ['This field is required.'])
-
-#         form = PasswordResetForm(user=user, data={'password1': 'foo',
-#                                                   'password2': 'bar'})
-#         self.assertFalse(form.is_valid())
-#         self.assertEqual(form.errors['password2'],
-#                          ["The two passwords didn't match."])
-
-#         form = PasswordResetForm(user=user, data={'password1': 'foo',
-#                                                   'password2': 'foo'})
-#         self.assertTrue(form.is_valid())
-#         self.assertEqual(user.password, old_sha)
-#         form.save()
-#         self.assertNotEqual(user.password, old_sha)
-
-#     def test_form_commit(self):
-#         user = create_user()
-#         old_sha = user.password
-
-#         form = PasswordResetForm(user=user, data={'password1': 'foo',
-#                                                   'password2': 'foo'})
-#         self.assertTrue(form.is_valid())
-#         user = form.save(commit=False)
-#         self.assertEqual(get_user_model()._default_manager.get().password,
-#                          old_sha)
-#         self.assertNotEqual(old_sha, user.password)
-#         user.save()
-#         self.assertEqual(get_user_model()._default_manager.get().password,
-#                          user.password)
-
-
-# class ViewTests(with_metaclass(CustomUserVariants, TestCase)):
-#     def test_recover(self):
-#         self.user = create_user()
-#         url = reverse('password_reset_recover')
-#         response = self.client.get(url)
-#         User = get_user_model()
-
-#         if User is CustomUser:
-#             self.assertContains(response, 'Email')
-#         else:
-#             self.assertContains(response, 'Username or Email')
-
-#         response = self.client.post(url,
-#                                     {'username_or_email': 'test@example.com'})
-#         self.assertContains(response, "Sorry, this user")
-
-#         self.assertEqual(len(mail.outbox), 0)
-
-#         if User is CustomUser:
-#             value = 'bar@example.com'
-#         else:
-#             value = 'foo'
-#         response = self.client.post(url, {'username_or_email': value},
+#         data = {
+#             'name': 'editors',
+#             'permissions': ('1', '2', '3'),
+#             'users': ('1',),
+#         }
+#         response = self.client.post('/admin/auth/group/add/', data,
 #                                     follow=True)
-#         self.assertEqual(len(response.redirect_chain), 1)
-#         self.assertContains(response, 'bar@example.com')
+#         self.assertEqual(response.status_code, 200)
 
-#         self.assertEqual(len(mail.outbox), 1)
+#         group = Group.objects.all().last()
+#         self.assertTrue(group.name == 'editors')
+#         self.assertTrue(group.permissions.all().count() == 3)
+#         self.assertTrue(group.user_set.first() == self.admin)
 
-#         message = mail.outbox[0]
-
-#         self.assertEqual(message.subject,
-#                          u'Password recovery on testserver')
-
-#         if User is CustomUser:
-#             self.assertTrue('Dear bar@example.com,' in message.body)
+#     def test_form_edit(self):
+#         if VERSION <= (1, 9):
+#             url = '/admin/auth/group/1/'
 #         else:
-#             self.assertTrue('Dear foo,' in message.body)
+#             url = '/admin/auth/group/1/change/'
 
-#         url = message.body.split('http://testserver')[1].split('\n', 1)[0]
-
+#         # GET the import form
 #         response = self.client.get(url)
-#         self.assertContains(response, 'New password (confirm)')
-#         if User is CustomUser:
-#             self.assertContains(response,
-#                                 'Hi, <strong>bar@example.com</strong>')
-#         else:
-#             self.assertContains(response, 'Hi, <strong>foo</strong>')
+#         self.assertEqual(response.status_code, 200)
 
-#         data = {'password1': 'foo',
-#                 'password2': 'foo'}
+#         data = {
+#             'name': 'admins',
+#             'permissions': ('1', '2'),
+#             'users': ('1',),
+#         }
 #         response = self.client.post(url, data, follow=True)
-#         self.assertEqual(len(response.redirect_chain), 1)
-#         self.assertContains(response,
-#                             "Your password has successfully been reset.")
+#         self.assertEqual(response.status_code, 200)
 
-#         self.assertTrue(
-#             get_user_model()._default_manager.get().check_password('foo'))
+#         group = Group.objects.all().last()
+#         self.assertTrue(group.name == 'admins')
+#         self.assertTrue(group.permissions.all().count() == 2)
+#         self.assertTrue(group.user_set.first() == self.admin)
 
-#     def test_invalid_reset_link(self):
-#         url = reverse('password_reset_reset', args=['foobar-invalid'])
 
-#         response = self.client.get(url)
-#         self.assertContains(response,
-#                             "Sorry, this password reset link is invalid")
+# ###################################
 
-#     def test_email_recover(self):
-#         self.user = create_user()
-#         url = reverse('email_recover')
-#         response = self.client.get(url)
-#         self.assertNotContains(response, "Username or Email")
-#         self.assertContains(response, "Email:")
 
-#         response = self.client.post(url, {'username_or_email': 'foo'})
+# class NaturalKeysTestCase(TestCase):
+
+#     def test_user_natural_key(self):
+#         staff_user = User.objects.create_user(username='staff')
+#         self.assertEqual(User.objects.get_by_natural_key('staff'), staff_user)
+#         self.assertEqual(staff_user.natural_key(), ('staff',))
+
+#     def test_group_natural_key(self):
+#         users_group = Group.objects.create(name='users')
+#         self.assertEqual(Group.objects.get_by_natural_key('users'), users_group)
+
+
+# class LoadDataWithoutNaturalKeysTestCase(TestCase):
+#     fixtures = ['regular.json']
+
+#     def test_user_is_created_and_added_to_group(self):
+#         user = User.objects.get(username='my_username')
+#         group = Group.objects.get(name='my_group')
+#         self.assertEqual(group, user.groups.get())
+
+
+# class LoadDataWithNaturalKeysTestCase(TestCase):
+#     fixtures = ['natural.json']
+
+#     def test_user_is_created_and_added_to_group(self):
+#         user = User.objects.get(username='my_username')
+#         group = Group.objects.get(name='my_group')
+#         self.assertEqual(group, user.groups.get())
+
+
+# class LoadDataWithNaturalKeysAndMultipleDatabasesTestCase(TestCase):
+#     databases = {'default', 'other'}
+
+#     def test_load_data_with_user_permissions(self):
+#         # Create test contenttypes for both databases
+#         default_objects = [
+#             ContentType.objects.db_manager('default').create(
+#                 model='examplemodela',
+#                 app_label='app_a',
+#             ),
+#             ContentType.objects.db_manager('default').create(
+#                 model='examplemodelb',
+#                 app_label='app_b',
+#             ),
+#         ]
+#         other_objects = [
+#             ContentType.objects.db_manager('other').create(
+#                 model='examplemodelb',
+#                 app_label='app_b',
+#             ),
+#             ContentType.objects.db_manager('other').create(
+#                 model='examplemodela',
+#                 app_label='app_a',
+#             ),
+#         ]
+
+#         # Now we create the test UserPermission
+#         Permission.objects.db_manager("default").create(
+#             name="Can delete example model b",
+#             codename="delete_examplemodelb",
+#             content_type=default_objects[1],
+#         )
+#         Permission.objects.db_manager("other").create(
+#             name="Can delete example model b",
+#             codename="delete_examplemodelb",
+#             content_type=other_objects[0],
+#         )
+
+#         perm_default = Permission.objects.get_by_natural_key(
+#             'delete_examplemodelb',
+#             'app_b',
+#             'examplemodelb',
+#         )
+
+#         perm_other = Permission.objects.db_manager('other').get_by_natural_key(
+#             'delete_examplemodelb',
+#             'app_b',
+#             'examplemodelb',
+#         )
+
+#         self.assertEqual(perm_default.content_type_id, default_objects[1].id)
+#         self.assertEqual(perm_other.content_type_id, other_objects[0].id)
+
+
+# class UserManagerTestCase(TestCase):
+
+#     def test_create_user(self):
+#         email_lowercase = 'normal@normal.com'
+#         user = User.objects.create_user('user', email_lowercase)
+#         self.assertEqual(user.email, email_lowercase)
+#         self.assertEqual(user.username, 'user')
+#         self.assertFalse(user.has_usable_password())
+
+#     def test_create_user_email_domain_normalize_rfc3696(self):
+#         # According to https://tools.ietf.org/html/rfc3696#section-3
+#         # the "@" symbol can be part of the local part of an email address
+#         returned = UserManager.normalize_email(r'Abc\@DEF@EXAMPLE.com')
+#         self.assertEqual(returned, r'Abc\@DEF@example.com')
+
+#     def test_create_user_email_domain_normalize(self):
+#         returned = UserManager.normalize_email('normal@DOMAIN.COM')
+#         self.assertEqual(returned, 'normal@domain.com')
+
+#     def test_create_user_email_domain_normalize_with_whitespace(self):
+#         returned = UserManager.normalize_email(r'email\ with_whitespace@D.COM')
+#         self.assertEqual(returned, r'email\ with_whitespace@d.com')
+
+#     def test_empty_username(self):
+#         with self.assertRaisesMessage(ValueError, 'The given username must be set'):
+#             User.objects.create_user(username='')
+
+#     def test_create_user_is_staff(self):
+#         email = 'normal@normal.com'
+#         user = User.objects.create_user('user', email, is_staff=True)
+#         self.assertEqual(user.email, email)
+#         self.assertEqual(user.username, 'user')
+#         self.assertTrue(user.is_staff)
+
+#     def test_create_super_user_raises_error_on_false_is_superuser(self):
+#         with self.assertRaisesMessage(ValueError, 'Superuser must have is_superuser=True.'):
+#             User.objects.create_superuser(
+#                 username='test', email='test@test.com',
+#                 password='test', is_superuser=False,
+#             )
+
+#     def test_create_superuser_raises_error_on_false_is_staff(self):
+#         with self.assertRaisesMessage(ValueError, 'Superuser must have is_staff=True.'):
+#             User.objects.create_superuser(
+#                 username='test', email='test@test.com',
+#                 password='test', is_staff=False,
+#             )
+
+#     def test_make_random_password(self):
+#         allowed_chars = 'abcdefg'
+#         password = UserManager().make_random_password(5, allowed_chars)
+#         self.assertEqual(len(password), 5)
+#         for char in password:
+#             self.assertIn(char, allowed_chars)
+
+
+# class AbstractBaseUserTests(SimpleTestCase):
+
+#     def test_has_usable_password(self):
+#         """
+#         Passwords are usable even if they don't correspond to a hasher in
+#         settings.PASSWORD_HASHERS.
+#         """
+#         self.assertIs(User(password='some-gibbberish').has_usable_password(), True)
+
+#     def test_normalize_username(self):
+#         self.assertEqual(IntegerUsernameUser().normalize_username(123), 123)
+
+#     def test_clean_normalize_username(self):
+#         # The normalization happens in AbstractBaseUser.clean()
+#         ohm_username = 'iamtheΩ'  # U+2126 OHM SIGN
+#         for model in ('auth.User', 'auth_tests.CustomUser'):
+#             with self.subTest(model=model), self.settings(AUTH_USER_MODEL=model):
+#                 User = get_user_model()
+#                 user = User(**{User.USERNAME_FIELD: ohm_username, 'password': 'foo'})
+#                 user.clean()
+#                 username = user.get_username()
+#                 self.assertNotEqual(username, ohm_username)
+#                 self.assertEqual(username, 'iamtheΩ')  # U+03A9 GREEK CAPITAL LETTER OMEGA
+
+#     def test_default_email(self):
+#         user = AbstractBaseUser()
+#         self.assertEqual(user.get_email_field_name(), 'email')
+
+#     def test_custom_email(self):
+#         user = CustomEmailField()
+#         self.assertEqual(user.get_email_field_name(), 'email_address')
+
+
+# class AbstractUserTestCase(TestCase):
+#     def test_email_user(self):
+#         # valid send_mail parameters
+#         kwargs = {
+#             "fail_silently": False,
+#             "auth_user": None,
+#             "auth_password": None,
+#             "connection": None,
+#             "html_message": None,
+#         }
+#         abstract_user = AbstractUser(email='foo@bar.com')
+#         abstract_user.email_user(
+#             subject="Subject here",
+#             message="This is a message",
+#             from_email="from@domain.com",
+#             **kwargs
+#         )
+#         self.assertEqual(len(mail.outbox), 1)
+#         message = mail.outbox[0]
+#         self.assertEqual(message.subject, "Subject here")
+#         self.assertEqual(message.body, "This is a message")
+#         self.assertEqual(message.from_email, "from@domain.com")
+#         self.assertEqual(message.to, [abstract_user.email])
+
+#     def test_last_login_default(self):
+#         user1 = User.objects.create(username='user1')
+#         self.assertIsNone(user1.last_login)
+
+#         user2 = User.objects.create_user(username='user2')
+#         self.assertIsNone(user2.last_login)
+
+#     def test_user_clean_normalize_email(self):
+#         user = User(username='user', password='foo', email='foo@BAR.com')
+#         user.clean()
+#         self.assertEqual(user.email, 'foo@bar.com')
+
+#     def test_user_double_save(self):
+#         """
+#         Calling user.save() twice should trigger password_changed() once.
+#         """
+#         user = User.objects.create_user(username='user', password='foo')
+#         user.set_password('bar')
+#         with mock.patch('django.contrib.auth.password_validation.password_changed') as pw_changed:
+#             user.save()
+#             self.assertEqual(pw_changed.call_count, 1)
+#             user.save()
+#             self.assertEqual(pw_changed.call_count, 1)
+
+#     @override_settings(PASSWORD_HASHERS=PASSWORD_HASHERS)
+#     def test_check_password_upgrade(self):
+#         """
+#         password_changed() shouldn't be called if User.check_password()
+#         triggers a hash iteration upgrade.
+#         """
+#         user = User.objects.create_user(username='user', password='foo')
+#         initial_password = user.password
+#         self.assertTrue(user.check_password('foo'))
+#         hasher = get_hasher('default')
+#         self.assertEqual('pbkdf2_sha256', hasher.algorithm)
+
+#         old_iterations = hasher.iterations
 #         try:
-#             self.assertContains(response, "Enter a valid email address")
-#         except AssertionError:
-#             self.assertContains(response, "Enter a valid e-mail address")
+#             # Upgrade the password iterations
+#             hasher.iterations = old_iterations + 1
+#             with mock.patch('django.contrib.auth.password_validation.password_changed') as pw_changed:
+#                 user.check_password('foo')
+#                 self.assertEqual(pw_changed.call_count, 0)
+#             self.assertNotEqual(initial_password, user.password)
+#         finally:
+#             hasher.iterations = old_iterations
 
-#         response = self.client.post(url, {'username_or_email': 'foo@ex.com'})
-#         self.assertContains(response, "Sorry, this user")
 
-#         self.assertEqual(len(mail.outbox), 0)
-#         response = self.client.post(
-#             url, {'username_or_email': 'bar@example.com'}, follow=True,
+# class CustomModelBackend(ModelBackend):
+#     def with_perm(self, perm, is_active=True, include_superusers=True, backend=None, obj=None):
+#         if obj is not None and obj.username == 'charliebrown':
+#             return User.objects.filter(pk=obj.pk)
+#         return User.objects.filter(username__startswith='charlie')
+
+
+# class UserWithPermTestCase(TestCase):
+
+#     @classmethod
+#     def setUpTestData(cls):
+#         content_type = ContentType.objects.get_for_model(Group)
+#         cls.permission = Permission.objects.create(
+#             name='test', content_type=content_type, codename='test',
 #         )
-#         self.assertEqual(len(mail.outbox), 1)
-#         self.assertEqual(len(response.redirect_chain), 1)
-#         self.assertContains(response, 'bar@example.com')
-
-#     def test_username_recover(self):
-#         if get_user_model() is CustomUser:
-#             raise SkipTest("No username field")
-#         self.user = create_user()
-#         url = reverse('username_recover')
-#         response = self.client.get(url)
-
-#         self.assertNotContains(response, "Username or Email")
-#         self.assertContains(response, "Username:")
-
-#         response = self.client.post(url,
-#                                     {'username_or_email': 'bar@example.com'})
-#         self.assertContains(response, "Sorry, this user")
-
-#         self.assertEqual(len(mail.outbox), 0)
-#         response = self.client.post(
-#             url, {'username_or_email': 'foo'}, follow=True,
+#         # User with permission.
+#         cls.user1 = User.objects.create_user('user 1', 'foo@example.com')
+#         cls.user1.user_permissions.add(cls.permission)
+#         # User with group permission.
+#         group1 = Group.objects.create(name='group 1')
+#         group1.permissions.add(cls.permission)
+#         group2 = Group.objects.create(name='group 2')
+#         group2.permissions.add(cls.permission)
+#         cls.user2 = User.objects.create_user('user 2', 'bar@example.com')
+#         cls.user2.groups.add(group1, group2)
+#         # Users without permissions.
+#         cls.user_charlie = User.objects.create_user('charlie', 'charlie@example.com')
+#         cls.user_charlie_b = User.objects.create_user('charliebrown', 'charlie@brown.com')
+#         # Superuser.
+#         cls.superuser = User.objects.create_superuser(
+#             'superuser', 'superuser@example.com', 'superpassword',
 #         )
-#         self.assertEqual(len(mail.outbox), 1)
-#         self.assertEqual(len(response.redirect_chain), 1)
-#         self.assertContains(response, 'foo')
-
-#     def test_invalid_signature(self):
-#         url = reverse('password_reset_sent',
-#                       kwargs={'signature': 'test@example.com:122323333'})
-#         response = self.client.get(url)
-#         self.assertEqual(response.status_code, 404)
-
-#     def test_content_redirection(self):
-#         self.user = create_user()
-#         url = reverse('email_recover')
-#         response = self.client.get(url)
-
-#         response = self.client.post(
-#             url, {'username_or_email': 'bar@example.com'}, follow=True,
+#         # Inactive user with permission.
+#         cls.inactive_user = User.objects.create_user(
+#             'inactive_user', 'baz@example.com', is_active=False,
 #         )
-#         self.assertEqual(len(mail.outbox), 1)
-#         self.assertEqual(len(response.redirect_chain), 1)
-#         self.assertContains(response, '<strong>bar@example.com</strong>')
+#         cls.inactive_user.user_permissions.add(cls.permission)
 
-#         if get_user_model() is CustomUser:
-#             return  # no username field
+#     def test_invalid_permission_name(self):
+#         msg = 'Permission name should be in the form app_label.permission_codename.'
+#         for perm in ('nodots', 'too.many.dots', '...', ''):
+#             with self.subTest(perm), self.assertRaisesMessage(ValueError, msg):
+#                 User.objects.with_perm(perm)
 
-#         url = reverse('username_recover')
-#         response = self.client.post(
-#             url, {'username_or_email': 'foo'}, follow=True,
+#     def test_invalid_permission_type(self):
+#         msg = 'The `perm` argument must be a string or a permission instance.'
+#         for perm in (b'auth.test', object(), None):
+#             with self.subTest(perm), self.assertRaisesMessage(TypeError, msg):
+#                 User.objects.with_perm(perm)
+
+#     def test_invalid_backend_type(self):
+#         msg = 'backend must be a dotted import path string (got %r).'
+#         for backend in (b'auth_tests.CustomModelBackend', object()):
+#             with self.subTest(backend):
+#                 with self.assertRaisesMessage(TypeError, msg % backend):
+#                     User.objects.with_perm('auth.test', backend=backend)
+
+#     def test_basic(self):
+#         active_users = [self.user1, self.user2]
+#         tests = [
+#             ({}, [*active_users, self.superuser]),
+#             ({'obj': self.user1}, []),
+#             # Only inactive users.
+#             ({'is_active': False}, [self.inactive_user]),
+#             # All users.
+#             ({'is_active': None}, [*active_users, self.superuser, self.inactive_user]),
+#             # Exclude superusers.
+#             ({'include_superusers': False}, active_users),
+#             (
+#                 {'include_superusers': False, 'is_active': False},
+#                 [self.inactive_user],
+#             ),
+#             (
+#                 {'include_superusers': False, 'is_active': None},
+#                 [*active_users, self.inactive_user],
+#             ),
+#         ]
+#         for kwargs, expected_users in tests:
+#             for perm in ('auth.test', self.permission):
+#                 with self.subTest(perm=perm, **kwargs):
+#                     self.assertCountEqual(
+#                         User.objects.with_perm(perm, **kwargs),
+#                         expected_users,
+#                     )
+
+#     @override_settings(AUTHENTICATION_BACKENDS=['django.contrib.auth.backends.BaseBackend'])
+#     def test_backend_without_with_perm(self):
+#         self.assertSequenceEqual(User.objects.with_perm('auth.test'), [])
+
+#     def test_nonexistent_permission(self):
+#         self.assertSequenceEqual(User.objects.with_perm('auth.perm'), [self.superuser])
+
+#     def test_nonexistent_backend(self):
+#         with self.assertRaises(ImportError):
+#             User.objects.with_perm(
+#                 'auth.test',
+#                 backend='invalid.backend.CustomModelBackend',
+#             )
+
+#     @override_settings(AUTHENTICATION_BACKENDS=['auth_tests.test_models.CustomModelBackend'])
+#     def test_custom_backend(self):
+#         for perm in ('auth.test', self.permission):
+#             with self.subTest(perm):
+#                 self.assertCountEqual(
+#                     User.objects.with_perm(perm),
+#                     [self.user_charlie, self.user_charlie_b],
+#                 )
+
+#     @override_settings(AUTHENTICATION_BACKENDS=['auth_tests.test_models.CustomModelBackend'])
+#     def test_custom_backend_pass_obj(self):
+#         for perm in ('auth.test', self.permission):
+#             with self.subTest(perm):
+#                 self.assertSequenceEqual(
+#                     User.objects.with_perm(perm, obj=self.user_charlie_b),
+#                     [self.user_charlie_b],
+#                 )
+
+#     @override_settings(AUTHENTICATION_BACKENDS=[
+#         'auth_tests.test_models.CustomModelBackend',
+#         'django.contrib.auth.backends.ModelBackend',
+#     ])
+#     def test_multiple_backends(self):
+#         msg = (
+#             'You have multiple authentication backends configured and '
+#             'therefore must provide the `backend` argument.'
 #         )
-#         self.assertEqual(len(mail.outbox), 2)
-#         self.assertEqual(len(response.redirect_chain), 1)
-#         self.assertContains(response, '<strong>foo</strong>')
+#         with self.assertRaisesMessage(ValueError, msg):
+#             User.objects.with_perm('auth.test')
 
-#     def test_insensitive_recover(self):
-#         self.user = create_user()
-#         url = reverse('insensitive_recover')
-#         response = self.client.get(url)
-#         normalized = '<strong>bar@example.com</strong>'
-
-#         User = get_user_model()
-#         if User is CustomUser:
-#             self.assertContains(response, 'Email')
-#         else:
-#             self.assertContains(response, 'Username or Email')
-#         self.assertEqual(len(mail.outbox), 0)
-
-#         value = 'BAR@example.COM' if User is CustomUser else 'FOO'
-#         response = self.client.post(url, {'username_or_email': value},
-#                                     follow=True)
-#         self.assertEqual(len(mail.outbox), 1)
-#         self.assertEqual(len(response.redirect_chain), 1)
-#         self.assertContains(response, normalized)
-
-#         response = self.client.post(
-#             url, {'username_or_email': 'bar@EXAmPLE.coM'}, follow=True,
+#         backend = 'auth_tests.test_models.CustomModelBackend'
+#         self.assertCountEqual(
+#             User.objects.with_perm('auth.test', backend=backend),
+#             [self.user_charlie, self.user_charlie_b],
 #         )
-#         self.assertEqual(len(mail.outbox), 2)
-#         self.assertEqual(len(response.redirect_chain), 1)
-#         self.assertContains(response, normalized)
 
-#         response = self.client.post(
-#             url, {'username_or_email': 'bar@example.com'}, follow=True,
+
+# class IsActiveTestCase(TestCase):
+#     """
+#     Tests the behavior of the guaranteed is_active attribute
+#     """
+
+#     def test_builtin_user_isactive(self):
+#         user = User.objects.create(username='foo', email='foo@bar.com')
+#         # is_active is true by default
+#         self.assertIs(user.is_active, True)
+#         user.is_active = False
+#         user.save()
+#         user_fetched = User.objects.get(pk=user.pk)
+#         # the is_active flag is saved
+#         self.assertFalse(user_fetched.is_active)
+
+#     @override_settings(AUTH_USER_MODEL='auth_tests.IsActiveTestUser1')
+#     def test_is_active_field_default(self):
+#         """
+#         tests that the default value for is_active is provided
+#         """
+#         UserModel = get_user_model()
+#         user = UserModel(username='foo')
+#         self.assertIs(user.is_active, True)
+#         # you can set the attribute - but it will not save
+#         user.is_active = False
+#         # there should be no problem saving - but the attribute is not saved
+#         user.save()
+#         user_fetched = UserModel._default_manager.get(pk=user.pk)
+#         # the attribute is always true for newly retrieved instance
+#         self.assertIs(user_fetched.is_active, True)
+
+
+# class TestCreateSuperUserSignals(TestCase):
+#     """
+#     Simple test case for ticket #20541
+#     """
+#     def post_save_listener(self, *args, **kwargs):
+#         self.signals_count += 1
+
+#     def setUp(self):
+#         self.signals_count = 0
+#         post_save.connect(self.post_save_listener, sender=User)
+
+#     def tearDown(self):
+#         post_save.disconnect(self.post_save_listener, sender=User)
+
+#     def test_create_user(self):
+#         User.objects.create_user("JohnDoe")
+#         self.assertEqual(self.signals_count, 1)
+
+#     def test_create_superuser(self):
+#         User.objects.create_superuser("JohnDoe", "mail@example.com", "1")
+#         self.assertEqual(self.signals_count, 1)
+
+
+# class AnonymousUserTests(SimpleTestCase):
+#     no_repr_msg = "Django doesn't provide a DB representation for AnonymousUser."
+
+#     def setUp(self):
+#         self.user = AnonymousUser()
+
+#     def test_properties(self):
+#         self.assertIsNone(self.user.pk)
+#         self.assertEqual(self.user.username, '')
+#         self.assertEqual(self.user.get_username(), '')
+#         self.assertIs(self.user.is_anonymous, True)
+#         self.assertIs(self.user.is_authenticated, False)
+#         self.assertIs(self.user.is_staff, False)
+#         self.assertIs(self.user.is_active, False)
+#         self.assertIs(self.user.is_superuser, False)
+#         self.assertEqual(self.user.groups.all().count(), 0)
+#         self.assertEqual(self.user.user_permissions.all().count(), 0)
+#         self.assertEqual(self.user.get_user_permissions(), set())
+#         self.assertEqual(self.user.get_group_permissions(), set())
+
+#     def test_str(self):
+#         self.assertEqual(str(self.user), 'AnonymousUser')
+
+#     def test_eq(self):
+#         self.assertEqual(self.user, AnonymousUser())
+#         self.assertNotEqual(self.user, User('super', 'super@example.com', 'super'))
+
+#     def test_hash(self):
+#         self.assertEqual(hash(self.user), 1)
+
+#     def test_int(self):
+#         msg = (
+#             'Cannot cast AnonymousUser to int. Are you trying to use it in '
+#             'place of User?'
 #         )
-#         self.assertEqual(len(mail.outbox), 3)
-#         self.assertEqual(len(response.redirect_chain), 1)
-#         self.assertContains(response, normalized)
+#         with self.assertRaisesMessage(TypeError, msg):
+#             int(self.user)
+
+#     def test_delete(self):
+#         with self.assertRaisesMessage(NotImplementedError, self.no_repr_msg):
+#             self.user.delete()
+
+#     def test_save(self):
+#         with self.assertRaisesMessage(NotImplementedError, self.no_repr_msg):
+#             self.user.save()
+
+#     def test_set_password(self):
+#         with self.assertRaisesMessage(NotImplementedError, self.no_repr_msg):
+#             self.user.set_password('password')
+
+#     def test_check_password(self):
+#         with self.assertRaisesMessage(NotImplementedError, self.no_repr_msg):
+#             self.user.check_password('password')
+
+
+# class GroupTests(SimpleTestCase):
+#     def test_str(self):
+#         g = Group(name='Users')
+#         self.assertEqual(str(g), 'Users')

@@ -33,17 +33,24 @@
                 <div class="main">
                     {% if categoria == 0 %}
                     <a href="{% url 'notificacoes:detalhes-mensagem' 0 0 %}" class="item active"><span
-                            class="name">Tudo</span></a>
+                            class="name">Recebidas</span></a>
                     {% else %}
                     <a href="{% url 'notificacoes:detalhes-mensagem' 0 0 %}" class="item"><span
-                            class="name">Tudo</span></a>
+                            class="name">Recebidas</span></a>
+                    {% endif %}
+                    {% if categoria == 5 %}
+                    <a href="{% url 'notificacoes:detalhes-mensagem' 5 0 %}" class="item active"><span
+                            class="name">Enviadas</span></a>
+                    {% else %}
+                    <a href="{% url 'notificacoes:detalhes-mensagem' 5 0 %}" class="item"><span
+                            class="name">Enviadas</span></a>
                     {% endif %}
                     {% if categoria == 1 %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 1 0 %}" class="item active"><span
-                            class="name">Não Lidas</span></a>
+                    <a href="{% url 'notificacoes:detalhes-mensagem' 1 0 %}" class="item active"><span class="name">Não
+                            Lidas</span></a>
                     {% else %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 1 0 %}" class="item"><span
-                            class="name">Não Lidas</span></a>
+                    <a href="{% url 'notificacoes:detalhes-mensagem' 1 0 %}" class="item"><span class="name">Não
+                            Lidas</span></a>
                     {% endif %}
                     {% if categoria == 2 %}
                     <a href="{% url 'notificacoes:detalhes-mensagem' 2 0 %}" class="item active"><span
@@ -66,42 +73,8 @@
                     <a href="{% url 'notificacoes:detalhes-mensagem' 4 0 %}" class="item"><span
                             class="name">Grupos</span></a>
                     {% endif %}
-                    {% if categoria == 5 %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 5 0 %}" class="item active"><span
-                            class="name">Administradores</span></a>
-                    {% else %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 5 0 %}" class="item"><span
-                            class="name">Administradores</span></a>
-                    {% endif %}
-                    {% if categoria == 6 %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 6 0 %}" class="item active"><span
-                            class="name">Coordenadores</span></a>
-                    {% else %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 6 0 %}" class="item"><span
-                            class="name">Coordenadores</span></a>
-                    {% endif %}
-                    {% if categoria == 7 %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 7 0 %}" class="item active"><span
-                            class="name">Professores Universitários</span></a>
-                    {% else %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 7 0 %}" class="item"><span
-                            class="name">Professores Universitários</span></a>
-                    {% endif %}
-                    {% if categoria == 8 %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 8 0 %}" class="item active"><span
-                            class="name">Colaboradores</span></a>
-                    {% else %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 8 0 %}" class="item"><span
-                            class="name">Colaboradores</span></a>
-                    {% endif %}                    
-                    {% if categoria == 9 %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 9 0 %}" class="item active"><span
-                            class="name">Participantes</span></a>
-                    {% else %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 9 0 %}" class="item"><span
-                            class="name">Participantes</span></a>
-                    {% endif %}</div>
                 </div>
+            </div>
         </aside>
         <div class="column is-4 messages hero is-fullheight">
             <div class="action-buttons">
@@ -112,8 +85,12 @@
                     </a>
                 </div>
                 <div class="control is-grouped">
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 0 0 %}" class="button is-small"><i class="fa fa-inbox"></i></a>
-                    <a class="button is-small"><div data-tooltip="Click em Enviar Mensagem para comunicar diretamente com um utilizador"><i class="fa fa-exclamation-circle"></i></div></a>
+                    <a href="{% url 'notificacoes:detalhes-mensagem' 0 0 %}" class="button is-small"><i
+                            class="fa fa-inbox"></i></a>
+                    <a class="button is-small">
+                        <div data-tooltip="Click em Nova Mensagem para comunicar diretamente com um utilizador"><i
+                                class="fa fa-exclamation-circle"></i></div>
+                    </a>
                     <a class="button is-small">
                         <i class="mdi mdi-trash-can-outline mdi-18px"></i>
                     </a>
@@ -155,8 +132,12 @@
         <div class="column is-6 message hero is-fullheight is-active" id="message-pane">
             <div class="action-buttons">
                 <div class="control is-grouped">
-                    <a href="{% url 'notificacoes:detalhes-mensagem' 0 0 %}" class="button is-small"><i class="fa fa-inbox"></i></a>
-                    <a class="button is-small"><div data-tooltip="Click em Enviar Mensagem para comunicar diretamente com um utilizador"><i class="fa fa-exclamation-circle"></i></div></a>
+                    <a href="{% url 'notificacoes:detalhes-mensagem' 0 0 %}" class="button is-small"><i
+                            class="fa fa-inbox"></i></a>
+                    <a class="button is-small">
+                        <div data-tooltip="Click em Enviar Mensagem para comunicar diretamente com um utilizador"><i
+                                class="fa fa-exclamation-circle"></i></div>
+                    </a>
                     <a class="button is-small">
                         <i class="mdi mdi-trash-can-outline mdi-18px"></i>
                     </a>
