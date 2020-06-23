@@ -13,7 +13,7 @@ class UtilizadoresTable(django_tables.Table):
     valido = django_tables.Column('Estado', attrs={"th": {"width": "130"}})
     tipo = django_tables.Column(accessor='firstProfile', orderable=False)
     acoes = django_tables.Column('Ações', empty_values=(),
-                                 orderable=False, attrs={"th": {"width": "104"}})
+                                 orderable=False, attrs={"th": {"width": "110"}})
 
     class Meta:
         model = Utilizador
