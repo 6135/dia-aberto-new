@@ -34,11 +34,10 @@ class CustomTimeWidget(TimeInput):
             self.format = '%H:%M'
 
 class TarefaAuxiliarForm(Form):
-    tipo = 
     atividade = ChoiceField(widget=Select(),choices=[('','Escolha a Atividade')])
     dia = ChoiceField(widget=Select(),choices=[('','Escolha a dia')])
     sessao = ChoiceField(widget=Select(),choices=[('','Escolha o horário')])
-
+    colab = ChoiceField(widget=Select(),choices = [('','Escolha o colaborador')])
     def save():
         pass
 
