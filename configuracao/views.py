@@ -15,6 +15,10 @@ import json
 from pip._vendor import requests
 from django.core import serializers
 from utilizadores.views import user_check
+from configuracao.tables import CursoTable, DepartamentoTable, EdificioTable, MenuTable, TemaTable, UOTable
+from django_tables2 import SingleTableMixin, SingleTableView
+from django_filters.views import FilterView
+from configuracao.filters import CursoFilter, DepartamentoFilter, EdificioFilter, MenuFilter, TemaFilter, UOFilter
 # Create your views here.
 
 class TimeC():
@@ -194,19 +198,24 @@ def filterMenus(request, menus):
 						| Q(campus=Campus.objects.filter(nome=filters[2]).first()))
 	return menus
 
+class verMenus(SingleTableMixin, FilterView):
 
-def viewMenus(request):
+	table_class = MenuTable
+	template_name = 'configuracao/listaMenu.html'
+	filterset_class = MenuFilter
+	table_pagination = {
+		'per_page': 10
+	}
 
-	user_check_var = user_check(request=request, user_profile=[Administrador])
-	if user_check_var.get('exists') == False: return user_check_var.get('render')
-
-	form = menusFilterForm(request.POST)
-	menus = Menu.objects.all()
-	menus = filterMenus(request,menus)
-	return render(request=request,
-				  template_name='configuracao/listaMenu.html',
-				  context = {'menus': menus, 'form': form}
-				)
+	def dispatch(self, request, *args, **kwargs):
+		user_check_var = user_check(request=request, user_profile=[Administrador])
+		if not user_check_var.get('exists'): return user_check_var.get('render')
+		return super().dispatch(request, *args, **kwargs)
+		
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["campi"] = list(map(lambda x: (x.id, x.nome), Campus.objects.all()))
+		return context
 
 def newMenu(request, id = None):
 
@@ -487,16 +496,24 @@ def eliminarAtribuicao(request, id):
 	Inscricaotransporte.objects.get(id=id).delete()
 	return redirect('configuracao:atribuirTransporte', transportehorario)
 
-def verEdificios(request):
-	user_check_var = user_check(request=request, user_profile=[Administrador])
-	print(user_check_var)
-	if user_check_var.get('exists') == False: return user_check_var.get('render')
+class verEdificios(SingleTableMixin, FilterView):
 
-	edificios = Edificio.objects.all()
+	table_class = EdificioTable
+	template_name = 'configuracao/listaEdificios.html'
+	filterset_class = EdificioFilter
+	table_pagination = {
+		'per_page': 10
+	}
 
-	return render(request=request,
-				template_name='configuracao/listaEdificios.html',
-				context={'edificios': edificios})
+	def dispatch(self, request, *args, **kwargs):
+		user_check_var = user_check(request=request, user_profile=[Administrador])
+		if not user_check_var.get('exists'): return user_check_var.get('render')
+		return super().dispatch(request, *args, **kwargs)
+		
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["campi"] = list(map(lambda x: (x.id, x.nome), Campus.objects.all()))
+		return context
 
 def configurarEdificio(request, id = None):
 
@@ -568,15 +585,20 @@ def verEdificioImagem(request,id = None):
 				context={'img': img})
 
 
-def verTemas(request):
-	user_check_var = user_check(request=request, user_profile=[Administrador])
-	if user_check_var.get('exists') == False: return user_check_var.get('render')
+class verTemas(SingleTableMixin, FilterView):
 
-	temas = Tema.objects.all()
+	table_class = TemaTable
+	template_name = 'configuracao/listaTemas.html'
+	filterset_class = TemaFilter
+	table_pagination = {
+		'per_page': 10
+	}
+	def dispatch(self, request, *args, **kwargs):
+		user_check_var = user_check(request=request, user_profile=[Administrador])
+		if not user_check_var.get('exists'): return user_check_var.get('render')
+		return super().dispatch(request, *args, **kwargs)
 
-	return render(request=request,
-				template_name='configuracao/listaTemas.html',
-				context={'temas': temas})
+
 
 def configurarTema(request, id = None):
 
@@ -608,17 +630,25 @@ def eliminarTema(request,id):
 	Tema.objects.get(id=id).delete()
 	return redirect('configuracao:verTemas')
 
+class verUOs(SingleTableMixin, FilterView):
 
-def verUOs(request):
+	table_class = UOTable
+	template_name = 'configuracao/listaUO.html'
+	filterset_class = UOFilter
+	table_pagination = {
+		'per_page': 10
+	}
 
-	user_check_var = user_check(request=request, user_profile=[Administrador])
-	if user_check_var.get('exists') == False: return user_check_var.get('render')
+	def dispatch(self, request, *args, **kwargs):
+		user_check_var = user_check(request=request, user_profile=[Administrador])
+		if not user_check_var.get('exists'): return user_check_var.get('render')
+		return super().dispatch(request, *args, **kwargs)
+		
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["campi"] = list(map(lambda x: (x.id, x.nome), Campus.objects.all()))
+		return context
 
-	uos = Unidadeorganica.objects.all()
-
-	return render(request=request,
-				template_name='configuracao/listaUO.html',
-				context={'UOs': uos})
 
 def configurarUO(request, id = None):
 
@@ -675,16 +705,25 @@ def eliminarUO(request, id):
 	Unidadeorganica.objects.filter(id=id).delete()
 	return redirect('configuracao:verUOs')
 
-def verDepartamentos(request):
+class verDepartamentos(SingleTableMixin, FilterView):
 
-	user_check_var = user_check(request=request, user_profile=[Administrador])
-	if user_check_var.get('exists') == False: return user_check_var.get('render')
+	table_class = DepartamentoTable
+	template_name = 'configuracao/listaDepartamento.html'
+	filterset_class = DepartamentoFilter
+	table_pagination = {
+		'per_page': 10
+	}
 
-	deps = Departamento.objects.all()
+	def dispatch(self, request, *args, **kwargs):
+		user_check_var = user_check(request=request, user_profile=[Administrador])
+		if not user_check_var.get('exists'): return user_check_var.get('render')
+		return super().dispatch(request, *args, **kwargs)
+		
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["facs"] = list(map(lambda x: (x.id, x.nome), Unidadeorganica.objects.all()))
+		return context
 
-	return render(request=request,
-				template_name='configuracao/listaDepartamento.html',
-				context={'departamentos': deps})
 
 def configurarDepartamento(request, id = None):
 
@@ -743,16 +782,25 @@ def eliminarDepartamento(request, id):
 	Departamento.objects.filter(id=id).delete()
 	return redirect('configuracao:verDepartamentos')
 
-def verCursos(request):
+class verCursos(SingleTableMixin, FilterView):
 
-	user_check_var = user_check(request=request, user_profile=[Administrador])
-	if user_check_var.get('exists') == False: return user_check_var.get('render')
+	table_class = CursoTable
+	template_name = 'configuracao/listaCurso.html'
+	filterset_class = CursoFilter
+	table_pagination = {
+		'per_page': 10
+	}
 
-	deps = Curso.objects.all()
+	def dispatch(self, request, *args, **kwargs):
+		user_check_var = user_check(request=request, user_profile=[Administrador])
+		if not user_check_var.get('exists'): return user_check_var.get('render')
+		return super().dispatch(request, *args, **kwargs)
+		
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["faculdades"] = list(map(lambda x: (x.id, x.nome), Unidadeorganica.objects.all()))
+		return context
 
-	return render(request=request,
-				template_name='configuracao/listaCurso.html',
-				context={'departamentos': deps})
 
 def configurarCurso(request, id = None):
 

@@ -228,6 +228,12 @@
                                                         <th><div class="th-wrap">Dia</div></th>
                                                         <th><div class="th-wrap" style="width:150px">Hora</div></th>
                                                         <th><div class="th-wrap" style="width:150px">Vagas</div></th>
+                                                        {% if atividade.estado != "Aceite" %}
+                                                        <th><div class="th-wrap" style="width:200px">Conflitos com a Atividade</div></th>
+                                                        {% endif %}
+                                                        {% if atividade.estado == "Aceite" and atividade.nrcolaboradoresnecessario > 0 %}
+                                                        <th><div class="th-wrap" style="width:200px">Colaborador Atribuido</div></th>
+                                                        {% endif %}
                                                     </tr>
                                                 </thead>
                                                 {% for  sessao in  sessoes%}
@@ -237,33 +243,38 @@
                                                                 <td data-label="Dia">{{sessao.dia}}</td>
                                                                 <td data-label="Hora">{{sessao.horarioid.inicio}} até {{sessao.horarioid.fim}}</td>
                                                                 <td data-label="Vagas">{{sessao.vagas}}</td>
+                                                                {% if atividade.estado != "Aceite" %}
+                                                                <td data-label="Conflitos">
+                                                                <p class="has-text-danger">
+                                                                {% for conf in conflitos %}
+                                                                    {% if sessao.id == conf.atividade1.id  %}
+                                                                    {{conf.atividade2.atividadeid.nome}} , 
+                                                                    {% endif %}
+                                                                {% endfor %}
+                                                                </p>
+                                                                </td>
+                                                                {% endif %}
+                                                                {% if atividade.estado == "Aceite" and atividade.nrcolaboradoresnecessario > 0 %}
+                                                                    {% for col in colaboradores %}
+                                                                        {% if col.sessao.id == sessao.id %}
+                                                                        <td data-label="Colaborador">{{col.tarefaid.colab.utilizador_ptr_id.user_ptr_id.first_name}} {{col.tarefaid.colab.utilizador_ptr_id.user_ptr_id.last_name}}</td> 
+                                                                        {% endif %} 
+                                                                    {% endfor %}
+                                                                {% endif %}
                                                             </tr>
                                                         </tbody>
                                                     {% endif %}
                                                 {% endfor %}
                                             </table>
-                                            {% if atividade.estado != "Aceite" %}
-                                            <p class="has-text-danger">
-                                                {% for conf in conflitos %}
-                                                {% if atividade.id == conf.atividade1.id  %}
-                                                    <span class="icon is-left has-text-danger">
-                                                        <i class="fas fa-exclamation-triangle"></i>
-                                                    </span>
-                                                    <strong class="has-text-danger">Conflitos nos horarios com a atividade:</strong>
-                                                    {{conf.atividade2.nome}}
-                                                    <br>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </p>
-                                            {% endif %}
                                         </div>
                                         {% if  atividade.estado == 'Pendente' %}
                                             <div style="margin-top:13px">
-                                                <a type="button" href="{% url 'atividades:validarAtividade' atividade.id 1%}" class="validatebutton button is-success" style="margin-right: 10px;" ><span class="icon is-small"><i class="mdi mdi-check"></i></span><span>Aceitar</span></a>
-                                                <a type="button" href="{% url 'atividades:validarAtividade' atividade.id 0%}" class="validatebutton button is-danger"><span class="icon is-small"><i class="mdi mdi-delete"></i></span> <span>Rejeitar</span></a>
+                                                <a type="button" onclick="alert.render('Deseja aceitar esta Atividade?','{% url 'atividades:validarAtividade' atividade.id 1 %}')"  class="validatebutton button is-success" style="margin-right: 10px;" ><span class="icon is-small"><i class="mdi mdi-check"></i></span><span>Aceitar</span></a>
+                                                <a type="button" onclick="alert.render('Deseja rejeitar esta Atividade?','{% url 'atividades:validarAtividade' atividade.id 0 %}')" class="validatebutton button is-danger"><span class="icon is-small"><i class="mdi mdi-delete"></i></span> <span>Rejeitar</span></a>
                                             </div>
                                         {% endif %}
                                     </div>
+                                    <hr>
                                 </div>
                             </div>                        
                         </td>                

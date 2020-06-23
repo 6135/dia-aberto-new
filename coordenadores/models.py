@@ -13,11 +13,17 @@ class Tarefa(models.Model):
     estado = models.CharField(max_length=64)
     coord = models.ForeignKey('utilizadores.Coordenador', models.CASCADE, db_column='CoordenadorUtilizadorID',null=True)  # Field name made lowercase.
     colab = models.ForeignKey('utilizadores.Colaborador', models.CASCADE, db_column='ColaboradorUtilizadorID',null=True,blank=True)  # Field name made lowercase.
-    tipo = models.CharField(max_length=64)
+    #tipo = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
     dia = models.DateField()
     horario = models.TimeField(blank=False, null=False)
-
+    @property
+    def tipo(self):
+        if TarefaAcompanhar.objects.filter(tarefaid=self.id):
+           return "tarefaAcompanhar"
+        elif TarefaAuxiliar.objects.filter(tarefaid=self.id):
+            return "tarefaAuxiliar"
+        else: return "tarefaOutra"
     class Meta:
         db_table = 'Tarefa'
 
@@ -43,9 +49,10 @@ class TarefaAcompanhar(models.Model):
     def getDescription(self):
         msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.dia.strftime('%d/%m/%y')+" às "+self.horario.strftime('%H horas e %M minutos')+"."
         return msg
+        
 class TarefaAuxiliar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
-    atividade = models.ForeignKey('atividades.Atividade', models.CASCADE, db_column='atividade')
+    sessao = models.ForeignKey('atividades.Sessao', models.CASCADE, db_column='sessao')
 
     class Meta:
         db_table = 'TarefaAuxiliar'

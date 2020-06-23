@@ -153,3 +153,21 @@ def atualizar_informacoes(user):
                 x.delete()
                 return "" 
     return ""
+
+
+
+
+@register.filter(name='mensagens') 
+def mensagens(user):
+    if user.is_authenticated:    
+        msgs = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id)[:5]
+        return msgs
+    return None    
+
+@register.filter(name='nr_mensagens') 
+def nr_mensagens(user):
+    if user.is_authenticated:    
+        msg = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id)
+        return len(msg)
+    else:
+        return 0        

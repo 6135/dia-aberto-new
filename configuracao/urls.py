@@ -14,7 +14,7 @@ urlpatterns = [
     #path('daysjson', views.view_days_as_json, name='daysjson'),
 
     #-almoco
-    path('menus',views.viewMenus, name='verMenus'),
+    path('menus',views.verMenus.as_view(), name='verMenus'),
     path('delmenu/<int:id>', views.delMenu, name='eliminarMenu'),
     path('editarmenu/<int:id>',views.newMenu, name='editarMenu'),
     path('novomenu', views.newMenu, name='novoMenu'),
@@ -27,27 +27,27 @@ urlpatterns = [
     path('eliminartransporte/<int:id>', views.eliminarTransporte, name='eliminarTransporte'),
     #-Utility
     path('imagens/edificio/<int:id>', views.verEdificioImagem, name='verEdificioImagem'),
-    path('edificios', views.verEdificios, name='verEdificios'),
+    path('edificios', views.verEdificios.as_view(), name='verEdificios'),
     path('adicionaredificio', views.configurarEdificio, name='adicionarEdificio'),
     path('editaredificio/<int:id>', views.configurarEdificio, name='editarEdificio'),
     path('eliminaredificio/<int:id>', views.eliminarEdificio,name='eliminarEdificio'),
 
-    path('uos', views.verUOs, name='verUOs'),
+    path('uos', views.verUOs.as_view(), name='verUOs'),
     path('adicionaruo', views.configurarUO, name='adicionarUO'),
     path('editaruo/<int:id>', views.configurarUO, name='editarUO'),
     path('eliminaruo/<int:id>', views.eliminarUO,name='eliminarUO'),
 
-    path('temas', views.verTemas, name='verTemas'),
+    path('temas', views.verTemas.as_view(), name='verTemas'),
     path('adicionarTema', views.configurarTema, name='adicionarTema'),
     path('editarTema/<int:id>', views.configurarTema, name='editarTema'),
     path('eliminarTema/<int:id>', views.eliminarTema,name='eliminarTema'),
 
-    path('departamentos', views.verDepartamentos, name='verDepartamentos'),
+    path('departamentos', views.verDepartamentos.as_view(), name='verDepartamentos'),
     path('adicionarDepartamento', views.configurarDepartamento, name='adicionarDepartamento'),
     path('editarDepartamento/<int:id>', views.configurarDepartamento, name='editarDepartamento'),
     path('eliminarDepartamento/<int:id>', views.eliminarDepartamento,name='eliminarDepartamento'),
 
-    path('cursos', views.verCursos, name='verCursos'),
+    path('cursos', views.verCursos.as_view(), name='verCursos'),
     path('adicionarCurso', views.configurarCurso, name='adicionarCurso'),
     path('editarCurso/<int:id>', views.configurarCurso, name='editarCurso'),
     path('eliminarCurso/<int:id>', views.eliminarCurso,name='eliminarCurso'),

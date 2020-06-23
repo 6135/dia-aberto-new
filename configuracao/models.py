@@ -14,6 +14,7 @@ from utilizadores.models import Coordenador
 from django.shortcuts import redirect
 from django.utils.safestring import mark_safe
 from django.urls.base import reverse
+from django.utils.html import escape
 class Transporte(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
@@ -251,7 +252,7 @@ class Espaco(models.Model):
 
     def __str__(self):
         if self.edificio.image:
-            return mark_safe('<a href=\'' + reverse('configuracao:verEdificioImagem',kwargs={'id': self.edificio.id}) + '\'>' + self.nome + '</a>')
+            return mark_safe('<a href=\'' + reverse('configuracao:verEdificioImagem',kwargs={'id': self.edificio.id}) + '\'>' + escape(self.nome) + '</a>')
         else: return self.nome    
 
     class Meta:
@@ -267,9 +268,16 @@ class Edificio(models.Model):
     def espacos_(self):
         return Espaco.objects.filter(edificio=self)
 
+    @property
+    def count_salas(self):
+        return Espaco.objects.filter(edificio=self).count()
+
+    def salas_(self):
+        return Espaco.objects.filter(edificio=self)
+
     def __str__(self):
         if self.image:
-            return mark_safe('<a href=\'' + reverse('configuracao:verEdificioImagem',kwargs={'id': self.id}) + '\'>' + self.nome + '</a>')
+            return mark_safe('<a href=\'' + reverse('configuracao:verEdificioImagem',kwargs={'id': self.id}) + '\'>' + escape(self.nome) + '</a>')
         else: return self.nome
     class Meta:
         db_table = 'Edificio'

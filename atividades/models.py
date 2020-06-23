@@ -40,6 +40,10 @@ class Tema(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
     tema = models.CharField(db_column='Tema', max_length=64)
+    
+    @property
+    def num_activities(self):
+        return Atividade.objects.filter(tema=self).count()
 
     def __str__(self):
         return str(self.tema)

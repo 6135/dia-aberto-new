@@ -67,7 +67,31 @@ class Utilizador(User):
         else:
             result = None
         return result 
-        
+
+    def emailValidoUO(self,uo):
+        user = User.objects.get(email=self.email)
+        if user.groups.filter(name = "Coordenador").exists():
+            utilizador = Coordenador.objects.get(email=self.email)
+        elif user.groups.filter(name = "Administrador").exists():
+            utilizador = Administrador.objects.get(email=self.email)
+        elif user.groups.filter(name = "ProfessorUniversitario").exists():
+            utilizador = ProfessorUniversitario.objects.get(email=self.email)
+        elif user.groups.filter(name = "Colaborador").exists():
+            utilizador = Colaborador.objects.get(email=self.email)
+        else:
+            return False
+        if utilizador.faculdade == uo:
+            return True
+        else:
+            return False   
+
+    def emailValidoParticipante(self):
+        user = User.objects.get(email=self.email)
+        if user.groups.filter(name = "Administrador").exists():
+            return True
+        else:
+            return False    
+
     class Meta:
         db_table = 'Utilizador'
 

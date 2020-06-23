@@ -16,6 +16,7 @@ from atividades.forms import SessaoForm
 
 from notificacoes import views as nviews
 from utilizadores import views as uviews
+from coordenadores.models import TarefaAuxiliar
 
 
 
@@ -45,6 +46,7 @@ def minhasatividades(request):
     atividades=Atividade.objects.filter(professoruniversitarioutilizadorid=ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id)).exclude(estado="nsub")
     sessoes=Sessao.objects.all()
     materiais= Materiais.objects.all()
+    colaboradores= TarefaAuxiliar.objects.all()
     if request.method == 'POST' or request.GET.get('searchAtividade'):
         today=datetime.now(timezone.utc)
         diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
@@ -61,7 +63,7 @@ def minhasatividades(request):
 
     return render(request=request,
 			template_name="atividades/minhasAtividades.html",
-            context={"atividades": atividades,"sessoes":sessoes,"materiais": materiais,"filter":filterForm})
+            context={"atividades": atividades,"sessoes":sessoes,"materiais": materiais,"filter":filterForm, "colaboradores": colaboradores})
 
 class Conflito:
     def __init__(self, atividade1,atividade2):
@@ -76,12 +78,13 @@ def atividadescoordenador(request):
     today= datetime.now(timezone.utc) - timedelta(hours=1, minutes=00)
     print(today)
     Atividade.objects.filter(estado="nsub",datasubmissao__lte=today).delete()
-        
+    colaboradores= TarefaAuxiliar.objects.all()
+
     atividades=Atividade.objects.filter(professoruniversitarioutilizadorid__faculdade_id=Coordenador.objects.get(utilizador_ptr_id = request.user.id).faculdade).exclude(estado="nsub")
     departamentos= Departamento.objects.filter(unidadeorganicaid= Coordenador.objects.get(utilizador_ptr_id = request.user.id).faculdade)
     dep= -1
 
-    sessoes=Sessao.objects.all()
+    sessoes=Sessao.objects.all().exclude(atividadeid__estado = 'nsub')
     materiais= Materiais.objects.all()
     conflito2= []
     for sessao1 in sessoes:
@@ -92,7 +95,7 @@ def atividadescoordenador(request):
                     hora2inicio=sessao2.horarioid.inicio.hour*60+sessao2.horarioid.inicio.minute
                     hora2fim=sessao2.horarioid.fim.hour*60+sessao2.horarioid.fim.minute
                     if hora1inicio<=hora2inicio < hora1fim or hora1inicio< hora2fim <= hora1fim:
-                        C1=Conflito(sessao1.atividadeid,sessao2.atividadeid)
+                        C1=Conflito(sessao1,sessao2)
                         conflito2.append(C1)
     conflito2= list(dict.fromkeys(conflito2))
     #for c in conflito2:
@@ -105,7 +108,7 @@ def atividadescoordenador(request):
         atividades=atividades.filter(nome__icontains=nome)
         tipo=str(request.POST.get('tipo'))
         departamento=str(request.POST.get('departamentos'))
-        if request.POST.get('departamentos') is not "":
+        if request.POST.get('departamentos') != "":
             dep=Departamento.objects.filter(id=request.POST.get('departamentos')).first()
         if dep is None:
             dep= -1
@@ -125,7 +128,7 @@ def atividadescoordenador(request):
 
     return render(request=request,
 			template_name="atividades/atividadesUOrganica.html",
-            context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm, "dep":dep,"departamentos":departamentos})
+            context={"atividades": atividades,"conflitos":conflito2,"sessoes":sessoes,"materiais": materiais,"filter":filterForm, "dep":dep,"departamentos":departamentos, "colaboradores": colaboradores})
 
 
 def alterarAtividade(request,id):
