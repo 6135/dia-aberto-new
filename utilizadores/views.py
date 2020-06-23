@@ -489,16 +489,20 @@ def apagar_utilizador(request, id):
         u = Colaborador.objects.filter(id=id)
     elif user.groups.filter(name="Participante").exists():
         u = Participante.objects.filter(id=id)
-        for inscricao in Inscricao.objects.filter(participante=u):
-            inscricaosessao_set = inscricao.inscricaosessao_set.all()
-            for inscricaosessao in inscricaosessao_set:
-                sessaoid = inscricaosessao.sessao.id
-                nparticipantes = inscricaosessao.nparticipantes
-                with transaction.atomic():
-                    sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
-                    sessao.vagas = F('vagas') + nparticipantes
-                    sessao.save()
-            inscricao.delete()
+        try:
+            for inscricao in Inscricao.objects.filter(participante=u):
+                inscricaosessao_set = inscricao.inscricaosessao_set.all()
+                for inscricaosessao in inscricaosessao_set:
+                    sessaoid = inscricaosessao.sessao.id
+                    nparticipantes = inscricaosessao.nparticipantes
+                    with transaction.atomic():
+                        sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
+                        sessao.vagas = F('vagas') + nparticipantes
+                        sessao.save()
+                inscricao.delete()
+                
+        except:
+            return redirect('utilizadores:mensagem',13)     
     else:
         u= user     
 
@@ -870,6 +874,12 @@ def mensagem(request, id, *args, **kwargs):
     elif id == 12:
         m = "Ainda não é permitido criar inscrições"
         tipo = "error"
+    elif id == 13:
+        m = "Erro ao apagar dados do participante"
+        tipo = "error" 
+    elif id == 14:
+        m = "Não existem mensagens"
+        tipo = "info"   
     else:
         m = "Esta pagina não existe"
         tipo = "error"                                     
