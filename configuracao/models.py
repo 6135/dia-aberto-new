@@ -7,9 +7,7 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.core import validators
-import time
-from time import mktime
-from datetime import datetime,timedelta, timezone
+from datetime import datetime,timedelta, timezone, time
 from utilizadores.models import Coordenador
 from django.shortcuts import redirect
 from django.utils.safestring import mark_safe
@@ -44,30 +42,28 @@ class Transportehorario(models.Model):
 
     horaPartida = models.TimeField(db_column="HoraPartida", blank=False, null=False)
     horaChegada = models.TimeField(db_column="HoraChegada", blank=False, null=False)
-    #TODO 
+
     transporte = models.ForeignKey(
         Transporte, models.CASCADE, db_column='Transporte')
 
     def __str__(self):
         return self.origem + " - " + self.chegada + ' Horas: ' + str(self.horaChegada) + ' - ' + str(self.horaPartida) + ' ' + str(self.transporte)
+    @property
+    def get_identifier(self):
+        return self.transporte.identificador
 
+    @property
+    def get_capacidade(self):
+        return Transporteuniversitario.objects.get(transporte=self.transporte).capacidade
+
+    @property
+    def get_trip_time(self):
+        return time.strftime(self.horaPartida, "%H:%M") + ' - ' + time.strftime(self.horaChegada, "%H:%M")
+    
     def trip(self):
         return str(self.origem) + ' - ' + str(self.chegada)
     class Meta:
         db_table = 'TransporteHorario'
-        
-#class Transportepessoal(models.Model):
-    # Field name made lowercase.
-#    transporte = models.OneToOneField(
-#        Transporte, models.CASCADE, db_column='Transporte', primary_key=True)
-    # Field name made lowercase.
-#    tipo = models.CharField(db_column='Tipo', max_length=255)
-
-#    def __str__(self):
-#        return str(self.transporte.id) + ' ' + str(self.tipo)
-
-#    class Meta:
-#        db_table = 'TransportePessoal'
 
 class Transporteuniversitario(models.Model):
     # Field name made lowercase.

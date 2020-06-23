@@ -1,0 +1,64 @@
+{% extends 'bulma_table_details.html' %}
+
+
+{% block details_content %}
+
+<table class="table has-mobile-cards is-fullwidth">
+    <tbody>
+        <tr>
+            <th class="th-wrap">Inicio submissao Atividades:</th>
+            <td data-label='Inicio submissao Atividades:'style="font-weight: normal;">
+                <span>{{row.record.datapropostasatividadesincio}}</span>
+            </td>
+        </tr>
+    
+        <tr style="border-bottom: 1px solid #ddd">
+            <th class="th-wrap">Fim submissao Atividades:</th>
+            <td data-label='Fim submissao Atividades:'style="font-weight: normal;">
+                <span> {{row.record.dataporpostaatividadesfim}} </span>
+            </td>
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd">
+            <th class="th-wrap">Inicio Inscrições:</th>
+            <td data-label='Inicio Inscrições:' style="font-weight: normal;">
+                <span>{{row.record.datainscricaoatividadesinicio}}</span>
+            </td>
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd">
+
+            <th class="th-wrap">Fim Inscrições:</th>
+            <td data-label="Fim Inscrições:" style="font-weight: normal;">
+                <span> {{row.record.datainscricaoatividadesfim}} </span>
+            </td>
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd">
+            <th class="th-wrap">Preço Professores:</th>
+            <td data-label="Preço Professores:" style="font-weight: normal;">
+                <span>{{row.record.precoprofessores}}</span>
+            </td>           
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd">
+
+            <th class="th-wrap">Preço Alunos:</th>
+            <td data-label='Preço Alunos:' style="font-weight: normal;">
+                <span> {{row.record.precoalunos}} </span>
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd">
+
+            <th class="th-wrap">Escala de sessões:</th>
+            <td data-label='Preço Alunos:' style="font-weight: normal;">
+                <span> {{row.record.escalasessoes}} </span>
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd">
+            <th class="th-wrap">Descrição:</th>
+            <td></td>
+        </tr>
+        <tr style="border-bottom: 1px solid #ddd">
+            <td colspan="4">
+                <textarea class="textarea" disabled style="resize: none;">{{row.record.descricao}}</textarea>
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+{% endblock details_content %}

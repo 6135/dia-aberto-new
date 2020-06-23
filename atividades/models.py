@@ -198,6 +198,8 @@ class Sessao(models.Model):
     def timeRange_(self, seperator=' até '):
         return self.horarioid.inicio.strftime('%H:%M') + str(seperator) + self.horarioid.fim.strftime('%H:%M')
 
+
+    
     class Meta:
         db_table = 'Sessao'
 
