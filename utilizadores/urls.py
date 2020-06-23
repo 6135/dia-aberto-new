@@ -17,7 +17,7 @@ app_name = 'utilizadores'
 
 
 urlpatterns = [
-    path('consultarutilizadores', consultar_utilizadores,name='consultar-utilizadores'),
+    path('consultarutilizadores', consultar_utilizadores.as_view(),name='consultar-utilizadores'),
     path('escolherperfil', escolher_perfil,name='escolher-perfil'),    
     path('criarutilizadores/<int:id>', criar_utilizador, name='criar-utilizador'),
     path('alterarpassword',alterar_password,name='alterar-password'),

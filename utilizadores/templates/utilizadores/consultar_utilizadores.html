@@ -1,386 +1,61 @@
 {% extends 'app.html' %}
+{% load django_tables2 %}
+{% load static %}
 
-{% block title %}- Consultar Utilizadores{% endblock title %}
+{% block title %}- Consultar Utilizadores
+{% endblock title %}
+
+{% block scripts %}
+<script>
+    function reset(event) {
+        event.preventDefault();
+        const btn = $("input[type=reset]");
+        btn.closest('form').find("option[selected]").removeAttr("selected");
+        btn.closest('form').find("input[type=text], input[type=number], textarea, select").val("");
+    }
+</script>
+{% endblock scripts %}
 
 {% block content %}
-
-{% load poll_extras %}
 <div class="columns">
     <div class="column is-3">
-        <form method="POST" action="" id='filter'>
-            {% csrf_token %}
-            <div>
-            <div class="menu">
-                <p class="menu-label">Filtros Utilizadores</p>
-                <ul class="menu-list">
-
-                <div class="field">
-                    <!---->
-                    <div class="control has-icons-left is-clearfix">
-                        <input name="current" placeholder="Nome" class="input" value="{{current}}"> 
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify mdi-24px"></i>
-                        </span>
-                    </div>
-                    <!---->
-                </div>
-
-                <div class="field">
-                    <!---->
-                    <div class="control is-expanded">
-                        <span class="select is-fullwidth is-empty">
-                            {{form.filtro_tipo}}
-                        </span>
-                        <!---->
-                    </div>
-                    <!---->
-                </div>
-                <div class="field">
-                    <!---->
-                    <div class="control is-expanded">
-                        <span class="select is-fullwidth is-empty">
-                            {{form.filtro_estado}}
-                        </span>
-                        <!---->
-                    </div>
-                    <!---->
-                </div>
-                <div class="field">
-                    <button type="submit" onClick="resetForm()" class="button is-danger is-outlined">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                        </span>
-                        <span>Limpar pesquisa</span>
-                    </button>
-                    <button type="Submit" class="button is-success is-outlined">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify mdi-24px"></i>
-                        </span>
-                        <span>Pesquisar</span>
-                    </button>
-                </div>
-                </ul>
+        <div class="menu">
+            <div class="menu-label">
+                Filtros Utilizadores
             </div>
+            <div class="menu-list content">
+                <form method="get">
+                    <div class="field is-grouped">
+                        <p class="control is-expanded">
+                            <input class="button is-light is-fullwidth" type="reset" onclick="reset" value="Limpar">
+                        </p>
+                        <p class="control is-expanded">
+                            <button class="button is-primary is-fullwidth" type="submit">
+                                <span class="icon">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                                <span>Pesquisar</span>
+                            </button>
+                        </p>
+                    </div>
+                </form>
             </div>
-            
-        </form>
+        </div>
     </div>
     <div class="column">
-        <nav class="breadcrumb" aria-label="breadcrumbs">
+        <nav aria-label="breadcrumbs" class="breadcrumb">
             <ul>
-              <li><a href="{% url 'home' %}">Início</a></li>
-              <li class="is-active"><a href="{% url 'utilizadores:consultar-utilizadores' %}" aria-current="page">Consultar Utilizadores</a></li>
+                <li><a href="{% url 'home' %}">Início</a></li>
+                <li class="is-active"><a href="{% url 'utilizadores:consultar-utilizadores' %}">Utilizadores</a>
+                </li>
             </ul>
-          </nav>
-          <a href="{% url 'utilizadores:escolher-perfil' %}">
-<button type="button" class="button is-success is-outlined" style="margin-bottom: 1rem;"><span class="icon is-small"><i class="mdi mdi-plus"></i></span> <span>Adicionar Utilizador</span> <!----></button>
-       </a>
-        <div class="b-table is-fullwidth">
-            <div class="table-container is-fullwidth">
-            
-                <table class="table has-mobile-cards is-relative is-fullwidth" id="table01">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th  onclick="sortTable(1,false)" style="cursor:pointer;" class="pre-expandable">
-                                Nome
-                                <span class="icon-expandable-180 is-small">
-                                    <i id="ordenar" class="mdi mdi-menu-up"></i>
-                                </span>
-
-    
-                            </th>
-                            <th >
-                                Email     
-                        
-                            </th>
-                            <th >
-                                Contacto
-                            </th>
-                            <th >
-                                Tipo
-                            </th>
-                            <th>
-                                Estado
-                            </th>
-                            <th>
-                                
-                            </th>   
-                        </tr>
-                    </thead>
-                    {% for user in utilizadores %}
-                    
-                    <tbody id="{{user}}">  
-                        <tr draggable="false">
-                            <td class="chevron-cell">
-                                <a class="detailbutton" role="button" onclick="displayDetails({{user.id}})" user="{{user.id}}">
-                                    <span class="icon">
-                                        <i id="mais_informacao{{user.id}}" class="mdi is-fullwidth mdi-chevron-right mdi-24px"></i>
-                                    </span>
-                                </a>
-                            </td>
-                        <td data-label="Nome">{{user.first_name}} {{user.last_name}}</td>
-                        <td data-label="Email">{{user.email}}</td>
-                        <td data-label="Contacto">{{user.contacto}}</td>
-                        <td data-label="Tipo">{{user.getProfiles}}</td>
-                        {% if user.valido == 'False'%}
-                        <td data-label="Estado" >
-                            <span class="tag is-warning" style="width: 10rem;font-size: small;">Por Confirmar</span>
-                        </td>
-                        {% elif user.valido == 'True' %}
-                        <td data-label="Estado">
-                            <span class="tag is-success" style="width: 10rem;font-size: small;">Confirmado</span>
-                        </td>
-                        {% elif user.valido == 'Rejeitado' %}
-                        <td data-label="Estado">
-                            <span class="tag is-danger" style="width: 10rem;font-size: small;">Rejeitado</span>
-                        </td>
-                        {% endif %}
-                           <td data-label="Operacoes">
-                            <div class="columns" >
-                                {% if user.valido != 'True'%}  
-                                <div class="column" data-tooltip="Validar" >  
-                                    <a href="{% url 'utilizadores:validar' user.first_name user.id %}">
-                                        <span class="icon is-small">
-                                            <i class="fas fa-check" style="color: #32CD32"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                                {% else %}
-                                <div class="column"> 
-                                    <span class="icon is-small">
-                                              
-                                    </span>
-                                </div> 
-                                {% endif %}
-                                {% if user.valido != 'Rejeitado'%}
-                                <div class="column"  data-tooltip="Rejeitar">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende rejeitar este utilizador?','{% url 'utilizadores:rejeitar' user.first_name user.id %}')">
-                                            <span class="icon has-text-danger">
-                                                <i class="fas fa-ban"></i>
-                                            </span>
-                                    </a> 
-                                </div>
-                                {% else %}
-                                <div class="column"> 
-                                    <span class="icon has-text-danger">
-                                              
-                                    </span>
-                                    </a> 
-                                </div> 
-                                {% endif %}
-                                {% if u == "Administrador"%} 
-                                <div class="column"  data-tooltip="Editar">  
-                                    <a href="{% url 'utilizadores:alterar-utilizador-admin' user.id %}">
-                                        <span class="icon is-small">
-                                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                                {% endif %}
-
-
-                                  
-                                                    
-
-                                <div class="column"  data-tooltip="Apagar">  
-                {% if user|has_group:"Participante" %}
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente.','{% url 'utilizadores:apagar-utilizador' user.id %}')">
-                   {% elif user|has_group:"Colaborador" %}
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>As <b>tarefas</b> atribuídas a este colaborador serão apagadas permanentemente.','{% url 'utilizadores:apagar-utilizador' user.id %}')">
-                   {% elif user|has_group:"ProfessorUniversitario" %}
-                   <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>As <b>atividades</b> pelo qual este professor está responsável serão apagadas permanentemente.','{% url 'utilizadores:apagar-utilizador' user.id %}')">
-                    {% elif user|has_group:"Coordenador" %}
-                    {% if user|apagar_admin:user.id %}
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br> As <b>atividades dos departamentos</b> pelo qual este coordenador está responsável serão apagadas permanentemente.<br><br>As <b>tarefas dos colaboradores</b> pelo qual este coordenador está responsável serão apagadas permanentemente.','{% url 'utilizadores:apagar-utilizador' user.id %}'')">
-                     {% else %}
-                    
-                  <a onclick="alert.warning('Não pode apagar este coordenador porque é o unico que existe.')">  
-                    {% endif %}
-                  
-                  {% elif user|has_group:"Administrador" %} 
-                   {% if user|apagar_admin:user.id %}
-                
-                   <a onclick="alert.render('Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente.','{% url 'utilizadores:apagar-utilizador' user.id %}')">
-                    {% else %}
-                    
-                  <a onclick="alert.warning('Não pode apagar este administrador porque é o unico que existe.')">  
-                    {% endif %}
-                    {% endif %}
-
-
-                                        <span class="icon is-small">
-                                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                                        </span>
-                                    </a> 
-                   
-                                </div>                           
-
-                                <div class="column"></div>
-                                <div class="column"></div> 
-                            </div> 
-                        </td>                     
-                      </tr> 
-                      <tr class="detail" style="display:none;" id='Details{{user.id}}'>
-                        <td colspan="5">
-                            <div class="detail-container">
-                                <div class="content"> 
-                                    <div style="font-size: 15px;">
-                                        <p>
-                                            <strong>Nome Próprio:</strong>
-                                            {{user.first_name}}
-                                        </p>
-                                        <p>
-                                            <strong>Apelido:</strong>
-                                            {{user.last_name}}
-                                        </p>
-
-                                        <p>
-                                            <strong>Username:</strong>
-                                            {{user.username}}
-                                        </p>
-                                        <p>
-                                            <strong>Contacto:</strong>
-                                            {{user.contacto}}
-                                        </p>
-                                        <p>
-                                            <strong>Email:</strong>
-                                            {{user.email}}
-                                        </p>
-                                    {% if user|has_group:"ProfessorUniversitario" %} 
-                                          <p>
-                                            <strong>Faculdade:</strong>
-                                            {{user|get_faculdade_pu:user.id}}
-                                        </p> 
-                                        <p>
-                                            <strong>Departamento:</strong>
-                                            {{user|get_departamento_pu:user.id}}
-                                        </p> 
-                                        <p>
-                                            <strong>Gabinete:</strong>
-                                            {{user|get_gabinete_pu:user.id}}
-                                        </p> 
-                                    {% elif user|has_group:"Coordenador" %}
-                                          <p>
-                                            <strong>Faculdade:</strong>
-                                            {{user|get_faculdade_coord:user.id}}
-                                        </p> 
-                                        <p>
-                                            <strong>Departamento:</strong>
-                                            {{user|get_departamento_coord:user.id}}
-                                        </p> 
-                                        <p>
-                                            <strong>Gabinete:</strong>
-                                            {{user|get_gabinete_coord:user.id}}
-                                        </p> 
-                                    {% elif user|has_group:"Colaborador" %}
-                                         <p>
-                                            <strong>Faculdade:</strong>
-                                            {{user|get_faculdade_colaborador:user.id}}
-                                        </p> 
-                                        <p>
-                                            <strong>Departamento:</strong>
-                                            {{user|get_departamento_colaborador:user.id}}
-                                        </p> 
-                                        <p>
-                                            <strong>Curso:</strong>
-                                            {{user|get_curso_colaborador:user.id}}
-                                        </p> 
-                                    {% elif user|has_group:"Administrador" %}
-                                        <p>
-                                            <strong>Gabinete:</strong>
-                                            {{user|get_gabinete_admin:user.id}}
-                                        </p> 
-                                    {% endif %}
-
-                                    </div>
-                                </div>
-                            </div>                        
-                        </td>                
-                      </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
+        </nav>
+        <a href="{% url 'utilizadores:escolher-perfil' %}">
+            <button type="button" class="button is-success is-outlined" style="margin-bottom: 1rem;"><span
+                    class="icon is-small"><i class="mdi mdi-plus"></i></span> <span>Adicionar Utilizador</span>
+            </button>
+        </a>
+        {% render_table table 'utilizadores/consultar_utilizadores_tabela.html' %}
     </div>
 </div>
-
-
-
-{% comment  %}
-Numeracao das paginas
-{% endcomment %}
-        </div>
-      </div>
-    
-
-<footer class="footer is-relative" style="background-color:white;">
-<div class="level"><div class="level-left">
-</div> 
-<div class="level-right">
-<div class="level-item">
-<nav class="pagination">
-{% if utilizadores.has_previous %}
-<a role="button" href="?page={{utilizadores.previous_page_number}}"  aria-label="" class="pagination-link pagination-previous">
-<span class="icon" aria-hidden="true">
-<i class="mdi mdi-chevron-left mdi-24px">
-</i>
-</span>
-</a> 
-{% else %}
-<a role="button" href="#" disabled="disabled" aria-label="" class="pagination-link pagination-previous">
-<span class="icon" aria-hidden="true">
-<i class="mdi mdi-chevron-left mdi-24px">
-</i>
-</span>
-</a> 
-{% endif %}
-
-{% if utilizadores.has_next %}
-<a role="button" href="?page={{utilizadores.next_page_number}}" aria-label="" class="pagination-link pagination-next">
-<span class="icon" aria-hidden="true"><i class="mdi mdi-chevron-right mdi-24px"></i></span></a>
-{% else %}
-<a role="button" href="#" disabled="disabled" aria-label="" class="pagination-link pagination-next">
-<span class="icon" aria-hidden="true"><i class="mdi mdi-chevron-right mdi-24px"></i></span></a>
-{% endif %}
-</div>
-
- <ul class="pagination-list"><!----> <!----> <li><a role="button" href="#" aria-label="Current page, Page 1." aria-current="true" class="pagination-link is-current ">{{utilizadores.number}}</a></li> <!----> <!----></ul></nav></div></div></div>
-</footer>
-{% comment  %}
-Fim da enumeracao das paginas
-{% endcomment %}
-
-
-<script>
-
-var msg = document.getElementById("msg-iniciar")
-var alerta = new Alerta(msg);
-function Alerta(msg) {
-    this.msg=msg
-    this.render=function(txt,elementId){
-        document.getElementById('text1').innerHTML = txt;
-        document.getElementById('dialog-confirm').setAttribute('data-target',elementId)
-        msg.classList.add("is-active");
-    }
-
-    this.cancelar=function(){
-        var msg = document.getElementById("msg-iniciar")
-        msg.classList.remove("is-active");
-    }   
-}
-
-</script>
-
-<style>
-  .footer {
-    position: relative;
-    bottom: 0;
-    width: 100%;
-    background-color: #fafafa;
-    padding: 1rem 3rem;
-  }
-</style>
 {% endblock content %}
-
