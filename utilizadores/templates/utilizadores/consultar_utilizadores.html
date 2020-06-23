@@ -25,6 +25,41 @@
             </div>
             <div class="menu-list content">
                 <form method="get">
+
+                    <div class="field">
+                        <label>Tipos:</label>
+                    </div>
+                    {% for value, label in filter.form.fields.groups.choices %}
+                    <div class="field" style="padding-left: 1rem;">
+                        <label class="checkbox">
+                            <input type="checkbox" name="{{filter.form.groups.name}}" value="{{value|stringformat:'s'}}"
+                                {% if value|stringformat:'s' in filter.form.groups.value %}checked{% endif %}>
+                            {{label}}
+                        </label>
+                    </div>
+                    {% endfor %}
+
+                    <!--<div class="field">
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select name="{{ filter.form.groups.name }}" value="{{filter.form.groups.value}}">
+                                    <option value="">Qualquer escola</option>
+                                    {% for value, group in filter.form.fields.groups.choices %}
+                                    {% if value != "" %}
+                                    <option value="{{ value }}"
+                                        {% if value|stringformat:'s' == filter.form.group.value %} selected
+                                        {% endif %}>
+                                        {{ group }}
+                                    </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                    </div>-->
                     <div class="field is-grouped">
                         <p class="control is-expanded">
                             <input class="button is-light is-fullwidth" type="reset" onclick="reset" value="Limpar">
