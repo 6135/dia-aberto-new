@@ -33,21 +33,64 @@ class CustomTimeWidget(TimeInput):
         else: 
             self.format = '%H:%M'
 
+def get_atividades_choices():
+    return [(" ",'Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.tarefas_get_atividades()]
+
 class TarefaAuxiliarForm(Form):
-    atividade = ChoiceField(widget=Select(),choices=[('','Escolha a Atividade')])
-    dia = ChoiceField(widget=Select(),choices=[('','Escolha a dia')])
-    sessao = ChoiceField(widget=Select(),choices=[('','Escolha o horário')])
-    colab = ChoiceField(widget=Select(),choices = [('','Escolha o colaborador')])
-    def save():
-        pass
+    atividade = ChoiceField(widget=Select(attrs={'onchange':'diasSelect();'}),choices=get_atividades_choices)
+    dia = DateField(widget=Select(attrs={'onchange':'sessoesSelect()'}))
+    sessao = IntegerField(widget=Select(attrs={'onchange':'colaboradoresSelect()'}))
+    colab = ChoiceField(widget=Select(),choices = [('','Escolha o colaborador')],required=False)
+
+    def save(self,user):
+        data = self.cleaned_data
+        estado = 'naoConcluida'
+        
+        sessao = Sessao.objects.get(id = data.get('sessao'))
+        if data.get('colab') == '':
+            estado = 'naoAtribuida'
+            colab = None
+        else:
+            colab = Colaborador.objects.get(id = data.get('colab'))
+        atividade = Atividade.objects.get(id = data.get('atividade'))
+        nome = 'Auxiliar na atividade ' + atividade.nome
+        tarefa = Tarefa(nome= nome,estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=sessao.horarioid.inicio)
+        tarefa.save()
+        TarefaAuxiliar(tarefaid=tarefa,sessao=sessao).save()   
+
+def get_inscricao_choices():
+    return [('','Escolha um grupo')]+[(grupo.id,'Grupo '+str(grupo.id)) for grupo in Inscricao.objects.filter(nalunos__gt=1)]
 
 class TarefaAcompanharForm(Form):
-   
+    grupo = ChoiceField(widget=Select(attrs={'onchange':'diasGrupo();grupoInfo()'}),choices=get_inscricao_choices)
+    dia = ChoiceField(widget=Select(attrs={'onchange':'grupoHorario()'}),choices=[('','Escolha o dia')])
+    horario = ChoiceField(widget=Select(attrs={'onchange':'grupoOrigem()'}),choices=[('','Escolha o horario')])
+    origem = ChoiceField(widget=Select(attrs={'onchange':'grupoDestino()'}),choices = [('','Escolha o local de encontro')])
+    destino = ChoiceField(widget=Select(attrs={'onchange':'colaboradoresSelect()'}),choices = [('','Escolha o local de destino')])
+    colab = ChoiceField(widget=Select(),choices = [('','Escolha o colaborador')],required=False)
+    
     def save():
-        pass
+        data = self.cleaned_data
+        estado = 'naoConcluida'
+        if data.get('colab') == '':
+            estado = 'naoAtribuida'
+            colab = None
+        else:
+            colab = Colaborador.objects.get(id = data.get('colab'))
+            
+        tarefa = Tarefa(nome= nome,estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=sessao.horarioid.inicio)
+        tarefa.save()
+        TarefaAuxiliar(tarefaid=tarefa,sessao=sessao).save()   
+
+def get_dia_choices():
+    return [('','Escolha o dia')]+get_dias()
 
 class TarefaOutraForm(Form):
-   
+    dia = ChoiceField(widget=Select(attrs={'onchange':'sessoesSelect()'}),choices=get_dia_choices())
+    horario = TimeField(widget=TimeInput(attrs={'type':'time','min':'09:00','max':'18:00'}))
+    descricao = CharField(widget=Textarea(attrs={'class':'textarea'}))
+    colab = ChoiceField(widget=Select(),choices = [('','Escolha o colaborador')],required=False)
+
     def save():
         pass
 

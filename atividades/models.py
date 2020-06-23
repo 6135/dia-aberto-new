@@ -9,7 +9,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 import html
-
+from coordenadores.models import TarefaAuxiliar
 
 class Anfiteatro(models.Model):
     # Field name made lowercase.
@@ -148,7 +148,17 @@ class Atividade(models.Model):
     def __ne__(self, other):
         return False if self == other else True
 
-
+    @staticmethod
+    def tarefas_get_atividades():
+        atividades=[]
+        sessoes = Sessao.objects.filter(atividadeid__estado='Aceite',atividadeid__nrcolaboradoresnecessario__gt=0)
+        for sessao in sessoes:
+            tarefa = TarefaAuxiliar.objects.filter(sessao=sessao.id)
+            if tarefa.count() < sessao.atividadeid.nrcolaboradoresnecessario:
+                if sessao.atividadeid not in atividades:
+                    atividades.append(sessao.atividadeid)   
+        return atividades
+        
 class Materiais(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
@@ -190,3 +200,14 @@ class Sessao(models.Model):
 
     class Meta:
         db_table = 'Sessao'
+
+    @staticmethod
+    def tarefas_get_sessoes(atividade,dia):
+        tarefa_sessoes=[]
+        sessoes = Sessao.objects.filter(atividadeid=atividade,dia=dia)
+        for sessao in sessoes:
+            tarefa = TarefaAuxiliar.objects.filter(sessao=sessao.id)
+            if tarefa.count() < sessao.atividadeid.nrcolaboradoresnecessario:
+                if sessao not in tarefa_sessoes:
+                    tarefa_sessoes.append(sessao)        
+        return tarefa_sessoes
