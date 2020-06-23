@@ -257,7 +257,7 @@
                                                                 {% if atividade.estado == "Aceite" and atividade.nrcolaboradoresnecessario > 0 %}
                                                                     {% for col in colaboradores %}
                                                                         {% if col.sessao.id == sessao.id %}
-                                                                        <td data-label="Colaborador">{{col.tarefaid.colab.utilizador_ptr_id.user_ptr_id.first_name}} {{col.tarefaid.colab.utilizador_ptr_id.user_ptr_id.last_name}}</td> 
+                                                                        <td data-label="Colaborador">{{col.tarefaid.colab.first_name}} {{col.tarefaid.colab.last_name}}</td> 
                                                                         {% endif %} 
                                                                     {% endfor %}
                                                                 {% endif %}
