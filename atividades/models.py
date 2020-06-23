@@ -9,6 +9,7 @@ from django.db import models
 from django.utils.safestring import mark_safe
 from django.urls import reverse
 import html
+from coordenadores.models import TarefaAuxiliar
 
 
 class Anfiteatro(models.Model):
@@ -148,6 +149,21 @@ class Atividade(models.Model):
     def __ne__(self, other):
         return False if self == other else True
 
+    def is_colab_full(self):
+        sessoes = Sessao.objects.filter(ativdadeid=self)
+        number_total_col = sessoes.count()*int(self.nrcolaboradoresnecessario)
+        number_total_tasks = TarefaAuxiliar.objects.filter(sessao__atividadeid=self).count()
+        return True if number_total_tasks >= number_total_col else False
+
+    @staticmethod
+    def tarefas_get_actividades():
+        atividades = Atividade.objects.filter(nrcolaboradoresnecessario__gt=0,estado="Aceite")
+        atividades_not_full = []
+        for act in atividades:
+            if act.is_colab_full() == False:
+                atividades_not_full.append(act)
+        return atividades_not_full
+
 
 class Materiais(models.Model):
     # Field name made lowercase.
@@ -188,5 +204,7 @@ class Sessao(models.Model):
     def timeRange_(self, seperator=' até '):
         return self.horarioid.inicio.strftime('%H:%M') + str(seperator) + self.horarioid.fim.strftime('%H:%M')
 
+
+    
     class Meta:
         db_table = 'Sessao'

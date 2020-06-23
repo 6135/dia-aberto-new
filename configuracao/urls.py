@@ -7,7 +7,7 @@ app_name = 'configuracao'
 urlpatterns = [
 
     #-diaAberto
-    path('diasabertos', views.viewDays, name='diasAbertos'),
+    path('diasabertos', views.viewDays.as_view(), name='diasAbertos'),
     path('editardia/<int:id>', views.newDay, name='editarDia'),
     path('inserirdiaaberto', views.newDay,name='novoDia' ),
     path('deldia/<int:id>', views.delDay, name='eliminarDia'),
@@ -19,7 +19,7 @@ urlpatterns = [
     path('editarmenu/<int:id>',views.newMenu, name='editarMenu'),
     path('novomenu', views.newMenu, name='novoMenu'),
     #-Transporte
-    path('transportes', views.verTransportes, name='verTransportes'),
+    path('transportes', views.verTransportes.as_view(), name='verTransportes'),
     path('criartransporte', views.criarTransporte, name='criarTransporte'),
     path('editartransporte/<int:id>', views.criarTransporte, name='editarTransporte'),
     path('atribuirtransporte/<int:id>', views.atribuirTransporte, name='atribuirTransporte'),

@@ -32,7 +32,7 @@ class AtividadeFilter(django_filters.FilterSet):
     campus_id = django_filters.NumberFilter(
         field_name="espacoid__edificio__campus__id")
     sessoes = django_filters.CharFilter(method=filter_sessoes)
-
+    
     class Meta:
         model = Atividade
         fields = '__all__'

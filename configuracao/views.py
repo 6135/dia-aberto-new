@@ -15,10 +15,10 @@ import json
 from pip._vendor import requests
 from django.core import serializers
 from utilizadores.views import user_check
-from configuracao.tables import CursoTable, DepartamentoTable, EdificioTable, MenuTable, TemaTable, UOTable
+from configuracao.tables import CursoTable, DepartamentoTable, DiaAbertoTable, EdificioTable, MenuTable, TemaTable, TransporteTable, UOTable
 from django_tables2 import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
-from configuracao.filters import CursoFilter, DepartamentoFilter, EdificioFilter, MenuFilter, TemaFilter, UOFilter
+from configuracao.filters import CursoFilter, DepartamentoFilter, DiaAbertoFilter, EdificioFilter, MenuFilter, TemaFilter, TransporteFilter, UOFilter
 # Create your views here.
 
 class TimeC():
@@ -107,41 +107,38 @@ def showBy(request, list_diaaberto):
 			list_diaaberto = list_diaaberto.filter(datainscricaoatividadesfim__gte=today)
 	return list_diaaberto
 	
-def viewDays(request):
-	user_check_var = user_check(request=request, user_profile=[Administrador])
-	if user_check_var.get('exists') == False: return user_check_var.get('render')
-	user = user_check_var.get('firstProfile')
-	if request.method == 'POST':
-		formFilter = diaAbertoFilterForm(request.POST)
-	else:
-		formFilter = diaAbertoFilterForm()
+class viewDays(SingleTableMixin, FilterView):
 
-	list_diaaberto = Diaaberto.objects.all()	#Obtain all days
+	table_class = DiaAbertoTable
+	template_name = 'configuracao/listaDiaAberto.html'
+	filterset_class = DiaAbertoFilter
+	table_pagination = {
+		'per_page': 10
+	}
 
-	earliest = Diaaberto.objects.all().order_by('ano').first()	#Obtain some constants
-	latest = Diaaberto.objects.all().order_by('ano').last()
-	current = Diaaberto.current()
-	is_open=False
-	latest_year = 9999
-	earliest_year = 0
-	if earliest is not None: 
-		if current is not None:
-			is_open = True
-		latest_year = latest.ano
-		earliest_year = earliest.ano
+	def dispatch(self, request, *args, **kwargs):
+		user_check_var = user_check(request=request, user_profile=[Administrador])
+		if not user_check_var.get('exists'): return user_check_var.get('render')
+		return super().dispatch(request, *args, **kwargs)
+		
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		earliest = Diaaberto.objects.all().order_by('ano').first()	#Obtain some constants
+		latest = Diaaberto.objects.all().order_by('ano').last()
+		current = Diaaberto.current()
+		is_open=False
+		latest_year = 9999
+		earliest_year = 0
+		if earliest is not None: 
+			if current is not None:
+				is_open = True
+			latest_year = latest.ano
+			earliest_year = earliest.ano
+		context["earliest"] = earliest_year
+		context['latest'] = latest_year
+		context["is_open"] = is_open
+		return context
 
-	filterRes = orderBy(request, list_diaaberto)		#Filter/order
-	list_diaaberto = filterRes['list_diaaberto']
-	current = filterRes['current']
-
-	list_diaaberto = showBy(request,list_diaaberto)
-
-	return render(request=request,
-				  template_name='configuracao/listaDiaAberto.html',
-				  context = {'form':formFilter, 'diaabertos': list_diaaberto, 'earliest': earliest_year,
-							'latest': latest_year, 'is_open': is_open, 'current': current,
-							}
-					)
 
 def newDay(request, id=None):
 
@@ -328,17 +325,25 @@ def filtrarTransportes(request, transportes):
 			transportes = transportes.filter(origem = request.POST.get('filter_from'))
 	return transportes
 
-def verTransportes(request):
+class verTransportes(SingleTableMixin, FilterView):
 
-	user_check_var = user_check(request=request, user_profile=[Administrador])
-	if user_check_var.get('exists') == False: return user_check_var.get('render')
+	table_class = TransporteTable
+	template_name = 'configuracao/listaTransportes.html'
+	filterset_class = TransporteFilter
+	table_pagination = {
+		'per_page': 10
+	}
 
-	form = transporteFilterForm(request.POST)
-	transportes = filtrarTransportes(request = request,transportes = Transportehorario.objects.all())
+	def dispatch(self, request, *args, **kwargs):
+		user_check_var = user_check(request=request, user_profile=[Administrador])
+		if not user_check_var.get('exists'): return user_check_var.get('render')
+		return super().dispatch(request, *args, **kwargs)
 
-	return render(request = request,
-				  template_name='configuracao/listaTransportes.html',
-				  context={'horariosTra': transportes, 'form': form})
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		context["campi"] = list(map(lambda x: (x.nome, x.nome), Campus.objects.all()))
+		return context
+
 
 def criarTransporte(request, id = None):
 
@@ -510,10 +515,15 @@ class verEdificios(SingleTableMixin, FilterView):
 		if not user_check_var.get('exists'): return user_check_var.get('render')
 		return super().dispatch(request, *args, **kwargs)
 		
+
 	def get_context_data(self, **kwargs):
-		context = super().get_context_data(**kwargs)
-		context["campi"] = list(map(lambda x: (x.id, x.nome), Campus.objects.all()))
+		context = super(SingleTableMixin, self).get_context_data(**kwargs)
+		table = self.get_table(**self.get_table_kwargs())
+		table.word = "woooooord"
+		context['campi'] = list(map(lambda x: (x.id, x.nome), Campus.objects.all()))
+		context[self.get_context_table_name(table)] = table
 		return context
+
 
 def configurarEdificio(request, id = None):
 

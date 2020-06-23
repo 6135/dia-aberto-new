@@ -2,55 +2,82 @@
 {% block content %}
 {% load l10n %}
 {% load configuracao_tags %}
+{% load django_tables2 %}
 <div class="columns">
     <div class="column is-3">
-        <form method="POST" action="" id='filter'>
-            {% csrf_token %}
-            <div>
+        <form method="get">
             <div class="menu">
-                <p class="menu-label">Filtros Transporte</p>
+                <p class="menu-label">Filtros Edificio</p>
                 <ul class="menu-list">
-                <div class="field">
-                    <!---->
-                    <div class="control has-icons-left is-clearfix">
-                        {{form.searchId}}
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify mdi-24px"></i>
-                        </span>
+                    <div class="field">
+                        <!---->
+                        <div class="control has-icons-left is-clearfix">
+                            <input class='input' id='id_identificador' type='text' name='identificador' value="{{filter.form.identificador.value|default_if_none:''}}" placeholder="Identificador">
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                        <!---->
                     </div>
-                    <!---->
-                </div>
-                <div class="field">
-                    <!---->
-                    <div class="select is-fullwidth">
-                        {{form.filter_from}}
+                    <div class="field">
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select name="{{ filter.form.de.name }}"
+                                    value="{{filter.form.de.value}}">
+                                    <option value="">De qualquer</option>
+                                    {% for value, campus in campi %}
+                                        {% if value != "" %}
+                                        <option value="{{ value }}"
+                                            {% if value|stringformat:'s' == filter.form.de.value %} selected
+                                            {% endif %}>
+                                            De {{ campus }}
+                                        </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
                     </div>
-                    <!---->
-                </div>
-                <div class="field">
-                    <!---->
-                    <div class="select is-fullwidth">
-                        {{form.filter_to}}
+                    <div class="field">
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select name="{{ filter.form.para.name }}"
+                                    value="{{filter.form.para.value}}">
+                                    <option value="">Para qualquer</option>
+                                    {% for value, campus in campi %}
+                                        {% if value != "" %}
+                                        <option value="{{ value }}"
+                                            {% if value|stringformat:'s' == filter.form.para.value %} selected
+                                            {% endif %}>
+                                            Para {{ campus }}
+                                        </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
                     </div>
-                    <!---->
-                </div>                
-                <div class="field">
-                    <button type="submit" onClick="resetForm()" class="button is-danger is-outlined">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                        </span>
-                        <span>Limpar pesquisa</span>
-                    </button>
-                    <button type="Submit" class="button is-success is-outlined">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify mdi-24px"></i>
-                        </span>
-                        <span>Pesquisar</span>
-                    </button>
-                </div>
                 </ul>
-            </div>
-            </div>
+                <div class='field is-grouped' style='margin-top: 5px'>
+                        <p class="control is-expanded">
+                            <a type="button" role="button" href="{% url 'configuracao:verTransportes' %}" class="button is-light is-fullwidth">Limpar</a>
+                        </p>
+                        <p class="control is-expanded">
+                            <button class="button is-primary is-fullwidth" type="submit">
+                                <span class="icon">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                                <span>Pesquisar</span>
+                            </button>
+                        </p>
+                </div>
+            </div>     
         </form>
     </div>
     <div class="column">
@@ -59,124 +86,15 @@
               <li><a href="#">Início</a></li>
               <li class="is-active"><a href="#" aria-current="page">Transportes</a></li>
             </ul>
-          </nav>
+        </nav>
         <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'configuracao:criarTransporte'%}">     
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
             <span>Criar Transporte</span>
-        </a>   
-    <form method="POST">
-        <div class="b-table">
-            <div class="table-wrapper">
-                <table id="table01" class="table has-mobile-cards is-hoverable is-fullwidth">
-                    <thead>
-                        <tr>
-                            <th style="width: 30px;" ></th>
-                            <th  onclick="sortTable(1,false)" style=" cursor: pointer;" class="pre-expandable">
-                                Identificador
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(2,false)" style=" cursor: pointer;" class="pre-expandable">
-                                Tipo
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>                                
-                            </th>
-                            <th onclick="sortTable(3,false)" style=" cursor: pointer;" class="pre-expandable">
-                                Rota
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(4,false)" style=" cursor: pointer;" class="pre-expandable">
-                                Horário
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(5,false)" style=" cursor: pointer;" class="pre-expandable">
-                                Capacidade
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>                            
-                            <th>
-                                Operações
-                            </th>                            
-                        </tr>
-                    </thead>
-                    <tbody> 
-                    {% for horarioTra in horariosTra %}     
-                    <tr draggable="false">
-                        <td class="chevron-cell">
-                            <a role="button" onclick="displayDetails({{horarioTra.id}})">
-                                <span class="">
-                                    <i class="mdi mdi-chevron-right mdi-24px"></i>
-                                </span>
-                            </a>
-                        </td>
-                        <td data-label="Identificador">
-                            {{horarioTra|transport_id}} 
-                        </td>
-                        <td data-label="Tipo">
-                            {{horarioTra|transport_type}}
-                        </td>
-                        <td data-label="Origem - Destino">
-                            {{horarioTra.trip}}
-                        </td>
-                        <td data-label="Horário">
-                            {{horarioTra.horaPartida}}&nbsp;-&nbsp;{{horarioTra.horaChegada}}
-                        </td>
-                        <td data-label="Capacidade">
-                            {{horarioTra|vagas_cap}}
-                        </td>
-                        <td data-label="Operações">
-                            <div class="columns">
-                            {% if horarioTra.origem == "Gambelas" and horarioTra.chegada == "Penha" or horarioTra.origem == "Penha" and horarioTra.chegada == "Gambelas" %}
-                             <div class="column is-1"> 
-                             </div>
-                              &nbsp;
-                            {% else %}
-                                <div class="column is-1">  
-                                    <a id='assign' href="{% url 'configuracao:atribuirTransporte' horarioTra.id %}">
-                                        <span class="icon is-small">
-                                            <i class="mdi mdi-bus-school mdi-24px"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                                &nbsp;
-                                {% endif %}
-                                <div class="column is-1">  
-                                    <a id='edit' href="{% url 'configuracao:editarTransporte' horarioTra.transporte.id%}">
-                                        <span class="icon is-small">
-                                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                        </span>
-                                    </a>
-                                </div>
-                                &nbsp;
-                                <div class="column is-1">                 
-                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Transporte?','{% url 'configuracao:eliminarTransporte' horarioTra.id %}')">
-                                        <span class="icon is-small">
-                                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                                        </span>
-                                    </a> 
-                                </div>
-                            </div> 
-                        </td>                     
-                      </tr> 
-                        
-                    
-                    {% endfor %}
-                    </tbody>
-                </table>
-    </form>
-            </div>
-        </div>
-
-    </div>
+        </a> 
+        {% render_table table %}
+    </div>  
 </div>
 
 {% endblock content %}

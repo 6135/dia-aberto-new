@@ -13,10 +13,10 @@ class Tarefa(models.Model):
     estado = models.CharField(max_length=64)
     coord = models.ForeignKey('utilizadores.Coordenador', models.CASCADE, db_column='CoordenadorUtilizadorID',null=True)  # Field name made lowercase.
     colab = models.ForeignKey('utilizadores.Colaborador', models.CASCADE, db_column='ColaboradorUtilizadorID',null=True,blank=True)  # Field name made lowercase.
-    #tipo = models.CharField(max_length=64)
     created_at = models.DateTimeField(auto_now_add=True)
     dia = models.DateField()
     horario = models.TimeField(blank=False, null=False)
+
     @property
     def tipo(self):
         if TarefaAcompanhar.objects.filter(tarefaid=self.id):
