@@ -17,7 +17,7 @@ class Utilizador(User):
         if Participante.objects.filter(utilizador_ptr_id=self):
             type = self.concat(type=type, string='Participante')
         if ProfessorUniversitario.objects.filter(utilizador_ptr_id=self):
-            type = self.concat(type=type, string='Professor Universitario')
+            type = self.concat(type=type, string='ProfessorUniversitario')
         if Coordenador.objects.filter(utilizador_ptr_id=self):
             type = self.concat(type=type, string='Coordenador')
         if Colaborador.objects.filter(utilizador_ptr_id=self):
@@ -31,6 +31,7 @@ class Utilizador(User):
             type += ', '+string
         return type
 
+    @property
     def firstProfile(self):
         return self.getProfiles().split(' ')[0]
 
