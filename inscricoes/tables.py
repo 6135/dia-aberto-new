@@ -10,12 +10,12 @@ from inscricoes.models import Inscricaosessao
 
 
 class InscricoesTable(tables.Table):
-    grupo = tables.Column('Grupo', accessor='id')
+    grupo = tables.Column('Grupo', accessor='id', attrs={"th": {"width": "65"}})
     horario = tables.Column(verbose_name='Horário')
     nalunos = tables.Column(verbose_name='Qtd', attrs={
-                            "abbr": {"title": "Quantidade"}})
+                            "abbr": {"title": "Quantidade"}, "th": {"width": "48"}})
     acoes = tables.Column('Ações', empty_values=(),
-                          orderable=False, attrs={"td": {"style": "min-width: 104px;"}})
+                          orderable=False, attrs={"th": {"width": "104"}})
     turma = tables.Column(empty_values=())
 
     class Meta:
