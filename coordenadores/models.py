@@ -49,6 +49,7 @@ class TarefaAcompanhar(models.Model):
     def getDescription(self):
         msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.dia.strftime('%d/%m/%y')+" às "+self.horario.strftime('%H horas e %M minutos')+"."
         return msg
+        
 class TarefaAuxiliar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
     sessao = models.ForeignKey('atividades.Sessao', models.CASCADE, db_column='sessao')
