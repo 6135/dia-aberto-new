@@ -187,17 +187,6 @@ def categorias_notificacao_automatica(request, id, nr):
     })
 
 
-# Mensagem pedido de cancelamento da tarefa
-
-def enviar_notificacao_mensagem(request, id):
-    tarefa = Tarefa.objects.get(id=id)
-    nome = tarefa.coord.first_name+" "+tarefa.coord.last_name
-    msg = "A enviar pedido de cancelamento de tarefa a "+nome
-    return render(request=request,
-                  template_name="colaboradores/enviar_notificacao.html",
-                  context={"msg": msg})
-
-
 # Envio de notificação automatica
 
 def enviar_notificacao_automatica(request, sigla, id):
