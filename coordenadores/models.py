@@ -47,7 +47,7 @@ class TarefaAcompanhar(models.Model):
         db_table = 'TarefaAcompanhar'
 
     def getDescription(self):
-        msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.dia.strftime('%d/%m/%y')+" às "+self.horario.strftime('%H horas e %M minutos')+"."
+        msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.tarefa.dia.strftime('%d/%m/%y')+" às "+self.tarefa.horario.strftime('%H horas e %M minutos')+"."
         return msg
         
 class TarefaAuxiliar(models.Model):
@@ -58,7 +58,7 @@ class TarefaAuxiliar(models.Model):
         db_table = 'TarefaAuxiliar'
     
     def getDescription(self):
-        msg = "Auxiliar na atividade "+self.sessaoid.atividadeid.nome+"."
+        msg = "Auxiliar na atividade "+self.sessao.atividadeid.nome+"."
         return msg
 
 class TarefaOutra(models.Model):
