@@ -95,7 +95,7 @@ class UtilizadoresTable(django_tables.Table):
         elif record.firstProfile == 'Administrador':
             if not self.request.user.groups.filter(name='Administrador').exists():
                 terceiro_botao = " "
-            elif Administrador.objects.filter(valido="True").count() > 1:
+            elif record.valido != "True" or Administrador.objects.filter(valido="True").count() > 1:
                 alerta = "Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente."
             elif self.request.user != record.user_ptr:
                 terceiro_botao = """
