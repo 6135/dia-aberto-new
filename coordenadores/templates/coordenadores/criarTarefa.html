@@ -138,14 +138,14 @@ function dropdownDependencies(url){
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
-          $("#id_dias").html(data);
-          $("#id_sessaoid").html('<option value="">Escolha uma sessão</option>');       
+          $("#id_diasDependentes").html(data);
+          $("#id_sessao").html('<option value="">Escolha um horário</option>');       
         }
       });
     }
 
     function sessoesSelect(){
-      var dia = document.getElementById("id_dias").value; 
+      var dia = document.getElementById("id_diasDependentes").value; 
       var atividadeId = document.getElementById("id_atividades").value; 
       $.ajax({                       
         url: "{% url 'coordenadores:sessoesAtividade' %}", 
@@ -156,7 +156,7 @@ function dropdownDependencies(url){
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
-          $("#id_sessaoid").html(data);           
+          $("#id_sessao").html(data);           
         }
       });
     }

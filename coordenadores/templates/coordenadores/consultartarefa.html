@@ -147,8 +147,8 @@
                                     </span>
                                 </a>
                             </td>
-                            <td data-label="Dia">{{tarefa.tarefaauxiliar.sessaoid.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horarios">{{tarefa.tarefaauxiliar.sessaoid.horarioid.inicio}} - {{tarefa.tarefaauxiliar.sessaoid.horarioid.fim}}</td>
+                            <td data-label="Dia">{{tarefa.tarefaauxiliar.sessao.dia|date:'d-m-Y'}}</td>
+                            <td data-label="Horarios">{{tarefa.tarefaauxiliar.sessao.horarioid.inicio}} - {{tarefa.tarefaauxiliar.sessao.horarioid.fim}}</td>
                             <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
                             <td data-label="Atribuido a">{{tarefa.colab|colab_none}}</td>
                             <td data-label="Tipo">{{tarefa.tipo}}</td>
@@ -185,7 +185,7 @@
                                         </p>
                                         <p>
                                             <strong>Professor da Atividade:</strong>
-                                            {{tarefa.tarefaauxiliar.sessaoid.atividadeid.professoruniversitarioutilizadorid.utilizadorid.nome}}
+                                            {{tarefa.tarefaauxiliar.sessao.atividadeid.professoruniversitarioutilizadorid.utilizadorid.nome}}
                                         </p>
                                         <p>
                                             <strong>Colaborador Atribuido:</strong>
@@ -197,15 +197,15 @@
                                         </p>
                                         <p>
                                             <strong>Campus:</strong>
-                                            {{tarefa.tarefaauxiliar.sessaoid.atividadeid.espacoid.edificio.campus.nome}}
+                                            {{tarefa.tarefaauxiliar.sessao.atividadeid.espacoid.edificio.campus.nome}}
                                         </p>
                                         <p>
                                             <strong>Edificio:</strong>
-                                            {{tarefa.tarefaauxiliar.sessaoid.atividadeid.espacoid.edificio.nome}}
+                                            {{tarefa.tarefaauxiliar.sessao.atividadeid.espacoid.edificio.nome}}
                                         </p>
                                         <p>
                                             <strong>Sala:</strong>
-                                            {{tarefa.tarefaauxiliar.sessaoid.atividadeid.espacoid.nome}}
+                                            {{tarefa.tarefaauxiliar.sessao.atividadeid.espacoid.nome}}
                                         </p>
                                          <p>
                                             <strong>Coordenador Responsavel:</strong>

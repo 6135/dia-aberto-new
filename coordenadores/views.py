@@ -24,39 +24,40 @@ def adicionartarefa(request, id = None):
         form_tarefa=TarefaForm(user=request.user.id,data=request.POST,instance=tarefa)
         print(form_tarefa.errors)
         if form_tarefa.is_valid():
-            form_tarefa.save()
+            tarefa_saved=form_tarefa.save()
             if request.POST['tipo'] == 'tarefaAuxiliar':        
-                auxiliar_form = TarefaAuxiliarForm(request.POST,instance=TarefaAuxiliar(tarefaid=form_tarefa.instance))
+                auxiliar_form = TarefaAuxiliarForm(request.POST,instance=TarefaAuxiliar(tarefaid=tarefa_saved))
+                print(auxiliar_form.errors)
                 if auxiliar_form.is_valid():
                     auxiliar_form.save()
-                    if temp == "atribuir": #Enviar Notificacao Automatica !!!!!!
-                        views.enviar_notificacao_automatica(request,"tarefaAtribuida",id) #Enviar Notificacao Automatica !!!!!!
-                    elif temp == "alterar": #Enviar Notificacao Automatica !!!!!!
-                        views.enviar_notificacao_automatica(request,"tarefaAlterada",id) #Enviar Notificacao Automatica !!!!!!
+                    #if temp == "atribuir": #Enviar Notificacao Automatica !!!!!!
+                    #    views.enviar_notificacao_automatica(request,"tarefaAtribuida",id) #Enviar Notificacao Automatica !!!!!!
+                    #elif temp == "alterar": #Enviar Notificacao Automatica !!!!!!
+                    #    views.enviar_notificacao_automatica(request,"tarefaAlterada",id) #Enviar Notificacao Automatica !!!!!!
                     return redirect('coordenadores:consultarTarefa') 
             elif request.POST['tipo'] == 'tarefaOutra': 
-                outra_form = TarefaOutraForm(request.POST,instance=TarefaOutra(tarefaid=form_tarefa.instance)) 
+                outra_form = TarefaOutraForm(request.POST,instance=TarefaOutra(tarefaid=tarefa_saved)) 
                 print(outra_form.errors)
                 if outra_form.is_valid():
                     outra_form.save()
-                    if temp == "atribuir" and form_tarefa.instance.colab: #Enviar Notificacao Automatica !!!!!!
-                        views.enviar_notificacao_automatica(request,"tarefaAtribuida",id) #Enviar Notificacao Automatica !!!!!!
-                    elif temp == "alterar" and form_tarefa.instance.colab: #Enviar Notificacao Automatica !!!!!!
-                        views.enviar_notificacao_automatica(request,"tarefaAlterada",id) #Enviar Notificacao Automatica !!!!!!
+                    #if temp == "atribuir" and tarefa_saved.colab: #Enviar Notificacao Automatica !!!!!!
+                    #    views.enviar_notificacao_automatica(request,"tarefaAtribuida",id) #Enviar Notificacao Automatica !!!!!!
+                    #elif temp == "alterar" and tarefa_saved.colab: #Enviar Notificacao Automatica !!!!!!
+                    #    views.enviar_notificacao_automatica(request,"tarefaAlterada",id) #Enviar Notificacao Automatica !!!!!!
                     return redirect('coordenadores:consultarTarefa') 
             elif request.POST['tipo'] == 'tarefaAcompanhar': 
-                acompanhar_form = TarefaAcompanharForm(request.POST,instance=TarefaAcompanhar(tarefaid=form_tarefa.instance)) 
+                acompanhar_form = TarefaAcompanharForm(request.POST,instance=TarefaAcompanhar(tarefaid=tarefa_saved)) 
                 
                 if acompanhar_form.is_valid():
                     acompanhar_form.save()
-                    if temp == "atribuir": #Enviar Notificacao Automatica !!!!!!
-                        views.enviar_notificacao_automatica(request,"tarefaAtribuida",id) #Enviar Notificacao Automatica !!!!!!
-                    elif temp == "alterar": #Enviar Notificacao Automatica !!!!!!
-                        views.enviar_notificacao_automatica(request,"tarefaAlterada",id) #Enviar Notificacao Automatica !!!!!!
+                    #if temp == "atribuir": #Enviar Notificacao Automatica !!!!!!
+                    #    views.enviar_notificacao_automatica(request,"tarefaAtribuida",id) #Enviar Notificacao Automatica !!!!!!
+                    #elif temp == "alterar": #Enviar Notificacao Automatica !!!!!!
+                    #    views.enviar_notificacao_automatica(request,"tarefaAlterada",id) #Enviar Notificacao Automatica !!!!!!
                     return redirect('coordenadores:consultarTarefa') 
                 print(acompanhar_form.errors)
             else:
-                form_tarefa.instance.delete()      
+                tarefa_saved.delete()      
     return render(request=request,
                 template_name='coordenadores/criarTarefa.html',
                 context={'formTarefa':form_tarefa}
@@ -67,17 +68,16 @@ def tipoTarefa(request):
     if request.method == 'POST':
         tipo = request.POST['tipo']
         if tipo == 'tarefaAuxiliar':
-            tarefa = TarefaForm(user=request.user.id,data=request.POST,instance=tarefa)
             form = TarefaAuxiliarForm()
             template = 'coordenadores/tarefaAuxiliar.html'
         elif tipo == 'tarefaAcompanhar':
             form = TarefaAcompanharForm()
             template = 'coordenadores/tarefaAcompanhar.html'
         elif tipo == 'tarefaOutra':
-            form = TarefaOutraForm()
-            tarefa = TarefaForm(user=request.user.id,data=request.POST,instance=tarefa)
+            form = TarefaOutraForm()       
             template = 'coordenadores/tarefaOutra.html'
-    return render(request=request,template_name=template,context={'form':form,'tarefa':tarefa})
+    tarefa_form = TarefaForm(user=request.user.id,data=request.POST,instance=tarefa)
+    return render(request=request,template_name=template,context={'form':form,'tarefa':tarefa_form})
 
 def diasAtividade(request):
     default = {
