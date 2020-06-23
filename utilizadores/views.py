@@ -78,6 +78,7 @@ class consultar_utilizadores(SingleTableMixin, FilterView):
         context = super(SingleTableMixin, self).get_context_data(**kwargs)
         table = self.get_table(**self.get_table_kwargs())
         table.request = self.request
+        table.fixed = True
         context[self.get_context_table_name(table)] = table
         return context
 

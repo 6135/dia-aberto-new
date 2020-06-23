@@ -3,8 +3,9 @@
 {% block table-wrapper %}
 {% block table %}
 <div class="table-wrapper">
-    <table class="main-table table has-mobile-cards is-fullwidth is-striped {% block table_class %}{% endblock table_class %}"
-        {% render_attrs table.attrs %}>
+    <table
+        class="main-table table has-mobile-cards is-fullwidth is-striped {% block table_class %}{% endblock table_class %}"
+        {% if table.fixed %}style="table-layout: fixed;" {% endif %} {% render_attrs table.attrs %}>
         {% block table.thead %}
         {% if table.show_header %}
         <thead {{ table.attrs.thead.as_html }}>
@@ -37,7 +38,7 @@
         <tbody {{ table.attrs.tbody.as_html }}>
             {% for row in table.paginated_rows %}
             {% block table.tbody.row %}
-            <tr {{ row.attrs.as_html }}>
+            <tr {{ row.attrs.as_html }}  style="word-wrap: break-word;">
                 {% block seta_tr %}
                 {% endblock seta_tr %}
                 {% for column, cell in row.items %}

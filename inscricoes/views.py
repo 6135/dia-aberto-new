@@ -221,6 +221,9 @@ class ConsultarInscricoes(SingleTableMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        table = self.get_table(**self.get_table_kwargs())
+        table.fixed = True
+        context[self.get_context_table_name(table)] = table
         context["departamentos"] = list(
             map(lambda x: (x.id, x.nome), Departamento.objects.all()))
         return context

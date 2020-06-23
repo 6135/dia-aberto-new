@@ -3,8 +3,8 @@ from utilizadores.models import Utilizador
 from django.db.models import Q
 
 get_valido_choices = [
-    ('True', 'Válido'),
-    ('False', 'Por validar'),
+    ('True', 'Confirmado'),
+    ('False', 'Por confirmar'),
     ('Rejeitado', 'Rejeitado'),
 ]
 

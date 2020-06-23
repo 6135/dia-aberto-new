@@ -9,11 +9,11 @@ class UtilizadoresTable(django_tables.Table):
     nome = django_tables.Column(
         empty_values=(), order_by=("first_name", "last_name"))
     email = django_tables.Column(
-        'Email', attrs={"td": {"style": "max-width: 14vw; word-wrap: break-word;"}})
-    valido = django_tables.Column('Estado')
+        'Email')
+    valido = django_tables.Column('Estado', attrs={"th": {"width": "130"}})
     tipo = django_tables.Column(accessor='firstProfile', orderable=False)
     acoes = django_tables.Column('Ações', empty_values=(),
-                                 orderable=False, attrs={"td": {"style": "min-width: 104px;"}})
+                                 orderable=False, attrs={"th": {"width": "104"}})
 
     class Meta:
         model = Utilizador
@@ -49,7 +49,7 @@ class UtilizadoresTable(django_tables.Table):
             estado = "Rejeitado"
             cor = "is-danger"
         return format_html(f"""
-        <span class="tag {cor}" style="font-size: small; min-width: 17vh;">
+        <span class="tag {cor}" style="font-size: small; min-width: 110px;">
         {estado}
         </span>
         """)
@@ -78,8 +78,8 @@ class UtilizadoresTable(django_tables.Table):
             segundo_botao = f"""
             <a href='{reverse('utilizadores:alterar-utilizador-admin', args=[record.id])}'
                 data-tooltip="Editar">
-                <span class="icon has-text-warning">
-                    <i class="mdi mdi-pencil mdi-24px"></i>
+                <span class="icon">
+                    <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                 </span>
             </a>
             """

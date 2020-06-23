@@ -10,12 +10,12 @@ from inscricoes.models import Inscricaosessao
 
 
 class InscricoesTable(tables.Table):
-    grupo = tables.Column('Grupo', accessor='id')
+    grupo = tables.Column('Grupo', accessor='id', attrs={"th": {"width": "65"}})
     horario = tables.Column(verbose_name='Horário')
     nalunos = tables.Column(verbose_name='Qtd', attrs={
-                            "abbr": {"title": "Quantidade"}})
+                            "abbr": {"title": "Quantidade"}, "th": {"width": "48"}})
     acoes = tables.Column('Ações', empty_values=(),
-                          orderable=False, attrs={"td": {"style": "min-width: 104px;"}})
+                          orderable=False, attrs={"th": {"width": "80"}})
     turma = tables.Column(empty_values=())
 
     class Meta:
@@ -52,16 +52,10 @@ class InscricoesTable(tables.Table):
     def render_acoes(self, record):
         return format_html(f"""
         <div>
-            <a href='{reverse("inscricoes:consultar-inscricao", kwargs={"pk": record.pk, "step": 5})}'
-               data-tooltip="Consultar">
-                <span class="icon has-text-info">
-                    <i class="mdi mdi-eye mdi-24px"></i>
-                </span>
-            </a>
             <a href='{reverse("inscricoes:consultar-inscricao", kwargs={"pk": record.pk})}'
                 data-tooltip="Editar">
-                <span class="icon has-text-warning">
-                    <i class="mdi mdi-pencil mdi-24px"></i>
+                <span class="icon">
+                    <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                 </span>
             </a>
             <a onclick="alert.render('Tem a certeza que pretende eliminar esta inscrição?','{reverse("inscricoes:apagar-inscricao", kwargs={"pk": record.pk})}')"
