@@ -78,8 +78,8 @@ class UtilizadoresTable(django_tables.Table):
             segundo_botao = f"""
             <a href='{reverse('utilizadores:alterar-utilizador-admin', args=[record.id])}'
                 data-tooltip="Editar">
-                <span class="icon has-text-warning">
-                    <i class="mdi mdi-pencil mdi-24px"></i>
+                <span class="icon">
+                    <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                 </span>
             </a>
             """
