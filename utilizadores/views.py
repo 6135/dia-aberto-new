@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from .models import Utilizador, ProfessorUniversitario, Participante, Colaborador, Coordenador
 from django.shortcuts import redirect
 from .forms import *
+from .tables import UtilizadoresTable
 from django.contrib import messages
 from django.contrib.auth import *
 from django.core.mail import send_mail
@@ -15,6 +16,7 @@ from inscricoes.models import Inscricao
 from django.db import transaction
 from atividades.models import Sessao
 from django.db.models import F
+from django_tables2 import SingleTableView
 
 # Verifica se o utilizador que esta logado pertence a pelo menos um dos perfis mencionados 
 # e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
@@ -55,10 +57,18 @@ def load_cursos(request):
     return render(request, 'utilizadores/curso_dropdown_list_options.html', {'cursos': cursos})
 
 
+class consultar_utilizadores(SingleTableView):
+    table_class = UtilizadoresTable
+    template_name = 'utilizadores/consultar_utilizadores.html'
+    model = Utilizador
+    table_pagination = {
+        'per_page': 10
+    }
+
 
 # Consultar todos os utilizadores com as funcionalidades dos filtros 
 
-def consultar_utilizadores(request):
+def consultar_utilizadores_old(request):
         
     if request.user.is_authenticated:    
         user = get_user(request)
