@@ -169,9 +169,9 @@ class TarefaOutraForm(Form):
 #            'descricao' : Textarea(attrs={'class':'textarea'}),
 #            }           
 #   
-#def get_dep_choices():
-#    return [(-1,'Mostra todos os Departamentos')] + [(departamento.id,departamento.nome) for departamento in Departamento.objects.all()]
-#
+def get_dep_choices():
+    return [(-1,'Mostra todos os Departamentos')] + [(departamento.id,departamento.nome) for departamento in Departamento.objects.all()]
+
 class tarefaFilterForm(Form):
     searchTarefa = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Pesquisa'}), required=False)
     Concluida=BooleanField(widget=CheckboxInput(),required=False)
