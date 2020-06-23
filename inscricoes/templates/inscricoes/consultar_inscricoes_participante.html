@@ -71,16 +71,6 @@
                     </b-field>
                     <div class="field">
                         <div class="control has-icons-left">
-                            <input class="input" name="{{ filter.form.participante.name }}"
-                                value="{{ filter.form.participante.value|default_if_none:'' }}" type="text"
-                                placeholder="Nome do Responsável">
-                            <span class="icon is-left">
-                                <i class="mdi mdi-magnify mdi-24px"></i>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <div class="control has-icons-left">
                             <div class="select is-fullwidth">
                                 <select name="{{ filter.form.departamento.name }}"
                                     value="{{filter.form.departamento.value}}">
@@ -165,10 +155,11 @@
         <nav aria-label="breadcrumbs" class="breadcrumb">
             <ul>
                 <li><a href="{% url 'home' %}">Início</a></li>
-                <li class="is-active"><a href="{% url 'inscricoes:consultar-inscricoes' %}">Inscrições</a></li>
+                <li class="is-active"><a href="{% url 'inscricoes:consultar-inscricoes-participante' %}">Inscrições</a>
+                </li>
             </ul>
         </nav>
-        {% render_table table %}
+        {% render_table table 'inscricoes/consultar_inscricoes_tabela.html' %}
     </div>
 </div>
 {% endblock content %}

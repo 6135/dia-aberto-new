@@ -52,19 +52,22 @@ class InscricoesTable(tables.Table):
     def render_acoes(self, record):
         return format_html(f"""
         <div>
-            <a href='{reverse("inscricoes:consultar-inscricao", kwargs={"pk": record.pk, "step": 5})}'>
+            <a href='{reverse("inscricoes:consultar-inscricao", kwargs={"pk": record.pk, "step": 5})}'
+               data-tooltip="Consultar">
                 <span class="icon has-text-info">
                     <i class="mdi mdi-eye mdi-24px"></i>
                 </span>
             </a>
-            <a href='{reverse("inscricoes:consultar-inscricao", kwargs={"pk": record.pk})}'>
+            <a href='{reverse("inscricoes:consultar-inscricao", kwargs={"pk": record.pk})}'
+                data-tooltip="Editar">
                 <span class="icon has-text-warning">
                     <i class="mdi mdi-pencil mdi-24px"></i>
                 </span>
             </a>
-            <a onclick="alert.render('Tem a certeza que pretende eliminar esta inscrição?','{reverse("inscricoes:apagar-inscricao", kwargs={"pk": record.pk})}')">
+            <a onclick="alert.render('Tem a certeza que pretende eliminar esta inscrição?','{reverse("inscricoes:apagar-inscricao", kwargs={"pk": record.pk})}')"
+                data-tooltip="Apagar">
                 <span class="icon has-text-danger">
-                    <i class="mdi mdi-close-box mdi-24px"></i>
+                    <i class="mdi mdi-trash-can mdi-24px"></i>
                 </span>
             </a>
         </div>

@@ -12,6 +12,15 @@ def filter_departamento(queryset, name, value):
     )
 
 
+def filter_nome_responsavel(queryset, name, value):
+    return queryset.filter(
+        Exists(Responsavel.objects.filter(
+            inscricao=OuterRef('pk'),
+            nome__icontains=value
+        ))
+    )
+
+
 class InscricaoFilter(django_filters.FilterSet):
     areacientifica = django_filters.CharFilter(
         field_name="areacientifica", lookup_expr='icontains')
@@ -21,7 +30,7 @@ class InscricaoFilter(django_filters.FilterSet):
         field_name="nalunos", lookup_expr='lte')
     departamento = django_filters.CharFilter(method=filter_departamento)
     participante = django_filters.CharFilter(
-        field_name="participante__nome", lookup_expr='icontains')
+        method=filter_nome_responsavel)
 
     class Meta:
         model = Inscricao

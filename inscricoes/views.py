@@ -212,7 +212,6 @@ class ConsultarInscricao(View):
 
 class ConsultarInscricoes(SingleTableMixin, FilterView):
     table_class = InscricoesTable
-    template_name = 'inscricoes/consultar_inscricoes.html'
 
     filterset_class = InscricaoFilter
 
@@ -222,12 +221,14 @@ class ConsultarInscricoes(SingleTableMixin, FilterView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["departamentos"] = list(map(lambda x: (x.id, x.nome), Departamento.objects.all()))
+        context["departamentos"] = list(
+            map(lambda x: (x.id, x.nome), Departamento.objects.all()))
         return context
-    
 
 
 class MinhasInscricoes(ConsultarInscricoes):
+    template_name = 'inscricoes/consultar_inscricoes_participante.html'
+
     def dispatch(self, request, *args, **kwargs):
         user_check_var = user_check(
             request=request, user_profile=[Participante])
@@ -240,9 +241,11 @@ class MinhasInscricoes(ConsultarInscricoes):
 
 
 class InscricoesDepartamento(ConsultarInscricoes):
+    template_name = 'inscricoes/consultar_inscricoes_coordenador.html'
+
     def dispatch(self, request, *args, **kwargs):
         user_check_var = user_check(request=request, user_profile=[
-            Coordenador, Participante, Administrador])
+            Coordenador])
         if not user_check_var.get('exists'):
             return user_check_var.get('render')
         coordenador = Coordenador.objects.get(user_ptr=self.request.user)
@@ -252,6 +255,17 @@ class InscricoesDepartamento(ConsultarInscricoes):
                 sessao__atividadeid__professoruniversitarioutilizadorid__departamento=coordenador.departamento
             ))
         )
+        return super().dispatch(request, *args, **kwargs)
+
+
+class InscricoesAdmin(ConsultarInscricoes):
+    template_name = 'inscricoes/consultar_inscricoes_admin.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        user_check_var = user_check(request=request, user_profile=[
+            Administrador])
+        if not user_check_var.get('exists'):
+            return user_check_var.get('render')
         return super().dispatch(request, *args, **kwargs)
 
 

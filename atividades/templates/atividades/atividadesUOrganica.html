@@ -231,6 +231,9 @@
                                                         {% if atividade.estado != "Aceite" %}
                                                         <th><div class="th-wrap" style="width:200px">Conflitos com a Atividade</div></th>
                                                         {% endif %}
+                                                        {% if atividade.estado == "Aceite" and atividade.nrcolaboradoresnecessario > 0 %}
+                                                        <th><div class="th-wrap" style="width:200px">Colaborador Atribuido</div></th>
+                                                        {% endif %}
                                                     </tr>
                                                 </thead>
                                                 {% for  sessao in  sessoes%}
@@ -250,6 +253,13 @@
                                                                 {% endfor %}
                                                                 </p>
                                                                 </td>
+                                                                {% endif %}
+                                                                {% if atividade.estado == "Aceite" and atividade.nrcolaboradoresnecessario > 0 %}
+                                                                    {% for col in colaboradores %}
+                                                                        {% if col.sessao.id == sessao.id %}
+                                                                        <td data-label="Colaborador">{{col.tarefaid.colab.utilizador_ptr_id.user_ptr_id.first_name}} {{col.tarefaid.colab.utilizador_ptr_id.user_ptr_id.last_name}}</td> 
+                                                                        {% endif %} 
+                                                                    {% endfor %}
                                                                 {% endif %}
                                                             </tr>
                                                         </tbody>

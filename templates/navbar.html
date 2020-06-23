@@ -25,7 +25,7 @@
         Criar Inscrição
       </a>
       {% if request.user|inscrito %}
-      <a href="{% url 'inscricoes:minhas-inscricoes' %}" class="navbar-item">
+      <a href="{% url 'inscricoes:consultar-inscricoes-participante' %}" class="navbar-item">
         Minhas Inscrições
       </a>
       {% endif %}
@@ -41,7 +41,7 @@
       <a href="{% url 'atividades:atividadesUOrganica' %}" class="navbar-item">
         Atividades dos Departamentos
       </a>
-      <a href="{% url 'inscricoes:consultar-inscricoes-departamento' %}" class="navbar-item">
+      <a href="{% url 'inscricoes:consultar-inscricoes-coordenador' %}" class="navbar-item">
         Inscrições
       </a>
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
@@ -57,7 +57,7 @@
       <a href="{% url 'configuracao:verTransportes' %}" class="navbar-item">
         Transportes
       </a>
-      <a href="{% url 'inscricoes:consultar-inscricoes' %}" class="navbar-item">
+      <a href="{% url 'inscricoes:consultar-inscricoes-admin' %}" class="navbar-item">
         Inscrições
       </a>
       <a href="{% url 'configuracao:verMenus' %}" class="navbar-item">
@@ -280,6 +280,10 @@
                   style="margin-right: 0.9rem">
                   <span>
                     <span class="icon">
+                    {% if request.user|nr_mensagens > 0 %}
+                    <span id="badge-inject" title="Badge top right"
+                        class="badge is-warning">{{request.user|nr_mensagens}}</span>
+                    {% endif %}
                       <i class="mdi mdi-message mdi-24px"></i>
                     </span>
                   </span>
@@ -288,27 +292,30 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu6" role="menu" style="min-width: 23rem">
               <div class="dropdown-content">
+              {% if request.user|nr_mensagens > 0 %}
+                {% for msg in request.user|mensagens %}
+                <div data-tooltip="Click para ver detalhes">
                 <div class="dropdown-item">
-                  Mensagem 1
+                  {{msg.mensagem.titulo}}
+                </div>
                 </div>
                 <hr class="dropdown-divider">
+                
+                {% endfor %}
+                {% else %}
                 <div class="dropdown-item">
-                  Mensagem 2
+                <strong>Não tem mensagens</strong>
                 </div>
-                <hr class="dropdown-divider">
-                <div class="dropdown-item">
-                  Mensagem 3
-                </div>
-                <hr class="dropdown-divider">
+                {% endif %}
                 <div class="dropdown-item level">
                   <div class="level-left">
                     <span class="icon">
                       <i class="mdi mdi-message-text"></i>
                     </span>
-                    <a href={% url 'notificacoes:enviar-notificacao' %}>Nova mensagem</a>
+                    <a href="{% url 'notificacoes:enviar-notificacao' %}">Nova mensagem</a>
                   </div>
                   <div class="level-right">
-                    <small><a href={% url 'notificacoes:enviar-notificacao' %}>Ver todas as mensagens</a></small>
+                    <small><a href="{% url 'notificacoes:detalhes-mensagem' 0 0 %}">Ver todas as mensagens</a></small>
                   </div>
                 </div>
               </div>
@@ -477,16 +484,15 @@
 {% register_notify callbacks='fill_notification_badge,lista_notificacoes,my_special_notification_callback' %}
 
 <script>
-
-  $('#dropdown_definicoes').click(function(e) {
+  $('#dropdown_definicoes').click(function (e) {
     $('#mensagens-dropdown').removeClass('is-active');
   })
 
-  $('#mensagens-dropdown').click(function(e) {
+  $('#mensagens-dropdown').click(function (e) {
     $('#dropdown_definicoes').removeClass('is-active');
   })
 
-  $('#notificacoes_trigger').click(function(e) {
+  $('#notificacoes_trigger').click(function (e) {
     $('#dropdown_definicoes').removeClass('is-active');
     $('#mensagens-dropdown').removeClass('is-active');
   })
