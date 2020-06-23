@@ -21,6 +21,25 @@ from datetime import datetime, timedelta
 Notificacao = load_model('notificacoes', 'Notificacao')
 
 
+class NotificacaoTestEnviarMensagens(TestCase):
+    ''' Testes unitarios para a componente notificacoes - Testes enviar mensagens '''
+    def setUp(self):
+        self.user_recipient = Utilizador(username="andreeee1", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt",contacto="+351967321393",valido="True")
+        self.user_emissor = Utilizador(username="andreeeeeeee1", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt",contacto="+351967321393",valido="True")
+        self.user_recipient.save()
+        self.user_emissor.save()
+
+
+
+    def teste_criar_mensagem(self):
+
+        info = InformacaoMensagem(data=timezone.now() + timedelta(days=5), pendente=True, titulo = "teste",
+                              descricao = "teste", emissor = self.user_emissor , recetor = self.user_recipient, tipo = "register" , lido = False)
+        info.save()
+        self.assertEqual("teste", info.descricao)
+
+
+
 
 class NotificacaoTestInformacaoNotificacao(TestCase):
     ''' Testes unitarios para a componente notificacoes - Testes à tabela InformacaoNotificacao para notificações que demorem mais de 5 dias a ser recebidas.
@@ -39,6 +58,23 @@ class NotificacaoTestInformacaoNotificacao(TestCase):
                               descricao = "teste", emissor = self.user_emissor , recetor = self.user_recipient, tipo = "register" , lido = False)
         info.save()
         self.assertEqual("teste", info.descricao)
+
+
+    def teste_nao_enviar_notificacao_informacao_temporaria(self):
+
+        info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = "teste",
+                              descricao = "teste", emissor = self.user_emissor , recetor = self.user_recipient, tipo = "register" , lido = False)
+        info.save()
+        self.assertEqual(False, timezone.now() >= info.data)
+        
+
+    def teste_enviar_notificacao_informacao_temporaria(self):
+
+        info = InformacaoNotificacao(data=timezone.now() , pendente=True, titulo = "teste",
+                              descricao = "teste", emissor = self.user_emissor , recetor = self.user_recipient, tipo = "register" , lido = False)
+        info.save()
+        self.assertEqual(True, timezone.now() >= info.data)
+            
 
 class NotificacaoTestGrupos(TestCase):
     ''' Testes unitarios para a componente notificacoes - Grupos e listas de utilizadores '''
