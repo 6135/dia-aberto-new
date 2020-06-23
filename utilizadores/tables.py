@@ -13,7 +13,7 @@ class UtilizadoresTable(django_tables.Table):
     valido = django_tables.Column('Estado', attrs={"th": {"width": "130"}})
     tipo = django_tables.Column(accessor='firstProfile', orderable=False)
     acoes = django_tables.Column('Ações', empty_values=(),
-                                 orderable=False, attrs={"th": {"width": "104"}})
+                                 orderable=False, attrs={"th": {"width": "110"}})
 
     class Meta:
         model = Utilizador
@@ -95,7 +95,7 @@ class UtilizadoresTable(django_tables.Table):
         elif record.firstProfile == 'Administrador':
             if not self.request.user.groups.filter(name='Administrador').exists():
                 terceiro_botao = " "
-            elif Administrador.objects.filter(valido="True").count() > 1:
+            elif record.valido != "True" or Administrador.objects.filter(valido="True").count() > 1:
                 alerta = "Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente."
             elif self.request.user != record.user_ptr:
                 terceiro_botao = """
