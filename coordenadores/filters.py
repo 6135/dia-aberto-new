@@ -12,6 +12,8 @@ class TarefaFilter(django_filters.FilterSet):
         ('Cancelada','Cancelada'),('Inicida','Iniciada'),('naoConcluida','Não Concluída')], widget=CheckboxSelectMultiple())
     tipo = django_filters.MultipleChoiceFilter(field_name='tipo', choices=[('tarefaAuxiliar','Auxiliar'),('tarefaAcompanhar','Acompanhar'),
         ('tarefaOutra','Outra')], widget=CheckboxSelectMultiple())
+    dia = django_filters.DateFilter(label="dia")
+    colab = django_filters.ChoiceFilter(label="colab")
     class Meta:
         model = Tarefa
         fields = '__all__'
