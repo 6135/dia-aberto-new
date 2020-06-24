@@ -403,59 +403,59 @@ def apagar_utilizador(request, id):
     else:
         return redirect('utilizadores:mensagem',5)
 
-
     user = User.objects.get(id=id)
-    if user.groups.filter(name = "Coordenador").exists():
-        u = Coordenador.objects.filter(id=id)
-    elif user.groups.filter(name = "Administrador").exists():
-        u = Administrador.objects.filter(id=id)
-    elif user.groups.filter(name = "ProfessorUniversitario").exists():
-        u = ProfessorUniversitario.objects.filter(id=id)
-    elif user.groups.filter(name = "Colaborador").exists():
-        u = Colaborador.objects.filter(id=id)
-    elif user.groups.filter(name="Participante").exists():
-        u = Participante.objects.get(id=id)
-        for inscricao in Inscricao.objects.filter(participante=u):
-            inscricaosessao_set = inscricao.inscricaosessao_set.all()
-            for inscricaosessao in inscricaosessao_set:
-                sessaoid = inscricaosessao.sessao.id
-                nparticipantes = inscricaosessao.nparticipantes
-                with transaction.atomic():
-                    sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
-                    sessao.vagas = F('vagas') + nparticipantes
-                    sessao.save()
-            inscricao.delete()
-    else:
-        u= user     
-
-    print(u)
-    u.delete() 
+    try:
+        if user.groups.filter(name = "Coordenador").exists():
+            u = Coordenador.objects.get(id=id)
+        elif user.groups.filter(name = "Administrador").exists():
+            u = Administrador.objects.get(id=id)
+        elif user.groups.filter(name = "ProfessorUniversitario").exists():
+            u = ProfessorUniversitario.objects.get(id=id)
+        elif user.groups.filter(name = "Colaborador").exists():
+            u = Colaborador.objects.get(id=id)
+        elif user.groups.filter(name="Participante").exists():
+            u = Participante.objects.get(id=id)
+            for inscricao in Inscricao.objects.filter(participante=u):
+                inscricaosessao_set = inscricao.inscricaosessao_set.all()
+                for inscricaosessao in inscricaosessao_set:
+                    sessaoid = inscricaosessao.sessao.id
+                    nparticipantes = inscricaosessao.nparticipantes
+                    with transaction.atomic():
+                        sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
+                        sessao.vagas = F('vagas') + nparticipantes
+                        sessao.save()
+                inscricao.delete()
+        else:
+            u = user    
+        u.delete() 
+    except:
+        return redirect('utilizadores:mensagem',13)
     return redirect('utilizadores:consultar-utilizadores')   
 
 
 #Apagar a propria conta 
 
 def apagar_proprio_utilizador(request):  
-
-    if request.user.is_authenticated:
-        id=request.user.id  
-        user = get_user(request)
-        if user.groups.filter(name = "Coordenador").exists():
-            u = Coordenador.objects.filter(id=id)
-        elif user.groups.filter(name = "Administrador").exists():
-            u = Administrador.objects.filter(id=id)
-        elif user.groups.filter(name = "ProfessorUniversitario").exists():
-            u = ProfessorUniversitario.objects.filter(id=id)
-        elif user.groups.filter(name = "Colaborador").exists():
-            u = Colaborador.objects.filter(id=id)
-        elif user.groups.filter(name = "Participante").exists():
-            u = Participante.objects.filter(id=id) 
+    try:
+        if request.user.is_authenticated:
+            id=request.user.id  
+            user = get_user(request)
+            if user.groups.filter(name = "Coordenador").exists():
+                u = Coordenador.objects.filter(id=id)
+            elif user.groups.filter(name = "Administrador").exists():
+                u = Administrador.objects.filter(id=id)
+            elif user.groups.filter(name = "ProfessorUniversitario").exists():
+                u = ProfessorUniversitario.objects.filter(id=id)
+            elif user.groups.filter(name = "Colaborador").exists():
+                u = Colaborador.objects.filter(id=id)
+            elif user.groups.filter(name = "Participante").exists():
+                u = Participante.objects.filter(id=id) 
+            else:
+                u= user     
         else:
-            u= user     
-    else:
-        return redirect('utilizadores:mensagem',5)
-
-
+            return redirect('utilizadores:mensagem',5)
+    except:
+        return redirect('utilizadores:mensagem',13)
     u.delete() 
     logout(request)
     return redirect('utilizadores:mensagem',7)   
@@ -797,7 +797,7 @@ def mensagem(request, id, *args, **kwargs):
         m = "Ainda não é permitido criar inscrições"
         tipo = "error"
     elif id == 13:
-        m = "Erro ao apagar dados do participante"
+        m = "Erro ao apagar dados do utilizador"
         tipo = "error" 
     elif id == 14:
         m = "Não existem mensagens"
