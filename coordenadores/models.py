@@ -37,6 +37,23 @@ class Tarefa(models.Model):
             tmp = TarefaOutra.objects.get(tarefaid=self.id)
         return tmp.getDescription()
 
+    def get_tarefa_especifica(self):
+        if self.tipo == "tarefaAcompanhar":
+            tmp = TarefaAcompanhar.objects.get(tarefaid=self.id)
+        elif self.tipo == "tarefaAuxiliar":   
+            tmp = TarefaAuxiliar.objects.get(tarefaid=self.id)
+        else:
+            tmp = TarefaOutra.objects.get(tarefaid=self.id)
+        return tmp
+
+    def get_outra_descricao(self):
+        tarefa = TarefaOutra.objects.get(tarefaid=self.id)
+        if tarefa is not None:
+            return tarefa.descricao
+        else:
+            return ""
+
+
 class TarefaAcompanhar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
     origem = models.CharField(max_length=255, db_column='origem', blank=False, null=False)
