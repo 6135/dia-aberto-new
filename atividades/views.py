@@ -75,7 +75,7 @@ class AtividadesCoordenador(SingleTableMixin, FilterView):
     table_pagination = {
 		'per_page': 10
 	}
-    user_check_var = None
+    
     def dispatch(self, request, *args, **kwargs):
         user_check_var = user_check(request=request, user_profile=[Coordenador])
         if not user_check_var.get('exists'): return user_check_var.get('render')
