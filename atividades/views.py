@@ -51,14 +51,14 @@ class AtividadesProfessor(SingleTableMixin, FilterView):
 	}
     
 
-    def dispatch(self, request, *args, **kwargs):
-        user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
-        if not user_check_var.get('exists'): return user_check_var.get('render')
-        self.user_check_var = user_check_var
-        return super().dispatch(request, *args, **kwargs)
+    #def dispatch(self, request, *args, **kwargs):
+    #    user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
+    #    if not user_check_var.get('exists'): return user_check_var.get('render')
+    #    self.user_check_var = user_check_var
+    #    return super().dispatch(request, *args, **kwargs)
 
-    def get_queryset(self):
-        return Atividade.objects.filter(professoruniversitarioutilizadorid=self.user_check_var.get('firstProfile')).exclude(estado="nsub")
+    #def get_queryset(self):
+    #    return Atividade.objects.filter(professoruniversitarioutilizadorid=self.user_check_var.get('firstProfile')).exclude(estado="nsub")
     
 
 

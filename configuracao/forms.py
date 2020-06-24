@@ -69,10 +69,11 @@ class diaAbertoFilterForm(Form):
 
 def get_diaaberto_choices():
     dia_choices = Diaaberto.objects.all()
+
     return [('','Escolha um Dia Aberto')]+[(dia.id,dia.ano) for dia in dia_choices]
 
 def get_campus_choices():
-    [(camp.id,camp.nome) for camp in Campus.objects.all()]
+    return [(camp.id,camp.nome) for camp in Campus.objects.all()]
 
 class menuForm(ModelForm):
     diaaberto = ChoiceField(choices=get_diaaberto_choices,widget=Select())
