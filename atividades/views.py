@@ -15,7 +15,7 @@ from django.forms.widgets import Select
 from atividades.forms import SessaoForm
 
 from notificacoes import views as nviews
-from utilizadores import views as uviews
+from utilizadores.views import user_check
 from coordenadores.models import TarefaAuxiliar
 from atividades.tables import *
 from atividades.filters import *
@@ -49,9 +49,10 @@ class AtividadesProfessor(SingleTableMixin, FilterView):
     table_pagination = {
 		'per_page': 10
 	}
-    user_check_var = None
+    
+
     def dispatch(self, request, *args, **kwargs):
-        user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+        user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
         if not user_check_var.get('exists'): return user_check_var.get('render')
         self.user_check_var = user_check_var
         return super().dispatch(request, *args, **kwargs)
@@ -76,7 +77,7 @@ class AtividadesCoordenador(SingleTableMixin, FilterView):
 	}
     user_check_var = None
     def dispatch(self, request, *args, **kwargs):
-        user_check_var = uviews.user_check(request=request, user_profile=[Coordenador])
+        user_check_var = user_check(request=request, user_profile=[Coordenador])
         if not user_check_var.get('exists'): return user_check_var.get('render')
         self.user_check_var = user_check_var
         today= datetime.now(timezone.utc) - timedelta(hours=1, minutes=00)
@@ -122,7 +123,7 @@ def conflict_array():
 
 
 def alterarAtividade(request,id):
-    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
 
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
@@ -205,7 +206,7 @@ def alterarAtividade(request,id):
                             })
 
 def eliminarAtividade(request,id):
-    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
 
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
@@ -238,7 +239,7 @@ def eliminarAtividade(request,id):
 
 
 def eliminarSessao(request,id):
-    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     sessoes = Sessao.objects.filter(id=id,atividadeid__professoruniversitarioutilizadorid=userId)
@@ -268,7 +269,7 @@ def eliminarSessao(request,id):
 
 def proporatividade(request):
     
-    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
 
     today= datetime.now(timezone.utc) 
@@ -341,7 +342,7 @@ def horariofim(inicio,duracao):
 
 def inserirsessao(request,id):
 
-    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
 
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
@@ -577,7 +578,7 @@ def verhorarios(request):
 
 def validaratividade(request,id, action):
 
-    user_check_var = uviews.user_check(request=request, user_profile=[Coordenador])
+    user_check_var = user_check(request=request, user_profile=[Coordenador])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
 
     atividade=Atividade.objects.get(id=id)
@@ -593,7 +594,7 @@ def validaratividade(request,id, action):
 
 def verresumo(request,id):
 
-    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
 
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
@@ -632,7 +633,7 @@ def verresumo(request,id):
 
 
 def confirmarResumo(request,id):
-    user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
+    user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
     if user_check_var.get('exists') == False: return user_check_var.get('render')
 
     userId = user_check_var.get('firstProfile').utilizador_ptr_id

@@ -127,15 +127,15 @@ class viewDays(SingleTableMixin, FilterView):
 		latest = Diaaberto.objects.all().order_by('ano').last()
 		current = Diaaberto.current()
 		is_open=False
-		latest = 9999
-		earliest = 0
+		latest_year = 9999
+		earliest_year = 0
 		if earliest is not None: 
 			if current is not None:
 				is_open = True
-			latest = latest.ano
-			earliest = earliest.ano
-		context["earliest"] = earliest
-		context['latest'] = latest
+			latest_year = latest.ano
+			earliest_year = earliest.ano
+		context["earliest"] = earliest_year
+		context['latest'] = latest_year
 		context["is_open"] = is_open
 		return context
 
@@ -308,6 +308,7 @@ def getDias(request):
 		data_fim = diaaberto.datadiaabertofim
 		total_dias= data_fim-data_inicio+timedelta(days=1)
 		options = diaaberto.days_as_dict()
+		
 	return render(request = request,
 				  template_name='configuracao/dropdown.html',
 				  context={'options':options, 'default': default}
