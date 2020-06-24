@@ -44,7 +44,7 @@ def filters(request):
 class AtividadesProfessor(SingleTableView):
     
     table_class = ProfAtividadesTable
-    template_name = 'atividades/minhasatividades.html'
+    template_name = 'atividades/minhasAtividades.html'
     table_pagination = {
 		'per_page': 10
 	}
