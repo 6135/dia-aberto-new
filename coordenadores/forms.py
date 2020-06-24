@@ -89,7 +89,7 @@ def get_dia_choices():
 
 class TarefaOutraForm(Form):
     dia = ChoiceField(widget=Select(attrs={'onchange':'sessoesSelect()'}),choices=get_dia_choices())
-    horario = TimeField(widget=TimeInput(attrs={'type':'time','min':'09:00','max':'18:00','onchange':'colaboradoresSelect();'}))
+    horario = TimeField(widget=TimeInput(attrs={'class':'input','type':'time','min':'09:00','max':'18:00','onchange':'colaboradoresSelect();'}))
     descricao = CharField(widget=Textarea(attrs={'class':'textarea'}))
     colab = CharField(widget=Select(),required=False)
 

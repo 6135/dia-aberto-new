@@ -8,20 +8,36 @@
         {% if  row.record.tipo == "tarefaAuxiliar" %}
             <tr>
                 <th class="th-wrap">Inicio submissao Atividades:</th>
-                <td data-label='Inicio submissao Atividades:'style="font-weight: normal;">
+                <td style="font-weight: normal;">
                     <span></span>
                 </td>
             </tr>
        {% endif %}
        {% if row.record.tipo == "tarefaAcompanhar" %}
-       {% endif %}
-       {% if row.record.tipo == "tarefaOutra" %}
             <tr>
-                <th class="th-wrap">Descrição:</th>
-                <td data-label='Inicio submissao Atividades:'style="font-weight: normal;">
-                    <span></span>
+                <th class="th-wrap">Local de encontro:</th>
+                <td>
+                    <span>{{row.record.tarefaacompanhar.origem}}</span>
                 </td>
             </tr>
+            <tr>
+                <th class="th-wrap">Local de destino:</th>
+                <td>
+                    <span>{{row.record.tarefaacompanhar.destino}}</span>
+                </td>
+            </tr>
+       {% endif %}
+       {% if row.record.tipo == "tarefaOutra" %}
+            <tr style="border-bottom: 1px solid #ddd">
+                <th class="th-wrap">Descrição:</th>
+                <td></td>
+            </tr>
+            <tr style="border-bottom: 1px solid #ddd">
+                <td colspan="4" data-label="Descrição">
+                    <textarea class="textarea" disabled style="resize: none;">{{row.record.tarefaoutra.descricao}}</textarea>
+                </td>
+            </tr>
+
        {% endif %}
     </tbody>
 </table>
