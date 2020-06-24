@@ -398,7 +398,7 @@ def criar_mensagem_participante(request, id):
                                 descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Individual" , lido = False)
                 info.save()
                 mensagem1 = MensagemEnviada(mensagem=info)
-                mensagem1.mensagem.lido = True
+                mensagem1.mensagem.lido = False
                 mensagem1.save()
                 mensagem2 = MensagemRecebida(mensagem=info)
                 mensagem2.save()
@@ -411,14 +411,14 @@ def criar_mensagem_participante(request, id):
                 
                 for x in utilizadores:
                     user_recipient = Utilizador.objects.get(user_ptr_id=x.utilizador_ptr_id)
-                    info = InformacaoMensagem(data=timezone.now(), pendente=False, titulo = titulo,
-                                    descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Grupo" , lido = False)
+                    info = InformacaoMensagem(data=timezone.now(), pendente=True, titulo = titulo,
+                                    descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Grupo de admistradores do dia aberto" , lido = False)
                     info.save()
                     if user_recipient.id != user.id:
                         tmp = MensagemRecebida(mensagem=info)
                         tmp.save()  
                 mensagem1 = MensagemEnviada(mensagem=info)
-                mensagem1.mensagem.lido = True
+                mensagem1.mensagem.lido = False
                 mensagem1.save()    
             return redirect("notificacoes:concluir-envio")
         else:
@@ -485,33 +485,38 @@ def criar_mensagem_uo(request, id):
                                     descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Individual" , lido = False)
                     info.save()
                     mensagem1 = MensagemEnviada(mensagem=info)
-                    mensagem1.mensagem.lido = True
+                    mensagem1.mensagem.lido = False
                     mensagem1.save()
                     mensagem2 = MensagemRecebida(mensagem=info)
                     mensagem2.save()
             elif tipo == 1:
+                grupo = "Grupo"
                 tipo_utilizadores = request.POST.get('filtro_tipo')
                 if tipo_utilizadores == "ProfessorUniversitario":
                     utilizadores = ProfessorUniversitario.objects.filter(faculdade=user.getUser().faculdade)
+                    grupo = "Grupo de professores universitários"
                 elif tipo_utilizadores == "Coordenador":
                     utilizadores = Coordenador.objects.filter(faculdade=user.getUser().faculdade)
+                    grupo = "Grupo de coordenadores"
                 elif tipo_utilizadores == "Colaborador":
                     utilizadores = Colaborador.objects.filter(faculdade=user.getUser().faculdade)
+                    grupo = "Grupo de colaboradores"
                 elif tipo_utilizadores == "Administrador":
-                    utilizadores = Administrador.objects.filter()    
+                    utilizadores = Administrador.objects.filter() 
+                    grupo = "Grupo de administradores do dia aberto"   
                 else:
                     return redirect("utilizadores:mensagem",5)
                 
                 for x in utilizadores:
                     user_recipient = Utilizador.objects.get(user_ptr_id=x.utilizador_ptr_id)
-                    info = InformacaoMensagem(data=timezone.now(), pendente=False, titulo = titulo,
-                                    descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Grupo" , lido = False)
+                    info = InformacaoMensagem(data=timezone.now(), pendente=True, titulo = titulo,
+                                    descricao = mensagem, emissor = user , recetor = user_recipient, tipo = grupo , lido = False)
                     info.save()
                     if user_recipient.id != user.id:
                         tmp = MensagemRecebida(mensagem=info)
                         tmp.save()  
                 mensagem1 = MensagemEnviada(mensagem=info)
-                mensagem1.mensagem.lido = True
+                mensagem1.mensagem.lido = False
                 mensagem1.save()    
             return redirect("notificacoes:concluir-envio")
         else:
@@ -569,35 +574,41 @@ def criar_mensagem_admin(request, id):
                                 descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Individual" , lido = False)
                 info.save()
                 mensagem1 = MensagemEnviada(mensagem=info)
-                mensagem1.mensagem.lido = True
+                mensagem1.mensagem.lido = False
                 mensagem1.save()
                 mensagem2 = MensagemRecebida(mensagem=info)
                 mensagem2.save()
             elif tipo == 1:
+                grupo = ""
                 tipo_utilizadores = request.POST.get('filtro_tipo')
                 if tipo_utilizadores == "Participante":
                     utilizadores = Participante.objects.all()
+                    grupo = "Grupo de participantes"
                 elif tipo_utilizadores == "ProfessorUniversitario":
                     utilizadores = ProfessorUniversitario.objects.all()
+                    grupo = "Grupo de professores universitários"
                 elif tipo_utilizadores == "Coordenador":
                     utilizadores = Coordenador.objects.all()
+                    grupo = "Grupo de coordenadores"
                 elif tipo_utilizadores == "Colaborador":
                     utilizadores = Colaborador.objects.all()
+                    grupo = "Grupo de colaboradores"
                 elif tipo_utilizadores == "Administrador":
-                    utilizadores = Administrador.objects.all()    
+                    utilizadores = Administrador.objects.all() 
+                    grupo = "Grupo de administradores do dia aberto"   
                 else:
                     return redirect("utilizadores:mensagem",5)
                 
                 for x in utilizadores:
                     user_recipient = Utilizador.objects.get(user_ptr_id=x.utilizador_ptr_id)
-                    info = InformacaoMensagem(data=timezone.now(), pendente=False, titulo = titulo,
-                                    descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Grupo" , lido = False)
+                    info = InformacaoMensagem(data=timezone.now(), pendente=True, titulo = titulo,
+                                    descricao = mensagem, emissor = user , recetor = user_recipient, tipo = grupo , lido = False)
                     info.save()
                     if user_recipient.id != user.id:
                         tmp = MensagemRecebida(mensagem=info)
                         tmp.save()  
                 mensagem1 = MensagemEnviada(mensagem=info)
-                mensagem1.mensagem.lido = True
+                mensagem1.mensagem.lido = False
                 mensagem1.save()    
             return redirect("notificacoes:concluir-envio")
         else:
@@ -631,59 +642,70 @@ def criar_mensagem_admin(request, id):
 # Apagar uma mensagem
 
 def apagar_mensagem(request, id ,nr):
-    return redirect('utilizadores:mensagem', 5)
-    # if request.user.is_authenticated:
-    #     user = get_user(request)
-    # else:
-    #     return redirect('utilizadores:mensagem', 5)
-    # notificacao = Notificacao.objects.get(id=nr)
-    # if notificacao == None:
-    #     return redirect("utilizadores:mensagem", 5)
-    # notificacao.delete()
-    # x = 0 
-    # nr = 0  
-    # if id == 1:
-    #     notificacoes = user.notifications.unread().order_by('-id') 
-    # elif id ==2:
-    #     notificacoes = user.notifications.read().order_by('-id') 
-    # elif id == 3:
-    #     notificacoes = Notificacao.objects.filter(recipient_id=user , public=False).order_by('-id')
-    # elif id ==4:    
-    #     notificacoes = Notificacao.objects.filter(recipient_id=user , public=True).order_by('-id')
-    # elif id == 5:
-    #     notificacoes = Notificacao.objects.filter(recipient_id=user , level="info").order_by('-id')
-    # elif id ==6:  
-    #     notificacoes = Notificacao.objects.filter(recipient_id=user , level="warning").order_by('-id')
-    # elif id ==7: 
-    #     notificacoes = Notificacao.objects.filter(recipient_id=user , level="error").order_by('-id')
-    # elif id ==8:  
-    #     notificacoes = Notificacao.objects.filter(recipient_id=user , level="success").order_by('-id')
-    # else:
-    #     notificacoes = user.notifications.all().order_by('-id')
+    if request.user.is_authenticated:
+        user = get_user(request)
+    else:
+        return redirect('utilizadores:mensagem', 5)
+    m=""
+    msg = False
+    form = MensagemResposta()
+
+    try:
+        if id != 5:
+            tmp = MensagemRecebida.objects.get(mensagem=nr)
+        else:
+            tmp = MensagemEnviada.objects.get(mensagem=nr)
+
+        tmp.delete()
+    except:
+         return redirect('utilizadores:mensagem', 404)   
+
+    x = 0   
+    nr = 0
+    if id == 1:
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=False).order_by('-id') 
+    elif id == 2:
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=True).order_by('-id') 
+    elif id == 3:
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__pendente=False).order_by('-id') 
+    elif id == 4:    
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__pendente=True).order_by('-id')
+    elif id == 5:    
+        notificacoes = MensagemEnviada.objects.select_related('mensagem__emissor').filter(mensagem__emissor=user.id).order_by('-id')
+    else:
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id).order_by('-id')
     
-    # x = len(notificacoes)
-    # if nr!=0:
-    #     notificacao = Notificacao.objects.get(id=nr)
-    #     if notificacao == None:
-    #         return redirect("notificacoes:sem-notificacoes", 10) 
-    # else:
-    #     if x>0:
-    #         notificacao = notificacoes[0]
-    #     else:
-    #         return redirect("notificacoes:sem-notificacoes", 10)    
-    # nr_notificacoes_por_pagina = 15
-    # paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
-    # page=request.GET.get('page')
-    # notificacoes = paginator.get_page(page)
-    # total = x
-    # if notificacao != None:
-    #     notificacao.unread = False
-    #     notificacao.save()
-    # else:
-    #     return redirect("utilizadores:mensagem", 5)
-    # return render(request, 'notificacoes/detalhes_mensagens.html', {
-    #     'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,'total':total
-    # })
+    x = len(notificacoes)
+    if nr!=0:
+        if id != 5:
+            notificacao = MensagemRecebida.objects.get(mensagem=nr)
+        else:
+            notificacao = MensagemEnviada.objects.get(mensagem=nr)
+        if notificacao == None:
+            return redirect("notificacoes:sem-mensagens", id) 
+    else:
+        if x>0:
+            notificacao = notificacoes[0]
+        else:
+            return redirect("notificacoes:sem-mensagens", id) 
+
+    nr_notificacoes_por_pagina = 5
+    paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
+    page=request.GET.get('page')
+    notificacoes = paginator.get_page(page)
+    total = x
+    if notificacao != None:
+        if id != 5:
+            notificacao.mensagem.lido = True  
+            notificacao.mensagem.save()
+            notificacao.save()
+    else:
+        return redirect("utilizadores:mensagem", 5)
+    return render(request, 'notificacoes/detalhes_mensagens.html', {
+        "form": form,'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,'total':total,"msg": msg,"m":m
+    })
+
+
 
 # Apagar mensagens por categorias de um dado utilizador
 
@@ -693,26 +715,29 @@ def limpar_mensagens(request, id):
         user = get_user(request)
     else:
         return redirect('utilizadores:mensagem', 5)
-    if id == 1:
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=False).order_by('-id') 
+
+    if id == 5:
+        notificacoes = MensagemEnviada.objects.select_related('mensagem__emissor').filter(mensagem__emissor=user.id)
+    elif id == 1:
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=False) 
     elif id == 2:
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=True).order_by('-id') 
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=True) 
     elif id == 3:
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__tipo="Individuais").order_by('-id') 
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__pendente=False) 
     elif id == 4:    
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__tipo="Grupo").order_by('-id')
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__pendente=True)
     else:
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id).order_by('-id')
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id)
     
     for x in notificacoes:
         x.delete()
 
-    return redirect('notificacoes:categorias-notificacao-automatica',0,0)
+    return redirect('notificacoes:detalhes-mensagem',id,0)
 
 
 # Marcar todas as mensagens de um utilizador como lidas
 
-def mensagem_como_lida(request):
+def mensagem_como_lida(request, id):
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -720,6 +745,7 @@ def mensagem_como_lida(request):
     msgs = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id)
     for msg in msgs:
         msg.mensagem.lido = True
+        msg.mensagem.save()
         msg.save()
     return redirect('notificacoes:categorias-notificacao-automatica',0,0)
 
@@ -746,15 +772,44 @@ def detalhes_mensagens(request, id, nr):
         user = get_user(request)
     else:
         return redirect('utilizadores:mensagem', 5)
+    m=""
+    if request.method == "POST":
+        msg = True
+        form = MensagemResposta(request.POST)
+        if form.is_valid():
+            mensagem = form.cleaned_data.get('mensagem')
+            msg_id = form.cleaned_data.get('msg_atual')
+            user_sender = Utilizador.objects.get(user_ptr_id=user.id)
+            notificacao = MensagemRecebida.objects.get(id=msg_id)
+            if "Re: " in notificacao.mensagem.titulo:
+                t = notificacao.mensagem.titulo
+            else:
+                t = "Re: "+notificacao.mensagem.titulo
+            info = InformacaoMensagem(data=timezone.now(), pendente=False, titulo = t ,
+                            descricao = mensagem, emissor = user_sender, recetor = notificacao.mensagem.emissor, tipo = "Individual" , lido = False)
+            info.save()
+            mensagem1 = MensagemEnviada(mensagem=info)
+            mensagem1.mensagem.lido = False
+            mensagem1.save()
+            mensagem2 = MensagemRecebida(mensagem=info)
+            mensagem2.save()
+            m = "Mensagem enviada com sucesso"
+            form = MensagemResposta()
+        else:
+            m = ""  
+    else:
+        msg = False
+        form = MensagemResposta()
+
     x = 0   
     if id == 1:
         notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=False).order_by('-id') 
     elif id == 2:
         notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=True).order_by('-id') 
     elif id == 3:
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__tipo="Individual").order_by('-id') 
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__pendente=False).order_by('-id') 
     elif id == 4:    
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__tipo="Grupo").order_by('-id')
+        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__pendente=True).order_by('-id')
     elif id == 5:    
         notificacoes = MensagemEnviada.objects.select_related('mensagem__emissor').filter(mensagem__emissor=user.id).order_by('-id')
     else:
@@ -769,18 +824,21 @@ def detalhes_mensagens(request, id, nr):
         if x>0:
             notificacao = notificacoes[0]
         else:
-            return redirect("notificacoes:sem-mensagens", id)    
+            return redirect("notificacoes:sem-mensagens", id) 
+
     nr_notificacoes_por_pagina = 5
     paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
     page=request.GET.get('page')
     notificacoes = paginator.get_page(page)
     total = x
     if notificacao != None:
-        notificacao.mensagem.lido = False
-        notificacao.mensagem.save()
+        if id != 5:
+            notificacao.mensagem.lido = True
+            notificacao.mensagem.save()
+            notificacao.save()
     else:
         return redirect("utilizadores:mensagem", 5)
     return render(request, 'notificacoes/detalhes_mensagens.html', {
-        'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,'total':total
+        "form": form,'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,'total':total,"msg": msg,"m":m
     })
 
