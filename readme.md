@@ -95,12 +95,47 @@ As informações de acesso à base de dados do servidor do Gui devem-lhe ser sol
 Para ligar a uma base de dados MySQL local, por exemplo, o .env pode ser:
 
 ```
-DEBUG=on
 DATABASE_URL=mysql://user:password@localhost:3306/db
 SECRET_KEY=q1^j3mv#y9-n&^*j)-rd3@lqqu@jv49p_99$mefzljeuz#fra3
 EMAIL_HOST_USER=suporte.dia.aberto@gmail.com
 EMAIL_HOST_PASSWORD=password # Pedir ao Barrocas
 ```
+
+9. Gerar uma nova SECRET_KEY aleatória (https://djecrety.ir/) e substituí-la no .env
+
+10. Criar uma DB vazia e substituir no .env
+
+```SH
+mysql -u [user] -p
+CREATE DATABASE diaAberto
+```
+    
+11. Gerar os ficheiros de migrações
+
+```SH
+python manage.py makemigrations notificacoes
+python manage.py makemigrations atividades
+python manage.py makemigrations colaboradores
+python manage.py makemigrations configuracao
+python manage.py makemigrations coordenadores
+python manage.py makemigrations inscricoes
+python manage.py makemigrations notifications
+python manage.py makemigrations auth
+python manage.py makemigrations utilizadores
+```
+
+12. Gerar as tabelas da DB
+
+```SH
+python manage.py migrate
+```
+
+13. Criar os grupos
+
+```SH
+python manage.py create_groups
+```
+
 
 ## Comandos fundamentais
 
