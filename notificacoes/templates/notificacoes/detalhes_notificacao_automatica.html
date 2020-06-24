@@ -141,15 +141,15 @@
                         {% for notificacao in notificacoes %}
 
                         {% if notificacao.id == atual.id %}
-                        <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}?page={{notificacoes.number}}"
+                        <a href="{% url 'notificacoes:categorias-notificacao-automatica' categoria notificacao.id %}?page={{notificacoes.number}}"
                             class="panel-block" style="background: #A0A0A0; ">
                             {% elif notificacao.unread == False %}
 
-                            <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}?page={{notificacoes.number}}"
+                            <a href="{% url 'notificacoes:categorias-notificacao-automatica' categoria notificacao.id %}?page={{notificacoes.number}}"
                                 class="panel-block">
                                 {% else %}
 
-                                <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}?page={{notificacoes.number}}"
+                                <a href="{% url 'notificacoes:categorias-notificacao-automatica' categoria notificacao.id %}?page={{notificacoes.number}}"
                                     class="panel-block" style=" background: Gainsboro; ">
                                     {% endif %}
 

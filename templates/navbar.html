@@ -144,7 +144,7 @@
                         class="panel-block">
                         {% else %}
                         <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 notificacao.id %}"
-                          class="panel-block" style=" background: Gainsboro; ">
+                          class="panel-block" style="background: Gainsboro;">
                           {% endif %}
 
                           {% if notificacao.level == "info" %}
@@ -280,10 +280,10 @@
                   style="margin-right: 0.9rem">
                   <span>
                     <span class="icon">
-                    {% if request.user|nr_mensagens > 0 %}
-                    <span id="badge-inject" title="Badge top right"
+                      {% if request.user|nr_mensagens > 0 %}
+                      <span id="badge-inject" title="Badge top right"
                         class="badge is-warning">{{request.user|nr_mensagens}}</span>
-                    {% endif %}
+                      {% endif %}
                       <i class="mdi mdi-message mdi-24px"></i>
                     </span>
                   </span>
@@ -292,19 +292,42 @@
             </div>
             <div class="dropdown-menu" id="dropdown-menu6" role="menu" style="min-width: 23rem">
               <div class="dropdown-content">
-              {% if request.user|nr_mensagens > 0 %}
-                {% for msg in request.user|mensagens %}
+                {% if request.user|nr_mensagens > 0 %}
+                {% comment %} {% for msg in request.user|mensagens %}
                 <div data-tooltip="Click para ver detalhes">
-                <div class="dropdown-item">
-                  {{msg.mensagem.titulo}}
-                </div>
+                  {% if msg.mensagem.lido == False %}
+                  <div class="dropdown-item" style="background: Gainsboro;">
+                    <strong>{{msg.mensagem.titulo}}</strong>
+                  </div>
+                  {% else %}
+                  <div class="dropdown-item">
+                    <strong>{{msg.mensagem.titulo}}</strong>
+                  </div>
+                  {% endif %}
                 </div>
                 <hr class="dropdown-divider">
-                
-                {% endfor %}
+
+                {% endfor %} {% endcomment %}
+                {% for msg in request.user|mensagens %}
+                <div data-tooltip="Click para ver detalhes">
+                  {% if msg.mensagem.lido == True %}
+                  <a href="{% url 'notificacoes:detalhes-mensagem' 0 msg.mensagem.id %}" class="panel-block">
+                    {% else %}
+                    <a href="{% url 'notificacoes:detalhes-mensagem' 0 msg.mensagem.id %}" class="panel-block"
+                      style="background: WhiteSmoke;">
+                      {% endif %}
+                      <p>
+                        <strong>
+                          {{msg.mensagem.titulo}}
+                        </strong>
+                      </p>
+
+                    </a>
+                </div>
+                {%endfor%}
                 {% else %}
                 <div class="dropdown-item">
-                <strong>Não tem mensagens</strong>
+                  <strong>Não tem mensagens</strong>
                 </div>
                 {% endif %}
                 <div class="dropdown-item level">

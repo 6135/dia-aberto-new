@@ -129,15 +129,15 @@
                             </td>
                             <td data-label="Nome">{{tarefa.nome}}</td>
                             {% if tarefa.tipo == "tarefaAuxiliar" %}
-                            <td data-label="Dia">{{tarefa.tarefaauxiliar.sessaoid.dia|date:'d-m-Y'}}</td>
+                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
 
-                            <td data-label="Horário">{{tarefa.tarefaauxiliar.sessaoid.horarioid.inicio}}</td>
+                            <td data-label="Horário">{{tarefa.horario}}</td>
                             {% elif tarefa.tipo == "tarefaAcompanhar" %}
-                            <td data-label="Dia">{{tarefa.tarefaacompanhar.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horario">{{tarefa.tarefaacompanhar.horario}}</td>
+                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
+                            <td data-label="Horario">{{tarefa.horario}}</td>
                             {% elif tarefa.tipo == "tarefaOutra" %}
-                            <td data-label="Dia">{{tarefa.tarefaoutra.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horarios">{{tarefa.tarefaoutra.horario}}</td>
+                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
+                            <td data-label="Horarios">{{tarefa.horario}}</td>
                             {% endif %}
                             <td data-label="Tipo">
                                 {% if tarefa.tipo == "tarefaAuxiliar" %}

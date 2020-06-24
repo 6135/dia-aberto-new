@@ -55,7 +55,7 @@ def consultar_tarefas(request):
             else:
                 tarefas = Tarefa.objects.filter(
                     nome=current)
-        elif estado_tarefa == "":#####
+        elif estado_tarefa == "":
             if tipo_tarefas == "Tarefa":
                 tarefas = Tarefa.objects.filter(colab=user)
             elif tipo_tarefas == "tarefaAuxiliar":
@@ -143,7 +143,13 @@ def cancelar_tarefa(request, id):
         return redirect('utilizadores:mensagem',5)
     # Envio de notificacao automatica
     views.enviar_notificacao_automatica(request,"cancelarTarefa",id)
-    return redirect('notificacoes:notificar',id) 
+    tarefa = Tarefa.objects.get(id=id)
+    nome = tarefa.coord.first_name+" "+tarefa.coord.last_name
+    msg = "A enviar pedido de cancelamento de tarefa a "+nome
+    return render(request=request,
+                  template_name="colaboradores/enviar_notificacao_informativa.html",
+                  context={"msg": msg})
+
 
 def validar_cancelamento_tarefa(request, id_notificacao):
     if request.user.is_authenticated:    

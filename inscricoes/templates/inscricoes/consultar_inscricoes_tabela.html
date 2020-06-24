@@ -40,4 +40,11 @@
 </tbody>
 </table>
 
+<br>
+
+<button type="button" class="button is-danger"
+    onclick="location.href='{% url 'inscricoes:inscricao-pdf' row.record.pk %}';"><span class="icon is-small"><i
+            class="mdi mdi-download"></i></span> <span> Obter PDF </span>
+</button>
+
 {% endblock details_content %}

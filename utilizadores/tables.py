@@ -9,11 +9,11 @@ class UtilizadoresTable(django_tables.Table):
     nome = django_tables.Column(
         empty_values=(), order_by=("first_name", "last_name"))
     email = django_tables.Column(
-        'Email', attrs={"td": {"style": "max-width: 14vw; word-wrap: break-word;"}})
-    valido = django_tables.Column('Estado')
+        'Email')
+    valido = django_tables.Column('Estado', attrs={"th": {"width": "130"}})
     tipo = django_tables.Column(accessor='firstProfile', orderable=False)
     acoes = django_tables.Column('Ações', empty_values=(),
-                                 orderable=False, attrs={"td": {"style": "min-width: 104px;"}})
+                                 orderable=False, attrs={"th": {"width": "110"}})
 
     class Meta:
         model = Utilizador
@@ -49,29 +49,41 @@ class UtilizadoresTable(django_tables.Table):
             estado = "Rejeitado"
             cor = "is-danger"
         return format_html(f"""
-        <span class="tag {cor}" style="font-size: small; min-width: 17vh;">
+        <span class="tag {cor}" style="font-size: small; min-width: 110px;">
         {estado}
         </span>
         """)
 
     def render_acoes(self, record):
-        if record.valido != "True":
-            primeiro_botao = f"""
-            <a data-tooltip="Validar" href="{reverse('utilizadores:validar', args=[record.first_name, record.id])}">
-                <span class="icon">
-                    <i class="fas fa-check" style="color: #32CD32"></i>
-                </span>
-            </a>
+        primeiro_botao = """<span class="icon"></span>"""
+        if self.request.user != record.user_ptr and not (record.firstProfile == 'Administrador' and not self.request.user.groups.filter(name='Administrador').exists()):
+            if record.valido != "True":
+                primeiro_botao = f"""
+                <a data-tooltip="Validar" href="{reverse('utilizadores:validar', args=[record.first_name, record.id])}">
+                    <span class="icon">
+                        <i class="fas fa-check" style="color: #32CD32"></i>
+                    </span>
+                </a>
+                    """
+            else:
+                primeiro_botao = f"""
+                <a data-tooltip="Rejeitar" onclick="alert.render('Tem a certeza que pretende rejeitar este utilizador?','{reverse('utilizadores:rejeitar', args=[record.first_name, record.id])}')">
+                    <span class="icon has-text-danger">
+                        <i class="fas fa-ban"></i>
+                    </span>
+                </a>
                 """
-        else:
-            primeiro_botao = f"""
-            <a data-tooltip="Rejeitar" onclick="alert.render('Tem a certeza que pretende rejeitar este utilizador?','{reverse('utilizadores:rejeitar', args=[record.first_name, record.id])}')">
-                <span class="icon has-text-danger">
-                    <i class="fas fa-ban"></i>
+        segundo_botao = ""
+        if self.request.user.groups.filter(name='Administrador').exists():
+            segundo_botao = f"""
+            <a href='{reverse('utilizadores:alterar-utilizador-admin', args=[record.id])}'
+                data-tooltip="Editar">
+                <span class="icon">
+                    <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                 </span>
             </a>
             """
-        terceiro_botao = None
+        terceiro_botao = ""
         if record.firstProfile == 'Participante':
             alerta = "Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente."
         elif record.firstProfile == 'Colaborador':
@@ -81,9 +93,11 @@ class UtilizadoresTable(django_tables.Table):
         elif record.firstProfile == 'Coordenador':
             alerta = "Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br> As <b>atividades dos departamentos</b> pelo qual este coordenador está responsável serão apagadas permanentemente.<br><br>As <b>tarefas dos colaboradores</b> pelo qual este coordenador está responsável serão apagadas permanentemente."
         elif record.firstProfile == 'Administrador':
-            if Administrador.objects.filter(valido="True").count() > 1:
+            if not self.request.user.groups.filter(name='Administrador').exists():
+                terceiro_botao = " "
+            elif record.valido != "True" or Administrador.objects.filter(valido="True").count() > 1:
                 alerta = "Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente."
-            else:
+            elif self.request.user != record.user_ptr:
                 terceiro_botao = """
                 <a onclick="alert.warning('Não pode apagar este administrador porque é o unico que existe.')"
                     data-tooltip="Apagar">
@@ -92,7 +106,7 @@ class UtilizadoresTable(django_tables.Table):
                     </span>
                 </a>
                 """
-        if terceiro_botao is None:
+        if self.request.user != record.user_ptr and terceiro_botao == "":
             terceiro_botao = f"""
                 <a onclick="alert.render('{alerta}','{reverse('utilizadores:apagar-utilizador', args=[record.id])}')"
                     data-tooltip="Apagar">
@@ -101,16 +115,10 @@ class UtilizadoresTable(django_tables.Table):
                     </span>
                 </a>
             """
-
         return format_html(f"""
         <div>
             {primeiro_botao}
-            <a href='{reverse('utilizadores:alterar-utilizador-admin', args=[record.id])}'
-                data-tooltip="Editar">
-                <span class="icon has-text-warning">
-                    <i class="mdi mdi-pencil mdi-24px"></i>
-                </span>
-            </a>
+            {segundo_botao}
             {terceiro_botao}
         </div>
         """)

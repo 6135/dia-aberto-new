@@ -245,9 +245,9 @@
               </div>
               {% endif %}
               <div style="margin-top:2%;text-align:center;position:center;">
-                <button type="button" value="Voltar" class="button is-outlined" style="margin-right:5%"
-                  onclick="voltar()">Voltar</button>
-
+                <a href="{% url 'utilizadores:consultar-utilizadores' %}" aria-current="page">
+                <button type="button" value="Voltar" class="button is-outlined" style="margin-right:5%">Voltar</button>
+                </a>
 
                 {% if perfil == "Participante" %}
                 <a
@@ -313,8 +313,8 @@
 </div>
 </div>
 </div>
-</div>
-        {% endblock content %}
+
+{% endblock content %}
 
 
 
@@ -322,15 +322,9 @@
 {% block scripts %}
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <script>
-  function voltar() {
-    location.href = "/utilizadores/consultarutilizadores"
-  }
 
 
-  {
-    %
-    if registo == 2 %
-  }
+  {% if registo == 2 %}
   $("#id_faculdade").change(function () {
     var url = $("#ProfessorUniversitarioRegisterForm").attr("data-departamentos-url");
     var faculdadeid = $(this).val();
@@ -345,9 +339,8 @@
       }
     });
 
-  }); {
-    % elif registo == 3 %
-  }
+  }); 
+  {% elif registo == 3 %}
   $("#id_faculdade").change(function () {
     var url = $("#CoordenadorRegisterForm").attr("data-departamentos-url");
     var faculdadeid = $(this).val();
@@ -362,9 +355,8 @@
       }
     });
 
-  }); {
-    % elif registo == 4 %
-  }
+  }); 
+  {% elif registo == 4 %}
   $("#id_faculdade").change(function () {
 
     var url = $("#ColaboradorRegisterForm").attr("data-cursos-url");
@@ -398,8 +390,6 @@
       }
     });
 
-  }); {
-    % endif %
-  }
+  }); {% endif %}
 </script>
 {% endblock scripts %}

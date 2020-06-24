@@ -4,6 +4,7 @@ from .models import Utilizador, ProfessorUniversitario, Participante, Colaborado
 from django.shortcuts import redirect
 from .forms import *
 from .tables import UtilizadoresTable
+from .filters import UtilizadoresFilter
 from django.contrib import messages
 from django.contrib.auth import *
 from django.core.mail import send_mail
@@ -16,7 +17,8 @@ from inscricoes.models import Inscricao
 from django.db import transaction
 from atividades.models import Sessao
 from django.db.models import F
-from django_tables2 import SingleTableView
+from django_tables2 import SingleTableMixin
+from django_filters.views import FilterView
 
 # Verifica se o utilizador que esta logado pertence a pelo menos um dos perfis mencionados 
 # e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
@@ -57,116 +59,30 @@ def load_cursos(request):
     return render(request, 'utilizadores/curso_dropdown_list_options.html', {'cursos': cursos})
 
 
-class consultar_utilizadores(SingleTableView):
+# Consultar todos os utilizadores com as funcionalidades dos filtros 
+
+class consultar_utilizadores(SingleTableMixin, FilterView):
     table_class = UtilizadoresTable
     template_name = 'utilizadores/consultar_utilizadores.html'
-    model = Utilizador
+    filterset_class = UtilizadoresFilter
     table_pagination = {
         'per_page': 10
     }
 
+    def dispatch(self, request, *args, **kwargs):
+        user_check_var = user_check(
+            request=request, user_profile=[Coordenador, Administrador])
+        if not user_check_var.get('exists'):
+            return user_check_var.get('render')
+        return super().dispatch(request, *args, **kwargs)
 
-# Consultar todos os utilizadores com as funcionalidades dos filtros 
-
-def consultar_utilizadores_old(request):
-        
-    if request.user.is_authenticated:    
-        user = get_user(request)
-        if user.groups.filter(name = "Coordenador").exists():
-            u = "Coordenador"
-        elif user.groups.filter(name = "Administrador").exists():
-            u = "Administrador"
-        else:
-            return redirect('utilizadores:mensagem',5)
-    else:
-        return redirect('utilizadores:mensagem',5)  
-
-
-    if request.method == 'POST':
-        
-        formFilter = UtilizadorFiltro(request.POST)
-        current = request.POST.get('current')
-
-        form = formFilter
-        tipo_utilizadores = request.POST.get('filtro_tipo')
-        estado_utilizadores = request.POST.get('filtro_estado')
-        txt = request.POST.get('current')
-
-        if estado_utilizadores != "":
-            if estado_utilizadores == "T":
-                estado = 'True'
-            elif estado_utilizadores == "F":
-                estado = 'False'
-            elif estado_utilizadores == "R":
-                estado = 'Rejeitado'    
-            else:
-                estado = 'True'
-        else:
-            estado = 'True'
-
-        if txt != "":
-            nome = txt.split()
-            sz = len(nome)
-            if sz == 1:
-                if estado_utilizadores != "":
-                    utilizadores = Utilizador.objects.filter(
-                        valido=estado, first_name=current)
-                else:
-                    utilizadores = Utilizador.objects.filter(
-                        first_name=current)
-                if len(utilizadores) == 0:
-                    if estado_utilizadores != "":
-                        utilizadores = Utilizador.objects.filter(
-                            valido=estado, last_name=current)
-                    else:
-                        utilizadores = Utilizador.objects.filter(
-                            last_name=current)
-            else:
-                if estado_utilizadores != "":
-                    utilizadores = Utilizador.objects.filter(valido=estado, first_name=nome[0]).filter(
-                        valido=estado, last_name=nome[1]).order_by('first_name')
-                else:
-                    utilizadores = Utilizador.objects.filter(first_name=nome[0]).filter(
-                        last_name=nome[1]).order_by('first_name')
-        elif estado_utilizadores == "":
-            if tipo_utilizadores == "Participante":
-                utilizadores = Participante.objects.all().order_by('first_name')
-            elif tipo_utilizadores == "ProfessorUniversitario":
-                utilizadores = ProfessorUniversitario.objects.all().order_by('first_name')
-            elif tipo_utilizadores == "Coordenador":
-                utilizadores = Coordenador.objects.all().order_by('first_name')
-            elif tipo_utilizadores == "Colaborador":
-                utilizadores = Colaborador.objects.all().order_by('first_name')
-            else:
-                utilizadores = Utilizador.objects.all().order_by('first_name')
-        else:
-            if tipo_utilizadores == "Participante":
-                utilizadores = Participante.objects.filter(
-                    valido=estado).order_by('first_name')
-            elif tipo_utilizadores == "ProfessorUniversitario":
-                utilizadores = ProfessorUniversitario.objects.filter(
-                    valido=estado).order_by('first_name')
-            elif tipo_utilizadores == "Coordenador":
-                utilizadores = Coordenador.objects.filter(
-                    valido=estado).order_by('first_name')
-            elif tipo_utilizadores == "Colaborador":
-                utilizadores = Colaborador.objects.filter(
-                    valido=estado).order_by('first_name')
-            else:
-                utilizadores = Utilizador.objects.filter(
-                    valido=estado).order_by('first_name')
-
-    else:
-        formFilter = UtilizadorFiltro()
-        current = ""
-        utilizadores = Utilizador.objects.all().order_by('first_name')
-        form = formFilter
-    
-    paginator= Paginator(utilizadores,5)
-    page=request.GET.get('page')
-    utilizadores = paginator.get_page(page)
-    return render(request=request, template_name='utilizadores/consultar_utilizadores.html', context={"utilizadores": utilizadores, 'form': form, 'current': current, 'u': u})
-
+    def get_context_data(self, **kwargs):
+        context = super(SingleTableMixin, self).get_context_data(**kwargs)
+        table = self.get_table(**self.get_table_kwargs())
+        table.request = self.request
+        table.fixed = True
+        context[self.get_context_table_name(table)] = table
+        return context
 
 
 # Escolher tipo de perfil para criar um utilizador
@@ -498,7 +414,7 @@ def apagar_utilizador(request, id):
     elif user.groups.filter(name = "Colaborador").exists():
         u = Colaborador.objects.filter(id=id)
     elif user.groups.filter(name="Participante").exists():
-        u = Participante.objects.filter(id=id)
+        u = Participante.objects.get(id=id)
         for inscricao in Inscricao.objects.filter(participante=u):
             inscricaosessao_set = inscricao.inscricaosessao_set.all()
             for inscricaosessao in inscricaosessao_set:
@@ -880,6 +796,12 @@ def mensagem(request, id, *args, **kwargs):
     elif id == 12:
         m = "Ainda não é permitido criar inscrições"
         tipo = "error"
+    elif id == 13:
+        m = "Erro ao apagar dados do participante"
+        tipo = "error" 
+    elif id == 14:
+        m = "Não existem mensagens"
+        tipo = "info"   
     else:
         m = "Esta pagina não existe"
         tipo = "error"                                     
