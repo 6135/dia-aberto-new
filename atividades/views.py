@@ -19,7 +19,7 @@ from utilizadores.views import user_check
 from coordenadores.models import TarefaAuxiliar
 from atividades.tables import *
 from atividades.filters import *
-from django_tables2 import SingleTableMixin
+from django_tables2 import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
 
 def filters(request):
@@ -41,11 +41,10 @@ def filters(request):
     return filters
 
 
-class AtividadesProfessor(SingleTableMixin, FilterView):
+class AtividadesProfessor(SingleTableView):
     
     table_class = ProfAtividadesTable
     template_name = 'atividades/minhasatividades.html'
-    filterset_class = ProfAtividadesFilter
     table_pagination = {
 		'per_page': 10
 	}
