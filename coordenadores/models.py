@@ -6,6 +6,7 @@
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
+from datetime import datetime, date,timezone,time
 
 class Tarefa(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
@@ -32,10 +33,18 @@ class Tarefa(models.Model):
         elif TarefaAuxiliar.objects.filter(tarefaid=self.id):
             return "Auxiliar"
         else: return "Outra"  
+
     class Meta:
         db_table = 'Tarefa'
 
-
+    @property
+    def eliminar(self):
+        if ((self.estado == 'Iniciada' or self.estado == 'naoConcluida') and self.dia < date.today()):
+            return True
+        else:
+            return False
+        
+        
     def getDescription(self):
         if self.tipo == "tarefaAcompanhar":
             tmp = TarefaAcompanhar.objects.get(tarefaid=self.id)
@@ -72,7 +81,7 @@ class TarefaAcompanhar(models.Model):
         db_table = 'TarefaAcompanhar'
 
     def getDescription(self):
-        msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.tarefa.dia.strftime('%d/%m/%y')+" às "+self.tarefa.horario.strftime('%H horas e %M minutos')+"."
+        msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.tarefaid.dia.strftime('%d/%m/%y')+" às "+self.tarefaid.horario.strftime('%H horas e %M minutos')+"."
         return msg
         
 class TarefaAuxiliar(models.Model):

@@ -308,6 +308,7 @@ def getDias(request):
 		data_fim = diaaberto.datadiaabertofim
 		total_dias= data_fim-data_inicio+timedelta(days=1)
 		options = diaaberto.days_as_dict()
+		
 	return render(request = request,
 				  template_name='configuracao/dropdown.html',
 				  context={'options':options, 'default': default}

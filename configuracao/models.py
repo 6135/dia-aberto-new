@@ -345,14 +345,6 @@ class Horario(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     inicio = models.TimeField(db_column='Inicio')  # Field name made lowercase.
     fim = models.TimeField(db_column='Fim')  # Field name made lowercase.
-
-    def add(self, inicio, fim):
-        try:
-            return Horario.objects.get(inicio=inicio,fim=fim).id
-        except Exception:
-            horario = Horario(inicio=inicio,fim=fim).save()
-            return horario.id
-        return "Err!"
     
     def __str__(self):
         return str(self.inicio) + ' até ' + str(self.fim)

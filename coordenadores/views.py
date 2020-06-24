@@ -6,7 +6,7 @@ from configuracao.models import Horario
 from utilizadores.models import ProfessorUniversitario, Coordenador
 from configuracao.models import Diaaberto, Horario, Campus, Edificio, Espaco
 from django.http import HttpResponseRedirect
-from datetime import datetime, date,timezone
+from datetime import datetime, date,timezone,time
 from _datetime import timedelta
 from django.db.models import Q
 from coordenadores.forms import *
@@ -248,10 +248,22 @@ class ConsultarTarefas(SingleTableMixin, FilterView):
     def get_queryset(self):
         return Tarefa.objects.filter(coord=self.user)
 
-def eliminartarefa(request,id):
-    tarefa = Tarefa.objects.get(id=id)
-    tarefa.delete()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        table = self.get_table(**self.get_table_kwargs())
+        context["colabs"] = list(map(lambda x: (x.id, x.full_name), Colaborador.objects.filter(faculdade = self.user.faculdade,utilizador_ptr_id__valido=True)))
+        context[self.get_context_table_name(table)] = table
+        return context
 
+def eliminartarefa(request,id):
+    user_check_var = user_check(request=request, user_profile=[Coordenador])
+    if not user_check_var.get('exists'): return user_check_var.get('render')
+    if Tarefa.objects.filter(id=id).exists():
+        tarefa = Tarefa.objects.get(id=id)
+    if tarefa.coord.id == user_check_var.get('firstProfile').id and tarefa.eliminar == True:
+        tarefa.delete()
+        return redirect('coordenadores:consultarTarefa')
+    return redirect('coordenadores:consultarTarefa')
 
 
 

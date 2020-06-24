@@ -4,6 +4,7 @@ from .models import *
 from utilizadores.models import *
 from configuracao.models import *
 from coordenadores.models import *
+from notificacoes.models import *
 from django.shortcuts import redirect
 from .forms import *
 from .tables import TarefasTable

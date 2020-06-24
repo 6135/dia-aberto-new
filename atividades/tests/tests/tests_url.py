@@ -8,9 +8,9 @@ class TestUrls(SimpleTestCase):
 
     def url_is_resolved(self):
         url = reverse('atividades:minhasAtividades')
-        self.assertEquals(resolve(url).func, views.AtividadesProfessor.as_view())
+        self.assertEquals(resolve(url).func.__name__, views.AtividadesProfessor.__name__)
         url = reverse('atividades:atividadesUOrganica')
-        self.assertEquals(resolve(url).func, views.AtividadesCoordenador.as_view())
+        self.assertEquals(resolve(url).func.__name__, views.AtividadesCoordenador.__name__)
         url = reverse('atividades:alterarAtividade', kwargs={'id':1})
         self.assertEquals(resolve(url).func, views.alterarAtividade) 
         url = reverse('atividades:inserirSessao', kwargs={'id':1})
@@ -29,8 +29,6 @@ class TestUrls(SimpleTestCase):
         self.assertEquals(resolve(url).func, views.versalas) 
         url = reverse('atividades:verHorarios')
         self.assertEquals(resolve(url).func, views.verhorarios) 
-        url = reverse('atividades:ajaxAddSessaoRow')
-        self.assertEquals(resolve(url).func, views.sessaoRow) 
         url = reverse('atividades:verResumo', kwargs={'id':1})
         self.assertEquals(resolve(url).func, views.verresumo) 
         url = reverse('atividades:confirmarResumo', kwargs={'id':1})

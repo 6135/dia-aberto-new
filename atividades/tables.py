@@ -54,6 +54,7 @@ class ProfAtividadesTable(tables.Table):
     class Meta:
         model = Atividade
         sequence = ('nome','tipo','datasubmissao','coordenador','estado', 'acoes')
+        
     def before_render(self, request):
         self.columns.hide('id')
         self.columns.hide('descricao')
