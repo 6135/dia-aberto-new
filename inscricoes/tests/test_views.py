@@ -1,11 +1,16 @@
 from django.test import Client, SimpleTestCase, TestCase
 from utilizadores.models import Administrador, Participante
 from inscricoes.models import Escola, Inscricao
-from configuracao.models import Diaaberto
+from configuracao.models import Campus, Diaaberto
 from django.utils.datetime_safe import datetime
 import pytz
 from django.urls import reverse
 from inscricoes.views import InscricaoWizard
+
+def create_campus():
+    return Campus.objects.create(
+        nome = "Gambelas"
+    )
 
 def create_open_day():
     return Diaaberto.objects.create(

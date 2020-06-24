@@ -2,7 +2,7 @@ from django.test import TestCase
 from utilizadores.models import *
 
 def create_Utilizador_0(self):
-    utilizador = Utilizador.objects.create(
+    utilizador = Utilizador.objects.get_or_create(
         username="andre0", 
         password="andre123456", 
         email="teste@teste.pt",
@@ -40,14 +40,14 @@ def create_Administrador_1(self):
     )    
 
 
-def create_Participante_0(self):
-    utilizador = Participante.objects.create(
+def create_Participante_0():
+    return Participante.objects.get_or_create(
         username="andre0", 
         password="andre123456", 
         email="teste@teste.pt",
         contacto="+351967321393",
         valido="True"
-    )
+    )[0]
 
 
 def create_Participante_1(self):
@@ -150,3 +150,4 @@ def create_Colaborador_1(self):
 
 
 class TestUtilizadoresModels(TestCase):
+    pass
