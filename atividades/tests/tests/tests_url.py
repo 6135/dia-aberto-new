@@ -8,9 +8,9 @@ class TestUrls(SimpleTestCase):
 
     def url_is_resolved(self):
         url = reverse('atividades:minhasAtividades')
-        self.assertEquals(resolve(url).func, views.AtividadesProfessor.as_view())
+        self.assertEquals(resolve(url).func.__name__, views.AtividadesProfessor.__name__)
         url = reverse('atividades:atividadesUOrganica')
-        self.assertEquals(resolve(url).func, views.AtividadesCoordenador.as_view())
+        self.assertEquals(resolve(url).func.__name__, views.AtividadesCoordenador.__name__)
         url = reverse('atividades:alterarAtividade', kwargs={'id':1})
         self.assertEquals(resolve(url).func, views.alterarAtividade) 
         url = reverse('atividades:inserirSessao', kwargs={'id':1})
