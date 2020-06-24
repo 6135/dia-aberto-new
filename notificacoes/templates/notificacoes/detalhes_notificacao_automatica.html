@@ -106,7 +106,7 @@
                 </div>
                 <div class="control is-grouped">
                     <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}" class="button is-small"><i class="fa fa-inbox"></i></a>
-                    <a class="button is-small"><div data-tooltip="Click em Enviar Mensagem para comunicar diretamente com um utilizador"><i class="fa fa-exclamation-circle"></i></div></a>
+                    <a class="button is-small"><div data-tooltip="Click em Enviar Mensagem para comunicar diretamente com um utilizador"><i class="fa fa-question-circle"></i></div></a>
                     <a onclick="alert.render('Tem a certeza que pretende eliminar todas as notificações desta categoria?','{% url 'notificacoes:limpar-notificacoes' categoria %}')"
                         class="button is-small">
                         <i class="mdi mdi-trash-can-outline mdi-18px"></i>
@@ -195,7 +195,7 @@
             <div class="action-buttons">
                 <div class="control is-grouped">
                     <a href="{% url 'notificacoes:categorias-notificacao-automatica' 0 0 %}" class="button is-small"><i class="fa fa-inbox"></i></a>
-                    <a class="button is-small"><div data-tooltip="Esta mensagem foi gerada automáticamente"><i class="fa fa-exclamation-circle"></i></div></a>
+                    <a class="button is-small"><div data-tooltip="Esta mensagem foi gerada automáticamente"><i class="fa fa-question-circle"></i></div></a>
                     <a onclick="alert.render('Tem a certeza que pretende eliminar esta notificação?','{% url 'notificacoes:apagar-notificacao-automatica' categoria atual.id %}?page={{notificacoes.number}}')"
                         class="button is-small">
                         <i class="mdi mdi-trash-can-outline mdi-18px"></i>

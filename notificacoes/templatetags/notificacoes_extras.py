@@ -160,14 +160,14 @@ def atualizar_informacoes(user):
 @register.filter(name='mensagens') 
 def mensagens(user):
     if user.is_authenticated:    
-        msgs = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id)[:5]
+        msgs = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id).order_by('-id') [:5]
         return msgs
     return None    
 
 @register.filter(name='nr_mensagens') 
 def nr_mensagens(user):
     if user.is_authenticated:    
-        msg = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id)
+        msg = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=False)
         return len(msg)
     else:
         return 0        

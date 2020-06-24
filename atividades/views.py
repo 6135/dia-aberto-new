@@ -128,6 +128,17 @@ def alterarAtividade(request,id):
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
 
+    atividadecheck= atividade.first()
+    sessoes= Sessao.objects.filter(atividadeid=atividadecheck)
+    for sessao in sessoes:
+        if sessao.vagas != atividadecheck.participantesmaximo:
+            return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })
+
     if atividade.exists():  
         activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
         if activity_object.professoruniversitarioutilizadorid != ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
@@ -161,6 +172,11 @@ def alterarAtividade(request,id):
                         activity_object_formed.estado = "nsub"
                         activity_object_formed.save()
                         materiais_object_form.save()
+                        sessoes= Sessao.objects.filter(atividadeid= activity_object_formed)
+                        print(sessoes)
+                        for sessao in sessoes:
+                            sessao.vagas= activity_object_formed.participantesmaximo
+                            sessao.save()
                     else:
                         print("hello")
                         print(Atividade.objects.get(id=id) == activity_object_formed)
@@ -169,6 +185,11 @@ def alterarAtividade(request,id):
                             activity_object_formed.dataalteracao = datetime.now()
                             activity_object_formed.save()
                             materiais_object_form.save()
+                            sessoes= Sessao.objects.filter(atividadeid= activity_object_formed)
+                            print(sessoes)
+                            for sessao in sessoes:
+                                sessao.vagas= activity_object_formed.participantesmaximo
+                                sessao.save()
                     nviews.enviar_notificacao_automatica(request,"atividadeAlterada",activity_object_formed.id) #Enviar Notificacao Automatica !!!!!!
                     return redirect('atividades:inserirSessao',id)          
         return render(request=request,
@@ -176,7 +197,12 @@ def alterarAtividade(request,id):
                         context={'form': activity_object_form, 'espaco':espaco,'espacos':espacos, "edificios": edificios, "campus":campus, "materiais":materiais_object_form}
                         )
     else:
-        return redirect('atividades:minhasAtividades')
+        return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })
 
 def eliminarAtividade(request,id):
     user_check_var = uviews.user_check(request=request, user_profile=[ProfessorUniversitario])
@@ -185,11 +211,28 @@ def eliminarAtividade(request,id):
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
 
+    atividadecheck= atividade.first()
+    sessoes= Sessao.objects.filter(atividadeid=atividadecheck)
+    for sessao in sessoes:
+        if sessao.vagas != atividadecheck.participantesmaximo:
+            return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })
+
     if atividade.exists():
         nviews.enviar_notificacao_automatica(request,"atividadeApagada",id) #Enviar Notificacao Automatica !!!!!!
         atividade.delete()
-        
-    return redirect('atividades:minhasAtividades')
+        return redirect('atividades:minhasAtividades')
+    else:
+        return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })
     
 
 
@@ -200,12 +243,27 @@ def eliminarSessao(request,id):
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     sessoes = Sessao.objects.filter(id=id,atividadeid__professoruniversitarioutilizadorid=userId)
 
+        
+
     if sessoes.exists():
         sessaor=sessoes.first()
+        if sessaor.vagas != sessaor.atividadeid.participantesmaximo:
+            return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })
         atividadeid= sessaor.atividadeid.id
         sessaor.delete()
         return redirect('atividades:inserirSessao',atividadeid)
-    return redirect('atividades:minhasAtividades')
+    else:
+        return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })
 
 
 def proporatividade(request):
@@ -289,6 +347,17 @@ def inserirsessao(request,id):
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
 
+    atividadecheck= atividade.first()
+    sessoes= Sessao.objects.filter(atividadeid=atividadecheck)
+    for sessao in sessoes:
+        if sessao.vagas != atividadecheck.participantesmaximo:
+            return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })
+
     if atividade.exists():  
         today= datetime.now(timezone.utc) 
         diaaberto=Diaaberto.objects.get(datapropostasatividadesincio__lte=today,dataporpostaatividadesfim__gte=today)
@@ -335,7 +404,12 @@ def inserirsessao(request,id):
                                'dias': dias_diaaberto,
                                'check': check, "id":id})
     else:
-        return redirect('atividades:minhasAtividades')    
+        return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })    
 
 
 class TimeC():
@@ -525,6 +599,17 @@ def verresumo(request,id):
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
 
+    atividadecheck= atividade.first()
+    sessoes= Sessao.objects.filter(atividadeid=atividadecheck)
+    for sessao in sessoes:
+        if sessao.vagas != atividadecheck.participantesmaximo:
+            return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })
+
     if atividade.exists():  
         atividade= Atividade.objects.get(id=id)
         nsub= 0
@@ -538,7 +623,12 @@ def verresumo(request,id):
         return render(request=request, 
                     template_name="atividades/resumo.html",  context={"atividade": atividade, "sessions_activity": sessions_activity, "nsub": nsub} )
     else:
-        return redirect('atividades:minhasAtividades')
+        return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })
 
 
 def confirmarResumo(request,id):
@@ -547,6 +637,17 @@ def confirmarResumo(request,id):
 
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
+
+    atividadecheck= atividade.first()
+    sessoes= Sessao.objects.filter(atividadeid=atividadecheck)
+    for sessao in sessoes:
+        if sessao.vagas != atividadecheck.participantesmaximo:
+            return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })
 
     if atividade.exists():  
         atividade= Atividade.objects.get(id=id)
@@ -557,7 +658,12 @@ def confirmarResumo(request,id):
         nviews.enviar_notificacao_automatica(request,"validarAtividades",atividade.id) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
         return redirect("atividades:minhasAtividades")
     else:
-        return redirect('atividades:minhasAtividades')
+        return    render(request=request,
+                            template_name='mensagem.html',
+                            context={
+                                'tipo':'error',
+                                'm':'Não tem permissões para esta ação!'
+                            })
 
 #---------------------End David
     

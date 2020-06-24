@@ -6,7 +6,7 @@
 </head>
 {% extends 'app.html' %}
 
-{% block title %}- Notificações{% endblock title %}
+{% block title %}- Mensagens{% endblock title %}
 
 {% block content %}
 {% load static %}
@@ -19,7 +19,7 @@
     <nav aria-label="breadcrumbs" class="breadcrumb">
         <ul>
             <li><a href="{% url 'home' %}">Início</a></li>
-            <li class="is-active"><a>Notificações</a></li>
+            <li class="is-active"><a>Mensagens</a></li>
         </ul>
     </nav>
     <div class="columns" id="mail-app">
@@ -89,7 +89,7 @@
                             class="fa fa-inbox"></i></a>
                     <a class="button is-small">
                         <div data-tooltip="Click em Nova Mensagem para comunicar diretamente com um utilizador"><i
-                                class="fa fa-exclamation-circle"></i></div>
+                                class="fa fa-question-circle"></i></div>
                     </a>
                     <a class="button is-small">
                         <i class="mdi mdi-trash-can-outline mdi-18px"></i>
@@ -136,7 +136,7 @@
                             class="fa fa-inbox"></i></a>
                     <a class="button is-small">
                         <div data-tooltip="Click em Enviar Mensagem para comunicar diretamente com um utilizador"><i
-                                class="fa fa-exclamation-circle"></i></div>
+                                class="fa fa-question-circle"></i></div>
                     </a>
                     <a class="button is-small">
                         <i class="mdi mdi-trash-can-outline mdi-18px"></i>

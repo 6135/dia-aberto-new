@@ -127,15 +127,15 @@ class viewDays(SingleTableMixin, FilterView):
 		latest = Diaaberto.objects.all().order_by('ano').last()
 		current = Diaaberto.current()
 		is_open=False
-		latest_year = 9999
-		earliest_year = 0
+		latest = 9999
+		earliest = 0
 		if earliest is not None: 
 			if current is not None:
 				is_open = True
-			latest_year = latest.ano
-			earliest_year = earliest.ano
-		context["earliest"] = earliest_year
-		context['latest'] = latest_year
+			latest = latest.ano
+			earliest = earliest.ano
+		context["earliest"] = earliest
+		context['latest'] = latest
 		context["is_open"] = is_open
 		return context
 

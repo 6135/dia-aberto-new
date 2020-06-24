@@ -4,6 +4,7 @@ from .models import *
 from utilizadores.models import *
 from configuracao.models import *
 from coordenadores.models import *
+from notificacoes.models import *
 from django.shortcuts import redirect
 from .forms import *
 from .tables import TarefasTable
@@ -175,17 +176,17 @@ def validar_cancelamento_tarefa(request, id_notificacao):
             return redirect('utilizadores:mensagem',5) 
     else:
         return redirect('utilizadores:mensagem',5) 
-    try:
-        notificacao = Notificacao.objects.get(id=id_notificacao)
-        notificacao.deleted = True
-        id_tarefa = notificacao.action_object.id
-        notificacao.save()
-        tarefa = Tarefa.objects.get(id=id_tarefa)
-        tarefa.estado="Cancelada"
-        tarefa.save()
-        views.enviar_notificacao_automatica(request,"confirmarCancelarTarefa",id_tarefa)
-    except:
-        return redirect('utilizadores:mensagem',11)    
+    # try:
+    notificacao = Notificacao.objects.get(id=id_notificacao)
+    notificacao.deleted = True
+    id_tarefa = notificacao.action_object.id
+    notificacao.save()
+    tarefa = Tarefa.objects.get(id=id_tarefa)
+    tarefa.estado="Cancelada"
+    tarefa.save()
+    views.enviar_notificacao_automatica(request,"confirmarCancelarTarefa",id_tarefa)
+    # except:
+    #     return redirect('utilizadores:mensagem',11)    
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 def rejeitar_cancelamento_tarefa(request, id_notificacao):

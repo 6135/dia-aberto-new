@@ -33,6 +33,7 @@ class Tarefa(models.Model):
         elif TarefaAuxiliar.objects.filter(tarefaid=self.id):
             return "Auxiliar"
         else: return "Outra"  
+
     class Meta:
         db_table = 'Tarefa'
 
@@ -80,7 +81,7 @@ class TarefaAcompanhar(models.Model):
         db_table = 'TarefaAcompanhar'
 
     def getDescription(self):
-        msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.tarefa.dia.strftime('%d/%m/%y')+" às "+self.tarefa.horario.strftime('%H horas e %M minutos')+"."
+        msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.tarefaid.dia.strftime('%d/%m/%y')+" às "+self.tarefaid.horario.strftime('%H horas e %M minutos')+"."
         return msg
         
 class TarefaAuxiliar(models.Model):
