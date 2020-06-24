@@ -24,6 +24,14 @@ class Tarefa(models.Model):
         elif TarefaAuxiliar.objects.filter(tarefaid=self.id):
             return "tarefaAuxiliar"
         else: return "tarefaOutra"
+
+    @property
+    def tipo_frontend(self):
+        if TarefaAcompanhar.objects.filter(tarefaid=self.id):
+           return "Acompanhar"
+        elif TarefaAuxiliar.objects.filter(tarefaid=self.id):
+            return "Auxiliar"
+        else: return "Outra"  
     class Meta:
         db_table = 'Tarefa'
 
@@ -36,6 +44,23 @@ class Tarefa(models.Model):
         else:
             tmp = TarefaOutra.objects.get(tarefaid=self.id)
         return tmp.getDescription()
+
+    def get_tarefa_especifica(self):
+        if self.tipo == "tarefaAcompanhar":
+            tmp = TarefaAcompanhar.objects.get(tarefaid=self.id)
+        elif self.tipo == "tarefaAuxiliar":   
+            tmp = TarefaAuxiliar.objects.get(tarefaid=self.id)
+        else:
+            tmp = TarefaOutra.objects.get(tarefaid=self.id)
+        return tmp
+
+    def get_outra_descricao(self):
+        tarefa = TarefaOutra.objects.get(tarefaid=self.id)
+        if tarefa is not None:
+            return tarefa.descricao
+        else:
+            return ""
+
 
 class TarefaAcompanhar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)

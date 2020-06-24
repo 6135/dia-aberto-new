@@ -4,6 +4,7 @@ from django.utils.html import format_html
 from django.db.models import Count
 from atividades.models import Tema
 
+
 class CursoTable(tables.Table):
 
     acoes = tables.Column('Operações', empty_values=(),orderable=False)

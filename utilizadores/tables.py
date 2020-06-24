@@ -87,7 +87,7 @@ class UtilizadoresTable(django_tables.Table):
         if record.firstProfile == 'Participante':
             alerta = "Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente."
         elif record.firstProfile == 'Colaborador':
-            alerta = "Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>As <b>tarefas</b> atribuídas a este colaborador serão apagadas permanentemente."
+            alerta = "Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>As suas <b>tarefas</b> deixarão de estar atribuídas."
         elif record.firstProfile == 'ProfessorUniversitario':
             alerta = "Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>As <b>atividades</b> pelo qual este professor está responsável serão apagadas permanentemente."
         elif record.firstProfile == 'Coordenador':
@@ -96,7 +96,7 @@ class UtilizadoresTable(django_tables.Table):
             if not self.request.user.groups.filter(name='Administrador').exists():
                 terceiro_botao = " "
             elif record.valido != "True" or Administrador.objects.filter(valido="True").count() > 1:
-                alerta = "Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>A <b>incrição</b> deste participante será apagada permanentemente."
+                alerta = "Tem a certeza que pretende eliminar este utilizador?<br><br><b>Atenção!</b><br><br>Todas as informações relativas aos dias abertos pelo qual este administrador está responsável serão apagadas permanentemente!"
             elif self.request.user != record.user_ptr:
                 terceiro_botao = """
                 <a onclick="alert.warning('Não pode apagar este administrador porque é o unico que existe.')"

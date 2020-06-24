@@ -1,7 +1,8 @@
 from atividades.models import Atividade, Sessao
 import django_filters
 from django.db.models import Exists, OuterRef
-import datetime
+from datetime import datetime
+from django.forms.widgets import CheckboxSelectMultiple
 
 
 def filter_sessoes(queryset, name, value):
@@ -36,3 +37,34 @@ class AtividadeFilter(django_filters.FilterSet):
     class Meta:
         model = Atividade
         fields = '__all__'
+
+
+
+class CoordAtividadesFilter(django_filters.FilterSet):
+    nome = django_filters.CharFilter(
+        field_name="nome", lookup_expr='icontains')
+    departamento_id = django_filters.NumberFilter(
+        field_name="professoruniversitarioutilizadorid__departamento__id")
+    campus_id = django_filters.NumberFilter(
+        field_name="espacoid__edificio__campus__id")
+    sessoes = django_filters.CharFilter(method=filter_sessoes)
+    estado = django_filters.MultipleChoiceFilter(field_name='estado', choices=[('Aceite','Aceite'),('Pendente','Pendente'),('Recusada','Recusada')], widget=CheckboxSelectMultiple())
+
+    class Meta:
+        model = Atividade
+        fields = '__all__'
+
+class ProfAtividadesFilter(django_filters.FilterSet):
+    nome = django_filters.CharFilter(
+        field_name="nome", lookup_expr='icontains')
+    departamento_id = django_filters.NumberFilter(
+        field_name="professoruniversitarioutilizadorid__departamento__id")
+    campus_id = django_filters.NumberFilter(
+        field_name="espacoid__edificio__campus__id")
+    sessoes = django_filters.CharFilter(method=filter_sessoes)
+    estado = django_filters.MultipleChoiceFilter(field_name='estado', choices=[('Aceite','Aceite'),('Pendente','Pendente'),('Recusada','Recusada')], widget=CheckboxSelectMultiple())
+
+    class Meta:
+        model = Atividade
+        fields = '__all__'
+

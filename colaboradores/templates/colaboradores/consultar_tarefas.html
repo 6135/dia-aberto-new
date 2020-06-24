@@ -1,73 +1,96 @@
 {% extends 'app.html' %}
+{% load django_tables2 %}
 
 {% block title %}- Minhas Tarefas{% endblock title %}
 
 {% block content %}
 
-{% load informacao %}
 <div class="columns">
     <div class="column is-3">
-        <form method="POST" action="" id='filter'>
-            {% csrf_token %}
-            <div>
-                <div class="menu">
-                    <p class="menu-label">Filtros Tarefa</p>
-                    <ul class="menu-list">
-
-                        <div class="field">
-                            <!---->
-                            <div class="control has-icons-left is-clearfix">
-                                <input name="current" placeholder="Nome da Tarefa" class="input" value="{{current}}">
-                                <span class="icon is-left">
-                                    <i class="mdi mdi-magnify mdi-24px"></i>
-                                </span>
-                            </div>
-                            <!---->
-                        </div>
-                        <hr>
-
-                        <div class="field">
-                            <!---->
-                            <div class="control is-expanded">
-                                <span class="select is-fullwidth is-empty">
-                                    {{form.filtro_tipo}}
-                                </span>
-                                <!---->
-                            </div>
-                            <!---->
-                        </div>
-                        <div class="field">
-                            <!---->
-                            <div class="control is-expanded">
-                                <span class="select is-fullwidth is-empty">
-                                    {{form.filtro_estado}}
-                                </span>
-                                <!---->
-                            </div>
-                            <!---->
-                        </div>
-
-                        <br>
-
-                        <div class="field">
-                            <button type="submit" onClick="resetForm()" class="button is-danger is-outlined">
-                                <span class="icon is-left">
-                                    <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                                </span>
-                                <span>Limpar pesquisa</span>
-                            </button>
-                            <button type="Submit" class="button is-success is-outlined">
-                                <span class="icon is-left">
-                                    <i class="mdi mdi-magnify mdi-24px"></i>
-                                </span>
-                                <span>Pesquisar</span>
-                            </button>
-                        </div>
-                    </ul>
-                </div>
+        <div class="menu">
+            <div class="menu-label">
+                Filtros Utilizadores
             </div>
-
-        </form>
+            <form method="get">
+                <div class="field">
+                    <div class="control has-icons-left">
+                        <input class="input" name="{{ filter.form.nome.name }}"
+                            value="{{ filter.form.nome.value|default_if_none:'' }}" type="text" placeholder="Nome">
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                    </div>
+                </div>
+                <hr>
+                <div class="field">
+                    <div class="control has-icons-left">
+                        <div class="select is-fullwidth">
+                            <select name="{{ filter.form.tipo.name }}" value="{{filter.form.tipo.value}}">
+                                <option value="">Todos os Tipos</option>
+                                <option value="tarefaAuxiliar" {% if filter.form.tipo.value == "tarefaAuxiliar" %}
+                                    selected {% endif %}>
+                                    Ajudar na Atividade
+                                </option>
+                                <option value="tarefaAcompanhar" {% if filter.form.tipo.value == "tarefaAcompanhar" %}
+                                    selected {% endif %}>
+                                    Acompanhar Participantes
+                                </option>
+                                <option value="tarefaOutra" {% if filter.form.tipo.value == "tarefaOutra" %} selected
+                                    {% endif %}>
+                                    Outras Tarefas
+                                </option>
+                            </select>
+                        </div>
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="control has-icons-left">
+                        <div class="select is-fullwidth">
+                            <select name="{{ filter.form.estado.name }}" value="{{filter.form.estado.value}}">
+                                <option value="">Todos os Estados</option>
+                                <option value="naoConcluida" {% if filter.form.estado.value == "naoConcluida" %}
+                                    selected {% endif %}>
+                                    Não Concluída
+                                </option>
+                                <option value="Concluida" {% if filter.form.estado.value == "Concluida" %} selected
+                                    {% endif %}>
+                                    Concluida
+                                </option>
+                                <option value="Cancelada" {% if filter.form.estado.value == "Cancelada" %} selected
+                                    {% endif %}>
+                                    Cancelada
+                                </option>
+                                <option value="Iniciada" {% if filter.form.estado.value == "Iniciada" %} selected
+                                    {% endif %}>
+                                    Iniciada
+                                </option>
+                            </select>
+                        </div>
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                    </div>
+                </div>
+                <div class="field is-grouped">
+                    <p class="control is-expanded">
+                        <input class="button is-light is-fullwidth" type="reset"
+                            onclick="event.preventDefault(); window.location='{% url 'utilizadores:consultar-utilizadores' %}';"
+                            value="Limpar">
+                    </p>
+                    <p class="control is-expanded">
+                        <button class="button is-primary is-fullwidth" type="submit">
+                            <span class="icon">
+                                <i class="mdi mdi-magnify"></i>
+                            </span>
+                            <span>Pesquisar</span>
+                        </button>
+                    </p>
+                </div>
+            </form>
+        </div>
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -77,312 +100,7 @@
                         aria-current="page">Consultar Tarefas</a></li>
             </ul>
         </nav>
-        {% comment %} <a href="{% url 'colaboradores:consultar-tarefas' %}">
-            <button type="button" class="button is-info is-outlined" style="margin-bottom: 1rem;">
-
-                <span class="icon is-small">
-                    <i class="mdi mdi-calendar-clock mdi-24px"></i>
-                </span>
-                <span>Meu Horário</span>
-                <!----></button>
-        </a> {% endcomment %}
-        <div class="b-table is-fullwidth">
-            <div class="table-wrapper is-fullwidth">
-
-                <table class="table is-striped has-mobile-cards is-hoverable is-fullwidth" id="table01">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th onclick="sortTable(1,false)" style="cursor:pointer;" class="pre-expandable">
-                                Nome
-                                <span class="icon-expandable-180 is-small">
-                                    <i id="ordenar" class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th>
-                                Dia
-                            </th>
-                            <th>
-                                Horário
-                            </th>
-                            <th>
-                                Tipo
-                            </th>
-                            <th>
-                                Estado
-                            </th>
-
-                        </tr>
-                    </thead>
-                    {% for tarefa in tarefas %}
-
-                    <tbody id="{{tarefa}}">
-                        <tr draggable="false">
-                            <td class="chevron-cell">
-                                <a class="detailbutton" role="button" onclick="displayDetails({{tarefa.id}})"
-                                    tarefa="{{tarefa.id}}">
-                                    <span class="icon">
-                                        <i id="mais_informacao{{tarefa.id}}"
-                                            class="mdi is-fullwidth mdi-chevron-right mdi-24px"></i>
-                                    </span>
-                                </a>
-                            </td>
-                            <td data-label="Nome">{{tarefa.nome}}</td>
-                            {% if tarefa == "tarefaAuxiliar" %}
-                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
-
-                            <td data-label="Horário">{{tarefa.horario}}</td>
-                            {% elif tarefa == "tarefaAcompanhar" %}
-                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horario">{{tarefa.horario}}</td>
-                            {% elif tarefa == "tarefaOutra" %}
-                            <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horarios">{{tarefa.horario}}</td>
-                            {% endif %}
-                            <td data-label="Tipo">
-                                {% if tarefa == "tarefaAuxiliar" %}
-                                Ajudar na Atividade
-                                {% elif tarefa == "tarefaAcompanhar" %}
-                                Acompanhar Participantes
-                                {% else %}
-                                Outras Tarefas
-                                {% endif %}
-
-
-                            </td>
-                            {% if tarefa.estado == 'naoConcluida'%}
-                            <td data-label="Estado">
-                                <span class="tag is-warning" style="width: 10rem;font-size: small;">Não Concluída</span>
-                            </td>
-                            {% elif tarefa.estado == 'Concluida' %}
-                            <td data-label="Estado">
-                                <span class="tag is-success" style="width: 10rem;font-size: small;">Concluída</span>
-                            </td>
-                            {% elif tarefa.estado == 'Cancelada' %}
-                            <td data-label="Estado">
-                                <span class="tag is-danger" style="width: 10rem;font-size: small;">Cancelada</span>
-                            </td>
-                            {% elif tarefa.estado == 'Iniciada' %}
-                            <td data-label="Estado">
-                                <span class="tag is-info" style="width: 10rem;font-size: small;">Iniciada</span>
-                            </td>
-                            {% endif %}
-
-                        </tr>
-                        <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
-                            <td colspan="5">
-                                <div class="detail-container">
-                                    <div class="content">
-                                        <div style="font-size: 15px;">
-                                            <p>
-                                                <button
-                                                    class="button is-info is-light">{{ date|get_due_date_string:tarefa.id }}</button>
-                                            </p>
-                                            {% if tarefa == "tarefaAuxiliar" %}
-                                            <p>
-                                                <strong>Nome:</strong>
-                                                {{tarefa.nome}}
-                                            </p>
-
-                                            <p>
-                                                <strong>Tipo de tarefa:</strong>
-                                                Ajudar na Atividade
-                                            </p>
-                                            <p>
-                                                <strong>Campus:</strong>
-                                                {{tarefa|get_tarefa_auxiliar_campus:tarefa.id}}
-
-                                            </p>
-                                            <p>
-                                                <strong>Edificio:</strong>
-                                                {{tarefa|get_tarefa_auxiliar_edificio:tarefa.id}}
-                                            </p>
-                                            <p>
-                                                <strong>Sala:</strong>
-                                                {{tarefa|get_tarefa_auxiliar_espaco:tarefa.id}}
-                                            </p>
-                                            <p>
-                                                <strong>Professor Universitário Responsável:</strong>
-                                                {{tarefa|get_tarefa_auxiliar_prof:tarefa.id}}
-                                            </p>
-                                            <p>
-                                                <strong>Coordenador Responsável:</strong>
-                                                {{tarefa.coord.first_name}} {{tarefa.coord.last_name}}
-                                            </p>
-                                            {% elif tarefa == "tarefaAcompanhar" %}
-                                            <p>
-                                                <strong>Nome:</strong>
-                                                {{tarefa.nome}}
-                                            </p>
-
-                                            <p>
-                                                <strong>Tipo de tarefa:</strong>
-                                                Acompanhar Participantes
-                                            </p>
-                                            <p>
-                                                <strong>Quem Acompanhar:</strong> Grupo
-                                                {{tarefa.tarefaacompanhar.inscricao.id}}
-
-                                            </p>
-                                            <p>
-                                                <strong>Origem:</strong>
-                                                {{tarefa|get_tarefa_acompanhar_origem:tarefa.id}}
-                                            </p>
-                                            <p>
-                                                <strong>Destino:</strong>
-                                                {{tarefa|get_tarefa_acompanhar_destino:tarefa.id}}
-                                            </p>
-                                            <p>
-                                                <strong>Coordenador Responsável:</strong>
-                                                {{tarefa.coord.first_name}} {{tarefa.coord.last_name}}
-                                            </p>
-
-
-
-                                            {% elif tarefa == "tarefaOutra" %}
-
-                                            <strong>Nome:</strong>
-                                            {{tarefa.nome}}
-                                            </p>
-
-                                            <p>
-                                                <strong>Tipo de tarefa:</strong>
-                                                Outras Tarefas
-                                            </p>
-                                            <p>
-                                                <strong>Descrição:</strong>
-                                                {{tarefa|get_tarefa_outra_descricao:tarefa.id}}
-                                            </p>
-                                            <p>
-                                                <strong>Coordenador Responsável:</strong>
-                                                {{tarefa.coord.first_name}} {{tarefa.coord.last_name}}
-                                            </p>
-                                            {% endif %}
-
-
-                                            <div class="field is-grouped">
-                                                {% if tarefa.estado == 'naoConcluida'  %}
-                                                {% if date|tarefa_passou:tarefa.id == False %}
-                                                <div class="control">
-                                                    <a
-                                                        onclick="alert.warning('<b>Atenção!</b><br><br>Esta tarefa ainda não começou')">
-
-                                                        <button class="button is-link">Iniciar</button>
-                                                    </a>
-                                                </div>
-                                                {% else %}
-                                                <div class="control">
-                                                    <a href="{% url 'colaboradores:iniciar-tarefa' tarefa.id %}">
-                                                        <button class="button is-link">Iniciar</button>
-                                                    </a>
-                                                </div>
-                                                {% endif %}
-                                                {% endif %}
-
-                                                {% if tarefa.estado == 'Iniciada'  %}
-
-                                                <div class="control">
-                                                    <a href="{% url 'colaboradores:concluir-tarefa' tarefa.id %}">
-                                                        <button class="button is-link is-light">Concluir</button>
-                                                    </a>
-                                                </div>
-
-                                                {% endif %}
-                                                {% if tarefa.estado != 'Cancelada' and tarefa.estado != 'Concluida' %}
-                                                <div class="control">
-                                                    <a
-                                                        onclick="alert.render('Tem a certeza que pretende cancelar esta tarefa?','{% url 'colaboradores:cancelar-tarefa' tarefa.id %}')">
-
-                                                        <button class="button is-light">
-                                                            Cancelar
-                                                        </button>
-                                                    </a>
-                                                </div>
-
-                                                {% endif %}
-                                            </div>
-
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-        </div>
+        {% render_table table 'colaboradores/consultar_tarefas_table.html' %}
     </div>
-
-
-    {% comment  %}
-    Numeracao das paginas
-    {% endcomment %}
 </div>
-</div>
-
-
-<footer class="footer is-relative" style="background-color:white;">
-    <div class="level">
-        <div class="level-left">
-        </div>
-        <div class="level-right">
-            <div class="level-item">
-                <nav class="pagination">
-                    {% if utilizadores.has_previous %}
-                    <a role="button" href="?page={{utilizadores.previous_page_number}}" aria-label=""
-                        class="pagination-link pagination-previous">
-                        <span class="icon" aria-hidden="true">
-                            <i class="mdi mdi-chevron-left mdi-24px">
-                            </i>
-                        </span>
-                    </a>
-                    {% else %}
-                    <a role="button" href="#" disabled="disabled" aria-label=""
-                        class="pagination-link pagination-previous">
-                        <span class="icon" aria-hidden="true">
-                            <i class="mdi mdi-chevron-left mdi-24px">
-                            </i>
-                        </span>
-                    </a>
-                    {% endif %}
-
-                    {% if tarefas.has_next %}
-                    <a role="button" href="?page={{tarefas.next_page_number}}" aria-label=""
-                        class="pagination-link pagination-next">
-                        <span class="icon" aria-hidden="true"><i class="mdi mdi-chevron-right mdi-24px"></i></span></a>
-                    {% else %}
-                    <a role="button" href="#" disabled="disabled" aria-label="" class="pagination-link pagination-next">
-                        <span class="icon" aria-hidden="true"><i class="mdi mdi-chevron-right mdi-24px"></i></span></a>
-                    {% endif %}
-            </div>
-
-            <ul class="pagination-list">
-                <!---->
-                <!---->
-                <li><a role="button" href="#" aria-label="Current page, Page 1." aria-current="true"
-                        class="pagination-link is-current ">{{tarefas.number}}</a></li>
-                <!---->
-                <!---->
-            </ul>
-            </nav>
-        </div>
-    </div>
-    </div>
-</footer>
-{% comment  %}
-Fim da enumeracao das paginas
-{% endcomment %}
-
-<style>
-    .footer {
-        position: relative;
-        bottom: 0;
-        width: 100%;
-        background-color: #fafafa;
-        padding: 1rem 3rem;
-    }
-</style>
 {% endblock content %}

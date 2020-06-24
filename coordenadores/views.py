@@ -11,8 +11,11 @@ from _datetime import timedelta
 from django.db.models import Q
 from coordenadores.forms import *
 from notificacoes import views
-
-
+from django_tables2 import SingleTableMixin, SingleTableView
+from django_filters.views import FilterView
+from coordenadores.tables import TarefaTable
+from coordenadores.filters import TarefaFilter
+from utilizadores.views import user_check
 #def adicionartarefa(request, id = None):
 #    tarefa = Tarefa()
 #    if id is not None:
@@ -228,64 +231,63 @@ def locaisDestino(request):
                 context={'options':destinos, 'default': default}
             )  
 
-def filters(request):
-    filters=[]
-    if request.POST.get('Concluida'):
-        filters.append('Concluida')
-    else:
-        filters.append('')
+class ConsultarTarefas(SingleTableMixin, FilterView):
+    table_class = TarefaTable
+    template_name = 'coordenadores/consultartarefa.html'
+    filterset_class = TarefaFilter
+    table_pagination = {
+		'per_page': 10
+	}
 
-    if request.POST.get('naoConcluida'):
-        filters.append('naoConcluida')
-    else:
-        filters.append('')
+    def dispatch(self, request, *args, **kwargs):
+        user_check_var = user_check(request=request, user_profile=[Coordenador])
+        if not user_check_var.get('exists'): return user_check_var.get('render')
+        self.user = user_check_var.get('firstProfile')
+        return super().dispatch(request, *args, **kwargs)
 
-    if request.POST.get('naoAtribuida'):
-        filters.append('naoAtribuida')
-    else:
-        filters.append('')
-    return filters
-
-def consultartarefa(request):
-    tarefas=Tarefa.objects.all()
-    tarefasacompanhar= TarefaAcompanhar.objects.all()
-    tarefasauxiliar= TarefaAuxiliar.objects.all()
-    colaboradores= Colaborador.objects.all()
-    tarefasoutra= TarefaOutra.objects.all()
-    if request.method == 'POST' or request.GET.get('searchTarefa'):
-        form_tarefa=TarefaForm(request.POST)
-        today=datetime.now(timezone.utc)
-        diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
-        filterForm=tarefaFilterForm(request.POST)
-        nome=str(request.POST.get('searchTarefa'))
-        tarefas=tarefas.filter(Q(nome__icontains=nome) | Q(colab__utilizadorid__nome__icontains=nome))
-        tipo=str(request.POST.get('tipo'))
-        if tipo != ' ' and tipo != 'None':
-            tarefas=tarefas.filter(tipo=tipo)
-        if request.POST.get('Concluida') or request.POST.get('naoConcluida')  or request.POST.get('naoAtribuida'):
-            filter=filters(request)
-            tarefas=tarefas.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
-    else:
-        form_tarefa= TarefaForm(user=request.user.id)
-        filterForm=tarefaFilterForm()
-
-    return render(request=request,
-			    template_name="coordenadores/consultartarefa.html",
-                context={"tarefas": tarefas,"tarefasauxiliar": tarefasauxiliar,"tarefasacompanhar": tarefasacompanhar,"tarefasoutra": tarefasoutra,"filter":filterForm, "formtarefa":form_tarefa, "colaboradores": colaboradores}
-            )
+    def get_queryset(self):
+        return Tarefa.objects.filter(coord=self.user)
 
 def eliminartarefa(request,id):
-    Tarefa.objects.get(id=id).delete()
-    views.enviar_notificacao_automatica(request,"tarefaApagada",id) #Enviar Notificacao Automatica !!!!!!
-    return redirect('coordenadores:consultarTarefa')
+    tarefa = Tarefa.objects.get(id=id)
+    tarefa.delete()
 
 
-def atribuircolaborador(request,tarefa):
-    tarefa= Tarefa.objects.get(id=tarefa)
-    colaborador= Colaborador.objects.get(utilizadorid=request.POST['colab'])
-    tarefa.estado= "naoConcluida"
-    tarefa.colab= colaborador
-    tarefa.save()
-    views.enviar_notificacao_automatica(request,"tarefaAtribuida",tarefa) #Enviar Notificacao Automatica !!!!!!
-    return redirect('coordenadores:consultarTarefa')
 
+
+#def consultartarefa(request):
+#    tarefas=Tarefa.objects.all()
+#    tarefasacompanhar= TarefaAcompanhar.objects.all()
+#    tarefasauxiliar= TarefaAuxiliar.objects.all()
+#    colaboradores= Colaborador.objects.all()
+#    tarefasoutra= TarefaOutra.objects.all()
+#    if request.method == 'POST' or request.GET.get('searchTarefa'):
+#        form_tarefa=TarefaForm(request.POST)
+#        today=datetime.now(timezone.utc)
+#        diaAberto=Diaaberto.objects.filter(datadiaabertofim__gte=today).first()
+#        filterForm=tarefaFilterForm(request.POST)
+#        nome=str(request.POST.get('searchTarefa'))
+#        tarefas=tarefas.filter(Q(nome__icontains=nome) | Q(colab__utilizadorid__nome__icontains=nome))
+#        tipo=str(request.POST.get('tipo'))
+#        if tipo != ' ' and tipo != 'None':
+#            tarefas=tarefas.filter(tipo=tipo)
+#        if request.POST.get('Concluida') or request.POST.get('naoConcluida')  or request.POST.get('naoAtribuida'):
+#            filter=filters(request)
+#            tarefas=tarefas.filter(Q(estado=filter[0]) | Q(estado=filter[1]) | Q(estado=filter[2]))
+#    else:
+#        form_tarefa= TarefaForm(user=request.user.id)
+#        filterForm=tarefaFilterForm()
+#
+#    return render(request=request,
+#			    template_name="coordenadores/consultartarefa.html",
+#                context={"tarefas": tarefas,"tarefasauxiliar": tarefasauxiliar,"tarefasacompanhar": tarefasacompanhar,"tarefasoutra": tarefasoutra,"filter":filterForm, "formtarefa":form_tarefa, "colaboradores": colaboradores}
+#            )
+#
+##def atribuircolaborador(request,tarefa):
+#    tarefa= Tarefa.objects.get(id=tarefa)
+#    colaborador= Colaborador.objects.get(utilizadorid=request.POST['colab'])
+#    tarefa.estado= "naoConcluida"
+#    tarefa.colab= colaborador
+#    tarefa.save()
+#    views.enviar_notificacao_automatica(request,"tarefaAtribuida",tarefa) #Enviar Notificacao Automatica !!!!!!
+#    return redirect('coordenadores:consultarTarefa'
