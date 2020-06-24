@@ -14,9 +14,9 @@
     <tbody>
     {% for sala in row.record.salas_ %}
         <tr>
-            <td>{{sala}}</td>
-            <td>{{sala.andar}}</td>
-            <td>{{sala.descricao|default_if_none:"--"}}</td>
+            <td data-label="Sala">{{sala}}</td>
+            <td data-label="Andar">{{sala.andar}}</td>
+            <td data-label="Descrição">{{sala.descricao|default_if_none:"--"}}</td>
         </tr>
     {% endfor %}
     </tbody>
