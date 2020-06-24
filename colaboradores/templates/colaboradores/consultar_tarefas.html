@@ -128,21 +128,21 @@
                                 </a>
                             </td>
                             <td data-label="Nome">{{tarefa.nome}}</td>
-                            {% if tarefa.tipo == "tarefaAuxiliar" %}
+                            {% if tarefa == "tarefaAuxiliar" %}
                             <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
 
                             <td data-label="Horário">{{tarefa.horario}}</td>
-                            {% elif tarefa.tipo == "tarefaAcompanhar" %}
+                            {% elif tarefa == "tarefaAcompanhar" %}
                             <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
                             <td data-label="Horario">{{tarefa.horario}}</td>
-                            {% elif tarefa.tipo == "tarefaOutra" %}
+                            {% elif tarefa == "tarefaOutra" %}
                             <td data-label="Dia">{{tarefa.dia|date:'d-m-Y'}}</td>
                             <td data-label="Horarios">{{tarefa.horario}}</td>
                             {% endif %}
                             <td data-label="Tipo">
-                                {% if tarefa.tipo == "tarefaAuxiliar" %}
+                                {% if tarefa == "tarefaAuxiliar" %}
                                 Ajudar na Atividade
-                                {% elif tarefa.tipo == "tarefaAcompanhar" %}
+                                {% elif tarefa == "tarefaAcompanhar" %}
                                 Acompanhar Participantes
                                 {% else %}
                                 Outras Tarefas
@@ -178,7 +178,7 @@
                                                 <button
                                                     class="button is-info is-light">{{ date|get_due_date_string:tarefa.id }}</button>
                                             </p>
-                                            {% if tarefa.tipo == "tarefaAuxiliar" %}
+                                            {% if tarefa == "tarefaAuxiliar" %}
                                             <p>
                                                 <strong>Nome:</strong>
                                                 {{tarefa.nome}}
@@ -209,7 +209,7 @@
                                                 <strong>Coordenador Responsável:</strong>
                                                 {{tarefa.coord.first_name}} {{tarefa.coord.last_name}}
                                             </p>
-                                            {% elif tarefa.tipo == "tarefaAcompanhar" %}
+                                            {% elif tarefa == "tarefaAcompanhar" %}
                                             <p>
                                                 <strong>Nome:</strong>
                                                 {{tarefa.nome}}
@@ -239,7 +239,7 @@
 
 
 
-                                            {% elif tarefa.tipo == "tarefaOutra" %}
+                                            {% elif tarefa == "tarefaOutra" %}
 
                                             <strong>Nome:</strong>
                                             {{tarefa.nome}}

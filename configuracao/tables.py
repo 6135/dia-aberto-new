@@ -17,22 +17,18 @@ class CursoTable(tables.Table):
     
     def render_acoes(self,record):
         return format_html(f"""
-            <div class="columns">
-                <div class="column is-1">  
-                    <a id='edit' href="{reverse('configuracao:editarCurso', kwargs={'id':record.pk})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                        </span>
-                    </a>
-                </div>
-                &nbsp;
-                <div class="column is-1">                 
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar este curso?','{reverse('configuracao:eliminarCurso', kwargs={'id':record.pk})}')">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
-                </div>
+            <div> 
+                <a id='edit' href="{reverse('configuracao:editarCurso', kwargs={'id':record.pk})}">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                    </span>
+                </a>
+                &nbsp;                
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este curso?','{reverse('configuracao:eliminarCurso', kwargs={'id':record.pk})}')">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                    </span>
+                </a> 
             </div> 
         """)
 
@@ -54,22 +50,18 @@ class TemaTable(tables.Table):
 
     def render_acoes(self,record):
         return format_html(f"""
-            <div class="columns">
-                <div class="column is-1">  
-                    <a id='edit' href="{reverse('configuracao:editarTema', kwargs={'id':record.pk})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                        </span>
-                    </a>
-                </div>
-                &nbsp;
-                <div class="column is-1">                 
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar este tema?','{reverse('configuracao:eliminarTema', kwargs={'id':record.pk})}')">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
-                </div>
+            <div>
+                <a id='edit' href="{reverse('configuracao:editarTema', kwargs={'id':record.pk})}">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                    </span>
+                </a>
+                &nbsp;              
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este tema?','{reverse('configuracao:eliminarTema', kwargs={'id':record.pk})}')">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                    </span>
+                </a> 
             </div> 
         """)
 
@@ -79,33 +71,31 @@ class DepartamentoTable(tables.Table):
     class Meta:
         model = Departamento
 
+    def before_render(self, request):
+        self.columns.hide('id')
 
     def render_acoes(self,record):
         print(record)
         return format_html(f"""
-            <div class="columns">
-                <div class="column is-1">  
-                    <a id='edit' href="{reverse('configuracao:editarDepartamento', kwargs={'id':record.pk})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                        </span>
-                    </a>
-                </div>
-                &nbsp;
-                <div class="column is-1">                 
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Departamento?\n<strong>Isto ira eliminar todos os curso e atividades contidas!</strong>','{reverse('configuracao:eliminarDepartamento', kwargs={'id':record.pk})}')">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
-                </div>
+            <div>
+                <a id='edit' href="{reverse('configuracao:editarDepartamento', kwargs={'id':record.pk})}">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                    </span>
+                </a>
+                &nbsp;            
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este Departamento?<strong>Isto ira eliminar todos os curso e atividades contidas!</strong>','{reverse('configuracao:eliminarDepartamento', kwargs={'id':record.pk})}')">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                    </span>
+                </a>
             </div> 
         """)
 
 class EdificioTable(tables.Table):
 
     numsalas = tables.Column('Numero de salas', accessor='count_salas')
-    acoes = tables.Column('Operações', empty_values=())
+    acoes = tables.Column('Operações', empty_values=(),orderable=False)
 
     class Meta:
         model = Edificio
@@ -119,22 +109,18 @@ class EdificioTable(tables.Table):
 
     def render_acoes(self,record):
         return format_html(f"""
-            <div class="columns">
-                <div class="column is-1">  
-                    <a id='edit' href="{reverse('configuracao:editarEdificio', kwargs={'id':record.pk})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                        </span>
-                    </a>
-                </div>
-                &nbsp;
-                <div class="column is-1">                 
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Edificio?\n<strong>Isto ira eliminar todos os espaços e atividades contidas!</strong>','{reverse('configuracao:eliminarEdificio', kwargs={'id':record.pk})}')">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
-                </div>
+            <div >
+                <a id='edit' href="{reverse('configuracao:editarEdificio', kwargs={'id':record.pk})}">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                    </span>
+                </a>
+                &nbsp;             
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este Edificio?<strong>Isto ira eliminar todos os espaços e atividades contidas!</strong>','{reverse('configuracao:eliminarEdificio', kwargs={'id':record.pk})}')">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                    </span>
+                </a> 
             </div> 
         """)
 
@@ -142,7 +128,7 @@ class EdificioTable(tables.Table):
 class UOTable(tables.Table):
 
     campusid = tables.Column('Campus')
-    acoes = tables.Column('Operações', empty_values=())
+    acoes = tables.Column('Operações', empty_values=(),orderable=False)
 
     class Meta:
         model = Unidadeorganica
@@ -153,28 +139,24 @@ class UOTable(tables.Table):
 
     def render_acoes(self,record):
         return format_html(f"""
-            <div class="columns">
-                <div class="column is-1">  
-                    <a id='edit' href="{reverse('configuracao:editarUO', kwargs={'id':record.pk})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                        </span>
-                    </a>
-                </div>
-                &nbsp;
-                <div class="column is-1">                 
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar esta Unidade Organica?\n<strong>Isto ira eliminar todos os departamentos e cursos da respetiva!</strong>','{reverse('configuracao:eliminarUO', kwargs={'id':record.pk})}')">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
-                </div>
+            <div> 
+                <a id='edit' href="{reverse('configuracao:editarUO', kwargs={'id':record.pk})}">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                    </span>
+                </a>
+                &nbsp;                
+                <a onclick="alert.render('Tem a certeza que pretende eliminar esta Unidade Organica?<strong>Isto ira eliminar todos os departamentos e cursos da respetiva!</strong>','{reverse('configuracao:eliminarUO', kwargs={'id':record.pk})}')">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                    </span>
+                </a> 
             </div> 
         """)
 
 class MenuTable(tables.Table):
 
-    acoes = tables.Column('Operações', empty_values=())
+    acoes = tables.Column('Operações', empty_values=(),orderable=False)
     
     class Meta:
         model = Menu
@@ -186,22 +168,18 @@ class MenuTable(tables.Table):
 
     def render_acoes(self,record):
         return format_html(f"""
-            <div class="columns">
-                <div class="column is-1">  
-                    <a id='edit' href="{reverse('configuracao:editarMenu', kwargs={'id':record.pk})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                        </span>
-                    </a>
-                </div>
-                &nbsp;
-                <div class="column is-1">                 
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Menu?','{reverse('configuracao:eliminarMenu', kwargs={'id':record.pk})}')">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
-                </div>
+            <div >
+                <a id='edit' href="{reverse('configuracao:editarMenu', kwargs={'id':record.pk})}">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                    </span>
+                </a>
+                &nbsp;            
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este Menu?','{reverse('configuracao:eliminarMenu', kwargs={'id':record.pk})}')">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                    </span>
+                </a> 
             </div> 
         """)
 
@@ -211,7 +189,7 @@ class TransporteTable(tables.Table):
     rota = tables.Column('Rota', accessor='trip')
     horario = tables.Column('Horário',accessor='get_trip_time')
     capacidade = tables.Column('Capacidade', accessor='get_capacidade')
-    acoes = tables.Column('Operações', empty_values=())
+    acoes = tables.Column('Operações', empty_values=(),orderable=False)
     
     class Meta:
         model = Transportehorario
@@ -227,53 +205,40 @@ class TransporteTable(tables.Table):
 
     def render_acoes(self,record):
         opers1 = f"""
-            <div class="columns">
-
-                <div class="column is-1"> 
-                </div>
+            <div>
                 &nbsp;
-                <div class="column is-1">  
-                    <a id='edit' href="{reverse('configuracao:editarTransporte', kwargs={'id':record.pk})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                        </span>
-                    </a>
-                </div>
-                &nbsp;
-                <div class="column is-1">                 
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar este tema?','{reverse('configuracao:eliminarTransporte', kwargs={'id':record.pk})}')">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
-                </div>
+                <a id='edit' href="{reverse('configuracao:editarTransporte', kwargs={'id':record.pk})}">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                    </span>
+                </a>
+                &nbsp;          
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este tema?','{reverse('configuracao:eliminarTransporte', kwargs={'id':record.pk})}')">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                    </span>
+                </a> 
             </div> 
         """
         opers2 = f"""
-            <div class="columns">
-                <div class="column is-1">  
-                    <a id="assign" href="{reverse('configuracao:atribuirTransporte', kwargs={'id':record.pk})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-bus-school mdi-24px"></i>
-                        </span>
-                    </a>
-                </div>
+            <div>
+                <a id="assign" href="{reverse('configuracao:atribuirTransporte', kwargs={'id':record.pk})}">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-bus-school mdi-24px"></i>
+                    </span>
+                </a>
                 &nbsp;
-                <div class="column is-1">  
-                    <a id='edit' href="{reverse('configuracao:editarTransporte', kwargs={'id':record.pk})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                        </span>
-                    </a>
-                </div>
-                &nbsp;
-                <div class="column is-1">                 
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar este tema?','{reverse('configuracao:eliminarTransporte', kwargs={'id':record.pk})}')">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
-                </div>
+                <a id='edit' href="{reverse('configuracao:editarTransporte', kwargs={'id':record.pk})}">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                    </span>
+                </a>
+                &nbsp;          
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este tema?','{reverse('configuracao:eliminarTransporte', kwargs={'id':record.pk})}')">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                    </span>
+                </a> 
             </div> 
         """
         if 'Penha' in str(record.trip) and 'Gambelas' in str(record.trip):
@@ -282,7 +247,7 @@ class TransporteTable(tables.Table):
 
 class DiaAbertoTable(tables.Table):
 
-    acoes = tables.Column('Operações', empty_values=())
+    acoes = tables.Column('Operações', empty_values=(),orderable=False)
     datadiaabertoinicio = tables.Column('Inicio')
     datadiaabertofim = tables.Column('Fim')
     class Meta:
@@ -304,21 +269,17 @@ class DiaAbertoTable(tables.Table):
 
     def render_acoes(self,record):
         return format_html(f"""
-            <div class="columns">
-                <div class="column is-1">  
-                    <a id='edit' href="{reverse('configuracao:editarDia', kwargs={'id':record.pk})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                        </span>
-                    </a>
-                </div>
-                &nbsp;
-                <div class="column is-1">                 
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia?\n<strong>Isto vai eliminar tudo!</strong>','{reverse('configuracao:eliminarDia', kwargs={'id':record.pk})}')">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
-                </div>
+            <div>
+                <a id='edit' href="{reverse('configuracao:editarDia', kwargs={'id':record.pk})}">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                    </span>
+                </a>
+                &nbsp;          
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia?<strong>Isto vai eliminar tudo!</strong>','{reverse('configuracao:eliminarDia', kwargs={'id':record.pk})}')">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                    </span>
+                </a> 
             </div> 
         """)
