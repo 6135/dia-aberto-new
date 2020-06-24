@@ -128,6 +128,12 @@ def alterarAtividade(request,id):
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
 
+    atividadecheck= atividade.first()
+    sessoes= Sessao.objects.filter(atividadeid=atividadecheck)
+    for sessao in sessoes:
+        if sessao.vagas != atividadecheck.participantesmaximo:
+            return redirect('atividades:minhasAtividades')
+
     if atividade.exists():  
         activity_object = Atividade.objects.get(id=id) #Objecto da atividade que temos de mudar, ativdade da dupla
         if activity_object.professoruniversitarioutilizadorid != ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id):
@@ -161,6 +167,11 @@ def alterarAtividade(request,id):
                         activity_object_formed.estado = "nsub"
                         activity_object_formed.save()
                         materiais_object_form.save()
+                        sessoes= Sessao.objects.filter(atividadeid= activity_object_formed)
+                        print(sessoes)
+                        for sessao in sessoes:
+                            sessao.vagas= activity_object_formed.participantesmaximo
+                            sessao.save()
                     else:
                         print("hello")
                         print(Atividade.objects.get(id=id) == activity_object_formed)
@@ -169,6 +180,11 @@ def alterarAtividade(request,id):
                             activity_object_formed.dataalteracao = datetime.now()
                             activity_object_formed.save()
                             materiais_object_form.save()
+                            sessoes= Sessao.objects.filter(atividadeid= activity_object_formed)
+                            print(sessoes)
+                            for sessao in sessoes:
+                                sessao.vagas= activity_object_formed.participantesmaximo
+                                sessao.save()
                     nviews.enviar_notificacao_automatica(request,"atividadeAlterada",activity_object_formed.id) #Enviar Notificacao Automatica !!!!!!
                     return redirect('atividades:inserirSessao',id)          
         return render(request=request,
@@ -184,6 +200,12 @@ def eliminarAtividade(request,id):
 
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
+
+    atividadecheck= atividade.first()
+    sessoes= Sessao.objects.filter(atividadeid=atividadecheck)
+    for sessao in sessoes:
+        if sessao.vagas != atividadecheck.participantesmaximo:
+            return redirect('atividades:minhasAtividades')
 
     if atividade.exists():
         nviews.enviar_notificacao_automatica(request,"atividadeApagada",id) #Enviar Notificacao Automatica !!!!!!
@@ -288,6 +310,12 @@ def inserirsessao(request,id):
 
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
+
+    atividadecheck= atividade.first()
+    sessoes= Sessao.objects.filter(atividadeid=atividadecheck)
+    for sessao in sessoes:
+        if sessao.vagas != atividadecheck.participantesmaximo:
+            return redirect('atividades:minhasAtividades')
 
     if atividade.exists():  
         today= datetime.now(timezone.utc) 
@@ -525,6 +553,12 @@ def verresumo(request,id):
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
 
+    atividadecheck= atividade.first()
+    sessoes= Sessao.objects.filter(atividadeid=atividadecheck)
+    for sessao in sessoes:
+        if sessao.vagas != atividadecheck.participantesmaximo:
+            return redirect('atividades:minhasAtividades')
+
     if atividade.exists():  
         atividade= Atividade.objects.get(id=id)
         nsub= 0
@@ -547,6 +581,12 @@ def confirmarResumo(request,id):
 
     userId = user_check_var.get('firstProfile').utilizador_ptr_id
     atividade = Atividade.objects.filter(id=id,professoruniversitarioutilizadorid=userId)
+
+    atividadecheck= atividade.first()
+    sessoes= Sessao.objects.filter(atividadeid=atividadecheck)
+    for sessao in sessoes:
+        if sessao.vagas != atividadecheck.participantesmaximo:
+            return redirect('atividades:minhasAtividades')
 
     if atividade.exists():  
         atividade= Atividade.objects.get(id=id)
