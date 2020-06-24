@@ -4,6 +4,7 @@ from django.utils.html import format_html
 from django.db.models import Count
 from coordenadores.models import TarefaAuxiliar
 from datetime import time
+from django.urls import reverse
 
 class TarefaTable(tables.Table):
     acoes = tables.Column('Operações', empty_values=(),orderable=False)
@@ -21,13 +22,13 @@ class TarefaTable(tables.Table):
     def render_acoes(self,record):
         return  format_html(f"""
             <div>
-                <a id='edit' href="">
+                <a id='edit' href="{reverse('coordenadores:alterarTarefa', kwargs={'id':record.id})}">
                     <span class="icon is-small">
                         <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                     </span>
                 </a>
                 &nbsp;
-                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','')">               
+                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{reverse('coordenadores:eliminarTarefa', kwargs={'id':record.id})}')">               
                     <span class="icon is-small">
                         <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                     </span>

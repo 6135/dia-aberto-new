@@ -19,13 +19,13 @@ class CursoTable(tables.Table):
     def render_acoes(self,record):
         return format_html(f"""
             <div> 
-                <a id='edit' href="{reverse('configuracao:editarCurso', kwargs={'id':record.pk})}">
+                <a id='edit' href="">
                     <span class="icon is-small">
                         <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                     </span>
                 </a>
                 &nbsp;                
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este curso?','{reverse('configuracao:eliminarCurso', kwargs={'id':record.pk})}')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este curso?','')">
                     <span class="icon is-small">
                         <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                     </span>

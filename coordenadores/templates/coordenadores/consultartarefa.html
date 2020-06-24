@@ -8,6 +8,51 @@
             <div class="menu">
                 <p class="menu-label">Filtros Tarefas</p>
                 <ul class="menu-list">
+                   <div class="field">
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select name="{{ filter.form.colab.name }}"
+                                    value="{{filter.form.colab.value}}">
+                                    <option value="">Todos os Colaboradores</option>
+                                    {% for value, col in colabs %}
+                                        {% if value != "" %}    
+                                            <option value="{{ value }}"
+                                                {% if value|stringformat:'s' == filter.form.colab.value %} selected
+                                                {% endif %}>
+                                                {{ col }}
+                                            </option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                    </div>
+                     <div class="field">
+                        <!---->
+                        {{filter.form.dia.label}}
+                        <div class="control has-icons-left is-clearfix">
+                            <input class='input' id='id_dia' type='date' name='dia' value="{{filter.form.dia.value|default_if_none:''}}">
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                        <!---->
+                    </div>
+                    <div class="field">
+                        <label>Estado:</label>
+                    </div>
+                    <li>
+                        {{filter.form.estado}}
+                    </li>
+                    <div class="field">
+                        <label>Tipo:</label>
+                    </div>
+                    <li>
+                        {{filter.form.tipo}}
+                    </li>
                     <div class="field">
                         <!---->
                         <div class="control has-icons-left is-clearfix">
@@ -17,38 +62,6 @@
                             </span>
                         </div>
                         <!---->
-                    </div>
-                    <div class="field">
-                        <!---->
-                        <div class="control has-icons-left is-clearfix">
-                            <input class='input' id='id_sigla' type='text' name='sigla' value="{{filter.form.sigla.value|default_if_none:''}}" placeholder="Sigla">
-                            <span class="icon is-left">
-                                <i class="mdi mdi-magnify mdi-24px"></i>
-                            </span>
-                        </div>
-                        <!---->
-                    </div>
-                    <div class="field">
-                        <div class="control has-icons-left">
-                            <div class="select is-fullwidth">
-                                <select name="{{ filter.form.unidadeorganicaid.name }}"
-                                    value="{{filter.form.unidadeorganicaid.value}}">
-                                    <option value="">Qualquer Faculdade</option>
-                                    {% for value, fac in facs %}
-                                        {% if value != "" %}
-                                        <option value="{{ value }}"
-                                            {% if value|stringformat:'s' == filter.form.unidadeorganicaid.value %} selected
-                                            {% endif %}>
-                                            {{ fac }}
-                                        </option>
-                                    {% endif %}
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <span class="icon is-left">
-                                <i class="mdi mdi-magnify mdi-24px"></i>
-                            </span>
-                        </div>
                     </div>
                 </ul>   
                 <div class='field is-grouped' style='margin-top: 5px'>
@@ -81,26 +94,6 @@
             <span>Adicionar Tarefa</span>
         </a>
         {% render_table table 'coordenadores/tarefadetails.html' %}
+    </div>
 </div>
 {% endblock content %}
-{% block scripts%}
-<script>
-/*$('.validatebutton').click(function(){
-    var action= $(this).attr("action");
-    var id= $(this).attr("id");
-    console.log({{form.searchtarefa.value}});
-    $.ajax(
-        {
-            type:"GET",
-            url: "",
-            data:{
-                searchtarefa:form.searchtarefa.value,
-                Aceite:form.Aceite.value,
-                Recusada:form.Recusada.value,
-                Pendente:form.Pendente.value,
-                diaAbertoAtual:form.diaAbertoAtual.value
-            }
-    })
-});*/
-</script>
-{% endblock scripts%}
