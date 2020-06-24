@@ -32,6 +32,7 @@ class Tarefa(models.Model):
         elif TarefaAuxiliar.objects.filter(tarefaid=self.id):
             return "Auxiliar"
         else: return "Outra"  
+
     class Meta:
         db_table = 'Tarefa'
 
