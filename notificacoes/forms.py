@@ -127,3 +127,16 @@ class MensagemFormGrupoParticipante(forms.Form):
         mensagem = self.cleaned_data.get('mensagem')
         if titulo=="" or mensagem=="":
             raise forms.ValidationError(f'Todos os campos são obrigatórios!')
+
+
+
+
+
+
+class MensagemResposta(forms.Form):
+    mensagem = CharField(widget=forms.Textarea, max_length=255, required=False)
+    msg_atual = forms.CharField(widget=forms.HiddenInput())
+    def clean(self):
+        mensagem = self.cleaned_data.get('mensagem')
+        if mensagem=="":
+            raise forms.ValidationError(f'A mensagem não pode ser vazia!')

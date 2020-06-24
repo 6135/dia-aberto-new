@@ -42,6 +42,6 @@ urlpatterns = [
          name='apagar-mensagem'),
     path('limparmensganes/<int:id>', views.limpar_mensagens,
          name='limpar-mensagens'),
-    path('marcarmensagemcomolida', views.mensagem_como_lida,
+    path('marcarmensagemcomolida/<int:id>', views.mensagem_como_lida,
          name='ler-mensagens'),
 ]
