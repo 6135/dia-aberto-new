@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 from .models import Utilizador, ProfessorUniversitario, Participante, Colaborador, Coordenador
 from django.shortcuts import redirect
 from .forms import *
@@ -16,6 +17,7 @@ from notificacoes import views
 from inscricoes.models import Inscricao
 from django.db import transaction
 from atividades.models import Sessao
+from notificacoes.models import *
 from django.db.models import F
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
@@ -427,37 +429,85 @@ def apagar_utilizador(request, id):
                 inscricao.delete()
         else:
             u = user    
+        utilizador = Utilizador.objects.get(user_ptr_id=u.id)
+        
+        informacao_mensagem1 = InformacaoMensagem.objects.filter(emissor=utilizador.id)
+        for msg in informacao_mensagem1:
+            msg.delete()
+
+        informacao_mensagem2 = InformacaoMensagem.objects.filter(recetor=utilizador.id)
+        for msg in informacao_mensagem2:
+            msg.delete()
+
+        mensagens_recebidas1 = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=utilizador.id)
+        for msg in mensagens_recebidas1:
+            msg.delete()
+        mensagens_recebidas2 = MensagemRecebida.objects.select_related('mensagem__emissor').filter(mensagem__emissor=utilizador.id)
+        for msg in mensagens_recebidas2:
+            msg.delete()
+        mensagens_enviadas1 = MensagemEnviada.objects.select_related('mensagem__recetor').filter(mensagem__recetor=utilizador.id)
+        for msg in mensagens_enviadas1:
+            msg.delete()
+        mensagens_enviadas2 = MensagemEnviada.objects.select_related('mensagem__emissor').filter(mensagem__emissor=utilizador.id)
+        for msg in mensagens_enviadas2:
+            msg.delete()    
         u.delete() 
     except:
         return redirect('utilizadores:mensagem',13)
-    return redirect('utilizadores:consultar-utilizadores')   
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
 #Apagar a propria conta 
 
 def apagar_proprio_utilizador(request):  
-    try:
-        if request.user.is_authenticated:
-            id=request.user.id  
-            user = get_user(request)
-            if user.groups.filter(name = "Coordenador").exists():
-                u = Coordenador.objects.filter(id=id)
-            elif user.groups.filter(name = "Administrador").exists():
-                u = Administrador.objects.filter(id=id)
-            elif user.groups.filter(name = "ProfessorUniversitario").exists():
-                u = ProfessorUniversitario.objects.filter(id=id)
-            elif user.groups.filter(name = "Colaborador").exists():
-                u = Colaborador.objects.filter(id=id)
-            elif user.groups.filter(name = "Participante").exists():
-                u = Participante.objects.filter(id=id) 
-            else:
-                u= user     
+    
+    if request.user.is_authenticated:
+        id=request.user.id  
+        user = get_user(request)
+        if user.groups.filter(name = "Coordenador").exists():
+            u = Coordenador.objects.filter(id=id)
+        elif user.groups.filter(name = "Administrador").exists():
+            u = Administrador.objects.filter(id=id)
+        elif user.groups.filter(name = "ProfessorUniversitario").exists():
+            u = ProfessorUniversitario.objects.filter(id=id)
+        elif user.groups.filter(name = "Colaborador").exists():
+            u = Colaborador.objects.filter(id=id)
+        elif user.groups.filter(name = "Participante").exists():
+            u = Participante.objects.filter(id=id) 
         else:
-            return redirect('utilizadores:mensagem',5)
+            u= user     
+    else:
+        return redirect('utilizadores:mensagem',5)
+    try:
+        utilizador = Utilizador.objects.get(user_ptr_id=user.id)
+        
+        informacao_mensagem1 = InformacaoMensagem.objects.filter(emissor=utilizador.id)
+        for msg in informacao_mensagem1:
+            msg.delete()
+
+        informacao_mensagem2 = InformacaoMensagem.objects.filter(recetor=utilizador.id)
+        for msg in informacao_mensagem2:
+            msg.delete()
+
+        mensagens_recebidas1 = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=utilizador.id)
+        for msg in mensagens_recebidas1:
+            msg.delete()
+        mensagens_recebidas2 = MensagemRecebida.objects.select_related('mensagem__emissor').filter(mensagem__emissor=utilizador.id)
+        for msg in mensagens_recebidas2:
+            msg.delete()
+        mensagens_enviadas1 = MensagemEnviada.objects.select_related('mensagem__recetor').filter(mensagem__recetor=utilizador.id)
+        for msg in mensagens_enviadas1:
+            msg.delete()
+        mensagens_enviadas2 = MensagemEnviada.objects.select_related('mensagem__emissor').filter(mensagem__emissor=utilizador.id)
+        for msg in mensagens_enviadas2:
+            msg.delete()   
+                
+        u.delete() 
+        logout(request)
     except:
         return redirect('utilizadores:mensagem',13)
-    u.delete() 
-    logout(request)
+
     return redirect('utilizadores:mensagem',7)   
 
 
