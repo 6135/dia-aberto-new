@@ -374,12 +374,6 @@
                                                     </span>
                                                 </div>
                                             </th>
-                                            <th style="width: 300px;">
-                                                Vagas
-                                                <span class="icon is-small">
-                                                    <i class="mdi mdi-menu-up"></i>
-                                                </span>
-                                            </th>
                                             <th style=""></th>
                                         </tr>
                                     </thead>
@@ -387,8 +381,7 @@
                                         {% for sessao in sessions_activity %} 
                                         <tr id="sessao.id" draggable="false">
                                             <td data-label="Dia">{{sessao.dia}}</td>
-                                            <td data-label="Nome">{{sessao.horarioid.inicio}}</td>
-                                            <td data-label="Submetido a">{{sessao.vagas}}</td>  
+                                            <td data-label="Nome">{{sessao.horarioid.inicio}}</td> 
                                             <td>
                                                <a onclick="alert.render('Tem a certeza que deseja eliminar a sessão?','{% url 'atividades:eliminarSessao' sessao.id%}')">
                                                     <span class="icon has-text-danger">
