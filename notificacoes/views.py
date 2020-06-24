@@ -414,8 +414,9 @@ def criar_mensagem_participante(request, id):
                     info = InformacaoMensagem(data=timezone.now(), pendente=False, titulo = titulo,
                                     descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Grupo" , lido = False)
                     info.save()
-                    tmp = MensagemRecebida(mensagem=info)
-                    tmp.save()  
+                    if user_recipient.id != user.id:
+                        tmp = MensagemRecebida(mensagem=info)
+                        tmp.save()  
                 mensagem1 = MensagemEnviada(mensagem=info)
                 mensagem1.mensagem.lido = True
                 mensagem1.save()    
@@ -506,8 +507,9 @@ def criar_mensagem_uo(request, id):
                     info = InformacaoMensagem(data=timezone.now(), pendente=False, titulo = titulo,
                                     descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Grupo" , lido = False)
                     info.save()
-                    tmp = MensagemRecebida(mensagem=info)
-                    tmp.save()  
+                    if user_recipient.id != user.id:
+                        tmp = MensagemRecebida(mensagem=info)
+                        tmp.save()  
                 mensagem1 = MensagemEnviada(mensagem=info)
                 mensagem1.mensagem.lido = True
                 mensagem1.save()    
@@ -591,8 +593,9 @@ def criar_mensagem_admin(request, id):
                     info = InformacaoMensagem(data=timezone.now(), pendente=False, titulo = titulo,
                                     descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Grupo" , lido = False)
                     info.save()
-                    tmp = MensagemRecebida(mensagem=info)
-                    tmp.save()  
+                    if user_recipient.id != user.id:
+                        tmp = MensagemRecebida(mensagem=info)
+                        tmp.save()  
                 mensagem1 = MensagemEnviada(mensagem=info)
                 mensagem1.mensagem.lido = True
                 mensagem1.save()    

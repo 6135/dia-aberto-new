@@ -91,7 +91,9 @@ class Utilizador(User):
             return True
         else:
             return False    
-
+    @property
+    def full_name(self):
+        return self.first_name + ' ' + self.last_name
     class Meta:
         db_table = 'Utilizador'
 

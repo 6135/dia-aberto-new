@@ -7,7 +7,10 @@
 # Feel free to rename the models, but don't rename db_table values or field names.
 from django.db import models
 from django.core import validators
-from datetime import datetime,timedelta, timezone, time
+from datetime import datetime,timedelta, timezone
+import time
+from time import mktime
+from datetime import datetime,timedelta, timezone
 from utilizadores.models import Coordenador
 from django.shortcuts import redirect
 from django.utils.safestring import mark_safe

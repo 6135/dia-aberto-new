@@ -21,3 +21,31 @@ def has_conflict(value,activity_id):
         if conf.atividade1.atividadeid.id == activity_id:
             return mark_safe("<a type=\"button\" onclick=\"alert.render(\'A Atividade tem conflitos, tem a certeza que desenja proceder?\'," + "/atividades/validaratividade/"+ str(activity_id) +'/'+'0' + ");\"  class=\" button is-success\" style=\"margin-right: 10px;\" ><span class=\"icon is-small\"><i class=\"mdi mdi-check\"></i></span><span>Aceitar</span></a>")
     return mark_safe("<a type=\"button\" href=\" " + "/atividades/validaratividade/"+ str(activity_id) +'/'+'0' + "\" class=\" button is-success\" style=\"margin-right: 10px;\" ><span class=\"icon is-small\"><i class=\"mdi mdi-check\"></i></span><span>Aceitar</span></a>")
+
+@register.filter
+def colab_list(value):
+    if len(value) == 0:
+        return "N/A"
+    else:
+        str_names = ""
+        for colab in value :
+            str_names+=str(colab.full_name) +','
+        return str_names[:-1]
+
+@register.filter
+def conflict_list(value):
+    if len(value) != 0:
+        return "Sem Colaboradores"
+    else:
+        str_names = ""
+        for colab in value :
+            str_names+=str(colab.full_name) +','
+        return str_names[:-1]
+
+
+@register.filter
+def material_none(value):
+    if value is None:
+        return "N/A"
+    else:
+        return value

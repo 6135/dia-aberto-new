@@ -1,73 +1,71 @@
 {% extends 'app.html' %}
 {% load coordenadores_extra %}
+{% load django_tables2 %}
 {% block content %}
 <div class="columns">
-       <div class="column is-3">
-        <form method="POST" action="" id='filter'>
-            {% csrf_token %}
-            <div>
+    <div class="column is-3">
+    <form method="get">
             <div class="menu">
-                <p class="menu-label">Filtros Tarefas</p>
+                <p class="menu-label">Filtros Departamentos</p>
                 <ul class="menu-list">
-                <li>
                     <div class="field">
-                        <div class="control is-expanded">
+                        <!---->
+                        <div class="control has-icons-left is-clearfix">
+                            <input class='input' id='id_nome' type='text' name='nome' value="{{filter.form.nome.value|default_if_none:''}}" placeholder="Nome">
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                        <!---->
+                    </div>
+                    <div class="field">
+                        <!---->
+                        <div class="control has-icons-left is-clearfix">
+                            <input class='input' id='id_sigla' type='text' name='sigla' value="{{filter.form.sigla.value|default_if_none:''}}" placeholder="Sigla">
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                        <!---->
+                    </div>
+                    <div class="field">
+                        <div class="control has-icons-left">
                             <div class="select is-fullwidth">
-                                {{filter.tipo}}
+                                <select name="{{ filter.form.unidadeorganicaid.name }}"
+                                    value="{{filter.form.unidadeorganicaid.value}}">
+                                    <option value="">Qualquer Faculdade</option>
+                                    {% for value, fac in facs %}
+                                        {% if value != "" %}
+                                        <option value="{{ value }}"
+                                            {% if value|stringformat:'s' == filter.form.unidadeorganicaid.value %} selected
+                                            {% endif %}>
+                                            {{ fac }}
+                                        </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
                             </div>
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
                         </div>
                     </div>
-                    <div class="field">
-                    <div class="control has-icons-left is-clearfix">
-                        {{filter.searchTarefa}}
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify mdi-24px"></i>
-                        </span>
-                    </div>
+                </ul>   
+                <div class='field is-grouped' style='margin-top: 5px'>
+                        <p class="control is-expanded">
+                            <a class="button is-light is-fullwidth" role="button" type="button" href="{% url 'configuracao:verDepartamentos' %}">Limpar</a>
+                        </p>
+                        <p class="control is-expanded">
+                            <button class="button is-primary is-fullwidth" type="submit">
+                                <span class="icon">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                                <span>Pesquisar</span>
+                            </button>
+                        </p>
                 </div>
-                    <div class="field">
-                        <label>Estado:</label>
-                    </div>
-                    <ul>
-                        <div class="field" style="padding-left: 1rem;">
-                            <label class="checkbox">
-                                    {{filter.Concluida}}
-                                    Concluida
-                            </label>
-                        </div>
-                        <div class="field" style="padding-left: 1rem;">
-                            <label class="checkbox">
-                                    {{filter.naoConcluida}}
-                                    Não Concluida
-                            </label>
-                        </div>
-                        <div class="field" style="padding-left: 1rem;">
-                            <label class="checkbox">
-                                    {{filter.naoAtribuida}}
-                                    Não Atribuida
-                            </label>
-                        </div>
-                    </ul>
-                </li>
-                <li></li>
-                <div class="field">
-                    <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                        </span>
-                        <span>Limpar pesquisa</span>
-                    </button>
-                    <button type="Submit" class="button is-success is-outlined">
-                        <span class="icon is-left">
-                            <i class="mdi mdi-magnify mdi-24px"></i>
-                        </span>
-                        <span>Pesquisar</span>
-                    </button>
-                </div>
-                </ul>
-            </div>
-            </div>
-        </form>    
+            </div>     
+        </form>      
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -82,422 +80,7 @@
             </span>
             <span>Adicionar Tarefa</span>
         </a>
-        <div class="table">
-            <div class="table-wrapper">
-                <table class="table has-mobile-cards is-hoverable is-fullwidth" id="table01">
-                    <thead>
-                        <tr>
-                            <th width="40px"></th>
-                             <th onclick="sortTable(1,false)" style="cursor:pointer;width: 200px;" class="pre-expandable">
-                                Dia
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(2,false)" style="cursor:pointer;width: 200px;" class="pre-expandable">
-                                Horario
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(3,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
-                                Nome
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(4,false)" style="cursor:pointer;width: 300px;" class="pre-expandable">
-                                Colaborador atribuido
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(5,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
-                                Tipo
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(6,false)" style="cursor:pointer;width: 200px;" class="pre-expandable">
-                                Estado
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                             <th  style="cursor:pointer;width: 200px;" class="pre-expandable">
-                                Operações
-                            </th>
-                            <th style="cursor:pointer;width: 200px;" class="pre-expandable">
-                            </th>
-                            <th style="">
-                            </th>
-                        </tr>
-
-
-
-                    </thead>
-                    {% for tarefa in tarefas %}
-                    {% if tarefa.tipo == "tarefaAuxiliar" %}
-                    <tbody id="{{tarefa}}">      
-                        <tr draggable="false">
-                            <td class="chevron-cell">
-                                <a class="detailbutton" role="button" onclick="displayDetails({{tarefa.id}})" tarefa="{{tarefa.id}}">
-                                    <span class="icon-expandable">
-                                        <i class="mdi mdi-chevron-right mdi-24px"></i>
-                                    </span>
-                                </a>
-                            </td>
-                            <td data-label="Dia">{{tarefa.tarefaauxiliar.sessao.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horarios">{{tarefa.tarefaauxiliar.sessao.horarioid.inicio}} - {{tarefa.tarefaauxiliar.sessao.horarioid.fim}}</td>
-                            <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colab|colab_none}}</td>
-                            <td data-label="Tipo">{{tarefa.tipo}}</td>
-                            <td data-label="Estado">
-                            {% if tarefa.estado == "naoConcluida" %}
-                                <span class="tag text is-warning" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Concluida</span>
-                            {% elif tarefa.estado == "Concluida"%}
-                                <span class="tag text is-success" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Concluida</span>
-                            {% elif tarefa.estado == "naoAtribuida"%}
-                                <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
-                            {% endif %}
-                            </td>
-                            <td >
-                                <a href="">
-                                    <span class="icon has-text-link">
-                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                    </span>
-                                </a>
-                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'coordenadores:eliminarTarefa' tarefa.id %}')">
-                                    <span class="icon has-text-danger">
-                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                                    </span>
-                                </a>
-                            </td>             
-                        </tr> 
-                        <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
-                        <td colspan="7">
-                            <div class="detail-container">
-                                <div class="content"> 
-                                    <div style="font-size: 15px">
-                                        <p>
-                                            <strong>Nome:</strong>
-                                            {{tarefa.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Professor da Atividade:</strong>
-                                            {{tarefa.tarefaauxiliar.sessao.atividadeid.professoruniversitarioutilizadorid.utilizadorid.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Colaborador Atribuido:</strong>
-                                            {{tarefa.colab.utilizadorid.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Tipo de tarefa:</strong>
-                                            {{tarefa.tipo}}
-                                        </p>
-                                        <p>
-                                            <strong>Campus:</strong>
-                                            {{tarefa.tarefaauxiliar.sessao.atividadeid.espacoid.edificio.campus.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Edificio:</strong>
-                                            {{tarefa.tarefaauxiliar.sessao.atividadeid.espacoid.edificio.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Sala:</strong>
-                                            {{tarefa.tarefaauxiliar.sessao.atividadeid.espacoid.nome}}
-                                        </p>
-                                         <p>
-                                            <strong>Coordenador Responsavel:</strong>
-                                            {{tarefa.coord.utilizador.nome}}
-                                        </p>
-                                        {% if tarefa.colab == NULL %}
-                                        <form action="{% url 'coordenadores:atribuirColaborador' tarefa.id%}" method='POST'>
-                                        {% csrf_token %}
-                                        <div class="columns">
-                                          <div class="column is-6">
-                                            <div class="field" >
-                                              <label class="label">Atribuir Colaborador:</label>
-                                              <div class="control">
-                                                <div class="select is-fullwidth" >
-                                                    {{formtarefa.colab}}
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="column is-1">
-                                              <div class="field" >
-                                              <label class="label"></label>
-                                              <br>
-                                                <div class="control">
-                                                  <div class="has-text-centered">
-                                                      <button type="submit" id="concluir"  class="button is-success">
-                                                          <span class="icon is-small">
-                                                              <i class="mdi mdi-plus"></i>
-                                                          </span>
-                                                          <span>Atribuir Colaborador</span>
-                                                      </button>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        </div>
-                                        </form>
-                                        {% endif %}
-
-                                    </div>
-                                </div>
-                            </div>                        
-                        </td>                
-                      </tr>
-                    </tbody>
-                    {% endif %}
-
-
-
-
-
-                    {% if tarefa.tipo == "tarefaAcompanhar" %}
-                    
-                    <tbody id="{{tarefa}}">      
-                        <tr draggable="false">
-                            <td class="chevron-cell">
-                                <a class="detailbutton" role="button" onclick="displayDetails({{tarefa.id}})" tarefa="{{tarefa.id}}">
-                                    <span class="icon-expandable">
-                                        <i class="mdi mdi-chevron-right mdi-24px"></i>
-                                    </span>
-                                </a>
-                            </td>
-                            <td data-label="Dia">{{tarefa.tarefaacompanhar.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horarios">{{tarefa.tarefaacompanhar.horario}}</td>
-                            <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colab|colab_none}}</td>
-                            <td data-label="Tipo">{{tarefa.tipo}}</td>
-                             <td data-label="Estado">
-                            {% if tarefa.estado == "naoConcluida" %}
-                                <span class="tag text is-warning" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Concluida</span>
-                            {% elif tarefa.estado == "Concluida"%}
-                                <span class="tag text is-success" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Concluida</span>
-                            {% elif tarefa.estado == "naoAtribuida"%}
-                                <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
-                            {% endif %}
-                            </td>
-                            <td >
-                                <a href="">
-                                    <span class="icon has-text-link">
-                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                    </span>
-                                </a>
-                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'coordenadores:eliminarTarefa' tarefa.id %}')">
-                                    <span class="icon has-text-danger">
-                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                                    </span>
-                                </a>
-                            </td>             
-                        </tr> 
-                        <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
-                        <td colspan="7">
-                            <div class="detail-container">
-                                <div class="content"> 
-                                    <div style="font-size: 15px">
-                                        <p>
-                                            <strong>Nome:</strong>
-                                            {{tarefa.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Colaborador Atribuido:</strong>
-                                            {{tarefa.colab.utilizadorid.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Tipo de tarefa:</strong>
-                                            {{tarefa.tipo}}
-                                        </p>
-                                        <p>
-                                            <strong>Acompanhar quem:</strong>
-                                            {{tarefa.tarefaacompanhar.inscricao.ano}}º{{tarefa.tarefaacompanhar.inscricao.turma}} - {{tarefa.tarefaacompanhar.inscricao.escola.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Origem:</strong>
-                                            {{tarefa.tarefaacompanhar.origem}}
-                                        </p>
-                                        <p>
-                                            <strong>Destino:</strong>
-                                            {{tarefa.tarefaacompanhar.destino}}
-                                        </p>
-                                         <p>
-                                            <strong>Coordenador Responsavel:</strong>
-                                            {{tarefa.coord.utilizador.nome}}
-                                        </p>
-                                        {% if tarefa.colab == NULL %}
-                                        <form action="{% url 'coordenadores:atribuirColaborador' tarefa.id%}" method='POST'>
-                                        {% csrf_token %}
-                                        <div class="columns">
-                                          <div class="column is-6">
-                                            <div class="field" >
-                                              <label class="label">Atribuir Colaborador:</label>
-                                              <div class="control">
-                                                <div class="select is-fullwidth" >
-                                                    {{formtarefa.colab}}
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="column is-1">
-                                              <div class="field" >
-                                              <label class="label"></label>
-                                              <br>
-                                                <div class="control">
-                                                  <div class="has-text-centered">
-                                                      <button type="submit" id="concluir"  class="button is-success">
-                                                          <span class="icon is-small">
-                                                              <i class="mdi mdi-plus"></i>
-                                                          </span>
-                                                          <span>Atribuir Colaborador</span>
-                                                      </button>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        </div>
-                                        </form>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>                        
-                        </td>                
-                      </tr>
-                    </tbody>
-                    {% endif %}    
-                            
-
-
-                    {% if tarefa.tipo == "tarefaOutra" %}
-                    {% for tarefaoutra in tarefasoutra %}
-                    {% if tarefaoutra.tarefaid == tarefa %}
-                    <tbody id="{{tarefa}}">      
-                        <tr draggable="false">
-                            <td class="chevron-cell">
-                                <a class="detailbutton" role="button" onclick="displayDetails({{tarefa.id}})" tarefa="{{tarefa.id}}">
-                                    <span class="icon-expandable">
-                                        <i class="mdi mdi-chevron-right mdi-24px"></i>
-                                    </span>
-                                </a>
-                            </td>
-                            <td data-label="Dia">{{tarefaoutra.dia|date:'d-m-Y'}}</td>
-                            <td data-label="Horarios">{{tarefaoutra.horario}}</td>
-                            <td data-label="Nome da Tarefa">{{tarefa.nome}} </td>
-                            <td data-label="Atribuido a">{{tarefa.colab|colab_none}}</td>
-                            <td data-label="Tipo">{{tarefa.tipo}}</td>
-                            <td data-label="Estado">
-                            {% if tarefa.estado == "naoConcluida" %}
-                                <span class="tag text is-warning" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Concluida</span>
-                            {% elif tarefa.estado == "Concluida"%}
-                                <span class="tag text is-success" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Concluida</span>
-                            {% elif tarefa.estado == "naoAtribuida"%}
-                                <span class="tag text is-danger" data-value="{{tarefa.estado}}" style="width: 7rem;font-size: small;">Não Atribuida</span>
-                            {% endif %}
-                            </td>
-                             <td >
-                                <a href="">
-                                    <span class="icon has-text-link">
-                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                    </span>
-                                </a>
-                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{% url 'coordenadores:eliminarTarefa' tarefa.id %}')">
-                                    <span class="icon has-text-danger">
-                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                                    </span>
-                                </a>
-                            </td>             
-                        </tr> 
-                        <tr class="detail" style="display:none;" id='Details{{tarefa.id}}'>
-                        <td colspan="7">
-                            <div class="detail-container">
-                                <div class="content"> 
-                                    <div style="font-size: 15px">
-                                        <p>
-                                            <strong>Nome:</strong>
-                                            {{tarefa.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Colaborador Atribuido:</strong>
-                                            {{tarefa.colab.utilizadorid.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Tipo de tarefa:</strong>
-                                            {{tarefa.tipo}}
-                                        </p>
-                                        <p>
-                                            <strong>Descrição:</strong>
-                                            {{tarefaoutra.descricao}}
-                                        </p>
-                                         <p>
-                                            <strong>Coordenador Responsavel:</strong>
-                                            {{tarefa.coord.utilizador.nome}}
-                                        </p>
-                                        {% if tarefa.colab == NULL %}
-                                        <form action="{% url 'coordenadores:atribuirColaborador' tarefa.id%}" method='POST'>
-                                        <div class="columns">
-                                          <div class="column is-6">
-                                            <div class="field" >
-                                              <label class="label">Atribuir Colaborador:</label>
-                                              <div class="control">
-                                                <div class="select is-fullwidth" >
-                                                    {{formtarefa.colab}}
-                                                </div>
-                                              </div>
-                                            </div>
-                                          </div>
-                                          <div class="column is-1">
-                                              <div class="field" >
-                                              <label class="label"></label>
-                                              <br>
-                                                <div class="control">
-                                                  <div class="has-text-centered">
-                                                      <button type="submit" id="concluir"  class="button is-success">
-                                                          <span class="icon is-small">
-                                                              <i class="mdi mdi-plus"></i>
-                                                          </span>
-                                                          <span>Atribuir Colaborador</span>
-                                                      </button>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                        </div>
-                                        {% csrf_token %}
-                                        </form>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                            </div>                        
-                        </td>                
-                      </tr>
-                    </tbody>
-                    {% endif %}
-                    {% endfor %} 
-                    {% endif %}    
-
-                    {% endfor %}
-                </table>
-            </div>
-    </div>
-</div>
-<div id="msg" class="dialog modal">
-    <div class="modal-background"></div>
-    <div class="modal-card animation-content">
-        <section class="modal-card-body is-titleless">
-            <div class="media">
-                <div class="media-content">
-                    <p id='text-00'></p>
-                </div>
-            </div>
-        </section>
-        <footer class="modal-card-foot">
-            <button onclick="alert.cancelar()" class="button">Cancelar</button>
-            <button onclick="alert.confirmar()" class="button is-success">Confirmar</button>
-        </footer>
-    </div>
+        {% render_table table 'coordenadores/tarefadetails.html' %}
 </div>
 <style>
 .dialog .modal-card .modal-card-body.is-titleless {
