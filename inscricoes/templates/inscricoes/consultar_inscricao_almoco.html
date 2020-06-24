@@ -115,7 +115,7 @@
                     ({{precoprofessores}}€)</label>
                 {% if alterar %}
                 <b-numberinput v-model="npratosdocentes" controls-position="compact" min="0"
-                    name="{{form.npratosdocentes.name}}" :max="nresponsaveis" />
+                    name="{{form.npratosdocentes.name}}" :max="Math.max(nresponsaveis, 5)" />
                 {{ form.npratosdocentes.errors }}
                 {% else %}
                 <input type="text" class="input" value="{{ form.npratosdocentes.value|default_if_none:'' }}" readonly>

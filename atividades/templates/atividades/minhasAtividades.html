@@ -1,78 +1,69 @@
 {% extends 'app.html' %}
 {% block content %}
+{% load django_tables2 %}
 <div class="columns">
        <div class="column is-3">
-        <form method="POST" action="" id='filter'>
-            {% csrf_token %}
-            <div>
+ <form method="get">
             <div class="menu">
                 <p class="menu-label">Filtros Atividades</p>
                 <ul class="menu-list">
-                    <li>
-                        <div class="field" >
-                            <label>Estado:</label>
-                        </div>
-                        <ul>
-                            <div class="field" style="padding-left: 1rem;">
-                                <label class="checkbox">
-                                        {{filter.Aceite}}
-                                        Aceite
-                                </label>
-                            </div>
-                            <div class="field" style="padding-left: 1rem;">
-                                <label class="checkbox">
-                                        {{filter.Pendente}}
-                                        Pendente
-                                </label>
-                            </div>
-                            <div class="field" style="padding-left: 1rem;">
-                                <label class="checkbox">
-                                        {{filter.Recusada}}
-                                        Recusada
-                                </label>
-                            </div>
-                        </ul>
-                    </li>
-                    <li></li>
-                    <div class="field" >
-                        <label class="checkbox">
-                                {{filter.diaAbertoAtual}}
-                                Atividades do Dia Aberto Atual
-                        </label>
-                    </div>
                     <div class="field">
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select name="{{ filter.form.tipo.name }}"
+                                    value="{{filter.form.tipo.value}}">
+                                    <option value="" >Qualquer Tipo</option>
+                                    <option value="Tertulia" {% if filter.form.tipo.value == 'Tertulia' %}selected{% endif %}>Tertulia</option>
+                                    <option value="Palestra" {% if filter.form.tipo.value == 'Palestra' %}selected{% endif %}>Palestra</option>
+                                    <option value="Atividade Laboratorial" {% if filter.form.tipo.value == 'Atividade Laboratorial' %}selected{% endif %}>Atividade Laboratorial</option>
+                                </select>
+                            </div>
+                            
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                            
+                        </div>
+                    </div>
+                
+                    <div class="field">
+                        <!---->
                         <div class="control has-icons-left is-clearfix">
-                            {{filter.searchAtividade}}
+                            <input class='input' id='id_nome' type='text' name='nome' value="{{filter.form.nome.value|default_if_none:''}}" placeholder="Nome">
                             <span class="icon is-left">
                                 <i class="mdi mdi-magnify mdi-24px"></i>
                             </span>
                         </div>
+                        <!---->
                     </div>
                     <div class="field">
-                        <button onclick="resetForm()" type="submit" class="button is-danger is-outlined">
-                            <span class="icon is-left">
-                                <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                            </span>
-                            <span>Limpar pesquisa</span>
-                        </button>
-                        <button type="Submit" class="button is-success is-outlined">
-                            <span class="icon is-left">
-                                <i class="mdi mdi-magnify mdi-24px"></i>
-                            </span>
-                            <span>Pesquisar</span>
-                        </button>
+                        <label>Estado:</label>
                     </div>
+                    <li>
+                        {{filter.form.estado}}
+                    </li>
                 </ul>
-            </div>
-            </div>
-            
+                <div class='field is-grouped' style='margin-top: 5px'>
+                        <p class="control is-expanded">
+                            <a type="button" role="button" href="{% url 'atividades:minhasAtividades' %}" class="button is-light is-fullwidth">Limpar</a>
+                        </p>
+                        <p class="control is-expanded">
+                            <button class="button is-primary is-fullwidth" type="submit">
+                                <span class="icon">
+                                    <i class="mdi mdi-magnify"></i>
+                                </span>
+                                <span>Pesquisar</span>
+                            </button>
+                        </p>
+                </div>
+            </div>     
         </form>
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
               <li><a href="#">Início</a></li>
-              <li class="is-active"><a href="#" aria-current="page">Minhas Atividades</a></li>
+              <li class="is-active"><a href="#" aria-current="page">Atividades</a></li>
             </ul>
           </nav>
         <a href="{% url 'atividades:proporAtividade' %}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
@@ -81,177 +72,9 @@
             </span>
             <span>Propor nova atividade</span>
         </a>
-        <div class="table">
-            <div class="table-wrapper">
-                <table class="table has-mobile-cards is-hoverable is-fullwidth" id="table01">
-                    <thead>
-                        <tr>
-                            <th width="40px"></th>
-                            <th  onclick="sortTable(1,false)" style="cursor:pointer;width: 250px;" class="pre-expandable">
-                                Nome
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(2,true)" style="cursor:pointer;width: 300px;" class="pre-expandable">
-                                Submetido a
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th onclick="sortTable(3,false)" style="cursor:pointer;" class="pre-expandable">
-                                Estado
-                                <span class="icon-expandable-180 is-small">
-                                    <i class="mdi mdi-menu-up"></i>
-                                </span>
-                            </th>
-                            <th >
-                            </th>
-                            <th style="width:300px">
-                            </th>
-                        </tr>
-                    </thead>
-                    {% for atividade in atividades %}
-                    <tbody id="{{atividade}}">      
-                        <tr draggable="false">
-                            <td class="chevron-cell">
-                                <a class="detailbutton" role="button" onclick="displayDetails({{atividade.id}})" atividade="{{atividade.id}}">
-                                    <span class="icon-expandable">
-                                        <i class="mdi mdi-chevron-right mdi-24px"></i>
-                                    </span>
-                                </a>
-                            </td>
-                            <td data-label="Nome">{{atividade.nome}} </td>
-                            <td data-label="Submetido a" date-value="{{atividade.dataalteracao|date:'Y-m-d H:i'}}">{{atividade.dataalteracao}}</td>
-                            {% if atividade.estado == "Pendente"%}
-                            <td data-label="Estado">
-                                <span class="tag text is-warning" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
-                            </td>
-                            {% elif atividade.estado == "Recusada" %}
-                            <td data-label="Estado">
-                                <span class="tag text is-danger" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
-                            </td>
-                            {% elif atividade.estado == "Aceite"%}
-                            <td data-label="Estado">
-                                <span class="tag text is-success" style="width: 7rem;font-size: small;">{{atividade.estado}}</span>
-                            </td>
-                            {% endif %}
-                            <td >
-                                <a href="{% url 'atividades:alterarAtividade' atividade.id %}">
-                                    <span class="icon has-text-link">
-                                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                                    </span>
-                                </a>
-                                
-                            </td>
-                            <td>
-                                <a onclick="alert.render('Tem a certeza que pretende eliminar esta atividade?','{% url 'atividades:eliminarAtividade' atividade.id %}')">
-                                    <span class="icon has-text-danger">
-                                        <i class="mdi mdi-trash-can-outline mdi-24px"></i>
-                                    </span>
-                                </a>
-                            </td>
-                        </tr> 
-                        <tr class="detail" style="display:none;" id='Details{{atividade.id}}'>
-                        <td colspan="7">
-                            <div class="detail-container">
-                                <div class="content"> 
-                                    <div style="font-size: 15px">
-                                        <p>
-                                            <strong>Nome:</strong>
-                                            {{atividade.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Data de submissão:</strong>
-                                            {{atividade.dataalteracao}}
-                                        </p>
-                                        <p>
-                                            <strong>Estado de submissão:</strong>
-                                            {{atividade.estado}}
-                                        </p>
-                                        <p>
-                                            <strong>Tipo de Atividade:</strong>
-                                            {{atividade.tipo}}
-                                        </p>
-                                        <p>
-                                            <strong>Descrição:</strong>
-                                            <div class="container">{{atividade.descricao}}</div>
-                                        </p>
-                                        <p>
-                                            <strong>Materiais:</strong>
-                                            {% for mat in materiais %}
-                                                {% if mat.atividadeid == atividade %}
-                                                    {% if mat.nomematerial != Null %}
-                                                        {{mat.nomematerial}}
-                                                    {% else %}
-                                                        --------
-                                                    {% endif %}
-                                                {% endif %}
-                                            {% endfor %}
-                                        </p>
-                                        <p>
-                                            <strong>Campus:</strong>
-                                            {{atividade.espacoid.edificio.campus.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Edificio:</strong>
-                                            {{atividade.espacoid.edificio.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Sala:</strong>
-                                            {{atividade.espacoid.nome}}
-                                        </p>
-                                         <p>
-                                        <p>
-                                            <strong>Departamento:</strong>
-                                            {{atividade.professoruniversitarioutilizadorid.departamento.nome}}
-                                        </p>
-                                        <p>
-                                            <strong>Sessões:</strong>
-                                        </p>
-                                        <div class="table-wrapper">
-                                            <table class="table has-mobile-cards">
-                                                <thead> 
-                                                    <tr>
-                                                        <th><div class="th-wrap">Dia</div></th>
-                                                        <th><div class="th-wrap" style="width:150px">Hora</div></th>
-                                                        <th><div class="th-wrap" style="width:150px">Vagas</div></th>
-                                                        {% if atividade.estado == "Aceite" and atividade.nrcolaboradoresnecessario > 0 %}
-                                                        <th><div class="th-wrap" style="width:200px">Colaborador Atribuido</div></th>
-                                                        {% endif %}
-                                                    </tr>
-                                                </thead>
-                                                {% for  sessao in  sessoes%}
-                                                    {% if  sessao.atividadeid.id == atividade.id %}
-                                                        <tbody>
-                                                            <tr >
-                                                                <td data-label="Dia">{{sessao.dia}}</td>
-                                                                <td data-label="Hora">{{sessao.horarioid.inicio}} até {{sessao.horarioid.fim}}</td>
-                                                                <td data-label="Vagas">{{sessao.vagas}}</td>
-                                                                {% if atividade.estado == "Aceite" and atividade.nrcolaboradoresnecessario > 0 %}
-                                                                    {% for col in colaboradores %}
-                                                                        {% if col.sessao.id == sessao.id %}
-                                                                        <td data-label="Colaborador">{{col.tarefaid.colab.utilizador_ptr_id.user_ptr_id.first_name}} {{col.tarefaid.colab.utilizador_ptr_id.user_ptr_id.last_name}}</td> 
-                                                                        {% endif %} 
-                                                                    {% endfor %}
-                                                                {% endif %}
-                                                            </tr>
-                                                        </tbody>
-                                                    {% endif %}
-                                                {% endfor %}
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>                        
-                        </td>                
-                      </tr>
-                    </tbody>         
-                    {% endfor %}
-                </table>
-            </div>
+        {% render_table table 'atividades/tabelaprof.html' %}
     </div>
-</div>
+
 <style>
 .dialog .modal-card .modal-card-body.is-titleless {
     border-top-left-radius: 6px;
@@ -269,23 +92,4 @@ tr.detail{
 </style>
 {% endblock content %}
 {% block scripts%}
-<script>
-/*$('.validatebutton').click(function(){
-    var action= $(this).attr("action");
-    var id= $(this).attr("id");
-    console.log({{form.searchAtividade.value}});
-    $.ajax(
-        {
-            type:"GET",
-            url: "",
-            data:{
-                searchAtividade:form.searchAtividade.value,
-                Aceite:form.Aceite.value,
-                Recusada:form.Recusada.value,
-                Pendente:form.Pendente.value,
-                diaAbertoAtual:form.diaAbertoAtual.value
-            }
-    })
-});*/
-</script>
 {% endblock scripts%}
