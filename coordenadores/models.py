@@ -45,6 +45,23 @@ class Tarefa(models.Model):
             tmp = TarefaOutra.objects.get(tarefaid=self.id)
         return tmp.getDescription()
 
+    def get_tarefa_especifica(self):
+        if self.tipo == "tarefaAcompanhar":
+            tmp = TarefaAcompanhar.objects.get(tarefaid=self.id)
+        elif self.tipo == "tarefaAuxiliar":   
+            tmp = TarefaAuxiliar.objects.get(tarefaid=self.id)
+        else:
+            tmp = TarefaOutra.objects.get(tarefaid=self.id)
+        return tmp
+
+    def get_outra_descricao(self):
+        tarefa = TarefaOutra.objects.get(tarefaid=self.id)
+        if tarefa is not None:
+            return tarefa.descricao
+        else:
+            return ""
+
+
 class TarefaAcompanhar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
     origem = models.CharField(max_length=255, db_column='origem', blank=False, null=False)
@@ -55,7 +72,7 @@ class TarefaAcompanhar(models.Model):
         db_table = 'TarefaAcompanhar'
 
     def getDescription(self):
-        msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.dia.strftime('%d/%m/%y')+" às "+self.horario.strftime('%H horas e %M minutos')+"."
+        msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.tarefa.dia.strftime('%d/%m/%y')+" às "+self.tarefa.horario.strftime('%H horas e %M minutos')+"."
         return msg
         
 class TarefaAuxiliar(models.Model):
@@ -66,7 +83,7 @@ class TarefaAuxiliar(models.Model):
         db_table = 'TarefaAuxiliar'
     
     def getDescription(self):
-        msg = "Auxiliar na atividade "+self.sessaoid.atividadeid.nome+"."
+        msg = "Auxiliar na atividade "+self.sessao.atividadeid.nome+"."
         return msg
 
 class TarefaOutra(models.Model):

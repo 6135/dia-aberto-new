@@ -187,17 +187,6 @@ def categorias_notificacao_automatica(request, id, nr):
     })
 
 
-# Mensagem pedido de cancelamento da tarefa
-
-def enviar_notificacao_mensagem(request, id):
-    tarefa = Tarefa.objects.get(id=id)
-    nome = tarefa.coord.first_name+" "+tarefa.coord.last_name
-    msg = "A enviar pedido de cancelamento de tarefa a "+nome
-    return render(request=request,
-                  template_name="colaboradores/enviar_notificacao.html",
-                  context={"msg": msg})
-
-
 # Envio de notificação automatica
 
 def enviar_notificacao_automatica(request, sigla, id):
@@ -425,8 +414,9 @@ def criar_mensagem_participante(request, id):
                     info = InformacaoMensagem(data=timezone.now(), pendente=False, titulo = titulo,
                                     descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Grupo" , lido = False)
                     info.save()
-                    tmp = MensagemRecebida(mensagem=info)
-                    tmp.save()  
+                    if user_recipient.id != user.id:
+                        tmp = MensagemRecebida(mensagem=info)
+                        tmp.save()  
                 mensagem1 = MensagemEnviada(mensagem=info)
                 mensagem1.mensagem.lido = True
                 mensagem1.save()    
@@ -517,8 +507,9 @@ def criar_mensagem_uo(request, id):
                     info = InformacaoMensagem(data=timezone.now(), pendente=False, titulo = titulo,
                                     descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Grupo" , lido = False)
                     info.save()
-                    tmp = MensagemRecebida(mensagem=info)
-                    tmp.save()  
+                    if user_recipient.id != user.id:
+                        tmp = MensagemRecebida(mensagem=info)
+                        tmp.save()  
                 mensagem1 = MensagemEnviada(mensagem=info)
                 mensagem1.mensagem.lido = True
                 mensagem1.save()    
@@ -602,8 +593,9 @@ def criar_mensagem_admin(request, id):
                     info = InformacaoMensagem(data=timezone.now(), pendente=False, titulo = titulo,
                                     descricao = mensagem, emissor = user , recetor = user_recipient, tipo = "Grupo" , lido = False)
                     info.save()
-                    tmp = MensagemRecebida(mensagem=info)
-                    tmp.save()  
+                    if user_recipient.id != user.id:
+                        tmp = MensagemRecebida(mensagem=info)
+                        tmp.save()  
                 mensagem1 = MensagemEnviada(mensagem=info)
                 mensagem1.mensagem.lido = True
                 mensagem1.save()    

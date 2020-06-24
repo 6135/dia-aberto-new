@@ -59,6 +59,8 @@ def load_cursos(request):
     return render(request, 'utilizadores/curso_dropdown_list_options.html', {'cursos': cursos})
 
 
+# Consultar todos os utilizadores com as funcionalidades dos filtros 
+
 class consultar_utilizadores(SingleTableMixin, FilterView):
     table_class = UtilizadoresTable
     template_name = 'utilizadores/consultar_utilizadores.html'
@@ -81,109 +83,6 @@ class consultar_utilizadores(SingleTableMixin, FilterView):
         table.fixed = True
         context[self.get_context_table_name(table)] = table
         return context
-
-
-# Consultar todos os utilizadores com as funcionalidades dos filtros 
-
-def consultar_utilizadores_old(request):
-        
-    if request.user.is_authenticated:    
-        user = get_user(request)
-        if user.groups.filter(name = "Coordenador").exists():
-            u = "Coordenador"
-        elif user.groups.filter(name = "Administrador").exists():
-            u = "Administrador"
-        else:
-            return redirect('utilizadores:mensagem',5)
-    else:
-        return redirect('utilizadores:mensagem',5)  
-
-
-    if request.method == 'POST':
-        
-        formFilter = UtilizadorFiltro(request.POST)
-        current = request.POST.get('current')
-
-        form = formFilter
-        tipo_utilizadores = request.POST.get('filtro_tipo')
-        estado_utilizadores = request.POST.get('filtro_estado')
-        txt = request.POST.get('current')
-
-        if estado_utilizadores != "":
-            if estado_utilizadores == "T":
-                estado = 'True'
-            elif estado_utilizadores == "F":
-                estado = 'False'
-            elif estado_utilizadores == "R":
-                estado = 'Rejeitado'    
-            else:
-                estado = 'True'
-        else:
-            estado = 'True'
-
-        if txt != "":
-            nome = txt.split()
-            sz = len(nome)
-            if sz == 1:
-                if estado_utilizadores != "":
-                    utilizadores = Utilizador.objects.filter(
-                        valido=estado, first_name=current)
-                else:
-                    utilizadores = Utilizador.objects.filter(
-                        first_name=current)
-                if len(utilizadores) == 0:
-                    if estado_utilizadores != "":
-                        utilizadores = Utilizador.objects.filter(
-                            valido=estado, last_name=current)
-                    else:
-                        utilizadores = Utilizador.objects.filter(
-                            last_name=current)
-            else:
-                if estado_utilizadores != "":
-                    utilizadores = Utilizador.objects.filter(valido=estado, first_name=nome[0]).filter(
-                        valido=estado, last_name=nome[1]).order_by('first_name')
-                else:
-                    utilizadores = Utilizador.objects.filter(first_name=nome[0]).filter(
-                        last_name=nome[1]).order_by('first_name')
-        elif estado_utilizadores == "":
-            if tipo_utilizadores == "Participante":
-                utilizadores = Participante.objects.all().order_by('first_name')
-            elif tipo_utilizadores == "ProfessorUniversitario":
-                utilizadores = ProfessorUniversitario.objects.all().order_by('first_name')
-            elif tipo_utilizadores == "Coordenador":
-                utilizadores = Coordenador.objects.all().order_by('first_name')
-            elif tipo_utilizadores == "Colaborador":
-                utilizadores = Colaborador.objects.all().order_by('first_name')
-            else:
-                utilizadores = Utilizador.objects.all().order_by('first_name')
-        else:
-            if tipo_utilizadores == "Participante":
-                utilizadores = Participante.objects.filter(
-                    valido=estado).order_by('first_name')
-            elif tipo_utilizadores == "ProfessorUniversitario":
-                utilizadores = ProfessorUniversitario.objects.filter(
-                    valido=estado).order_by('first_name')
-            elif tipo_utilizadores == "Coordenador":
-                utilizadores = Coordenador.objects.filter(
-                    valido=estado).order_by('first_name')
-            elif tipo_utilizadores == "Colaborador":
-                utilizadores = Colaborador.objects.filter(
-                    valido=estado).order_by('first_name')
-            else:
-                utilizadores = Utilizador.objects.filter(
-                    valido=estado).order_by('first_name')
-
-    else:
-        formFilter = UtilizadorFiltro()
-        current = ""
-        utilizadores = Utilizador.objects.all().order_by('first_name')
-        form = formFilter
-    
-    paginator= Paginator(utilizadores,5)
-    page=request.GET.get('page')
-    utilizadores = paginator.get_page(page)
-    return render(request=request, template_name='utilizadores/consultar_utilizadores_old.html', context={"utilizadores": utilizadores, 'form': form, 'current': current, 'u': u})
-
 
 
 # Escolher tipo de perfil para criar um utilizador
@@ -504,19 +403,18 @@ def apagar_utilizador(request, id):
     else:
         return redirect('utilizadores:mensagem',5)
 
-
     user = User.objects.get(id=id)
-    if user.groups.filter(name = "Coordenador").exists():
-        u = Coordenador.objects.filter(id=id)
-    elif user.groups.filter(name = "Administrador").exists():
-        u = Administrador.objects.filter(id=id)
-    elif user.groups.filter(name = "ProfessorUniversitario").exists():
-        u = ProfessorUniversitario.objects.filter(id=id)
-    elif user.groups.filter(name = "Colaborador").exists():
-        u = Colaborador.objects.filter(id=id)
-    elif user.groups.filter(name="Participante").exists():
-        u = Participante.objects.filter(id=id)
-        try:
+    try:
+        if user.groups.filter(name = "Coordenador").exists():
+            u = Coordenador.objects.get(id=id)
+        elif user.groups.filter(name = "Administrador").exists():
+            u = Administrador.objects.get(id=id)
+        elif user.groups.filter(name = "ProfessorUniversitario").exists():
+            u = ProfessorUniversitario.objects.get(id=id)
+        elif user.groups.filter(name = "Colaborador").exists():
+            u = Colaborador.objects.get(id=id)
+        elif user.groups.filter(name="Participante").exists():
+            u = Participante.objects.get(id=id)
             for inscricao in Inscricao.objects.filter(participante=u):
                 inscricaosessao_set = inscricao.inscricaosessao_set.all()
                 for inscricaosessao in inscricaosessao_set:
@@ -527,40 +425,37 @@ def apagar_utilizador(request, id):
                         sessao.vagas = F('vagas') + nparticipantes
                         sessao.save()
                 inscricao.delete()
-                
-        except:
-            return redirect('utilizadores:mensagem',13)     
-    else:
-        u= user     
-
-    print(u)
-    u.delete() 
+        else:
+            u = user    
+        u.delete() 
+    except:
+        return redirect('utilizadores:mensagem',13)
     return redirect('utilizadores:consultar-utilizadores')   
 
 
 #Apagar a propria conta 
 
 def apagar_proprio_utilizador(request):  
-
-    if request.user.is_authenticated:
-        id=request.user.id  
-        user = get_user(request)
-        if user.groups.filter(name = "Coordenador").exists():
-            u = Coordenador.objects.filter(id=id)
-        elif user.groups.filter(name = "Administrador").exists():
-            u = Administrador.objects.filter(id=id)
-        elif user.groups.filter(name = "ProfessorUniversitario").exists():
-            u = ProfessorUniversitario.objects.filter(id=id)
-        elif user.groups.filter(name = "Colaborador").exists():
-            u = Colaborador.objects.filter(id=id)
-        elif user.groups.filter(name = "Participante").exists():
-            u = Participante.objects.filter(id=id) 
+    try:
+        if request.user.is_authenticated:
+            id=request.user.id  
+            user = get_user(request)
+            if user.groups.filter(name = "Coordenador").exists():
+                u = Coordenador.objects.filter(id=id)
+            elif user.groups.filter(name = "Administrador").exists():
+                u = Administrador.objects.filter(id=id)
+            elif user.groups.filter(name = "ProfessorUniversitario").exists():
+                u = ProfessorUniversitario.objects.filter(id=id)
+            elif user.groups.filter(name = "Colaborador").exists():
+                u = Colaborador.objects.filter(id=id)
+            elif user.groups.filter(name = "Participante").exists():
+                u = Participante.objects.filter(id=id) 
+            else:
+                u= user     
         else:
-            u= user     
-    else:
-        return redirect('utilizadores:mensagem',5)
-
-
+            return redirect('utilizadores:mensagem',5)
+    except:
+        return redirect('utilizadores:mensagem',13)
     u.delete() 
     logout(request)
     return redirect('utilizadores:mensagem',7)   
@@ -902,7 +797,7 @@ def mensagem(request, id, *args, **kwargs):
         m = "Ainda não é permitido criar inscrições"
         tipo = "error"
     elif id == 13:
-        m = "Erro ao apagar dados do participante"
+        m = "Erro ao apagar dados do utilizador"
         tipo = "error" 
     elif id == 14:
         m = "Não existem mensagens"

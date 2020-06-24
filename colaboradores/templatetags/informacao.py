@@ -7,25 +7,15 @@ register = template.Library()
 
 @register.filter(name='get_due_date_string')
 def get_due_date_string(value,id):
-    temp= Tarefa.objects.get(id=id)
-    if temp.tipo=="tarefaAuxiliar":
-        tarefa = TarefaAuxiliar.objects.get(tarefaid=id)
-        value = tarefa.sessaoid.dia
-        passou = tarefa.sessaoid.horarioid.inicio.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
-    elif temp.tipo == "tarefaAcompanhar":
-        tarefa = TarefaAcompanhar.objects.get(tarefaid=id)  
-        value = tarefa.dia 
-        passou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S') 
-    else:
-        tarefa = TarefaOutra.objects.get(tarefaid=id)  
-        value = tarefa.dia
-        passou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
+    tarefa = Tarefa.objects.get(id=id)
+    passou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
+    value = tarefa.dia
     delta = value - date.today()
-    if temp.estado == "Cancelada":
+    if tarefa.estado == "Cancelada":
         return "Esta tarefa foi cancelada"
-    if delta.days == 0 and temp.estado != "Concluida":
+    if delta.days == 0 and tarefa.estado != "Concluida":
         return "Esta tarefa é hoje!"
-    elif  delta.days == 0 and temp.estado == "Concluida":
+    elif  delta.days == 0 and tarefa.estado == "Concluida":
         return "Esta tarefa foi hoje!"
     elif delta.days < 1:
         return "Esta tarefa foi há %s %s atrás!" % (abs(delta.days),
@@ -38,38 +28,22 @@ def get_due_date_string(value,id):
 
 @register.filter(name='tarefa_passou')
 def tarefa_passou(value,id):
-    temp = Tarefa.objects.get(id=id)
-    if temp.tipo=="tarefaAuxiliar":
-        tarefa = TarefaAuxiliar.objects.get(tarefaid=id)
-        value = tarefa.sessaoid.dia
-        comecou = tarefa.sessaoid.horarioid.inicio.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
-    elif temp.tipo == "tarefaAcompanhar":
-        tarefa = TarefaAcompanhar.objects.get(tarefaid=id)  
-        value = tarefa.dia 
-        comecou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S') 
-    else:
-        tarefa = TarefaOutra.objects.get(tarefaid=id)  
-        value = tarefa.dia
-        comecou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
+    tarefa = Tarefa.objects.get(id=id) 
+    value = tarefa.dia
     delta = value - date.today()
-    return comecou == True or delta.days < 0
+    if delta.days > 0:
+        return False
+    else:
+        return tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
+    
+  
 
 
 @register.filter(name='iniciar_tarefa')
 def iniciar_tarefa(value,id):
-    temp = Tarefa.objects.get(id=id)
-    if temp.tipo=="tarefaAuxiliar":
-        tarefa = TarefaAuxiliar.objects.get(tarefaid=id)
-        value = tarefa.sessaoid.dia
-        comecou = tarefa.sessaoid.horarioid.inicio.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
-    elif temp.tipo == "tarefaAcompanhar":
-        tarefa = TarefaAcompanhar.objects.get(tarefaid=id)  
-        value = tarefa.dia 
-        comecou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S') 
-    else:
-        tarefa = TarefaOutra.objects.get(tarefaid=id)  
-        value = tarefa.dia
-        comecou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
+    tarefa = Tarefa.objects.get(id=id)
+    value = tarefa.dia
+    comecou = tarefa.horario.strftime('%H:%M:%S') < datetime.datetime.now().strftime('%H:%M:%S')
     delta = value - date.today()
     return comecou == True and delta.days == 0
  
@@ -77,7 +51,7 @@ def iniciar_tarefa(value,id):
 def get_tarefa_auxiliar_prof(tarefa,id):
     tarefa = TarefaAuxiliar.objects.get(tarefaid=id)
     if tarefa!=None:
-        return tarefa.sessaoid.atividadeid.professoruniversitarioutilizadorid.first_name+" "+tarefa.sessaoid.atividadeid.professoruniversitarioutilizadorid.last_name
+        return tarefa.sessao.atividadeid.professoruniversitarioutilizadorid.first_name+" "+tarefa.sessao.atividadeid.professoruniversitarioutilizadorid.last_name
     else:
         pass
 
@@ -85,7 +59,7 @@ def get_tarefa_auxiliar_prof(tarefa,id):
 def get_tarefa_auxiliar_campus(tarefa,id):
     tarefa = TarefaAuxiliar.objects.get(tarefaid=id)
     if tarefa!=None:    
-        return tarefa.sessaoid.atividadeid.espacoid.edificio.campus.nome
+        return tarefa.sessao.atividadeid.espacoid.edificio.campus.nome
     else:
         pass
 
@@ -93,7 +67,7 @@ def get_tarefa_auxiliar_campus(tarefa,id):
 def get_tarefa_auxiliar_sala(tarefa,id):
     tarefa = TarefaAuxiliar.objects.get(tarefaid=id)
     if tarefa!=None:
-        return tarefa.sessaoid.atividadeid.espacoid.edificio.campus.nome    
+        return tarefa.sessao.atividadeid.espacoid.edificio.campus.nome    
     else:
         pass
 
@@ -101,7 +75,7 @@ def get_tarefa_auxiliar_sala(tarefa,id):
 def get_tarefa_auxiliar_edificio(tarefa,id):
     tarefa = TarefaAuxiliar.objects.get(tarefaid=id)
     if tarefa!=None:
-        return tarefa.sessaoid.atividadeid.espacoid.edificio.nome
+        return tarefa.sessao.atividadeid.espacoid.edificio.nome
     else:
         pass
 
@@ -109,7 +83,7 @@ def get_tarefa_auxiliar_edificio(tarefa,id):
 def get_tarefa_auxiliar_espaco(tarefa,id):
     tarefa = TarefaAuxiliar.objects.get(tarefaid=id)
     if tarefa!=None:
-        return tarefa.sessaoid.atividadeid.espacoid.nome
+        return tarefa.sessao.atividadeid.espacoid.nome
     else:
         pass
 ###

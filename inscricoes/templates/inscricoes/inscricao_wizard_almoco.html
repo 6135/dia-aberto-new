@@ -206,7 +206,7 @@
                                 Não Estudantes{% else %}Nº Docentes{% endif %}
                                 ({{precoprofessores}}€)</label>
                             <b-numberinput v-model="npratosdocentes" controls-position="compact" min="0"
-                                name="almoco-npratosdocentes" max="Math.max(nresponsaveis, 5)" />
+                                name="almoco-npratosdocentes" :max="Math.max(nresponsaveis, 5)" />
                             {{ form.npratosdocentes.errors }}
                         </div>
                     </div>

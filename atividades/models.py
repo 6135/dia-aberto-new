@@ -131,6 +131,12 @@ class Atividade(models.Model):
     def get_coord(self):
         return self.professoruniversitarioutilizadorid.faculdade.coord_()
 
+    def get_material(self):
+        return Materiais.objects.filter(atividadeid=self).first()
+
+    def get_tema(self):
+        return self.tema.tema
+
     def __eq__(self, other):
         return self.nome == other.nome and \
             self.descricao == other.descricao and \
@@ -194,6 +200,10 @@ class Sessao(models.Model):
     # Field name made lowercase.
     horarioid = models.ForeignKey(
         'configuracao.Horario', models.DO_NOTHING, db_column='HorarioID')
+
+    def get_colaboradores(self):
+        tarefas = TarefaAuxiliar.objects.filter(sessao = self, tarefaid__estado="Atribuida")
+        return [tarefa.tarefaid.colab for tarefa in tarefas]
 
     def timeRange_(self, seperator=' até '):
         return self.horarioid.inicio.strftime('%H:%M') + str(seperator) + self.horarioid.fim.strftime('%H:%M')

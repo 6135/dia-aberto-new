@@ -12,14 +12,12 @@ from .views import mensagem
 from .views import alterar_password
 
 from . import views
-from utilizadores.views import consultar_utilizadores_old
 
 app_name = 'utilizadores'
 
 
 urlpatterns = [
     path('consultarutilizadores', consultar_utilizadores.as_view(),name='consultar-utilizadores'),
-    path('consultarutilizadoresold', consultar_utilizadores_old,name='consultar-utilizadores-old'),
     path('escolherperfil', escolher_perfil,name='escolher-perfil'),    
     path('criarutilizadores/<int:id>', criar_utilizador, name='criar-utilizador'),
     path('alterarpassword',alterar_password,name='alterar-password'),
