@@ -2,7 +2,6 @@ import logging
 
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import Group
-from django.contrib.auth.models import Permission
 
 GROUPS = ['Coordenador', 'Participante', 'ProfessorUniversitario', 'Administrador', 'Colaborador']
 
