@@ -60,6 +60,8 @@ REST_FRAMEWORK = {
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.auth',
+    'django.contrib.admin',
     'atividades',
     'colaboradores',
     'configuracao',
@@ -73,8 +75,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'django_filters',
     "django_tables2",
-    'django.contrib.admin',
-    'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',

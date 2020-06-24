@@ -29,8 +29,6 @@ class TestUrls(SimpleTestCase):
         self.assertEquals(resolve(url).func, views.versalas) 
         url = reverse('atividades:verHorarios')
         self.assertEquals(resolve(url).func, views.verhorarios) 
-        url = reverse('atividades:ajaxAddSessaoRow')
-        self.assertEquals(resolve(url).func, views.sessaoRow) 
         url = reverse('atividades:verResumo', kwargs={'id':1})
         self.assertEquals(resolve(url).func, views.verresumo) 
         url = reverse('atividades:confirmarResumo', kwargs={'id':1})
