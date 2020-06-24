@@ -89,21 +89,17 @@ class ProfAtividadesTable(tables.Table):
 
     def render_acoes(self,record):
         return format_html(f"""
-            <div class="columns">
-                <div class="column is-1">  
+            <div>
                     <a id='edit' href="{reverse('atividades:alterarAtividade', kwargs={'id':record.pk})}">
                         <span class="icon is-small">
                             <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                         </span>
                     </a>
-                </div>
-                &nbsp;
-                <div class="column is-1">                 
+                &nbsp;               
                     <a onclick="alert.render('Tem a certeza que pretende eliminar esta Atividade?','{reverse('atividades:eliminarAtividade', kwargs={'id':record.pk})}')">
                         <span class="icon is-small">
                             <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                         </span>
                     </a> 
-                </div>
             </div> 
         """)
