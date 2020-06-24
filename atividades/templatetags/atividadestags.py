@@ -25,7 +25,7 @@ def has_conflict(value,activity_id):
 @register.filter
 def colab_list(value):
     if len(value) == 0:
-        return "Sem Colaboradores"
+        return "N/A"
     else:
         str_names = ""
         for colab in value :
@@ -46,6 +46,6 @@ def conflict_list(value):
 @register.filter
 def material_none(value):
     if value is None:
-        return "Sem Material Necessario"
+        return "N/A"
     else:
         return value

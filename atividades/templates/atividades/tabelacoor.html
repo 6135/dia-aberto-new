@@ -7,43 +7,43 @@
     <tbody>
         <tr style="border-bottom: 1px solid #ddd">
             <th class="th-wrap">Data da ultima alteração:</th>
-            <td data-label='Inicio Inscrições:' style="font-weight: normal;">
+            <td  style="font-weight: normal;">
                 <span>{{row.record.dataalteracao}}</span>
             </td>
         </tr>
         <tr style="border-bottom: 1px solid #ddd">
-            <th class="th-wrap">Local</th>
-            <td data-label="Preço Professores:" style="font-weight: normal;">
+            <th class="th-wrap">Local:</th>
+            <td style="font-weight: normal;">
                 <span>{{row.record.espacoid.edificio.campus.nome}} - {{row.record.espacoid.edificio}} - {{row.record.espacoid}}</span>
             </td>           
         </tr>
         <tr style="border-bottom: 1px solid #ddd">
             <th class="th-wrap">Tema:</th>
-            <td data-label="Preço Professores:" style="font-weight: normal;">
+            <td  style="font-weight: normal;">
                 <span>{{row.record.get_tema}}</span>
             </td>           
         </tr>
         <tr style="border-bottom: 1px solid #ddd">
             <th class="th-wrap">Publico Alvo:</th>
-            <td data-label="Preço Professores:" style="font-weight: normal;">
+            <td style="font-weight: normal;">
                 <span>{{row.record.publicoalvo}}</span>
             </td>           
         </tr>
         <tr style="border-bottom: 1px solid #ddd">
             <th class="th-wrap">Departamento:</th>
-            <td data-label="Preço Professores:" style="font-weight: normal;">
+            <td style="font-weight: normal;">
                 <span>{{row.record.professoruniversitarioutilizadorid.departamento.nome}}</span>
             </td>           
         </tr>
         <tr style="border-bottom: 1px solid #ddd">
             <th class="th-wrap">Numero de Colaboradores:</th>
-            <td data-label="Preço Professores:" style="font-weight: normal;">
+            <td style="font-weight: normal;">
                 <span>{{row.record.nrcolaboradoresnecessario}}</span>
             </td>           
         </tr>
         <tr style="border-bottom: 1px solid #ddd">
             <th class="th-wrap">Materiais Necessarios:</th>
-            <td data-label="Preço Professores:" style="font-weight: normal;">
+            <td style="font-weight: normal;">
                 <span>{{row.record.get_material.nomematerial|material_none}}</span>
             </td>           
         </tr>
@@ -72,7 +72,7 @@
                 <th><div class="th-wrap" style="width:200px">Conflitos com a Atividade</div></th>
                 {% endif %}
                 {% if row.record.estado == "Aceite" and row.record.nrcolaboradoresnecessario > 0 %}
-                <th><div class="th-wrap" style="width:200px">Colaborador Atribuido</div></th>
+                <th><div class="th-wrap" style="width:200px">Colaboradores </div></th>
                 {% endif %}
             </tr>
         </thead>
