@@ -41,3 +41,11 @@ def conflict_list(value):
         for colab in value :
             str_names+=str(colab.full_name) +','
         return str_names[:-1]
+
+
+@register.filter
+def material_none(value):
+    if value is None:
+        return "Sem Material Necessario"
+    else:
+        return value
