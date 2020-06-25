@@ -185,16 +185,16 @@ class MenuTable(tables.Table):
         """)
 
 class TransporteTable(tables.Table):
-
-    identifier = tables.Column('Identificador',accessor='get_identifier')
+    
+    identifier = tables.Column('ID',accessor='get_identifier')
     rota = tables.Column('Rota', accessor='trip')
     horario = tables.Column('Horário',accessor='get_trip_time')
-    capacidade = tables.Column('Capacidade', accessor='get_capacidade')
+    capacidade = tables.Column('Cap.', accessor='get_capacidade')
     acoes = tables.Column('Operações', empty_values=(),orderable=False)
-    
+    dia = tables.Column('Dia', accessor='transporte__dia')
     class Meta:
         model = Transportehorario
-        sequence = ('identifier','rota','horario','capacidade','acoes')
+        sequence = ('identifier','rota','dia','horario','capacidade','acoes')
 
     def before_render(self, request):
         self.columns.hide('id')
