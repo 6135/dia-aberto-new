@@ -6,41 +6,50 @@ from django.utils.datetime_safe import datetime
 import pytz
 from django.urls import reverse
 from inscricoes.views import InscricaoWizard
+from configuracao.tests.test_models import create_open_day
+from utilizadores.tests.test_models import create_Administrador_0, create_Colaborador_0, create_Coordenador_0, create_Participante_0, create_ProfessorUniversitario_0, create_Utilizador_0
 
-def create_campus():
-    return Campus.objects.create(
-        nome = "Gambelas"
-    )
 
-def create_open_day():
-    return Diaaberto.objects.create(
-        precoalunos = 2,
-        precoprofessores = 2,
-        enderecopaginaweb = 'web.com',
-        descricao = 'Dia Aberto',
-        emaildiaaberto = 'web@web.com',
-        ano = '2020',
-        datadiaabertoinicio = datetime(1970,1,1,9,30,tzinfo=pytz.UTC),
-        datadiaabertofim = datetime(2040,1,2,9,30,tzinfo=pytz.UTC),
-        datainscricaoatividadesinicio = datetime(1970,1,1,9,30,tzinfo=pytz.UTC),
-        datainscricaoatividadesfim = datetime(2040,1,2,9,30,tzinfo=pytz.UTC),
-        datapropostasatividadesincio = datetime(1970,1,1,9,30,tzinfo=pytz.UTC),
-        dataporpostaatividadesfim = datetime(2040,1,2,9,30,tzinfo=pytz.UTC),
-        administradorutilizadorid = None,
-        escalasessoes = '00:30',
-    )
+class TestInscricaoWizardView(TestCase):
+    """ Teste suite da view "CriarInscricao" da app "inscricoes" """
 
-class CriarInscricaoTestCase(TestCase):
+    def assertNaoTemPermissoes(self, response):
+        self.assertTemplateUsed(response, 'mensagem.html')
+        self.assertEquals(response.context['tipo'], 'error')
+        self.assertEquals(
+            response.context['m'], 'Não tem permissões para aceder a esta página!')
 
-    @classmethod
-    def setUpTestData(cls):
-        cls.participante = Participante.objects.create_user('inesvalentim')
-        cls.diaaberto = create_open_day()
-        cls.diaaberto.save()
-
-    def test_CriarInscricao_Sucesso(self):
-        self.client.force_login(self.participante)
+    def test_CriarInscricao_semLogin(self):
+        create_open_day()
         response = self.client.get(reverse('inscricoes:criar-inscricao'))
-        self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'inscricoes/inscricao_wizard_info.html')
+        self.assertRedirects(response, reverse('utilizadores:login'))
+
+    def test_CriarInscricao_naoParticipante(self):
+        create_open_day()
+        for utilizador in [create_Utilizador_0(), create_Coordenador_0(), create_ProfessorUniversitario_0(), create_Colaborador_0(), create_Administrador_0()]:
+            self.client.force_login(utilizador)
+            response = self.client.get(
+                reverse('inscricoes:criar-inscricao'), follow=True)
+            self.assertNaoTemPermissoes(response)
+            self.client.logout()
+
+    def test_CriarInscricao_naoHaDiaAberto(self):
+        participante = create_Participante_0()
+        self.client.force_login(participante)
+        response = self.client.get(
+            reverse('inscricoes:criar-inscricao'), follow=True)
+        self.assertTemplateUsed(
+            response, 'mensagem.html')
+        self.assertEquals(response.context['tipo'], 'error')
+        self.assertEquals(
+            response.context['m'], 'Ainda não é permitido criar inscrições')
+
+    def test_CriarInscricao_ok(self):
+        create_open_day()
+        participante = create_Participante_0()
+        self.client.force_login(participante)
+        response = self.client.get(reverse('inscricoes:criar-inscricao'))
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(
+            response, 'inscricoes/inscricao_wizard_info.html')
         self.assertIsNotNone(response.context['wizard'])

@@ -1,7 +1,7 @@
 from django.test import TestCase
-from inscricoes.models import Escola, Inscricao, Inscricaoprato, Responsavel
-from inscricoes.tests.test_views import create_open_day, create_campus
+from inscricoes.models import Escola, Inscricao, Inscricaoprato, Inscricaotransporte, Responsavel
 from utilizadores.tests.test_models import create_Participante_0
+from configuracao.tests.test_models import create_campus, create_open_day, create_transporte
 import datetime
 
 
@@ -69,19 +69,35 @@ def create_Inscricao_2():
 
 def create_Responsavel_0():
     return Responsavel.objects.get_or_create(
-        inscricao = create_Inscricao_0(),
-        nome = "Miguel Afonso",
-        email = "miguelafonso@mail.mail",
-        tel = "+351931231231",
+        inscricao=create_Inscricao_0(),
+        nome="Miguel Afonso",
+        email="miguelafonso@mail.mail",
+        tel="+351931231231",
     )[0]
 
 
 def create_Inscricaoprato_0():
     return Inscricaoprato.objects.get_or_create(
-        inscricao = create_Inscricao_0(),
-        campus = create_campus(),
-        npratosalunos = 300,
-        npratosdocentes = 200,
+        inscricao=create_Inscricao_0(),
+        campus=create_campus(),
+        npratosalunos=300,
+        npratosdocentes=200,
+    )[0]
+
+
+# def create_Inscricaosessao_0():
+#     return Inscricaotransporte.objects.get_or_create(
+#         inscricao=create_Inscricao_0(),
+#         sessao=create_sessao(),
+#         nparticipantes=20,
+#     )[0]
+
+
+def create_Inscricaotransporte_0():
+    return Inscricaotransporte.objects.get_or_create(
+        inscricao=create_Inscricao_0(),
+        transporte=create_transporte(create_open_day()),
+        npassageiros=40,
     )[0]
 
 
@@ -105,3 +121,11 @@ class TestInscricoesModels(TestCase):
     def test_Inscricaoprato_model(self):
         """ Testes do modelo "Inscricaoprato" """
         inscricoesprato = [create_Inscricaoprato_0()]
+
+    # def test_Inscricaosessao_model(self):
+    #     """ Testes do modelo "Inscricaosessao" """
+    #     inscricoessessao = [create_Inscricaosessao_0()]
+
+    def test_Inscricaotransporte_model(self):
+        """ Testes do modelo "Inscricaotransporte" """
+        inscricoesprato = [create_Inscricaotransporte_0()]
