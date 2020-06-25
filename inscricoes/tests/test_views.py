@@ -81,11 +81,14 @@ class TestInscricaoPDFView(TestCase):
 class TestAtividadesAPIView(TestCase):
     """ Teste suite da view "AtividadesAPI" da app "inscricoes" """
 
-    def test_CriarInscricao_GET_semLogin(self):
+    def test_AtividadesAPI_GET_vazia(self):
         """ Teste de método GET sem login """
-        create_open_day()
-        response = self.client.get(reverse('inscricoes:criar-inscricao'))
-        self.assertRedirects(response, reverse('utilizadores:login'))
+        response = self.client.get(reverse('inscricoes:api-atividades'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['count'], 0)
+        self.assertEqual(response.data['next'], None)
+        self.assertEqual(response.data['previous'], None)
+        self.assertEqual(len(response.data['results']), 0)
 
 class TestCriarInscricaoView(TestCase):
     """ Teste suite da view "CriarInscricao" da app "inscricoes" """
