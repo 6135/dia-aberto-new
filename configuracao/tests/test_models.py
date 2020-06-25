@@ -83,6 +83,13 @@ def create_sala(edificio):
         descricao = 'Uma sala normal'
     )
 
+def create_transporte(diaaberto):
+    return Transporte.objects.create(
+        identificador = '01-00',
+        diaaberto = diaaberto,
+        dia = date(1970,1,1)
+    )
+
 class TestModels(TestCase):
 
 
@@ -211,4 +218,5 @@ class TestModels(TestCase):
         #methods
 
         self.assertEquals(str(edifi),'<a href=\"/configuracao/imagens/edificio/' + str(edifi.id) + '\">' + edifi.nome + '</a>')
-        #self.assertEquals(edifi.sa)
+        self.assertEquals(edifi.salas_().first().id, self.espaco.id)
+        self.assertEquals(edifi.count_salas,1)
