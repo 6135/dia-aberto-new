@@ -131,7 +131,6 @@
             if("{{tarefa.tipo}}"=="tarefaAuxiliar"){
               diasSelect();
               sessoesSelect();
-              colaboradoresSelect();
             }
             else if("{{tarefa.tipo}}"=="tarefaAcompanhar"){  
               diasGrupo();
@@ -212,12 +211,14 @@ function dropdownDependencies(url){
     function sessoesSelect(){
       var dia = document.getElementById("id_dia").value; 
       var atividadeId = document.getElementById("id_atividade").value; 
+      var tarefa = "{{tarefa.id}}";
       $.ajax({                       
         url: "{% url 'coordenadores:sessoesAtividade' %}", 
         method: 'POST',             
         data: {
             'dia': dia,
             'atividadeid':atividadeId,
+            'tarefa': tarefa,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
@@ -227,10 +228,12 @@ function dropdownDependencies(url){
     }
 
     function colaboradoresSelect(){
+      var tarefa = "{{tarefa.id}}";
       $.ajax({                       
         url: "{% url 'coordenadores:colaboradores' %}", 
         method: 'POST',             
         data: {
+            'tarefa': tarefa,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   

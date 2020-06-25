@@ -54,9 +54,12 @@ class TarefaAuxiliarForm(Form):
             colab = Colaborador.objects.get(id = data.get('colab'))
         atividade = Atividade.objects.get(id = data.get('atividade'))
         nome = 'Auxiliar na atividade ' + atividade.nome
-        tarefa = Tarefa(nome= nome,estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=sessao.horarioid.inicio)
-        tarefa.save()
-        TarefaAuxiliar(tarefaid=tarefa,sessao=sessao).save()   
+        if id is None:
+            tarefa=Tarefa.objects.create(nome= nome,estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=sessao.horarioid.inicio)
+            TarefaAuxiliar.objects.create(tarefaid=tarefa,sessao=sessao)
+        else:
+            Tarefa.objects.filter(id=id).update(nome= nome,estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=sessao.horarioid.inicio)
+            TarefaAuxiliar.objects.filter(tarefaid=id).update(sessao=sessao)
 
 def get_inscricao_choices():
     return [('','Escolha um grupo')]+[(grupo.id,'Grupo '+str(grupo.id)) for grupo in Inscricao.objects.filter(individual=False)]
@@ -87,7 +90,7 @@ class TarefaAcompanharForm(Form):
         
 
         if  origem != 'Check in':
-            local = Espaco.objects.filter(id=int(origem))
+            local = Espaco.objects.get(id=int(origem))
             origem = str(local.id)  
         
         if id is None:

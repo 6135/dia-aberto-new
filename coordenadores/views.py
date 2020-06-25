@@ -107,7 +107,8 @@ def tipoTarefa(request):
             template = 'coordenadores/tarefaAuxiliar.html'
             if request.POST.get('id'):
                 tarefa = TarefaAuxiliar.objects.get(tarefaid=int(request.POST['id']))
-                form = TarefaAuxiliarForm()
+                form = TarefaAuxiliarForm(initial={'atividade':tarefa.sessao.atividadeid.id,'dia':tarefa.tarefaid.dia,'horario':tarefa.tarefaid.horario,
+                                            'sessao':tarefa.sessao})
             else:
                 form = TarefaAuxiliarForm()       
         elif tipo == 'tarefaAcompanhar':
@@ -121,7 +122,7 @@ def tipoTarefa(request):
             template = 'coordenadores/tarefaOutra.html'
             if request.POST.get('id'):
                 tarefa = TarefaOutra.objects.get(tarefaid=int(request.POST['id']))
-                form = TarefaOutraForm(initial={'dia':tarefa.tarefaid.dia,'horario':tarefa.tarefaid.horario,'descricao':tarefa.descricao})      
+                form = TarefaOutraForm(initial={'dia':tarefa.tarefaid.dia,'horario':tarefa.tarefaid.horario,'descricao':tarefa.descricao,'colab':tarefa.tarefaid.colab})      
             else:
                   form = TarefaOutraForm()
             
@@ -130,20 +131,21 @@ def tipoTarefa(request):
 def diasAtividade(request):
     
     dias=[]
-    if request.POST['atividadeid'] != '':
+    if request.method == 'POST':
         if 'tarefa' in request.POST and request.POST['tarefa']!='':
-            tarefa = Tarefa.objects.get(id=request.POST['tarefa'])
+            tarefa = TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa']))
+            atividade = tarefa.sessao.atividadeid.id
             default={
-                'key': tarefa.dia,
-                'value': tarefa.dia
+                'key': str(tarefa.tarefaid.dia),
+                'value': tarefa.tarefaid.dia
             }
         else:
             default = {
                 'key': '',
                 'value': 'Escolha o dia'
             }
-    atividadeid = request.POST.get('atividadeid')
-    atividade = Atividade.objects.get(id=atividadeid)   
+            atividade = request.POST.get('atividadeid')
+    atividade = Atividade.objects.get(id=atividade)   
     dias = atividade.get_dias()  
     return render(request=request,
                 template_name='configuracao/dropdown.html',
@@ -151,14 +153,25 @@ def diasAtividade(request):
             )
 
 def sessoesAtividade(request):
-    dia = request.POST['dia']
-    atividade= request.POST['atividadeid']
-    sessoes = Sessao.tarefas_get_sessoes(atividade=atividade,dia=dia)
-    default = {
-        'key': '',
-        'value': 'Escolha a sessão'
-    }
-    options = [{
+    if request.method == 'POST':
+        if 'tarefa' in request.POST and request.POST['tarefa']!='':
+            tarefa = TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa']))
+            atividade = tarefa.sessao.atividadeid.id
+            dia = tarefa.tarefaid.dia
+            default={
+                'key': str(tarefa.sessao.id),
+                'value': str(tarefa.sessao.horarioid.inicio) + ' até ' + str(tarefa.sessao.horarioid.fim)
+            }
+        else:
+            default = {
+                'key': '',
+                'value': 'Escolha a sessão'
+            }
+            dia = request.POST['dia']
+            atividade= request.POST['atividadeid']
+        sessoes = Sessao.tarefas_get_sessoes(atividade=atividade,dia=dia)
+    
+        options = [{
                     'key':	str(sessao.id),
                     'value':	str(sessao.horarioid.inicio) + ' até ' + str(sessao.horarioid.fim)
                 } for sessao in sessoes
@@ -169,19 +182,32 @@ def sessoesAtividade(request):
             )
 
 def colaboradores(request):
-    coordenador = Coordenador.objects.get(id = request.user.id)
-    colabs = Colaborador.objects.filter(faculdade = coordenador.faculdade,utilizador_ptr_id__valido=True)
-    default = {
-        'key': '',
-        'value': 'Escolha o colaborador'
-    }
-    
-    options = [{
+    default=[]
+    if request.method == 'POST':
+        if 'tarefa' in request.POST and request.POST['tarefa']!='':
+            tarefa = Tarefa.objects.get(id=int(request.POST['tarefa']))
+            if tarefa.colab is not None:
+                default={
+                    'key': str(tarefa.colab.utilizador_ptr_id),
+                    'value': str(tarefa.colab.full_name)
+                } 
+            else:
+                default = {
+                    'key': '',
+                    'value': 'Escolha o colaborador'
+                }
+        else:
+            default = {
+                'key': '',
+                'value': 'Escolha o colaborador'
+            }
+        coordenador = Coordenador.objects.get(id = request.user.id)
+        colabs = Colaborador.objects.filter(faculdade = coordenador.faculdade,utilizador_ptr_id__valido=True)
+        options = [{
                     'key':	str(colab.utilizador_ptr_id),
-                    'value':	str(colab)
+                    'value':	str(colab.full_name)
                 } for colab in colabs
             ]
-
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':options, 'default': default}
@@ -258,9 +284,10 @@ def locaisOrigem(request):
             grupo = tarefa.inscricao.id
             horario = tarefa.tarefaid.horario
             dia = str(tarefa.tarefaid.dia)
+            local = Espaco.objects.get(id=int(tarefa.origem))
             default={
-                'key': tarefa.origem,
-                'value': tarefa.origem
+                'key': str(local.id),
+                'value': local.nome
             }
             
         else:

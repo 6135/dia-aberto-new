@@ -76,5 +76,7 @@ class TarefaTable(tables.Table):
         if record.tipo == 'tarefaAuxiliar':
             tarefa = TarefaAuxiliar.objects.get(tarefaid=record.id)
             return time.strftime(tarefa.sessao.horarioid.inicio,"%H:%M") + ' - ' + time.strftime(tarefa.sessao.horarioid.fim,"%H:%M")
-        else: return record.horario
-            
+        else: return record.horario       
+    
+    def render_colab(self,record):
+        return record.colab.full_name
