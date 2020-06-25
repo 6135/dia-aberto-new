@@ -148,6 +148,9 @@ def newDay(request, id=None):
 
 	user_check_var = user_check(request=request, user_profile=[Administrador])
 	if user_check_var.get('exists') == False: return user_check_var.get('render')
+	if Diaaberto.current() is not None:
+		return redirect('configuracao:diasAbertos')
+
 
 	logged_admin = Administrador.objects.get(utilizador_ptr_id = request.user.id)
 
