@@ -362,7 +362,8 @@ def eliminartarefa(request,id):
     if Tarefa.objects.filter(id=id).exists():
         tarefa = Tarefa.objects.get(id=id)
     if tarefa.coord.id == user_check_var.get('firstProfile').id:
-        views.enviar_notificacao_automatica(request,"tarefaApagada",id)
+        if tarefa.colab is not None:
+            views.enviar_notificacao_automatica(request,"tarefaApagada",id)
         tarefa.delete()    
         return redirect('coordenadores:consultarTarefa')
     return redirect('coordenadores:consultarTarefa')
