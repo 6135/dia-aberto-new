@@ -159,7 +159,10 @@ def newDay(request, id=None):
 		dia_aberto_form = diaAbertoSettingsForm(submitted_data, instance=dia_aberto)
 
 		if dia_aberto_form.is_valid():
-			dia_aberto_form.save()
+			dia_aberto = dia_aberto_form.save()
+			if dia_aberto.escalasessoes > time(0,59):
+				dia_aberto.escalasessoes = time(0,59)
+				dia_aberto.save()
 			return redirect('configuracao:diasAbertos')
 
 	return render(request=request,
