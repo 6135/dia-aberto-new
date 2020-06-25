@@ -73,27 +73,24 @@ def adicionartarefa(request,id=None):
         tarefa = Tarefa.objects.get(id=id)
     else:
         tarefa = None
+
     if request.method == 'POST':
         if request.POST['tipo']=='tarefaAuxiliar':
             form = TarefaAuxiliarForm(request.POST)
-            if form.is_valid():
-                coord = Coordenador.objects.get(id=request.user.id)
-                form.save(user=coord,id=id)
-                return redirect('coordenadores:consultarTarefa')
-        if request.POST['tipo']=='tarefaAcompanhar':
+        elif request.POST['tipo']=='tarefaAcompanhar':
             form = TarefaAcompanharForm(request.POST)
-            if form.is_valid():
-                coord = Coordenador.objects.get(id=request.user.id)
-                print(id)
-                form.save(user=coord,id=id)
-                return redirect('coordenadores:consultarTarefa')
-        if request.POST['tipo']=='tarefaOutra':
+        elif request.POST['tipo']=='tarefaOutra':
             form = TarefaOutraForm(request.POST)
-            if form.is_valid():
-                coord = Coordenador.objects.get(id=request.user.id)
-                form.save(user=coord,id=id)
-                return redirect('coordenadores:consultarTarefa')
-    
+        if form.is_valid():
+            coord = Coordenador.objects.get(id=request.user.id)
+            save=form.save(user=coord,id=id)
+            print(save)
+            if id:
+                views.enviar_notificacao_automatica(request,sigla="tarefaAlterada",id=id)
+            else:
+                views.enviar_notificacao_automatica(request,sigla="tarefaAtribuida",id=save)
+            return redirect('coordenadores:consultarTarefa')
+
     return render(request = request,template_name='coordenadores/criarTarefa.html',context={'tarefa':tarefa})
 
 
@@ -365,15 +362,16 @@ def eliminartarefa(request,id):
     if Tarefa.objects.filter(id=id).exists():
         tarefa = Tarefa.objects.get(id=id)
     if tarefa.coord.id == user_check_var.get('firstProfile').id:
-        tarefa.delete()
+        views.enviar_notificacao_automatica(request,"tarefaApagada",id)
+        tarefa.delete()    
         return redirect('coordenadores:consultarTarefa')
     return redirect('coordenadores:consultarTarefa')
 
 def atribuirColaborador(request,id):
     if request.method == 'POST':
-        print(request.POST)
         colab = Colaborador.objects.get(id = int(request.POST.get('colab')))
         Tarefa.objects.filter(id=id).update(colab=colab,estado='naoConcluida')
+        views.enviar_notificacao_automatica(request,"tarefaAtribuida",id)
     return redirect('coordenadores:consultarTarefa')
 
 #def consultartarefa(request):
