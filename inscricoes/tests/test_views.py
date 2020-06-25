@@ -85,10 +85,12 @@ class TestAtividadesAPIView(TestCase):
         """ Teste de método GET sem login """
         response = self.client.get(reverse('inscricoes:api-atividades'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data['count'], 0)
-        self.assertEqual(response.data['next'], None)
-        self.assertEqual(response.data['previous'], None)
-        self.assertEqual(len(response.data['results']), 0)
+        self.assertEqual(response.data, {
+            'count': 0,
+            'next': None,
+            'previous': None,
+            'results': [],
+        })
 
 class TestCriarInscricaoView(TestCase):
     """ Teste suite da view "CriarInscricao" da app "inscricoes" """
