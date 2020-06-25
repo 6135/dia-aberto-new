@@ -471,8 +471,9 @@ def criar_mensagem_uo(request, id):
         user = Utilizador.objects.get(id=user.id)
     else:
         return redirect('utilizadores:mensagem', 5)      
-    user_check_var = user_check(
-        request=request, user_profile=[Coordenador, Administrador,Colaborador])
+    user_check_var = user_check(request=request, user_profile=[Coordenador, colaborador, ProfessorUniversitario])
+    if user_check_var.get('exists') == False: 
+        return user_check_var.get('render')
     if request.method == "POST":
         tipo = id
         if tipo == 0:
@@ -570,8 +571,9 @@ def criar_mensagem_admin(request, id):
         user = Utilizador.objects.get(id=user.id)
     else:
         return redirect('utilizadores:mensagem', 5)      
-    user_check_var = user_check(
-        request=request, user_profile=[Administrador])       
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if user_check_var.get('exists') == False: 
+        return user_check_var.get('render')    
     if request.method == "POST":
         tipo = id
         if tipo == 0:
