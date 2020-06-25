@@ -21,7 +21,10 @@ from django.core.paginator import Paginator
 from notificacoes import views
 from django.utils.datetime_safe import date
 
+
+
 class consultar_tarefas(SingleTableMixin, FilterView):
+    ''' Funcionalidade de consultar tarefas do colaborador atual, funcionalidades de filtros para a a consulta das tarefas '''
     template_name = 'colaboradores/consultar_tarefas.html'
     table_class = TarefasTable
     filterset_class = TarefasFilter
@@ -31,7 +34,7 @@ class consultar_tarefas(SingleTableMixin, FilterView):
         return Tarefa.objects.filter(colab=self.request.user)
     
 
-# Funcionalidade de consultar tarefas do colaborador atual, funcionalidades de filtros para a a consulta das tarefas
+
 
 def consultar_tarefas_old(request):
         
@@ -106,9 +109,9 @@ def consultar_tarefas_old(request):
     return render(request=request, template_name='colaboradores/consultar_tarefas_old.html', context={"tarefas": tarefas, 'form': form, 'current': current, 'u': u})
 
 
-# Funcionalidade de conclusao de uma tarefa do colaborador
 
 def concluir_tarefa(request, id): 
+    ''' Funcionalidade de conclusão de uma tarefa do colaborador '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Colaborador").exists():
@@ -128,9 +131,9 @@ def concluir_tarefa(request, id):
                   context={"msg": msg})
 
 
-# Funcionalidade de inicio de uma tarefa do colaborador
 
 def iniciar_tarefa(request, id): 
+    ''' Funcionalidade de inicio de uma tarefa do colaborador '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Colaborador").exists():
@@ -147,8 +150,9 @@ def iniciar_tarefa(request, id):
     return redirect('colaboradores:consultar-tarefas')   
 
 
-# Funcionalidade de cancelamento de uma tarefa do colaborador
-def cancelar_tarefa(request, id): 
+
+def cancelar_tarefa(request, id):
+    ''' Funcionalidade de cancelamento de uma tarefa do colaborador ''' 
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Colaborador").exists():
@@ -157,8 +161,8 @@ def cancelar_tarefa(request, id):
             return redirect('utilizadores:mensagem',5) 
     else:
         return redirect('utilizadores:mensagem',5)
-    # Envio de notificacao automatica
-    views.enviar_notificacao_automatica(request,"cancelarTarefa",id)
+    # Envio de notificação automática
+    views.enviar_notificacao_automatica(request,"cancelarTarefa",id) #Envio de notificação automática !!!!
     tarefa = Tarefa.objects.get(id=id)
     nome = tarefa.coord.first_name+" "+tarefa.coord.last_name
     msg = "A enviar pedido de cancelamento de tarefa a "+nome
