@@ -42,7 +42,7 @@ class TarefaAuxiliarForm(Form):
     sessao = IntegerField(widget=Select(attrs={'onchange':'colaboradoresSelect()'}))
     colab = CharField(widget=Select(),required=False)
 
-    def save(self,user):
+    def save(self,user,id):
         data = self.cleaned_data
         estado = 'naoConcluida'
         

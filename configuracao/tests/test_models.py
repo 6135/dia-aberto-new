@@ -197,7 +197,7 @@ class TestModels(TestCase):
 
         self.assertEquals(horario.inicio,time(12,0))
         self.assertEquals(horario.fim,time(14,0))
-        self.assertEquals(str(horario), "12:00 - 14:00")
+        self.assertEquals(str(horario), '12:00:00 até 14:00:00')
 
     def test_menu(self):
         menu = self.menu
@@ -205,7 +205,7 @@ class TestModels(TestCase):
         self.assertEquals(self.lunchTime, menu.horarioid)
         self.assertEquals(self.campus, menu.campus)
         self.assertEquals(self.diaaberto, menu.diaaberto)
-        self.assertEquals(self.dia, date(1970,1,1))
+        self.assertEquals(date(1970,1,1), menu.dia)
 
         # methods
 
@@ -235,3 +235,9 @@ class TestModels(TestCase):
     def test_sala(self):
         sala = self.espaco
 
+        self.assertEquals(sala.nome,'2.13')
+        self.assertEquals(sala.edificio.id,self.edifico.id)
+        self.assertEquals(sala.andar,'0')
+        self.assertEquals(sala.descricao,'Uma sala normal')
+
+        
