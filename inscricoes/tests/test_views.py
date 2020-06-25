@@ -78,6 +78,20 @@ class TestInscricaoPDFView(TestCase):
             str(response.context['ano']), self.inscricao.diaaberto.ano)
 
 
+class TestAtividadesAPIView(TestCase):
+    """ Teste suite da view "AtividadesAPI" da app "inscricoes" """
+
+    def test_AtividadesAPI_GET_vazia(self):
+        """ Teste de método GET sem login """
+        response = self.client.get(reverse('inscricoes:api-atividades'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data, {
+            'count': 0,
+            'next': None,
+            'previous': None,
+            'results': [],
+        })
+
 class TestCriarInscricaoView(TestCase):
     """ Teste suite da view "CriarInscricao" da app "inscricoes" """
 

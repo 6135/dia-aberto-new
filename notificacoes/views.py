@@ -22,7 +22,6 @@ from .forms import *
 
 
 
-
 def apagar_notificacao_automatica(request, id ,nr):
     ''' Apagar uma notificação automática '''
     if request.user.is_authenticated:
@@ -468,12 +467,18 @@ def criar_mensagem_uo(request, id):
     msg = False
     if request.user.is_authenticated: 
         user = get_user(request) 
+        if user.groups.filter(name = "Colaborador").exists():
+            utilizador_atual_verificacao = True
+        elif user.groups.filter(name = "Coordenador").exists():
+            utilizador_atual_verificacao = True
+        elif user.groups.filter(name = "ProfessorUniversitario").exists():     
+            utilizador_atual_verificacao = True 
+        else:     
+            return redirect('utilizadores:mensagem', 5)  
         user = Utilizador.objects.get(id=user.id)
     else:
         return redirect('utilizadores:mensagem', 5)      
-    user_check_var = user_check(request=request, user_profile=[Coordenador, colaborador, ProfessorUniversitario])
-    if user_check_var.get('exists') == False: 
-        return user_check_var.get('render')
+
     if request.method == "POST":
         tipo = id
         if tipo == 0:
@@ -568,12 +573,12 @@ def criar_mensagem_admin(request, id):
     msg = False
     if request.user.is_authenticated: 
         user = get_user(request) 
+        if user.groups.filter(name = "Administrador").exists() == False:
+            return redirect('utilizadores:mensagem', 5) 
         user = Utilizador.objects.get(id=user.id)
     else:
         return redirect('utilizadores:mensagem', 5)      
-    user_check_var = user_check(request=request, user_profile=[Administrador])
-    if user_check_var.get('exists') == False: 
-        return user_check_var.get('render')    
+ 
     if request.method == "POST":
         tipo = id
         if tipo == 0:
