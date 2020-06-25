@@ -182,14 +182,20 @@ def sessoesAtividade(request):
             )
 
 def colaboradores(request):
-
+    default=[]
     if request.method == 'POST':
         if 'tarefa' in request.POST and request.POST['tarefa']!='':
             tarefa = Tarefa.objects.get(id=int(request.POST['tarefa']))
-            default={
-                'key': str(tarefa.colab.utilizador_ptr_id),
-                'value': str(tarefa.colab.full_name)
-            }   
+            if tarefa.colab is not None:
+                default={
+                    'key': str(tarefa.colab.utilizador_ptr_id),
+                    'value': str(tarefa.colab.full_name)
+                } 
+            else:
+                default = {
+                    'key': '',
+                    'value': 'Escolha o colaborador'
+                }
         else:
             default = {
                 'key': '',
@@ -202,7 +208,6 @@ def colaboradores(request):
                     'value':	str(colab.full_name)
                 } for colab in colabs
             ]
-
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':options, 'default': default}
@@ -279,9 +284,10 @@ def locaisOrigem(request):
             grupo = tarefa.inscricao.id
             horario = tarefa.tarefaid.horario
             dia = str(tarefa.tarefaid.dia)
+            local = Espaco.objects.get(id=int(tarefa.origem))
             default={
-                'key': tarefa.origem,
-                'value': tarefa.origem
+                'key': str(local.id),
+                'value': local.nome
             }
             
         else:
