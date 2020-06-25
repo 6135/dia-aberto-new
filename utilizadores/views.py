@@ -349,7 +349,7 @@ def rejeitar_utilizador(request, id):
 
 def alterar_idioma(request):  
     ''' Alterar o idioma da plataforma ''' 
-     return redirect('utilizadores:mensagem',5)  
+    return redirect('utilizadores:mensagem',5)  
 
 
 
