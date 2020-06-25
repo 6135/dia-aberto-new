@@ -1,7 +1,7 @@
 from django.test import TestCase
 from inscricoes.models import Escola, Inscricao, Inscricaoprato, Inscricaotransporte, Responsavel
 from utilizadores.tests.test_models import create_Participante_0
-from configuracao.tests.test_models import create_campus, create_open_day, create_transporte
+from configuracao.tests.test_models import create_campus, create_open_day, create_transporteH
 import datetime
 
 
@@ -96,7 +96,7 @@ def create_Inscricaoprato_0():
 def create_Inscricaotransporte_0():
     return Inscricaotransporte.objects.get_or_create(
         inscricao=create_Inscricao_0(),
-        transporte=create_transporte(create_open_day()),
+        transporte=create_transporteH(create_open_day()),
         npassageiros=40,
     )[0]
 

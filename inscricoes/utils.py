@@ -191,7 +191,7 @@ def update_context(context, step, wizard=None, inscricao=None):
     if step == 'escola':
         prox_diaaberto = Diaaberto.current()
         context.update({
-            'escolas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Escola.objects.all()))),
+            'escolas': json.dumps(list(set(map(lambda x: x.nome, Escola.objects.all())))),
             'inicio': prox_diaaberto.datadiaabertoinicio.strftime("%d/%m/%Y"),
             'fim': prox_diaaberto.datadiaabertofim.strftime("%d/%m/%Y"),
         })

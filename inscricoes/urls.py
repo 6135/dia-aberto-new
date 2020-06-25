@@ -7,7 +7,7 @@ from . import views
 app_name = 'inscricoes'
 
 urlpatterns = [
-    path('api/atividades', views.AtividadesAPIView.as_view(), name="api-atividades"),
+    path('api/atividades', views.AtividadesAPI.as_view(), name="api-atividades"),
     path('criar', views.CriarInscricao.as_view(),
          name='criar-inscricao'),
     path('<int:pk>/pdf', views.InscricaoPDF,

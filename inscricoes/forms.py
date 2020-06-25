@@ -33,6 +33,7 @@ class InscricaoForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(InscricaoForm, self).clean()
+        cleaned_data['local'] = cleaned_data['local'].capitalize()
         # Verificar se o dia escolhido faz parte do Dia Aberto
         if not cleaned_data.get('diaaberto', ''):
             hoje = datetime.now(pytz.utc)
@@ -143,6 +144,9 @@ def verificar_vagas(sessoes, nalunos, dia):
         except:
             raise forms.ValidationError(
                 _("Ocorreu um erro inesperado. Por favor, tente submeter uma nova inscrição."))
+        if sessao_obj.atividadeid.estado != "Aceite":
+            raise forms.ValidationError(
+                _(f"A seguinte atividade não se encontra validada: \"{sessao_obj.atividadeid.nome}\"."))
         if sessao_obj.dia != dia:
             raise forms.ValidationError(
                 _(f"A seguinte sessão não faz parte do dia da inscrição: \"{sessao_obj.atividadeid.nome}\", dia {sessao_obj.dia}, das {sessao_obj.horarioid.inicio.strftime('%H:%M')} às {sessao_obj.horarioid.fim.strftime('%H:%M')}. Dia da inscrição: {dia}"))
