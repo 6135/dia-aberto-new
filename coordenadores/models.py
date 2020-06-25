@@ -8,7 +8,7 @@
 from django.db import models
 from datetime import datetime, date,timezone,time
 from django.db.models.signals import pre_delete, post_delete
-
+from configuracao.models import *
 class Tarefa(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
@@ -87,12 +87,13 @@ class TarefaAcompanhar(models.Model):
 
     def getDescription(self):
         if self.origem != 'Check in':
-            origem = Espaco.objects.get(id=int(self.origem))
+            local = Espaco.objects.get(id=int(self.origem))
+            origem = local.nome
+            extra = " da sala "+origem+", no edifício "+ local.edificio.nome
         else:
-            origem = self.origem
+            extra = " do "+self.origem
         destino = Espaco.objects.get(id=int(self.destino))
-        msg = self.tarefaid.nome+" da sala "+origem.nome+", no edificio "+ origem.edificio.nome\
-        +", á sala "+destino.nome+", no edificio "+ destino.edificio.nome+", no dia "+self.tarefaid.dia.strftime('%d/%m/%y')\
+        msg = self.tarefaid.nome+extra+" á sala "+destino.nome+", no edifício "+ destino.edificio.nome+", no dia "+self.tarefaid.dia.strftime('%d/%m/%y')\
         +" às "+self.tarefaid.horario.strftime('%H horas e %M minutos')+"."
         return msg
    
