@@ -135,6 +135,7 @@
             }
             else if("{{tarefa.tipo}}"=="tarefaAcompanhar"){  
               diasGrupo();
+              grupoInfo();
             }
             colaboradoresSelect();
           }
@@ -237,12 +238,14 @@ function dropdownDependencies(url){
 /*-------------------->EndAuxiliarAtividade<-----------------*/
 /*-------------------->Acompanhar Grupo<---------------------*/
     function grupoInfo(){
-      var grupo_id = document.getElementById("id_grupo").value;; 
+      var grupo_id = document.getElementById("id_grupo").value;
+      var tarefa = "{{tarefa.id}}"
       $.ajax({                       
         url: "{% url 'coordenadores:grupoInfo' %}", 
         method: 'POST',             
         data: {
             'grupo_id': grupo_id,
+            'tarefa':tarefa,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
@@ -254,7 +257,6 @@ function dropdownDependencies(url){
     function diasGrupo(){
       var grupo_id = document.getElementById("id_grupo").value;
       var tarefa = "{{tarefa.id}}"
-      console.log(grupo_id)
       $.ajax({                       
         url: "{% url 'coordenadores:diasGrupo' %}", 
         method: 'POST',             

@@ -188,12 +188,17 @@ def colaboradores(request):
             )
 
 def grupoInfo(request):
-    info = Inscricao.objects.get(id=request.POST['grupo_id'])
-    #reponsavel = Responsavel.objects.get(inscricao=request.POST['grupo_id'])
+    if request.method == 'POST':
+        if 'tarefa' in request.POST and request.POST.get('tarefa') != '':
+            tarefa = Tarefa.objects.get(id=request.POST.get('tarefa'))
+            grupo
+        else:   
+            info = Inscricao.objects.get(id=request.POST['grupo_id'])
+    reponsavel = Responsavel.objects.get(inscricao=request.POST['grupo_id'])
     return render(request=request,
                 template_name='coordenadores/grupoInfo.html',
                 context={'info': info}
-            )
+            ))
 
 def diasGrupo(request):
     dias=[]
@@ -203,7 +208,7 @@ def diasGrupo(request):
             
             default={
                 'key': str(tarefa.dia),
-                'value': str(tarefa.dia)
+                'value': tarefa.dia
             }
         else:
             default = {
@@ -213,8 +218,6 @@ def diasGrupo(request):
         inscricaoid = request.POST.get('grupo_id')
         inscricao = Inscricao.objects.get(id=inscricaoid)
         dias = inscricao.get_dias()
-        print(default)
-        print(dias)
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':dias, 'default': default}
