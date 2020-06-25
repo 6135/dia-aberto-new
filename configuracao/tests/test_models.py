@@ -83,7 +83,7 @@ def create_sala(edificio):
         descricao = 'Uma sala normal'
     )
 
-def create_transporte(diaaberto):
+def create_transporteH(diaaberto):
     transporte =  Transporte.objects.create(
         identificador = '01-00',
         diaaberto = diaaberto,
@@ -120,7 +120,7 @@ class TestModels(TestCase):
         self.prato = create_prato(menu=self.menu)
         self.edificio = create_edificio(self.campus)
         self.espaco = create_sala(self.edificio)
-        self.transporteH = create_transporte(self.diaaberto)
+        self.transporteH = create_transporteH(self.diaaberto)
         self.transporte = self.transporteH.transporte
         self.transporteU = create_transporteU(self.transporte)
 
@@ -236,8 +236,40 @@ class TestModels(TestCase):
         sala = self.espaco
 
         self.assertEquals(sala.nome,'2.13')
-        self.assertEquals(sala.edificio.id,self.edifico.id)
+        self.assertEquals(sala.edificio.id,self.edificio.id)
         self.assertEquals(sala.andar,'0')
         self.assertEquals(sala.descricao,'Uma sala normal')
 
+    
+    def test_transport(self):
+        transport = self.transporte
+
+        self.assertEquals(transport.identificador, '01-00')
+        self.assertEquals(str(transport), '01-00')
+        self.assertEquals(transport.diaaberto.id, self.diaaberto.id)
+        self.assertEquals(transport.dia, date(1970,1,1))
         
+    def test_transportH(self):
+        transportH = self.transporteH
+
+        self.assertEquals(transportH.origem,'Penha')
+        self.assertEquals(transportH.chegada,'Terminal')
+        self.assertEquals(transportH.horaPartida, time(11,0))
+        self.assertEquals(transportH.horaChegada, time(11,30))
+        self.assertEquals(transportH.transporte.id, self.transporte.id)
+
+        # methods
+
+        self.assertEquals(transportH.get_identifier, str(self.transporte))
+        self.assertEquals(transportH.get_capacidade, self.transporteU.capacidade)
+        self.assertEquals(transportH.get_trip_time, '11:00 - 11:30')
+        self.assertEquals(transportH.trip(), 'Penha - Terminal')
+
+
+
+
+#def create_transporteU(transporte):
+#    return Transporteuniversitario.objects.create(
+#        transporte = transporte,
+#        capacidade = 20
+#    )

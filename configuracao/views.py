@@ -210,8 +210,11 @@ class verMenus(SingleTableMixin, FilterView):
 		return super().dispatch(request, *args, **kwargs)
 		
 	def get_context_data(self, **kwargs):
-		context = super().get_context_data(**kwargs)
+		context = super(SingleTableMixin, self).get_context_data(**kwargs)
+		table = self.get_table(**self.get_table_kwargs())
+		table.fixed = True
 		context["campi"] = list(map(lambda x: (x.id, x.nome), Campus.objects.all()))
+		context[self.get_context_table_name(table)] = table
 		return context
 
 def newMenu(request, id = None):
