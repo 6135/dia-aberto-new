@@ -90,7 +90,7 @@ class TarefaAcompanharForm(Form):
         
 
         if  origem != 'Check in':
-            local = Espaco.objects.filter(id=int(origem))
+            local = Espaco.objects.get(id=int(origem))
             origem = str(local.id)  
         
         if id is None:
