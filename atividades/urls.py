@@ -16,7 +16,6 @@ urlpatterns = [
     path('veredificios',views.veredificios,name="verEdificios"),
     path('versalas',views.versalas,name="verSalas"),
     path('verhorarios',views.verhorarios,name="verHorarios"),
-    path('ajaxaddsessaorow',views.sessaoRow,name="ajaxAddSessaoRow"),
     path('verresumo/<int:id>',views.verresumo,name='verResumo'),
     path('confirmar/<int:id>',views.confirmarResumo,name='confirmarResumo'),
 ]

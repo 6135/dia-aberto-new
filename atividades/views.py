@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , MateriaisForm, atividadesFilterForm, CampusForm
+from .forms import AtividadeForm , MateriaisForm, CampusForm
 from .models import *
 from configuracao.models import Horario
 from .models import Atividade, Sessao, Tema, Materiais
@@ -21,24 +21,6 @@ from atividades.tables import *
 from atividades.filters import *
 from django_tables2 import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
-
-def filters(request):
-    filters=[]
-    if request.POST.get('Aceite'):
-        filters.append('Aceite')
-    else:
-        filters.append('')
-
-    if request.POST.get('Recusada'):
-        filters.append('Recusada')
-    else:
-        filters.append('')
-
-    if request.POST.get('Pendente'):
-        filters.append('Pendente')
-    else:
-        filters.append('')
-    return filters
 
 
 class AtividadesProfessor(SingleTableMixin, FilterView):
@@ -497,20 +479,6 @@ class TimeC():
 
 
 
-
-
-def sessaoRow(request):
-    value = int(request.POST.get('extra'))
-    dias = Diaaberto.objects.get(datapropostasatividadesincio__lte=datetime.now(),dataporpostaatividadesfim__gte=datetime.now()).days_as_array()
-    data = {
-		'form_dia': "form-" + str(value-1) + "-dia",
-		'form_dia': "form-" + str(value-1) + "-dia",
-		'form_horario': "form-" + str(value-1) + "-horarioid",
-		'form_horario': "form-" + str(value-1) + "-horarioid",
-		'form_id': 'form-' + str(value-1) + '-id',
-        'dias': dias,
-	}
-    return render(request=request, template_name='atividades/sessaoRow.html', context=data)
 
 def veredificios(request):
     campus=request.POST["valuecampus"]
