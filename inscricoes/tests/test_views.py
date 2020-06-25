@@ -37,11 +37,10 @@ class TestInscricaoPDFView(TestCase):
             reverse('inscricoes:inscricao-pdf', kwargs={'pk': self.inscricao.pk}))
         self.assertRedirects(response, reverse('utilizadores:login'))
 
-    def test_InscricaoPDF_GET_naoParticipanteCoordenadorAdministrador(self):
+    def test_InscricaoPDF_GET_naoParticipanteCoordenadorAdministradorColaborador(self):
         """ Teste de método GET sem ser participante """
         utilizadores = [create_Utilizador_0(),
-                        create_ProfessorUniversitario_0(),
-                        create_Colaborador_0()]
+                        create_ProfessorUniversitario_0()]
         for utilizador in utilizadores:
             self.client.force_login(utilizador)
             response = self.client.get(

@@ -30,7 +30,7 @@ def InscricaoPDF(request, pk):
     """ View que gera um PDF com os detalhes da inscrição """
     inscricao = get_object_or_404(Inscricao, pk=pk)
     erro_permissoes = nao_tem_permissoes(request, inscricao)
-    if erro_permissoes:
+    if erro_permissoes and not request.user.groups.filter(name="Colaborador").exists():
         return erro_permissoes
     ano = inscricao.diaaberto.ano
     context = {
