@@ -43,10 +43,10 @@
                 {{row.record.get_tarefa_especifica.sessao.atividadeid.professoruniversitarioutilizadorid.last_name}}
             </td>
         </tr>
-        {% elif row.record.tipo == "tarefaAuxiliar" %}
+        {% elif row.record.tipo == "tarefaAcompanhar" %}
         <tr>
             <td><strong>Quem Acompanhar:</strong></td>
-            <td>Grupo {{row.record.get_tarefa_especifica.inscricao.get_grupo}}</td>
+            <td><a href="{% url 'inscricoes:inscricao-pdf' row.record.get_tarefa_especifica.inscricao.pk %}">Grupo {{row.record.get_tarefa_especifica.inscricao.get_grupo}} (Clicar para ver detalhes da inscrição)</a></td>
         </tr>
         <tr>
             <td><strong>Origem:</strong></td>

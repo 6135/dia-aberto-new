@@ -100,7 +100,7 @@ def coordenador_e_inscricao_nao_do_departamento(request, inscricao):
 def participante_e_inscricao_doutro(request, inscricao):
     user_check_var = user_check(request=request, user_profile=[Participante])
     if user_check_var.get('exists'):
-        participante = Participante.objects.get(user_ptr=request.user)
+        participante = Participante.objects.get(user_ptr=request.user.id)
         if inscricao.participante != participante:
             return user_check_var.get('render')
     return False
