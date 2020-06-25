@@ -30,13 +30,18 @@ class consultar_tarefas(SingleTableMixin, FilterView):
     filterset_class = TarefasFilter
     paginate_by = 10
 
-    def get_queryset(self):
+    def dispatch(self, request, *args, **kwargs):
         user_check_var = user_check(
             request=request, user_profile=[Colaborador])
+        if not user_check_var.get('exists'):
+            return user_check_var.get('render')
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        user_check_var = user_check(
+            request=self.request, user_profile=[Colaborador])
         return Tarefa.objects.filter(colab=self.request.user)
     
-
-
 
 def consultar_tarefas_old(request):
         
