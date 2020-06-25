@@ -175,6 +175,18 @@ def alterarAtividade(request,id):
                         sessoes= Sessao.objects.filter(atividadeid= activity_object_formed)
                         print(sessoes)
                         for sessao in sessoes:
+                            inicio= str(sessao.horarioid.inicio)
+                            splitinicio=inicio.split(":")
+                            print(splitinicio)
+                            duracaoesperada= activity_object_formed.duracaoesperada
+                            hfim= horariofim(splitinicio,duracaoesperada)
+                            horario= Horario.objects.filter(inicio= sessao.horarioid.inicio, fim=hfim).first()
+                            if horario is None:
+                                new_Horario= Horario(inicio=inicio, fim=hfim)
+                                new_Horario.save()
+                            else:
+                                new_Horario= horario
+                            sessao.horarioid=Horario.objects.get(id=new_Horario.id)
                             sessao.vagas= activity_object_formed.participantesmaximo
                             sessao.save()
                     else:
@@ -188,6 +200,18 @@ def alterarAtividade(request,id):
                             sessoes= Sessao.objects.filter(atividadeid= activity_object_formed)
                             print(sessoes)
                             for sessao in sessoes:
+                                inicio= str(sessao.horarioid.inicio)
+                                splitinicio=inicio.split(":")
+                                print(splitinicio)
+                                duracaoesperada= activity_object_formed.duracaoesperada
+                                hfim= horariofim(splitinicio,duracaoesperada)
+                                horario= Horario.objects.filter(inicio= sessao.horarioid.inicio, fim=hfim).first()
+                                if horario is None:
+                                    new_Horario= Horario(inicio=inicio, fim=hfim)
+                                    new_Horario.save()
+                                else:
+                                    new_Horario= horario
+                                sessao.horarioid=Horario.objects.get(id=new_Horario.id)
                                 sessao.vagas= activity_object_formed.participantesmaximo
                                 sessao.save()
                     nviews.enviar_notificacao_automatica(request,"atividadeAlterada",activity_object_formed.id) #Enviar Notificacao Automatica !!!!!!
