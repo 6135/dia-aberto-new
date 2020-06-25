@@ -41,23 +41,24 @@ def filters(request):
     return filters
 
 
-class AtividadesProfessor(SingleTableView):
+class AtividadesProfessor(SingleTableMixin, FilterView):
     
     table_class = ProfAtividadesTable
-    template_name = 'atividades/minhasatividades.html'
+    template_name = 'atividades/minhasAtividades.html'
+    filterset_class = ProfAtividadesFilter
     table_pagination = {
 		'per_page': 10
 	}
     
 
-    #def dispatch(self, request, *args, **kwargs):
-    #    user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
-    #    if not user_check_var.get('exists'): return user_check_var.get('render')
-    #    self.user_check_var = user_check_var
-    #    return super().dispatch(request, *args, **kwargs)
-
-    #def get_queryset(self):
-    #    return Atividade.objects.filter(professoruniversitarioutilizadorid=self.user_check_var.get('firstProfile')).exclude(estado="nsub")
+    def dispatch(self, request, *args, **kwargs):
+        user_check_var = user_check(request=request, user_profile=[ProfessorUniversitario])
+        if not user_check_var.get('exists'): return user_check_var.get('render')
+        self.user_check_var = user_check_var
+        return super().dispatch(request, *args, **kwargs)
+        
+    def get_queryset(self):
+        return Atividade.objects.filter(professoruniversitarioutilizadorid=self.user_check_var.get('firstProfile')).exclude(estado="nsub")
     
 
 
@@ -74,7 +75,7 @@ class AtividadesCoordenador(SingleTableMixin, FilterView):
     table_pagination = {
 		'per_page': 10
 	}
-    user_check_var = None
+    
     def dispatch(self, request, *args, **kwargs):
         user_check_var = user_check(request=request, user_profile=[Coordenador])
         if not user_check_var.get('exists'): return user_check_var.get('render')
