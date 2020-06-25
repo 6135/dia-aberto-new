@@ -1,0 +1,237 @@
+{% extends 'configuracao/app.html' %}
+{% block content %}
+{% load l10n %}
+
+<div class="columns">
+    <div class="column is-3">
+        <form method="POST" action="" id='filter'>
+            {% csrf_token %}
+            <div>
+            <div class="menu">
+                <p class="menu-label">Filtros Dia Aberto</p>
+                <ul class="menu-list">
+                <div class="field">
+                    <!---->
+                    <div class="control has-icons-left is-clearfix">
+                        <input type="number" name="searchAno" placeholder="Ano" class="input" min='{{earliest}}' max='{{latest}}' value="{{current.specific_year}}"> 
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                    </div>
+                    <!---->
+                </div>
+                <div class="field">
+                    <!---->
+                    <div class="control">
+                        <span class="select is-fullwidth is-empty">
+                            {{form.orderBy}}
+                        </span>
+                        <!---->
+                    </div>
+                    <!---->
+                </div>
+                <div class="field">
+                    <!---->
+                    <div class="control">
+                        <span class="select is-fullwidth is-empty">
+                            {{form.showBy}}
+                        </span>
+                        <!---->
+                    </div>
+                    <!---->
+                </div>
+                <div class="field">
+                    <button type="submit" onClick="resetForm()" class="button is-danger is-outlined">
+                        <span class="icon is-left">
+                            <i class="mdi mdi-trash-can-outline mdi-24px"></i>
+                        </span>
+                        <span>Limpar pesquisa</span>
+                    </button>
+                    <button type="Submit" class="button is-success is-outlined">
+                        <span class="icon is-left">
+                            <i class="mdi mdi-magnify mdi-24px"></i>
+                        </span>
+                        <span>Pesquisar</span>
+                    </button>
+                </div>
+                </ul>
+            </div>
+            </div>
+            
+        </form>
+    </div>
+    <div class="column">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+              <li><a href="#">Início</a></li>
+              <li class="is-active"><a href="#" aria-current="page">Dias Abertos</a></li>
+            </ul>
+          </nav>
+        {% if is_open == True %}
+        <input type="hidden" id="novoDia" value="{% url 'novoDia'%}">  
+        <a onclick="alert.render('Ainda existe um dia aberto em vigor.\nTem a certeza que deseja criar um novo?','novoDia')" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">     
+        {% else %}
+        <a class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" href="{% url 'novoDia'%}">     
+        {% endif %}
+            <span class="icon is-small">
+                <i class="mdi mdi-plus"></i>
+            </span>
+            <span>Criar novo Dia Aberto</span>
+        </a>   
+
+        <div class="b-table">
+            <div class="table-wrapper">
+                <table id="table01" class="table has-mobile-cards is-hoverable is-fullwidth">
+                    <thead>
+                        <tr>
+                            <th style="width: 30px;" ></th>
+                            <th onclick="sortTable(1,false)" style="cursor: pointer;width: 120px" class="pre-arrow">
+                                Ano<span class="arrow active"><span></span><span></span></span>
+                            </th>
+                            <th onclick="sortTable(2,true)" style=" cursor: pointer;" class="pre-arrow">
+                                Dia Inicio<span class="arrow active"><span></span><span></span></span>
+                            </th>
+                            <th onclick="sortTable(3,true)" style=" cursor: pointer;" class="pre-arrow">
+                                Dia Fim<span class="arrow active"><span></span><span></span></span>
+                            </th>
+                            <th>
+                                Operações
+                            </th>                            
+                        </tr>
+                    </thead>
+                    <tbody> 
+                    {% for diaAberto in diaabertos %}     
+                    <tr draggable="false">
+                        <td class="chevron-cell">
+                            <a role="button" onclick="displayDetails({{diaAberto.id}})">
+                                <span class="icon-expandable">
+                                    <i class="mdi mdi-chevron-right mdi-24px"></i>
+                                </span>
+                            </a>
+                        </td>
+                        <td data-label="Ano" data-value="{{diaAberto.ano}}">{{diaAberto.ano}} </td>
+                        <td id="start{{diaAberto.id}}" data-label="Dia Inicio" date-value="{{diaAberto.datadiaabertoinicio|date:'Y-m-d H:i'}}">{{diaAberto.datadiaabertoinicio}}</td>
+                        <td data-label="Dia Fim" date-value="{{diaAberto.datadiaabertofim|date:'Y-m-d H:i'}}">{{diaAberto.datadiaabertofim}}</td>
+                        <td data-label="Operações">
+                            <div class="columns">
+                                
+                                <div class="column">  
+                                    <a id='edit' href="{% url 'editarDia' diaAberto.id %}">
+                                        <span class="icon is-small">
+                                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                                        </span>
+                                    </a>
+                                </div>
+                                <div class="column">               
+                                    <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia Aberto?<br>Atenção, isto irá eliminar todas as atividades e insciçoes associadas!','{% url 'eliminarDia' diaAberto.id %}')">
+                                        <span class="icon is-small">
+                                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                                        </span>
+                                    </a> 
+                                </div>
+                                <div class="column"></div>
+                                <div class="column"></div> 
+                            </div> 
+                        </td>                     
+                      </tr> 
+                      <tr class="detail" style="display: none" id='Details{{diaAberto.id}}'>
+                        <td colspan="5">
+                            <div class="detail-container">
+                                <div class="table"> 
+                                    <div class="table-wrapper">
+                                        <table class="table has-mobile-cards is-fullwidth">
+                                            <thead>
+                                                <tr>
+                                                    <th class="th-wrap">Inicio submissao Atividades:</th>
+                                                    <th class="th-wrap">Fim submissao Atividades:</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <td data-label='Inicio submissao Atividades:'style="font-weight: normal;">
+                                                        <span>{{diaAberto.datapropostasatividadesincio}}</span>
+                                                    </td>
+                                                    <td data-label='Fim submissao Atividades:'style="font-weight: normal;">
+                                                        <span> {{diaAberto.dataporpostaatividadesfim}} </span>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="table"> 
+                                    <div class="table-wrapper">
+                                        <table class="table has-mobile-cards is-fullwidth">
+                                            <thead>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <th class="th-wrap">Inicio Inscrições:</th>
+                                                    <th class="th-wrap">Fim Inscrições:</th></tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <td data-label='Inicio Inscrições:' style="font-weight: normal;">
+                                                        <span>{{diaAberto.datainscricaoatividadesinicio}}</span>
+                                                    </td>
+
+                                                    <td data-label="Fim Inscrições:" style="font-weight: normal;">
+                                                        <span> {{diaAberto.datainscricaoatividadesfim}} </span>
+                                                    </td></tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="table"> 
+                                    <div class="table-wrapper">
+                                        <table class="table has-mobile-cards is-fullwidth">
+                                            <thead>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <th class="th-wrap">Preço Professores:</th>
+                                                    <th class="th-wrap">Preço Alunos:</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <td data-label="Preço Professores:" style="font-weight: normal;">
+                                                        <span>{{diaAberto.precoprofessores}}</span>
+                                                    </td>
+                                                    <td data-label='Preço Alunos:' style="font-weight: normal;">
+                                                        <span> {{diaAberto.precoalunos}} </span>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="table"> 
+                                    <div class="table-wrapper">
+                                        <table class="table has-mobile-cards is-fullwidth">
+                                            <tbody>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <th class="th-wrap">Descrição:</th>
+                                                </tr>
+                                            </tbody>
+                                            <tbody>
+                                                <tr style="border-bottom: 1px solid #ddd">
+                                                    <td colspan="4">
+                                                        <textarea class="textarea" disabled style="resize: none;">{{diaAberto.descricao}}</textarea>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>                                                                                            
+                            </div>
+                            <hr>
+                        </td>
+                      </tr> 
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'configuracao/popup.html' %}
+
+{% endblock content %}
+{% block scripts %}
+{% endblock scripts %}
