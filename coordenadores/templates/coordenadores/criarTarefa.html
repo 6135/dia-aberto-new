@@ -4,12 +4,7 @@
   <ul>
     <li><a href="{% url 'home' %}">Início</a></li>
     <li><a href="{% url 'coordenadores:consultarTarefa' %}">Tarefas</a></li>
-    {% if  tarefa %}
-      <li class="is-active"><a href="">Alterar Tarefa</a></li>
-    {% else %}
-      <li class="is-active"><a href="">Adicionar Tarefa</a></li>
-    {% endif %}
-    
+    <li class="is-active"><a href="">Adicionar Tarefa</a></li>
   </ul>
 </nav>
 <div style="padding: 3rem 2vw 1rem">
@@ -25,23 +20,16 @@
               </span>
           </div>
           <div class="step-details">
-              {% if  tarefa %}
-                <p class="step-title">Alterar Tarefa</p>
-              {% else %}
-                 <p class="step-title">Adicionar Tarefa</p>
-              {% endif %}
+              <p class="step-title">Adicionar Tarefa</p>
           </div>
         </div>
         <div class="step-item is-completed is-success is-active"> 
         </div>
       </nav>        
-      <div style="padding: 1rem 2vw 0px;" onload="alterarTarefa();">
+      <div style="padding: 1rem 2vw 0px;">
             <hr>
             <div class="column is-offset-3 is-6">
                 <div class="block">
-                {% if tarefa %}
-                      <h1 class="title is-3 has-text-centered">Tarefa {{tarefa.tipo_frontend}}</h1><input hidden name="tipo" value="{{tarefa.tipo}}">
-                {% else %}
                     <div class="field">
                         <label class="label">Tipo de tarefa: </label>
                     </div>
@@ -59,9 +47,8 @@
                         <span class="control-label">Outra</span>
                       </label>
                     </div>
-                  {% endif %}
                 </div>
-                <div id="tipoTarefa" >        
+                <div id="tipoTarefa">        
                 </div>   
                 <div class="field" style="padding-top:10px">
                     <label class="label">Colaborador</label>
@@ -79,20 +66,13 @@
       <div class="column is-8 is-offset-2">
                 <div class="level">
                   <div class="level-left">
-                    <a href="javascript:history.back()" class="button is-medium is-outlined" type="button">
+                    <a href="javascript:history.back()" class="button is-outlined" type="button">
                       <span>Cancelar</span>
                     </a>
                   </div>
                   <div class="level-right">
-                    <button type="submit" class="button is-medium is-success is-outlined is-link">
-                      {% if  tarefa %}
-                        <span>Alterar Tarefa</span>
-                      {% else %}
-                        <span>Adicionar Tarefa</span>
-                      {% endif %}
-                        <span class="icon is-medium">
-                          <i class="mdi mdi-check mdi-36px"></i>
-                        </span>
+                    <button type="submit" class="button is-large is-success is-outlined is-link">
+                      <span>Adicionar Tarefa</span>
                     </button>
                   </div>
                 </div>
@@ -145,6 +125,7 @@
 
     function defaultDias(){
       var atividadeId = document.getElementById("id_atividades").value;
+      console.log(atividadeId)
       if(typeof ativiadeId === 'undefined') 
         atividadeId = '';
       $.ajax({                       
@@ -164,6 +145,7 @@
 
     $('input:radio').change(function(){
         var tipo=this.value;
+        console.log(tipo)
         $.ajax({                       
         url: "{% url 'coordenadores:tipoTarefa' %}", 
         method: 'POST',             
@@ -172,7 +154,8 @@
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
-          $("#tipoTarefa").html(data);    
+          $("#tipoTarefa").html(data); 
+          defaultDias();    
         }
       });
       
@@ -190,13 +173,11 @@ function dropdownDependencies(url){
 /*---------------->AuxiliarAtividade<--------------------*/
     function diasSelect(){
       var atividadeId = document.getElementById("id_atividade").value; 
-      var tarefa = "{{tarefa.id}}";
       $.ajax({                       
         url: "{% url 'coordenadores:diasAtividade' %}", 
         method: 'POST',             
         data: {
             'atividadeid': atividadeId,
-            'tarefa': tarefa,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
@@ -262,7 +243,6 @@ function dropdownDependencies(url){
         method: 'POST',             
         data: {
             'grupo_id': grupo_id,
-            'tarefa' : tarefa,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   

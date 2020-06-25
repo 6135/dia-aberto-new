@@ -20,35 +20,21 @@ class TarefaTable(tables.Table):
         self.columns.hide('created_at')
 
     def render_acoes(self,record):
-        if record.estado == "Concluida":
-            return  format_html(f"""
-                <div style="margin-left:1.8rem">
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{reverse('coordenadores:eliminarTarefa', kwargs={'id':record.id})}')">               
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
-                </div> 
-            """)
-        elif record.estado == "Iniciada":
-            return  format_html(f"""
-            """)
-        else:
-            return  format_html(f"""
-                <div>
-                    <a id='edit' href="{reverse('coordenadores:alterarTarefa', kwargs={'id':record.id})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
-                        </span>
-                    </a>
-                    &nbsp;
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{reverse('coordenadores:eliminarTarefa', kwargs={'id':record.id})}')">               
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
-                </div> 
-            """)
+        return  format_html(f"""
+            <div>
+                <a id='edit' href="{reverse('coordenadores:alterarTarefa', kwargs={'id':record.id})}">
+                    <span class="icon is-small">
+                        <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                    </span>
+                </a>
+                &nbsp;
+                <a onclick="alert.render('Tem a certeza que pretende eliminar esta tarefa?','{reverse('coordenadores:eliminarTarefa', kwargs={'id':record.id})}')">               
+                    <span class="icon is-small">
+                        <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                    </span>
+                </a> 
+            </div> 
+        """)
 
     def render_estado(self,record):
         if record.estado == "naoConcluida":
