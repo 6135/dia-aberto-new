@@ -386,6 +386,8 @@ def criar_mensagem_participante(request, id):
     msg = False
     if request.user.is_authenticated: 
         user = get_user(request) 
+        if user.groups.filter(name = "Participante").exists() == False:
+            return redirect('utilizadores:mensagem', 5)  
         user = Utilizador.objects.get(id=user.id)
     else:
         return redirect('utilizadores:mensagem', 5)      
@@ -469,7 +471,8 @@ def criar_mensagem_uo(request, id):
         user = Utilizador.objects.get(id=user.id)
     else:
         return redirect('utilizadores:mensagem', 5)      
-           
+    user_check_var = user_check(
+        request=request, user_profile=[Coordenador, Administrador,Colaborador])
     if request.method == "POST":
         tipo = id
         if tipo == 0:
@@ -567,7 +570,8 @@ def criar_mensagem_admin(request, id):
         user = Utilizador.objects.get(id=user.id)
     else:
         return redirect('utilizadores:mensagem', 5)      
-           
+    user_check_var = user_check(
+        request=request, user_profile=[Administrador])       
     if request.method == "POST":
         tipo = id
         if tipo == 0:

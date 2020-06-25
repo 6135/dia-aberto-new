@@ -412,6 +412,16 @@ def apagar_utilizador(request, id):
             u = ProfessorUniversitario.objects.get(id=id)
         elif user.groups.filter(name = "Colaborador").exists():
             u = Colaborador.objects.get(id=id)
+            tarefas = Tarefa.objects.filter(colab=u)
+            for tarefa in tarefas:
+                if tarefa.estado=="Iniciada":
+                    return redirect('utilizadores:mensagem',14)
+                elif tarefa.estado=="Concluida":
+                    tarefa.delete()
+                else:    
+                    tarefa.estado="naoAtribuida"
+                    tarefa.colab=None
+                    tarefa.save()
         elif user.groups.filter(name="Participante").exists():
             u = Participante.objects.get(id=id)
             for inscricao in Inscricao.objects.filter(participante=u):
@@ -470,8 +480,29 @@ def apagar_proprio_utilizador(request):
             u = ProfessorUniversitario.objects.filter(id=id)
         elif user.groups.filter(name = "Colaborador").exists():
             u = Colaborador.objects.filter(id=id)
+            tarefas = Tarefa.objects.filter(colab=u)
+            for tarefa in tarefas:
+                if tarefa.estado=="Iniciada":
+                    return redirect('utilizadores:mensagem',15)
+                elif tarefa.estado=="Concluida":
+                    tarefa.delete()
+                else:    
+                    tarefa.estado="naoAtribuida"
+                    tarefa.colab=None
+                    tarefa.save()
         elif user.groups.filter(name = "Participante").exists():
             u = Participante.objects.filter(id=id) 
+            u = Participante.objects.get(id=id)
+            for inscricao in Inscricao.objects.filter(participante=u):
+                inscricaosessao_set = inscricao.inscricaosessao_set.all()
+                for inscricaosessao in inscricaosessao_set:
+                    sessaoid = inscricaosessao.sessao.id
+                    nparticipantes = inscricaosessao.nparticipantes
+                    with transaction.atomic():
+                        sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
+                        sessao.vagas = F('vagas') + nparticipantes
+                        sessao.save()
+                inscricao.delete()
         else:
             u= user     
     else:
@@ -857,7 +888,13 @@ def mensagem(request, id, *args, **kwargs):
         tipo = "error" 
     elif id == 14:
         m = "Não existem mensagens"
-        tipo = "info"   
+        tipo = "info"  
+    elif id == 15:
+        m = "Este colaborador tem tarefas iniciadas pelo que apenas deverá ser apagado quando estas estiverem concluidas"
+        tipo = "info"  
+    elif id == 16:
+        m = "Para puder apagar a sua conta deverá concluir primeiro as tarefas que estão iniciadas"
+        tipo = "info"                
     else:
         m = "Esta pagina não existe"
         tipo = "error"                                     
