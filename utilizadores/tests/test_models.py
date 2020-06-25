@@ -23,18 +23,18 @@ def create_Utilizador_1():
         first_name="André",
         last_name="Barrocas", 
         password="andre123456", 
-        email="teste@teste.pt",
+        email="teste1@teste.pt",
         contacto="+351967321393",
         valido="False"
     )[0]    
 
 def create_Administrador_0():
     return Administrador.objects.get_or_create(
-        username="andre0",
+        username="andre2",
         first_name="André",
         last_name="Barrocas",
         password="andre123456", 
-        email="teste@teste.pt",
+        email="teste2@teste.pt",
         contacto="+351967321393",
         valido="False"
     )[0]
@@ -42,11 +42,11 @@ def create_Administrador_0():
 
 def create_Administrador_1():
     return Administrador.objects.get_or_create(
-        username="andre1",
+        username="andre3",
         first_name="André",
         last_name="Barrocas",
         password="andre123456", 
-        email="teste@teste.pt",
+        email="teste3@teste.pt",
         contacto="+351967321393",
         valido="False",
         gabinete="A20",
@@ -55,11 +55,11 @@ def create_Administrador_1():
 
 def create_Participante_0():
     return Participante.objects.get_or_create(
-        username="andre0",
+        username="andre4",
         first_name="André",
         last_name="Barrocas",
         password="andre123456", 
-        email="teste@teste.pt",
+        email="teste4@teste.pt",
         contacto="+351967321393",
         valido="True"
     )[0]
@@ -67,11 +67,11 @@ def create_Participante_0():
 
 def create_Participante_1():
     return Participante.objects.get_or_create(
-        username="andre1",
+        username="andre5",
         first_name="André",
         last_name="Barrocas",
         password="andre123456", 
-        email="teste@teste.pt",
+        email="teste5@teste.pt",
         contacto="+351967321393",
         valido="True"
     )[0]    
@@ -112,11 +112,11 @@ def create_Departamento_0(uo):
 
 def create_ProfessorUniversitario_0():
     return ProfessorUniversitario.objects.get_or_create(
-        username="andre0",
+        username="andre6",
         first_name="André",
         last_name="Barrocas",
         password="andre123456", 
-        email="teste@teste.pt",
+        email="teste6@teste.pt",
         contacto="+351967321393",
         valido="False",
         gabinete="A20",
@@ -128,11 +128,11 @@ def create_ProfessorUniversitario_0():
 
 def create_ProfessorUniversitario_1():
     return ProfessorUniversitario.objects.get_or_create(
-        username="andre1",
+        username="andre7",
         first_name="André",
         last_name="Barrocas",
         password="andre123456", 
-        email="teste@teste.pt",
+        email="teste7@teste.pt",
         contacto="+351967321393",
         valido="False",
         gabinete="A20",
@@ -145,11 +145,11 @@ def create_ProfessorUniversitario_1():
 
 def create_Coordenador_0():
     return Coordenador.objects.get_or_create(
-        username="andre0",
+        username="andre8",
         first_name="André",
         last_name="Barrocas",
         password="andre123456", 
-        email="teste@teste.pt",
+        email="teste8@teste.pt",
         contacto="+351967321393",
         valido="False",
         gabinete="A20",
@@ -160,11 +160,11 @@ def create_Coordenador_0():
 
 def create_Coordenador_1():
     return Coordenador.objects.get_or_create(
-        username="andre1",
+        username="andre9",
         first_name="André",
         last_name="Barrocas",
         password="andre123456", 
-        email="teste@teste.pt",
+        email="teste9@teste.pt",
         contacto="+351967321393",
         valido="False",
         gabinete="A20",
@@ -176,11 +176,11 @@ def create_Coordenador_1():
 
 def create_Colaborador_0():
     return Colaborador.objects.get_or_create(
-        username="andre0",
+        username="andre10",
         first_name="André",
         last_name="Barrocas",
         password="andre123456", 
-        email="teste@teste.pt",
+        email="teste10@teste.pt",
         contacto="+351967321393",
         valido="False",
         curso=create_Curso_0(),
@@ -192,11 +192,11 @@ def create_Colaborador_0():
 
 def create_Colaborador_1():
     return Colaborador.objects.get_or_create(
-        username="andre1",
+        username="andre11",
         first_name="André",
         last_name="Barrocas",
         password="andre123456", 
-        email="teste@teste.pt",
+        email="teste11@teste.pt",
         contacto="+351967321393",
         valido="False",
         curso=create_Curso_0(),
@@ -247,8 +247,8 @@ class TestUtilizadoresModels(TestCase):
 
     def test_full_name(self):
         ''' Teste que verifica se o nome completo de um utilizador é correto '''
-        self.assertEquals(self.utilizador0.full_name(),"André André")
-        self.assertEquals(self.utilizador1.full_name(),"André André")
+        self.assertEquals(self.utilizador0.full_name,"André Barrocas")
+        self.assertEquals(self.utilizador1.full_name,"André Barrocas")
 
 
 
@@ -266,50 +266,50 @@ class TestAdministradoresModels(TestCase):
 
     def test_get_profiles(self):
         ''' Teste que verifica o perfil do administrador '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.getProfiles(),'Administrador')
         self.assertEquals(user1.getProfiles(),'Administrador')
 
 
     def test_get_user(self):
         ''' Teste que verifica o a subclasse do utilizador de um dado utilizador '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(self.utilizador0,user1.getUser())
         self.assertEquals(self.utilizador1,user.getUser())
 
 
     def test_get_profile(self):
         ''' Teste que verifica o perfil do administrador '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.getUser(),"Administrador")
         self.assertEquals(self.utilizador1.getUser(),"Administrador")
 
 
     def test_email_valido_UO(self):
         ''' Teste que verifica pelo email de um utilizador se é da mesma unidade orgânica que outro '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.emailValidoUO(create_UO_0(create_Campus_0())),True)
         self.assertEquals(user1.emailValidoUO(create_UO_0(create_Campus_0())),True)   
 
 
     def test_email_valido_participante(self):
         ''' Teste que verifica que um utilizador é do tipo administrador pelo email '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.emailValidoParticipante(),True)
         self.assertEquals(user1.emailValidoParticipante(),True)
 
 
     def test_full_name(self):
         ''' Teste que verifica se o nome completo de um administrador é correto '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
-        self.assertEquals(user0.full_name(),"André André")
-        self.assertEquals(user1.full_name(),"André André")
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
+        self.assertEquals(user0.full_name,"André Barrocas")
+        self.assertEquals(user1.full_name,"André Barrocas")
 
 
 
@@ -327,50 +327,50 @@ class TestParticipantesModels(TestCase):
 
     def test_get_profiles(self):
         ''' Teste que verifica o perfil do participante '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.getProfiles(),'Participante')
         self.assertEquals(user1.getProfiles(),'Participante')
 
 
     def test_get_user(self):
         ''' Teste que verifica o a subclasse do utilizador de um dado utilizador '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(self.utilizador0,user1.getUser())
         self.assertEquals(self.utilizador1,user.getUser())
 
 
     def test_get_profile(self):
         ''' Teste que verifica o perfil do participante '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.getUser(),"Administrador")
         self.assertEquals(self.utilizador1.getUser(),"Administrador")
 
 
     def test_email_valido_UO(self):
         ''' Teste que verifica pelo email de um utilizador se é da mesma unidade orgânica que outro '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.emailValidoUO(create_UO_0(create_Campus_0())),False)
         self.assertEquals(user1.emailValidoUO(create_UO_0(create_Campus_0())),False)   
 
 
     def test_email_valido_participante(self):
         ''' Teste que verifica que um utilizador é do tipo administrador pelo email '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.emailValidoParticipante(),False)
         self.assertEquals(user1.emailValidoParticipante(),False)
 
 
     def test_full_name(self):
         ''' Teste que verifica se o nome completo de um administrador é correto '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
-        self.assertEquals(user0.full_name(),"André André")
-        self.assertEquals(user1.full_name(),"André André")        
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
+        self.assertEquals(user0.full_name,"André Barrocas")
+        self.assertEquals(user1.full_name,"André Barrocas")        
 
 
 
@@ -388,50 +388,50 @@ class TestProfessorUniversitariosModels(TestCase):
 
     def test_get_profiles(self):
         ''' Teste que verifica o perfil do professor universitário '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.getProfiles(),'ProfessorUniversitario')
         self.assertEquals(user1.getProfiles(),'ProfessorUniversitario')
 
 
     def test_get_user(self):
         ''' Teste que verifica o a subclasse do utilizador de um dado utilizador '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(self.utilizador0,user1.getUser())
         self.assertEquals(self.utilizador1,user.getUser())
 
 
     def test_get_profile(self):
         ''' Teste que verifica o perfil do professor universitário '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.getUser(),"ProfessorUniversitario")
         self.assertEquals(self.utilizador1.getUser(),"ProfessorUniversitario")
 
 
     def test_email_valido_UO(self):
         ''' Teste que verifica pelo email de um utilizador se é da mesma unidade orgânica que outro '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.emailValidoUO(create_UO_0(create_Campus_0())),True)
         self.assertEquals(user1.emailValidoUO(create_UO_0(create_Campus_0())),True)   
 
 
     def test_email_valido_participante(self):
         ''' Teste que verifica que um utilizador é do tipo administrador pelo email '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.emailValidoParticipante(),False)
         self.assertEquals(user1.emailValidoParticipante(),False)
 
 
     def test_full_name(self):
         ''' Teste que verifica se o nome completo de um professor universitário é correto '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
-        self.assertEquals(user0.full_name(),"André André")
-        self.assertEquals(user1.full_name(),"André André")        
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
+        self.assertEquals(user0.full_name,"André Barrocas")
+        self.assertEquals(user1.full_name,"André Barrocas")        
 
 
         
@@ -448,50 +448,50 @@ class TestCoodenadoresModels(TestCase):
 
     def test_get_profiles(self):
         ''' Teste que verifica o perfil do coordenador '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.getProfiles(),'Coodenador')
         self.assertEquals(user1.getProfiles(),'Coodenador')
 
 
     def test_get_user(self):
         ''' Teste que verifica o a subclasse do utilizador de um dado utilizador '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(self.utilizador0,user1.getUser())
         self.assertEquals(self.utilizador1,user.getUser())
 
 
     def test_get_profile(self):
         ''' Teste que verifica o perfil do coordenador '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.getUser(),"Coodenador")
         self.assertEquals(self.utilizador1.getUser(),"Coodenador")
 
 
     def test_email_valido_UO(self):
         ''' Teste que verifica pelo email de um utilizador se é da mesma unidade orgânica que outro '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.emailValidoUO(create_UO_0(create_Campus_0())),True)
         self.assertEquals(user1.emailValidoUO(create_UO_0(create_Campus_0())),True)   
 
 
     def test_email_valido_participante(self):
         ''' Teste que verifica que um utilizador é do tipo administrador pelo email '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.emailValidoParticipante(),False)
         self.assertEquals(user1.emailValidoParticipante(),False)
 
 
     def test_full_name(self):
         ''' Teste que verifica se o nome completo de um coordenador é correto '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
-        self.assertEquals(user0.full_name(),"André André")
-        self.assertEquals(user1.full_name(),"André André")        
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
+        self.assertEquals(user0.full_name,"André Barrocas")
+        self.assertEquals(user1.full_name,"André Barrocas")        
 
 
 
@@ -510,47 +510,47 @@ class TestColaboradoresModels(TestCase):
 
     def test_get_profiles(self):
         ''' Teste que verifica o perfil do colaborador '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.getProfiles(),'Colaborador')
         self.assertEquals(user1.getProfiles(),'Colaborador')
 
 
     def test_get_user(self):
         ''' Teste que verifica o a subclasse do utilizador de um dado utilizador '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(self.utilizador0,user1.getUser())
         self.assertEquals(self.utilizador1,user.getUser())
 
 
     def test_get_profile(self):
         ''' Teste que verifica o perfil do colaborador '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.getUser(),"Colaborador")
         self.assertEquals(self.utilizador1.getUser(),"Colaborador")
 
 
     def test_email_valido_UO(self):
         ''' Teste que verifica pelo email de um utilizador se é da mesma unidade orgânica que outro '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.emailValidoUO(create_UO_0(create_Campus_0())),True)
         self.assertEquals(user1.emailValidoUO(create_UO_0(create_Campus_0())),True)   
 
 
     def test_email_valido_participante(self):
         ''' Teste que verifica que um utilizador é do tipo administrador pelo email '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
         self.assertEquals(user0.emailValidoParticipante(),False)
         self.assertEquals(user1.emailValidoParticipante(),False)
 
 
     def test_full_name(self):
         ''' Teste que verifica se o nome completo de um colaborador é correto '''
-        user0=Utilizadores.objects.get(id=self.utilizador0.id)
-        user1=Utilizadores.objects.get(id=self.utilizador1.id)
-        self.assertEquals(user0.full_name(),"André André")
-        self.assertEquals(user1.full_name(),"André André")        
+        user0=Utilizador.objects.get(id=self.utilizador0.id)
+        user1=Utilizador.objects.get(id=self.utilizador1.id)
+        self.assertEquals(user0.full_name,"André Barrocas")
+        self.assertEquals(user1.full_name,"André Barrocas")        
