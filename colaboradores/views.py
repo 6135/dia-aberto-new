@@ -111,16 +111,16 @@ def validar_cancelamento_tarefa(request, id_notificacao):
             return redirect('utilizadores:mensagem',5) 
     else:
         return redirect('utilizadores:mensagem',5) 
-    try:
-        notificacao = Notificacao.objects.get(id=id_notificacao)
-        notificacao.deleted = True
-        id_tarefa = notificacao.action_object.id
-        notificacao.save()
-        tarefa = Tarefa.objects.filter(id=id_tarefa)
-        tarefa.update(colab=None,estado="Cancelada")
-        views.enviar_notificacao_automatica(request,"confirmarCancelarTarefa",id_tarefa)
-    except:
-        return redirect('utilizadores:mensagem',11)    
+    # try:
+    notificacao = Notificacao.objects.get(id=id_notificacao)
+    notificacao.deleted = True
+    id_tarefa = notificacao.action_object.id
+    notificacao.save()
+    tarefa = Tarefa.objects.filter(id=id_tarefa)
+    tarefa.update(colab=None,estado="Cancelada")
+    views.enviar_notificacao_automatica(request,"confirmarCancelarTarefa",id_tarefa)
+    # except:
+    #     return redirect('utilizadores:mensagem',11)    
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 def rejeitar_cancelamento_tarefa(request, id_notificacao):
