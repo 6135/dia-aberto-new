@@ -217,6 +217,8 @@ def enviar_notificacao_automatica(request, sigla, id):
         user_recipient = Utilizador.objects.get(id=tarefa.colab.id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=tarefa,
                     target=None, level="success", description=titulo, public=False, timestamp=timezone.now())
+        tarefa.colab=None
+        tarefa.save()
     # Enviar notificação ao enviar rejeicao do pedido de cancelamento da tarefa - coordenador
     elif sigla == "rejeitarCancelarTarefa":
         tarefa = Tarefa.objects.get(id=id)
