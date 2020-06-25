@@ -21,7 +21,10 @@ class Escola(models.Model):
 
 class Inscricao(models.Model):
     individual = models.BooleanField()
-    nalunos = models.IntegerField()
+    nalunos = models.IntegerField(validators=[
+            validators.MinValueValidator(1),
+            validators.MaxValueValidator(100)
+        ])
     escola = models.ForeignKey(Escola, models.CASCADE)
     ano = models.IntegerField(
         validators=[
