@@ -19,6 +19,7 @@ from configuracao.tables import CursoTable, DepartamentoTable, DiaAbertoTable, E
 from django_tables2 import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
 from configuracao.filters import CursoFilter, DepartamentoFilter, DiaAbertoFilter, EdificioFilter, MenuFilter, TemaFilter, TransporteFilter, UOFilter
+from django.db.models.query import QuerySet
 # Create your views here.
 
 class TimeC():
@@ -106,7 +107,8 @@ def showBy(request, list_diaaberto):
 		elif request.POST['showBy'] == '3':
 			list_diaaberto = list_diaaberto.filter(datainscricaoatividadesfim__gte=today)
 	return list_diaaberto
-	
+
+
 class viewDays(SingleTableMixin, FilterView):
 
 	table_class = DiaAbertoTable
@@ -116,9 +118,11 @@ class viewDays(SingleTableMixin, FilterView):
 		'per_page': 10
 	}
 
+
 	def dispatch(self, request, *args, **kwargs):
 		user_check_var = user_check(request=request, user_profile=[Administrador])
 		if not user_check_var.get('exists'): return user_check_var.get('render')
+
 		return super().dispatch(request, *args, **kwargs)
 		
 	def get_context_data(self, **kwargs):

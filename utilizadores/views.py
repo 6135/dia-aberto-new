@@ -18,6 +18,7 @@ from inscricoes.models import Inscricao
 from django.db import transaction
 from atividades.models import Sessao
 from notificacoes.models import *
+from coordenadores.models import Tarefa
 from django.db.models import F
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
@@ -403,64 +404,63 @@ def apagar_utilizador(request, id):
         return redirect('utilizadores:mensagem',5)
 
     user = User.objects.get(id=id)
-    try:
-        if user.groups.filter(name = "Coordenador").exists():
-            u = Coordenador.objects.get(id=id)
-        elif user.groups.filter(name = "Administrador").exists():
-            u = Administrador.objects.get(id=id)
-        elif user.groups.filter(name = "ProfessorUniversitario").exists():
-            u = ProfessorUniversitario.objects.get(id=id)
-        elif user.groups.filter(name = "Colaborador").exists():
-            u = Colaborador.objects.get(id=id)
-            tarefas = Tarefa.objects.filter(colab=u)
-            for tarefa in tarefas:
-                if tarefa.estado=="Iniciada":
-                    return redirect('utilizadores:mensagem',14)
-                elif tarefa.estado=="Concluida":
-                    tarefa.delete()
-                else:    
-                    tarefa.estado="naoAtribuida"
-                    tarefa.colab=None
-                    tarefa.save()
-        elif user.groups.filter(name="Participante").exists():
-            u = Participante.objects.get(id=id)
-            for inscricao in Inscricao.objects.filter(participante=u):
-                inscricaosessao_set = inscricao.inscricaosessao_set.all()
-                for inscricaosessao in inscricaosessao_set:
-                    sessaoid = inscricaosessao.sessao.id
-                    nparticipantes = inscricaosessao.nparticipantes
-                    with transaction.atomic():
-                        sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
-                        sessao.vagas = F('vagas') + nparticipantes
-                        sessao.save()
-                inscricao.delete()
-        else:
-            u = user    
-        utilizador = Utilizador.objects.get(user_ptr_id=u.id)
-        
-        informacao_mensagem1 = InformacaoMensagem.objects.filter(emissor=utilizador.id)
-        for msg in informacao_mensagem1:
-            msg.delete()
+    # try:
+    if user.groups.filter(name = "Coordenador").exists():
+        u = Coordenador.objects.get(id=id)
+    elif user.groups.filter(name = "Administrador").exists():
+        u = Administrador.objects.get(id=id)
+    elif user.groups.filter(name = "ProfessorUniversitario").exists():
+        u = ProfessorUniversitario.objects.get(id=id)
+    elif user.groups.filter(name = "Colaborador").exists():
+        u = Colaborador.objects.get(id=id)
+        for tarefa in Tarefa.objects.filter(colab=u):
+            if tarefa.estado=="Iniciada":
+                return redirect('utilizadores:mensagem',14)
+            elif tarefa.estado=="Concluida":
+                tarefa.delete()
+            else:    
+                tarefa.estado="naoAtribuida"
+                tarefa.colab=None
+                tarefa.save()
+    elif user.groups.filter(name="Participante").exists():
+        u = Participante.objects.get(id=id)
+        for inscricao in Inscricao.objects.filter(participante=u):
+            inscricaosessao_set = inscricao.inscricaosessao_set.all()
+            for inscricaosessao in inscricaosessao_set:
+                sessaoid = inscricaosessao.sessao.id
+                nparticipantes = inscricaosessao.nparticipantes
+                with transaction.atomic():
+                    sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
+                    sessao.vagas = F('vagas') + nparticipantes
+                    sessao.save()
+            inscricao.delete()
+    else:
+        u = user    
+    utilizador = Utilizador.objects.get(user_ptr_id=u.id)
+    
+    informacao_mensagem1 = InformacaoMensagem.objects.filter(emissor=utilizador.id)
+    for msg in informacao_mensagem1:
+        msg.delete()
 
-        informacao_mensagem2 = InformacaoMensagem.objects.filter(recetor=utilizador.id)
-        for msg in informacao_mensagem2:
-            msg.delete()
+    informacao_mensagem2 = InformacaoMensagem.objects.filter(recetor=utilizador.id)
+    for msg in informacao_mensagem2:
+        msg.delete()
 
-        mensagens_recebidas1 = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=utilizador.id)
-        for msg in mensagens_recebidas1:
-            msg.delete()
-        mensagens_recebidas2 = MensagemRecebida.objects.select_related('mensagem__emissor').filter(mensagem__emissor=utilizador.id)
-        for msg in mensagens_recebidas2:
-            msg.delete()
-        mensagens_enviadas1 = MensagemEnviada.objects.select_related('mensagem__recetor').filter(mensagem__recetor=utilizador.id)
-        for msg in mensagens_enviadas1:
-            msg.delete()
-        mensagens_enviadas2 = MensagemEnviada.objects.select_related('mensagem__emissor').filter(mensagem__emissor=utilizador.id)
-        for msg in mensagens_enviadas2:
-            msg.delete()    
-        u.delete() 
-    except:
-        return redirect('utilizadores:mensagem',13)
+    mensagens_recebidas1 = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=utilizador.id)
+    for msg in mensagens_recebidas1:
+        msg.delete()
+    mensagens_recebidas2 = MensagemRecebida.objects.select_related('mensagem__emissor').filter(mensagem__emissor=utilizador.id)
+    for msg in mensagens_recebidas2:
+        msg.delete()
+    mensagens_enviadas1 = MensagemEnviada.objects.select_related('mensagem__recetor').filter(mensagem__recetor=utilizador.id)
+    for msg in mensagens_enviadas1:
+        msg.delete()
+    mensagens_enviadas2 = MensagemEnviada.objects.select_related('mensagem__emissor').filter(mensagem__emissor=utilizador.id)
+    for msg in mensagens_enviadas2:
+        msg.delete()    
+    u.delete() 
+    # except:
+    #     return redirect('utilizadores:mensagem',13)
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -473,36 +473,41 @@ def apagar_proprio_utilizador(request):
         id=request.user.id  
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
-            u = Coordenador.objects.filter(id=id)
+            u = Coordenador.objects.get(id=id)
         elif user.groups.filter(name = "Administrador").exists():
-            u = Administrador.objects.filter(id=id)
+            u = Administrador.objects.get(id=id)
         elif user.groups.filter(name = "ProfessorUniversitario").exists():
-            u = ProfessorUniversitario.objects.filter(id=id)
+            u = ProfessorUniversitario.objects.get(id=id)
         elif user.groups.filter(name = "Colaborador").exists():
-            u = Colaborador.objects.filter(id=id)
-            tarefas = Tarefa.objects.filter(colab=u)
-            for tarefa in tarefas:
-                if tarefa.estado=="Iniciada":
-                    return redirect('utilizadores:mensagem',15)
-                elif tarefa.estado=="Concluida":
-                    tarefa.delete()
-                else:    
-                    tarefa.estado="naoAtribuida"
-                    tarefa.colab=None
-                    tarefa.save()
+            u = Colaborador.objects.get(id=id)
+            try:
+                for tarefa in Tarefa.objects.filter(colab=u):
+                    if tarefa.estado=="Iniciada":
+                        return redirect('utilizadores:mensagem',15)
+                    elif tarefa.estado=="Concluida":
+                        tarefa.delete()
+                    else:    
+                        tarefa.estado="naoAtribuida"
+                        tarefa.colab=None
+                        tarefa.save()
+            except:
+                return redirect('utilizadores:mensagem',13)
         elif user.groups.filter(name = "Participante").exists():
-            u = Participante.objects.filter(id=id) 
-            u = Participante.objects.get(id=id)
-            for inscricao in Inscricao.objects.filter(participante=u):
-                inscricaosessao_set = inscricao.inscricaosessao_set.all()
-                for inscricaosessao in inscricaosessao_set:
-                    sessaoid = inscricaosessao.sessao.id
-                    nparticipantes = inscricaosessao.nparticipantes
-                    with transaction.atomic():
-                        sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
-                        sessao.vagas = F('vagas') + nparticipantes
-                        sessao.save()
-                inscricao.delete()
+            try:
+                u = Participante.objects.filter(id=id) 
+                u = Participante.objects.get(id=id)
+                for inscricao in Inscricao.objects.filter(participante=u):
+                    inscricaosessao_set = inscricao.inscricaosessao_set.all()
+                    for inscricaosessao in inscricaosessao_set:
+                        sessaoid = inscricaosessao.sessao.id
+                        nparticipantes = inscricaosessao.nparticipantes
+                        with transaction.atomic():
+                            sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
+                            sessao.vagas = F('vagas') + nparticipantes
+                            sessao.save()
+                    inscricao.delete()
+            except:
+                return redirect('utilizadores:mensagem',13)
         else:
             u= user     
     else:
