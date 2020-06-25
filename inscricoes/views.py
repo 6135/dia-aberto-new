@@ -21,7 +21,9 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 from rest_framework.filters import OrderingFilter, SearchFilter
 from django_filters.views import FilterView
 from configuracao.models import Departamento, Diaaberto
-from django.utils import timezone
+from datetime import datetime
+import pytz
+from configuracao.tests.test_models import create_open_day
 
 
 def InscricaoPDF(request, pk):
@@ -60,7 +62,7 @@ class AtividadesAPIView(ListAPIView):
     filterset_class = AtividadeFilter
 
 
-class InscricaoWizard(SessionWizardView):
+class CriarInscricao(SessionWizardView):
     form_list = [
         ('info', InfoForm),
         ('responsaveis', ResponsavelForm),
@@ -77,7 +79,7 @@ class InscricaoWizard(SessionWizardView):
             diaaberto = Diaaberto.current()
             if diaaberto is None:
                 return redirect('utilizadores:mensagem', 12)
-            if timezone.now() < diaaberto.datainscricaoatividadesinicio or timezone.now() > diaaberto.datainscricaoatividadesfim:
+            if datetime.now(pytz.UTC) < diaaberto.datainscricaoatividadesinicio or datetime.now(pytz.UTC) > diaaberto.datainscricaoatividadesfim:
                 m = f"Período de abertura das inscrições: {diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
                 return render(request=request,
                               template_name="mensagem.html", context={'m': m, 'tipo': 'error', 'continuar': 'on'})
@@ -86,7 +88,7 @@ class InscricaoWizard(SessionWizardView):
             }
         else:
             return _user_check['render']
-        return super(InscricaoWizard, self).dispatch(request, *args, **kwargs)
+        return super(CriarInscricao, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, form, **kwargs):
         context = super().get_context_data(form=form, **kwargs)
@@ -116,7 +118,7 @@ class InscricaoWizard(SessionWizardView):
         # inscritos para verificar inscritos nos almoços e nas sessões.
         update_post(self.steps.current, self.request.POST, self)
         print(self.request.POST)
-        return super(InscricaoWizard, self).post(*args, **kwargs)
+        return super(CriarInscricao, self).post(*args, **kwargs)
 
     def done(self, form_list, form_dict, **kwargs):
         # Guardar na Base de Dados
@@ -167,7 +169,7 @@ class ConsultarInscricao(View):
             return erro_permissoes
         context = {}
         inscricao = get_object_or_404(Inscricao, pk=pk)
-        if user_check(request, [Participante])['exists'] and timezone.now() > inscricao.diaaberto.datainscricaoatividadesfim:
+        if user_check(request, [Participante])['exists'] and datetime.now(pytz.UTC) > inscricao.diaaberto.datainscricaoatividadesfim:
             m = f"Não pode alterar a inscrição fora do período: {inscricao.diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {inscricao.diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
             return render(request=request, template_name="mensagem.html", context={'m': m, 'tipo': 'error', 'continuar': 'on'})
         form = init_form(self.step_names[step], inscricao)
@@ -187,7 +189,7 @@ class ConsultarInscricao(View):
             return erro_permissoes
         context = {}
         inscricao = get_object_or_404(Inscricao, pk=pk)
-        if user_check(request, [Participante])['exists'] and timezone.now() > inscricao.diaaberto.datainscricaoatividadesfim:
+        if user_check(request, [Participante])['exists'] and datetime.now(pytz.UTC) > inscricao.diaaberto.datainscricaoatividadesfim:
             m = f"Não pode alterar a inscrição fora do período: {inscricao.diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {inscricao.diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
             return render(request=request, template_name="mensagem.html", context={'m': m, 'tipo': 'error', 'continuar': 'on'})
         update_post(self.step_names[step], request.POST, inscricao=inscricao)
