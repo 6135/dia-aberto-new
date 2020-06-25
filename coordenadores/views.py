@@ -69,58 +69,82 @@ from utilizadores.views import user_check
 #
 
 def adicionartarefa(request,id=None):
+    if id:
+        tarefa = Tarefa.objects.get(id=id)
+    else:
+        tarefa = None
     if request.method == 'POST':
         if request.POST['tipo']=='tarefaAuxiliar':
             form = TarefaAuxiliarForm(request.POST)
             if form.is_valid():
                 coord = Coordenador.objects.get(id=request.user.id)
-                form.save(user=coord)
+                form.save(user=coord,id=id)
                 return redirect('coordenadores:consultarTarefa')
         if request.POST['tipo']=='tarefaAcompanhar':
             form = TarefaAcompanharForm(request.POST)
             if form.is_valid():
                 coord = Coordenador.objects.get(id=request.user.id)
-                form.save(user=coord)
+                print(id)
+                form.save(user=coord,id=id)
                 return redirect('coordenadores:consultarTarefa')
         if request.POST['tipo']=='tarefaOutra':
             form = TarefaOutraForm(request.POST)
-            print(form.errors)
             if form.is_valid():
                 coord = Coordenador.objects.get(id=request.user.id)
-                form.save(user=coord)
+                form.save(user=coord,id=id)
                 return redirect('coordenadores:consultarTarefa')
-         
-
-    return render(request = request,
-    template_name='coordenadores/criarTarefa.html')
+    
+    return render(request = request,template_name='coordenadores/criarTarefa.html',context={'tarefa':tarefa})
 
 
 
 def tipoTarefa(request):
-    tarefa = Tarefa()
+    template =''
+    form = ''
     if request.method == 'POST':
         tipo = request.POST['tipo']
         if tipo == 'tarefaAuxiliar':
-            form = TarefaAuxiliarForm()
             template = 'coordenadores/tarefaAuxiliar.html'
+            if request.POST.get('id'):
+                tarefa = TarefaAuxiliar.objects.get(tarefaid=int(request.POST['id']))
+                form = TarefaAuxiliarForm()
+            else:
+                form = TarefaAuxiliarForm()       
         elif tipo == 'tarefaAcompanhar':
-            form = TarefaAcompanharForm()
             template = 'coordenadores/tarefaAcompanhar.html'
+            if request.POST.get('id'):
+                tarefa = TarefaAcompanhar.objects.get(tarefaid=int(request.POST['id']))
+                form = TarefaAcompanharForm(initial={'grupo':tarefa.inscricao.id,'dia':tarefa.tarefaid.dia})
+            else:
+                 form = TarefaAcompanharForm()           
         elif tipo == 'tarefaOutra':
-            form = TarefaOutraForm()       
             template = 'coordenadores/tarefaOutra.html'
+            if request.POST.get('id'):
+                tarefa = TarefaOutra.objects.get(tarefaid=int(request.POST['id']))
+                form = TarefaOutraForm(initial={'dia':tarefa.tarefaid.dia,'horario':tarefa.tarefaid.horario,'descricao':tarefa.descricao})      
+            else:
+                  form = TarefaOutraForm()
+            
     return render(request=request,template_name=template,context={'form':form})
 
 def diasAtividade(request):
-    default = {
-        'key': '',
-        'value': 'Escolha o dia'
-    }
+    
     dias=[]
     if request.POST['atividadeid'] != '':
-        atividadeid = request.POST.get('atividadeid')
-        atividade = Atividade.objects.get(id=atividadeid)   
-        dias = atividade.get_dias()  
+        if 'tarefa' in request.POST and request.POST['tarefa']!='':
+            tarefa = Tarefa.objects.get(id=request.POST['tarefa'])
+            default={
+                'key': tarefa.dia,
+                'value': tarefa.dia
+            }
+        else:
+            default = {
+                'key': '',
+                'value': 'Escolha o dia'
+            }
+    atividadeid = request.POST.get('atividadeid')
+    atividade = Atividade.objects.get(id=atividadeid)   
+    dias = atividade.get_dias()  
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':dias, 'default': default}
@@ -172,10 +196,6 @@ def grupoInfo(request):
             )
 
 def diasGrupo(request):
-    default = {
-        'key': '',
-        'value': 'Escolha o dia'
-    }
     dias=[]
     if request.POST['grupo_id'] != '':
         inscricaoid = request.POST.get('grupo_id')
@@ -193,6 +213,17 @@ def horarioGrupo(request):
     }
     horario=[]
     if request.POST['dia'] != '' and request.POST['grupo_id'] != '':
+        if 'tarefa' in request.POST and request.POST.get('tarefa')!='':
+            tarefa = Tarefa.objects.get(id=request.POST.get('tarefa'))
+            default={
+                'key': str(tarefa.dia),
+                'value': str(tarefa.dia)
+            }
+        else:
+            default = {
+                'key': '',
+                'value': 'Escolha o dia'
+            }
         inscricaoid = request.POST.get('grupo_id')
         inscricao = Inscricao.objects.get(id=inscricaoid)
         horario = inscricao.get_horarios(request.POST['dia'])
@@ -256,11 +287,12 @@ class ConsultarTarefas(SingleTableMixin, FilterView):
         return context
 
 def eliminartarefa(request,id):
+    tarefa = ''
     user_check_var = user_check(request=request, user_profile=[Coordenador])
     if not user_check_var.get('exists'): return user_check_var.get('render')
     if Tarefa.objects.filter(id=id).exists():
         tarefa = Tarefa.objects.get(id=id)
-    if tarefa.coord.id == user_check_var.get('firstProfile').id and tarefa.eliminar == True:
+    if tarefa.coord.id == user_check_var.get('firstProfile').id:
         tarefa.delete()
         return redirect('coordenadores:consultarTarefa')
     return redirect('coordenadores:consultarTarefa')
