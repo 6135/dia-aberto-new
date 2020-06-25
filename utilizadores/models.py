@@ -73,7 +73,7 @@ class Utilizador(User):
         if user.groups.filter(name = "Coordenador").exists():
             utilizador = Coordenador.objects.get(email=self.email)
         elif user.groups.filter(name = "Administrador").exists():
-            utilizador = Administrador.objects.get(email=self.email)
+            return True
         elif user.groups.filter(name = "ProfessorUniversitario").exists():
             utilizador = ProfessorUniversitario.objects.get(email=self.email)
         elif user.groups.filter(name = "Colaborador").exists():
