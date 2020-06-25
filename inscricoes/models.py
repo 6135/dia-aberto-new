@@ -155,7 +155,6 @@ class Inscricaosessao(models.Model):
         validators=[
             validators.MinValueValidator(1),
             validators.MaxValueValidator(300),
-            # TODO: Adicionar validação de nparticipantes <= vagas na sessão
         ]
     )
 
@@ -174,7 +173,6 @@ class Inscricaotransporte(models.Model):
         validators=[
             validators.MinValueValidator(1),
             validators.MaxValueValidator(300),
-            # TODO: Adicionar validação de npassageiros <= vagas no transporte
         ]
     )
 
