@@ -304,7 +304,7 @@ def proporatividade(request):
                              tema=Tema.objects.get(id=request.POST['tema']))
             activity_object_form = AtividadeForm(request.POST, instance=new_form)
             activity_object_form.save()
-            idAtividade= activity_object_form
+            idAtividade= Atividade.objects.all().order_by('-id').first()
             new_material= Materiais(atividadeid=idAtividade)
             material_object_form= MateriaisForm(request.POST, instance= new_material)
             material_object_form.save()
