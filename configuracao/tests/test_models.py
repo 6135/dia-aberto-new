@@ -135,7 +135,7 @@ class TestModels(TestCase):
         self.prato.delete()
         self.menu.delete()
         self.lunchTime.delete()
-        self.espaco.detele()
+        self.espaco.delete()
         self.edificio.delete()
         self.campus.delete()
         self.transporte.delete()
@@ -199,7 +199,7 @@ class TestModels(TestCase):
 
         self.assertEquals(horario.inicio,time(12,0))
         self.assertEquals(horario.fim,time(14,0))
-        self.assertEquals(str(horario))
+        self.assertEquals(str(horario), "12:00 - 14:00")
 
     def test_menu(self):
         menu = self.menu
@@ -212,7 +212,7 @@ class TestModels(TestCase):
         # methods
 
         self.assertEquals(menu.pratos_().first().id, \
-            Prato.objects.filter(menuid=menu).id)
+            Prato.objects.filter(menuid=menu).first().id)
     
     def test_prato(self):
         prato = self.prato
@@ -230,6 +230,10 @@ class TestModels(TestCase):
 
         #methods
 
-        self.assertEquals(str(edifi),'<a href=\"/configuracao/imagens/edificio/' + str(edifi.id) + '\">' + edifi.nome + '</a>')
+        self.assertEquals(str(edifi),"<a href='/configuracao/imagens/edificio/" + str(edifi.id) + "'>C1</a>")
         self.assertEquals(edifi.salas_().first().id, self.espaco.id)
         self.assertEquals(edifi.count_salas,1)
+
+    def test_sala(self):
+        sala = self.espaco
+
