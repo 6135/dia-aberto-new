@@ -11,7 +11,7 @@ def create_open_day():
         enderecopaginaweb = 'web.com',
         descricao = 'Dia Aberto',
         emaildiaaberto = 'web@web.com',
-        ano = '2020',
+        ano = datetime.now().year,
         datadiaabertoinicio = datetime(1970,1,1,9,30,tzinfo=pytz.UTC),
         datadiaabertofim = datetime(2040,1,2,9,30,tzinfo=pytz.UTC),
         datainscricaoatividadesinicio = datetime(1970,1,1,9,30,tzinfo=pytz.UTC),
@@ -144,7 +144,7 @@ class TestModels(TestCase):
         self.assertEquals(Diaaberto().submit_activities_open(), True)
         #fields
         self.assertEquals(Diaaberto.current().id,diaaberto.id)
-        self.assertEquals(str(diaaberto),'2020')
+        self.assertEquals(str(diaaberto),str(datetime.now().year))
         self.assertEquals(diaaberto.precoalunos,2)
         self.assertEquals(diaaberto.precoprofessores, 2)
         self.assertEquals(diaaberto.enderecopaginaweb, 'web.com')
