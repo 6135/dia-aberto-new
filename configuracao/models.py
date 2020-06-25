@@ -120,9 +120,6 @@ class Diaaberto(models.Model):
     escalasessoes = models.TimeField(db_column='EscalaSessoes')
 
     def session_times(self):
-        if self.escalasessoes > time(0,59):
-            self.escalasessoes = time(0,59)
-            self.save()
 
         start_time  = self.datadiaabertoinicio.time()
         end_time = self.datadiaabertofim.time()

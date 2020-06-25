@@ -38,8 +38,6 @@ class consultar_tarefas(SingleTableMixin, FilterView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        user_check_var = user_check(
-            request=self.request, user_profile=[Colaborador])
         return Tarefa.objects.filter(colab=self.request.user)
 
 
