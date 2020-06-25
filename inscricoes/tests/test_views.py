@@ -3,7 +3,6 @@ from utilizadores.models import Administrador, Participante
 from inscricoes.models import Escola, Inscricao
 from configuracao.models import Campus, Diaaberto
 from django.utils.datetime_safe import datetime
-import pytz
 from django.urls import reverse
 from inscricoes.views import InscricaoWizard
 from configuracao.tests.test_models import create_open_day

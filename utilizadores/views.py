@@ -861,7 +861,7 @@ def mensagem(request, id, *args, **kwargs):
     if id == 400 or id == 500:
         continuar = "off" 
     return render(request=request,
-        template_name="utilizadores/mensagem.html", context={'m': m, 'tipo': tipo ,'u': u, 'continuar': continuar,})
+        template_name="mensagem.html", context={'m': m, 'tipo': tipo ,'u': u, 'continuar': continuar,})
 
 
 
