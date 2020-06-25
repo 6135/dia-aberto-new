@@ -29,9 +29,12 @@ def colab_list(value):
         return "N/A"
     else:
         str_names = ""
+        none= []
         for colab in value :
             if colab is not None:
                 str_names+=str(colab.full_name) +','
+        if str_names == "":
+            return "N/A"
         return str_names[:-1]
 
 @register.filter

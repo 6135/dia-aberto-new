@@ -6,7 +6,7 @@ from atividades import views
 #Create your tests here.
 class TestUrls(SimpleTestCase):
 
-    def url_is_resolved(self):
+    def test_url_is_resolved(self):
         url = reverse('atividades:minhasAtividades')
         self.assertEquals(resolve(url).func.__name__, views.AtividadesProfessor.__name__)
         url = reverse('atividades:atividadesUOrganica')
@@ -21,7 +21,7 @@ class TestUrls(SimpleTestCase):
         self.assertEquals(resolve(url).func, views.eliminarSessao)
         url = reverse('atividades:proporAtividade')
         self.assertEquals(resolve(url).func, views.proporatividade) 
-        url = reverse('atividades:validarAtividade', kwargs={'id':1})
+        url = reverse('atividades:validarAtividade', kwargs={'id':1,'action':1})
         self.assertEquals(resolve(url).func, views.validaratividade) 
         url = reverse('atividades:verEdificios')
         self.assertEquals(resolve(url).func, views.veredificios) 
