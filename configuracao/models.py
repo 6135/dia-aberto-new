@@ -120,6 +120,10 @@ class Diaaberto(models.Model):
     escalasessoes = models.TimeField(db_column='EscalaSessoes')
 
     def session_times(self):
+        if self.escalasessoes > time(0,59):
+            self.escalasessoes = time(0,59)
+            self.save()
+
         start_time  = self.datadiaabertoinicio.time()
         end_time = self.datadiaabertofim.time()
         start_time_as_seconds = (start_time.hour * 60 + start_time.minute) * 60
@@ -261,7 +265,7 @@ class Espaco(models.Model):
 class Edificio(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=64)  # Field name made lowercase.
-    campus = models.ForeignKey('Campus', models.DO_NOTHING, db_column='Campus', blank=True, null=False)  # Field name made lowercase.
+    campus = models.ForeignKey('Campus', models.DO_NOTHING, db_column='Campus', null=False)  # Field name made lowercase.
     image = models.ImageField(upload_to='images/edifi',db_column='image', blank=True, null=True)
 
     def espacos_(self):

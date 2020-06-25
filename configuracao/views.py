@@ -151,7 +151,6 @@ def newDay(request, id=None):
 		dia_aberto = Diaaberto(administradorutilizadorid=logged_admin)
 	else:
 		dia_aberto = Diaaberto.objects.get(id=id,administradorutilizadorid=logged_admin)
-		print(dia_aberto.session_times())
 
 	dia_aberto_form = diaAbertoSettingsForm(instance=dia_aberto)
 
@@ -389,9 +388,6 @@ def criarTransporte(request, id = None):
 				instance.delete()
 
 			return redirect('configuracao:verTransportes')
-		print(form_transport.errors)
-		print(form_universitario.errors)
-		print(horario_form_set.errors)
 
 	return render(request = request,
 				template_name='configuracao/criarTransporte.html',
@@ -482,12 +478,11 @@ def atribuirTransporte(request, id):
 
 	
 
-	print(dadoschepart)
 	if request.method == "POST":
 		gruposid=request.POST["gruposid"]
 		if "new" in request.POST:
 			grupo= Inscricao.objects.get(id=gruposid)
-			print(grupo)
+
 			new_inscricaotransporte= Inscricaotransporte(transporte=transportehorario, npassageiros=grupo.nalunos, inscricao= grupo)
 			new_inscricaotransporte.save()
 			return redirect('configuracao:atribuirTransporte', id)
@@ -548,7 +543,6 @@ def configurarEdificio(request, id = None):
 		edificioForm = EdificioForm(request.POST,request.FILES,instance=edificio)
 		formSet = espacoFormSet(request.POST)
 		if edificioForm.is_valid() and formSet.is_valid():
-			print(edificioForm.instance.image)
 			edificio = edificioForm.save()
 			instances = formSet.save(commit=False)
 
