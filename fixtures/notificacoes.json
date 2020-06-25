@@ -1,0 +1,10 @@
+[
+  {
+    "model": "notificacoes.Notificacao",
+    "pk": "1",
+    "fields": {
+      "descricao": "A atividade X que submeteu foi aceite!",
+      "criadoem": "14 de maio, 2021"
+    }
+  }
+]

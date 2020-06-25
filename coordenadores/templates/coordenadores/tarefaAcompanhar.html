@@ -36,7 +36,9 @@
             <label class="label">Dia</label>
             <div class="control">
                 <div class="select is-fullwidth">
-                    {{form.dia}}
+                    <select name="dia" onchange="grupoHorario()" id="id_dia">
+                        <option value="">Escolha o dia</option>
+                    </select>
                 </div>
             </div>
         </div>
