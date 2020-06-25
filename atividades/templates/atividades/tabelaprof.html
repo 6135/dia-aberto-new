@@ -61,7 +61,7 @@
             <tr>
                 <th><div class="th-wrap">Dia</div></th>
                 <th><div class="th-wrap" style="width:150px">Hora</div></th>
-                <th><div class="th-wrap" style="width:150px">Vagas</div></th>
+                <th><div class="th-wrap" style="width:150px">Inscritos</div></th>
                 {% if row.record.estado == "Aceite" and row.record.nrcolaboradoresnecessario > 0 %}
                 <th><div class="th-wrap" style="width:200px">Colaboradores</div></th>
                 {% endif %}
@@ -72,7 +72,7 @@
                 <tr >
                     <td data-label="Dia">{{sessao.dia}}</td>
                     <td data-label="Hora">{{sessao.horarioid.inicio}} até {{sessao.horarioid.fim}}</td>
-                    <td data-label="Vagas">{{sessao.vagas}}</td>
+                    <td data-label="inscritos">{{sessao|inscritos}}/{{row.record.participantesmaximo}}</td>
                     {% if row.record.estado == "Aceite" and row.record.nrcolaboradoresnecessario > 0 %}
                     <td data-label="Colaborador">
                         {{sessao.get_colaboradores|colab_list}}

@@ -21,9 +21,10 @@ from datetime import datetime, timedelta
 from .forms import *
 
 
-# Apagar uma notificação automática
+
 
 def apagar_notificacao_automatica(request, id ,nr):
+    ''' Apagar uma notificação automática '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -77,10 +78,11 @@ def apagar_notificacao_automatica(request, id ,nr):
         'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,'total':total
     })
 
-# Apagar notificacoes de um utilizadore por categorias
+
 
 
 def limpar_notificacoes(request, id):
+    ''' Apagar notificacoes de um utilizadore por categorias '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -109,9 +111,10 @@ def limpar_notificacoes(request, id):
     return redirect('notificacoes:categorias-notificacao-automatica',0,0)
 
 
-# Marcar todas as notificações de um utilizador como lidas
+
 
 def marcar_como_lida(request):
+    ''' Marcar todas as notificações de um utilizador como lidas '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -121,10 +124,11 @@ def marcar_como_lida(request):
 
 
 
-# Página quando não existem notificacoes
+
 
 
 def sem_notificacoes(request, id):
+    ''' Página quando não existem notificacoes '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -134,10 +138,11 @@ def sem_notificacoes(request, id):
         'categoria':id,
     })
 
-# Ver notificações automáticas por categorias
+
 
 
 def categorias_notificacao_automatica(request, id, nr):
+    ''' Ver notificações automáticas por categorias '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -187,9 +192,10 @@ def categorias_notificacao_automatica(request, id, nr):
     })
 
 
-# Envio de notificação automatica
+
 
 def enviar_notificacao_automatica(request, sigla, id):
+    ''' Envio de notificação automatica '''
     if request.user.is_authenticated:
         user_sender = get_user(request)
     elif sigla!="validarRegistosPendentes":
@@ -337,6 +343,7 @@ def enviar_notificacao_automatica(request, sigla, id):
 
 
 def escolher_tipo(request):
+    ''' Escolher tipo de mensagem a enviar, poderá ser uma mensagem de grupo ou individual '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -345,15 +352,17 @@ def escolher_tipo(request):
 
 
 def concluir_envio(request):
+    ''' Página de sucesso quando a mensagem é enviada '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:
         return redirect('utilizadores:mensagem', 5)
     return render(request, 'notificacoes/concluir_envio.html')
 
-# Criar uma nova mensagem
+
 
 def criar_mensagem(request, id):
+    ''' Criar uma nova mensagem tomando em consideração o tipo de utilizador que está logado atualmente no sistema '''
     if request.user.is_authenticated: 
         user = get_user(request) 
         user = Utilizador.objects.get(id=user.id)
@@ -370,12 +379,15 @@ def criar_mensagem(request, id):
 
 
 
-# Criar uma nova mensagem por um colaborador, coordenador ou docente
+
 
 def criar_mensagem_participante(request, id):
+    ''' Criar uma nova mensagem por um participante '''
     msg = False
     if request.user.is_authenticated: 
         user = get_user(request) 
+        if user.groups.filter(name = "Participante").exists() == False:
+            return redirect('utilizadores:mensagem', 5)  
         user = Utilizador.objects.get(id=user.id)
     else:
         return redirect('utilizadores:mensagem', 5)      
@@ -449,16 +461,18 @@ def criar_mensagem_participante(request, id):
             return redirect("utilizadores:mensagem",5)
 
 
-# Criar uma nova mensagem por um colaborador, coordenador ou docente
+
 
 def criar_mensagem_uo(request, id):
+    ''' Criar uma nova mensagem por um colaborador, coordenador ou docente '''
     msg = False
     if request.user.is_authenticated: 
         user = get_user(request) 
         user = Utilizador.objects.get(id=user.id)
     else:
         return redirect('utilizadores:mensagem', 5)      
-           
+    user_check_var = user_check(
+        request=request, user_profile=[Coordenador, Administrador,Colaborador])
     if request.method == "POST":
         tipo = id
         if tipo == 0:
@@ -546,16 +560,18 @@ def criar_mensagem_uo(request, id):
         else:
             return redirect("utilizadores:mensagem",5)
 
-# Criar uma nova mensagem por um administrador
+
 
 def criar_mensagem_admin(request, id):
+    ''' Criar uma nova mensagem por um administrador '''
     msg = False
     if request.user.is_authenticated: 
         user = get_user(request) 
         user = Utilizador.objects.get(id=user.id)
     else:
         return redirect('utilizadores:mensagem', 5)      
-           
+    user_check_var = user_check(
+        request=request, user_profile=[Administrador])       
     if request.method == "POST":
         tipo = id
         if tipo == 0:
@@ -639,9 +655,10 @@ def criar_mensagem_admin(request, id):
             return redirect("utilizadores:mensagem",5)
     
 
-# Apagar uma mensagem
+
 
 def apagar_mensagem(request, id ,nr):
+    ''' Apagar uma mensagem '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -707,10 +724,11 @@ def apagar_mensagem(request, id ,nr):
 
 
 
-# Apagar mensagens por categorias de um dado utilizador
+
 
 
 def limpar_mensagens(request, id):
+    ''' Apagar mensagens por categorias de um dado utilizador '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -735,9 +753,10 @@ def limpar_mensagens(request, id):
     return redirect('notificacoes:detalhes-mensagem',id,0)
 
 
-# Marcar todas as mensagens de um utilizador como lidas
+
 
 def mensagem_como_lida(request, id):
+    ''' Marcar todas as mensagens de um utilizador como lidas '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -751,10 +770,11 @@ def mensagem_como_lida(request, id):
 
 
 
-# Página quando não existem mensagens
+
 
 
 def sem_mensagens(request, id):
+    ''' Página quando não existem mensagens '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:
@@ -764,10 +784,11 @@ def sem_mensagens(request, id):
         'categoria':id,
     })
 
-# Ver mensagens por categorias
+
 
 
 def detalhes_mensagens(request, id, nr):
+    ''' Ver mensagens por categorias '''
     if request.user.is_authenticated:
         user = get_user(request)
     else:

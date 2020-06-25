@@ -202,7 +202,7 @@ class Sessao(models.Model):
         'configuracao.Horario', models.DO_NOTHING, db_column='HorarioID')
 
     def get_colaboradores(self):
-        tarefas = TarefaAuxiliar.objects.filter(sessao = self, tarefaid__estado="Atribuida")
+        tarefas = TarefaAuxiliar.objects.filter(sessao = self).exclude(tarefaid__estado="naoAtribuida")
         return [tarefa.tarefaid.colab for tarefa in tarefas]
 
     def timeRange_(self, seperator=' até '):

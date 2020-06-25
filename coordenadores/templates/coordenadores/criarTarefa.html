@@ -136,6 +136,9 @@
             else if("{{tarefa.tipo}}"=="tarefaAcompanhar"){  
               diasGrupo();
               grupoInfo();
+              grupoHorario();
+              grupoOrigem();
+              grupoDestino();
             }
             colaboradoresSelect();
           }
@@ -274,12 +277,14 @@ function dropdownDependencies(url){
     function grupoHorario(){
       var dia = document.getElementById("id_dia").value;
       var grupo_id = document.getElementById("id_grupo").value; 
+      var tarefa = "{{tarefa.id}}"
       $.ajax({                       
         url: "{% url 'coordenadores:horarioGrupo' %}", 
         method: 'POST',             
         data: {
             'dia': dia,
             'grupo_id' : grupo_id,
+            'tarefa': tarefa,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
@@ -291,14 +296,16 @@ function dropdownDependencies(url){
     function grupoOrigem(){
       var dia = document.getElementById("id_dia").value;
       var grupo_id = document.getElementById("id_grupo").value; 
-      var sessao_id = document.getElementById("id_horario").value;
+      var horario = document.getElementById("id_horario").value;
+      var tarefa = "{{tarefa.id}}";
       $.ajax({                       
         url: "{% url 'coordenadores:locaisOrigem' %}", 
         method: 'POST',             
         data: {
             'dia': dia,
             'grupo_id' : grupo_id,
-            'sessao_id' : sessao_id,
+            'horario' : horario,
+            'tarefa' : tarefa,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
@@ -310,14 +317,16 @@ function dropdownDependencies(url){
     function grupoDestino(){
       var dia = document.getElementById("id_dia").value;
       var grupo_id = document.getElementById("id_grupo").value; 
-      var sessao_id = document.getElementById("id_horario").value;
+      var horario = document.getElementById("id_horario").value;
+      var tarefa = "{{tarefa.id}}";
       $.ajax({                       
         url: "{% url 'coordenadores:locaisDestino' %}", 
         method: 'POST',             
         data: {
             'dia': dia,
             'grupo_id' : grupo_id,
-            'sessao_id' : sessao_id,
+            'horario' : horario,
+            'tarefa':tarefa,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   

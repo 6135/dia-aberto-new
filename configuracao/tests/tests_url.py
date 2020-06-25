@@ -4,7 +4,7 @@ from django.urls import resolve,reverse
 from configuracao import views
 
 #Create your tests here.
-class TestUrls(SimpleTestCase):
+class TestUrls(TestCase):
     
     def test_url_is_resolved(self):
         url = reverse('configuracao:diasAbertos')

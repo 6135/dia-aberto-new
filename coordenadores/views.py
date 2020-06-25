@@ -224,60 +224,86 @@ def diasGrupo(request):
             )
 
 def horarioGrupo(request):
-    default = {
-        'key': '',
-        'value': 'Escolha o horário'
-    }
-    horario=[]
-    if request.POST['dia'] != '' and request.POST['grupo_id'] != '':
+    horario = []
+    default = []
+    if request.method == 'POST':    
         if 'tarefa' in request.POST and request.POST.get('tarefa')!='':
-            tarefa = Tarefa.objects.get(id=request.POST.get('tarefa'))
+            tarefa = TarefaAcompanhar.objects.get(tarefaid=request.POST.get('tarefa'))
+            grupo = tarefa.inscricao.id
+            dia = str(tarefa.tarefaid.dia)
             default={
-                'key': str(tarefa.dia),
-                'value': str(tarefa.dia)
+                'key': str(tarefa.tarefaid.horario),
+                'value': time.strftime(tarefa.tarefaid.horario,"%H:%M")
             }
+            
         else:
+            grupo = request.POST.get('grupo_id')
+            dia = request.POST['dia']
             default = {
                 'key': '',
                 'value': 'Escolha o dia'
             }
-        inscricaoid = request.POST.get('grupo_id')
-        inscricao = Inscricao.objects.get(id=inscricaoid)
-        horario = inscricao.get_horarios(request.POST['dia'])
+        
+        inscricao = Inscricao.objects.get(id=grupo)
+        horario = inscricao.get_horarios(dia)
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':horario, 'default': default}
             )
 
 def locaisOrigem(request):
-    default = {
-        'key': '',
-        'value': 'Escolha o local de encontro'
-    }
-    if request.POST['sessao_id']:
+    if request.method == 'POST':    
+        if 'tarefa' in request.POST and request.POST.get('tarefa')!='':
+            tarefa = TarefaAcompanhar.objects.get(tarefaid=request.POST.get('tarefa'))
+            grupo = tarefa.inscricao.id
+            horario = tarefa.tarefaid.horario
+            dia = str(tarefa.tarefaid.dia)
+            default={
+                'key': tarefa.origem,
+                'value': tarefa.origem
+            }
+            
+        else:
+            grupo = request.POST.get('grupo_id')
+            dia = request.POST['dia']
+            horario = request.POST.get('horario')
+            default = {
+                'key': '',
+                'value': 'Escolha o local de encontro'
+            }
         origens = []
-        inscricaoid = request.POST.get('grupo_id')
-        inscricao = Inscricao.objects.get(id=inscricaoid)
-        origens =  inscricao.get_origem(request.POST['dia'],request.POST['sessao_id'])
+        inscricao = Inscricao.objects.get(id=grupo)
+        origens =  inscricao.get_origem(dia,horario)
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':origens, 'default': default}
             )  
 
 def locaisDestino(request):
-    default = {
-        'key': '',
-        'value': 'Escolha o local de destino'
-    }
-    if request.method == 'POST':
+    if request.method == 'POST':    
+        if 'tarefa' in request.POST and request.POST.get('tarefa')!='':
+            tarefa = TarefaAcompanhar.objects.get(tarefaid=request.POST.get('tarefa'))
+            grupo = tarefa.inscricao.id
+            horario = tarefa.tarefaid.horario
+            dia = str(tarefa.tarefaid.dia)
+            local = Espaco.objects.get(id=int(tarefa.destino))
+            default={
+                'key': tarefa.destino,
+                'value': local.nome
+            }         
+        else:
+            grupo = request.POST.get('grupo_id')
+            dia = request.POST['dia']
+            horario = request.POST.get('horario')
+            default = {
+                'key': '',
+                'value': 'Escolha o local de destino'
+            }
         destinos = []
-        inscricaoid = request.POST.get('grupo_id')
-        inscricao = Inscricao.objects.get(id=inscricaoid)
-        destinos =  inscricao.get_destino(request.POST['dia'],request.POST['sessao_id'])
-    return render(request=request,
-                template_name='configuracao/dropdown.html',
-                context={'options':destinos, 'default': default}
-            )  
+        inscricao = Inscricao.objects.get(id=grupo)
+        destinos =  inscricao.get_destino(dia,horario)
+
+    return render(request=request,template_name='configuracao/dropdown.html',context={'options':destinos, 'default': default})  
 
 class ConsultarTarefas(SingleTableMixin, FilterView):
     table_class = TarefaTable
