@@ -544,8 +544,9 @@ def apagar_proprio_utilizador(request):
 def enviar_email_validar(request,nome,id):
     ''' Envio de email quando o utilizador é validado na pagina consultar utilizadores '''  
     msg="A enviar email a "+nome+" a informar que o seu registo foi validado"
-    user_check_var = user_check(
-        request=request, user_profile=[Coordenador, Administrador])
+    user_check_var = user_check(request=request, user_profile=[Coordenador, Administrador])
+    if user_check_var.get('exists') == False: 
+        return user_check_var.get('render')
     return render(request=request,
                   template_name="utilizadores/enviar_email_validar.html",
                   context={"msg": msg, "id":id})
@@ -555,8 +556,9 @@ def enviar_email_validar(request,nome,id):
 def enviar_email_rejeitar(request,nome,id):  
     ''' Envio de email quando o utilizador é rejeitado na pagina consultar utilizadores '''
     msg="A enviar email a "+nome+" a informar que o seu registo foi rejeitado"
-    user_check_var = user_check(
-        request=request, user_profile=[Coordenador, Administrador])
+    user_check_var = user_check(request=request, user_profile=[Coordenador, Administrador])
+    if user_check_var.get('exists') == False: 
+        return user_check_var.get('render')
     return render(request=request,
                   template_name="utilizadores/enviar_email_rejeitar.html",
                   context={"msg": msg, "id":id})
@@ -835,7 +837,7 @@ def mensagem(request, id, *args, **kwargs):
         else:
             u=""     
     else:
-        id = 5
+        u = ""
 
 
     if id == 400 or id == 500:
