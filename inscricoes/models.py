@@ -16,7 +16,7 @@ class Escola(models.Model):
         ordering = ['nome', 'local']
 
     def __str__(self):
-        return self.nome
+        return f"{self.nome} - {self.local}"
 
 
 class Inscricao(models.Model):

@@ -33,6 +33,7 @@ class InscricaoForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super(InscricaoForm, self).clean()
+        cleaned_data['local'] = cleaned_data['local'].capitalize()
         # Verificar se o dia escolhido faz parte do Dia Aberto
         if not cleaned_data.get('diaaberto', ''):
             hoje = datetime.now(pytz.utc)
