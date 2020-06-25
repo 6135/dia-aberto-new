@@ -83,6 +83,25 @@ def create_sala(edificio):
         descricao = 'Uma sala normal'
     )
 
+def create_transporte(diaaberto):
+    transporte =  Transporte.objects.create(
+        identificador = '01-00',
+        diaaberto = diaaberto,
+        dia = date(1970,1,1)
+    )
+    return  Transportehorario.objects.create(
+        origem = 'Penha',
+        chegada = 'Terminal',
+        horaPartida = time(11,0),
+        horaChegada = time(11,30),
+        transporte = transporte
+    )
+def create_transporteU(transporte):
+    return Transporteuniversitario.objects.create(
+        transporte = transporte,
+        capacidade = 20
+    )
+
 class TestModels(TestCase):
 
 
@@ -104,7 +123,9 @@ class TestModels(TestCase):
         self.prato = create_prato(menu=self.menu)
         self.edificio = create_edificio(self.campus)
         self.espaco = create_sala(self.edificio)
-
+        self.transporteH = create_transporte(self.diaaberto)
+        self.transporte = self.transporteH.transporte
+        self.transporteU = create_transporteU(self.transporte)
 
     def tearDown(self):
         self.diaaberto.delete()
@@ -115,10 +136,9 @@ class TestModels(TestCase):
         self.menu.delete()
         self.lunchTime.delete()
         self.espaco.detele()
-
         self.edificio.delete()
         self.campus.delete()
-        
+        self.transporte.delete()
 
     def test_dia_aberto(self):
         diaaberto = self.diaaberto
@@ -211,4 +231,5 @@ class TestModels(TestCase):
         #methods
 
         self.assertEquals(str(edifi),'<a href=\"/configuracao/imagens/edificio/' + str(edifi.id) + '\">' + edifi.nome + '</a>')
-        #self.assertEquals(edifi.sa)
+        self.assertEquals(edifi.salas_().first().id, self.espaco.id)
+        self.assertEquals(edifi.count_salas,1)
