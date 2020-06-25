@@ -203,18 +203,6 @@ def grupoInfo(request):
 def diasGrupo(request):
     dias=[]
     if request.POST['grupo_id'] != '':
-        if 'tarefa' in request.POST and request.POST.get('tarefa')!='':
-            tarefa = Tarefa.objects.get(id=request.POST.get('tarefa'))
-            
-            default={
-                'key': str(tarefa.dia),
-                'value': tarefa.dia
-            }
-        else:
-            default = {
-                'key': '',
-                'value': 'Escolha o dia'
-            }
         inscricaoid = request.POST.get('grupo_id')
         inscricao = Inscricao.objects.get(id=inscricaoid)
         dias = inscricao.get_dias()

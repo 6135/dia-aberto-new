@@ -3,7 +3,7 @@
 {% load django_tables2 %}
 <div class="columns">
        <div class="column is-3">
-        {% comment %}<form method="get">
+        <form method="get">
             <div class="menu">
                 <p class="menu-label">Filtros Atividades</p>
                 <ul class="menu-list">
@@ -58,7 +58,7 @@
                 </div>
             </div>     
         </form>
-        {% endcomment %}
+       
     </div>
     <div class="column">
         <nav class="breadcrumb" aria-label="breadcrumbs">
@@ -73,7 +73,7 @@
             </span>
             <span>Propor nova atividade</span>
         </a>
-        {% render_table table %}
+        {% render_table table 'atividades/tabelaprof.html' %}
     </div>
 
 <style>
