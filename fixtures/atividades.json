@@ -1,0 +1,251 @@
+[
+  {
+    "model": "atividades.Atividade",
+    "pk": "1",
+    "fields": {
+      "nome": "Observação de Joões ao Microscópio",
+      "descricao": "Observação de cientistas no seu habitat natural.",
+      "publicoalvo": "Ciencias e Tecnologia",
+      "nrcolaboradoresnecessario": 2,
+      "tipo": "Atividade Laboratorial",
+      "estado": "Confirmada",
+      "duracaoesperada": 30,
+      "participantesmaximo": 40,
+      "datasubmissao": "2020-03-16T17:41:28+00:00",
+      "dataalteracao": "2020-03-16T17:41:28+00:00"
+    }
+  },
+  {
+    "model": "atividades.Atividade",
+    "pk": "2",
+    "fields": {
+      "nome": "Python é meh",
+      "descricao": "Tem as suas coisinhas boas e as suas coisinhas más mas come-se...",
+      "publicoalvo": "Ciencias e Tecnologia",
+      "nrcolaboradoresnecessario": 2,
+      "tipo": "Atividade Laboratorial",
+      "estado": "Confirmada",
+      "duracaoesperada": 30,
+      "participantesmaximo": 40,
+      "datasubmissao": "2020-03-18T13:42:28+00:00",
+      "dataalteracao": "2020-03-18T13:42:28+00:00"
+    }
+  },
+  {
+    "model": "atividades.Atividade",
+    "pk": "3",
+    "fields": {
+      "nome": "DUUUDE",
+      "descricao": "Tem as suas coisinhas boas e as suas coisinhas más mas come-se...",
+      "publicoalvo": "Ciencias e Tecnologia",
+      "nrcolaboradoresnecessario": 2,
+      "tipo": "Atividade Laboratorial",
+      "estado": "Confirmada",
+      "duracaoesperada": 30,
+      "participantesmaximo": 40,
+      "datasubmissao": "2020-03-18T13:42:28+00:00",
+      "dataalteracao": "2020-03-18T13:42:28+00:00"
+    }
+  },
+  {
+    "model": "atividades.Atividade",
+    "pk": "4",
+    "fields": {
+      "nome": "I wanna Dev",
+      "descricao": "Tem as suas coisinhas boas e as suas coisinhas más mas come-se...",
+      "publicoalvo": "Ciencias e Tecnologia",
+      "nrcolaboradoresnecessario": 2,
+      "tipo": "Atividade Laboratorial",
+      "estado": "Confirmada",
+      "duracaoesperada": 30,
+      "participantesmaximo": 40,
+      "datasubmissao": "2020-03-18T13:42:28+00:00",
+      "dataalteracao": "2020-03-18T13:42:28+00:00"
+    }
+  },
+  {
+    "model": "atividades.Atividade",
+    "pk": "5",
+    "fields": {
+      "nome": "Gamin n Modeling",
+      "descricao": "Tem as suas coisinhas boas e as suas coisinhas más mas come-se...",
+      "publicoalvo": "Ciencias e Tecnologia",
+      "nrcolaboradoresnecessario": 2,
+      "tipo": "Atividade Laboratorial",
+      "estado": "Confirmada",
+      "duracaoesperada": 30,
+      "participantesmaximo": 40,
+      "datasubmissao": "2020-03-18T13:42:28+00:00",
+      "dataalteracao": "2020-03-18T13:42:28+00:00"
+    }
+  },
+  {
+    "model": "configuracao.Horario",
+    "pk": "1",
+    "fields": {
+      "inicio": "14:00",
+      "fim": "15:30"
+    }
+  },
+  {
+    "model": "configuracao.Horario",
+    "pk": "2",
+    "fields": {
+      "inicio": "9:30",
+      "fim": "11:30"
+    }
+  },
+  {
+    "model": "configuracao.Horario",
+    "pk": "3",
+    "fields": {
+      "inicio": "15:30",
+      "fim": "18:00"
+    }
+  },
+  {
+    "model": "configuracao.Horario",
+    "pk": "4",
+    "fields": {
+      "inicio": "8:30",
+      "fim": "9:30"
+    }
+  },
+  {
+    "model": "configuracao.Horario",
+    "pk": "5",
+    "fields": {
+      "inicio": "11:30",
+      "fim": "13:00"
+    }
+  },
+  {
+    "model": "configuracao.Horario",
+    "pk": "5",
+    "fields": {
+      "inicio": "14:30",
+      "fim": "16:00"
+    }
+  },
+  {
+    "model": "atividades.Sessao",
+    "pk": "1",
+    "fields": {
+      "horarioid": "1",
+      "ninscritos": 5,
+      "vagas": 40,
+      "atividadeid": "1",
+      "dia": "2020-03-25"
+    }
+  },
+  {
+    "model": "atividades.Sessao",
+    "pk": "2",
+    "fields": {
+      "horarioid": "2",
+      "ninscritos": 10,
+      "vagas": 30,
+      "atividadeid": "1",
+      "dia": "2020-03-25"
+    }
+  },
+  {
+    "model": "atividades.Sessao",
+    "pk": "3",
+    "fields": {
+      "horarioid": "3",
+      "ninscritos": 10,
+      "vagas": 25,
+      "atividadeid": "2",
+      "dia": "2020-03-25"
+    }
+  },
+  {
+    "model": "atividades.Sessao",
+    "pk": "4",
+    "fields": {
+      "horarioid": "4",
+      "ninscritos": 10,
+      "vagas": 25,
+      "atividadeid": "1",
+      "dia": "2020-03-25"
+    }
+  },
+  {
+    "model": "atividades.Sessao",
+    "pk": "5",
+    "fields": {
+      "horarioid": "5",
+      "ninscritos": 10,
+      "vagas": 35,
+      "atividadeid": "2",
+      "dia": "2020-03-25"
+    }
+  },
+  {
+    "model": "atividades.Sessao",
+    "pk": "5",
+    "fields": {
+      "horarioid": "2",
+      "ninscritos": 10,
+      "vagas": 25,
+      "atividadeid": "3",
+      "dia": "2020-03-25"
+    }
+  },
+  {
+    "model": "atividades.Sessao",
+    "pk": "6",
+    "fields": {
+      "horarioid": "4",
+      "ninscritos": 10,
+      "vagas": 30,
+      "atividadeid": "3",
+      "dia": "2020-03-25"
+    }
+  },
+  {
+    "model": "atividades.Sessao",
+    "pk": "7",
+    "fields": {
+      "horarioid": "5",
+      "ninscritos": 10,
+      "vagas": 15,
+      "atividadeid": "4",
+      "dia": "2020-03-25"
+    }
+  },
+  {
+    "model": "atividades.Sessao",
+    "pk": "8",
+    "fields": {
+      "horarioid": "2",
+      "ninscritos": 10,
+      "vagas": 20,
+      "atividadeid": "4",
+      "dia": "2020-03-25"
+    }
+  },
+  {
+    "model": "atividades.Sessao",
+    "pk": "9",
+    "fields": {
+      "horarioid": "3",
+      "ninscritos": 10,
+      "vagas": 20,
+      "atividadeid": "5",
+      "dia": "2020-03-25"
+    }
+  },
+  {
+    "model": "atividades.Sessao",
+    "pk": "10",
+    "fields": {
+      "horarioid": "1",
+      "ninscritos": 10,
+      "vagas": 25,
+      "atividadeid": "5",
+      "dia": "2020-03-25"
+    }
+  }
+]

@@ -66,7 +66,7 @@ class Atividade(models.Model):
         db_column='Publicoalvo', max_length=255, choices=publicosalvo, default='')
     # Field name made lowercase.
     nrcolaboradoresnecessario = models.IntegerField(
-        db_column='nrColaboradoresNecessario')
+        db_column='nrColaboradoresNecessario', default=0)
     tipos = (("Atividade Laboratorial", "Atividade Laboratorial"),
              ("Tertulia", "Tertulia"), ("Palestra", "Palestra"))
     # Field name made lowercase.
