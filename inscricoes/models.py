@@ -69,7 +69,7 @@ class Inscricao(models.Model):
             inscricao=self).order_by('sessao__dia')
         dias = []
         dias = [sessao.sessao.dia for sessao in inscricao_sessoes]
-        return [{'key': str(dia), 'value': str(dia)} for dia in set(dias)]
+        return [{'key': str(dia), 'value': dia} for dia in set(dias)]
 
     def get_horarios(self, dia):
         inscricao_sessoes = Inscricaosessao.objects.filter(
