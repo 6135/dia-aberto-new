@@ -75,12 +75,12 @@ class Inscricao(models.Model):
         inscricao_sessoes = Inscricaosessao.objects.filter(
             inscricao=self, sessao__dia=dia).order_by('sessao__horarioid__inicio')
         horarios = []
-        horarios.append({'key': inscricao_sessoes.first().sessao.horarioid.inicio,
+        horarios.append({'key': str(inscricao_sessoes.first().sessao.horarioid.inicio),
                          'value': inscricao_sessoes.first().sessao.horarioid.inicio})
         for sessao in inscricao_sessoes:
             if sessao.sessao.horarioid.fim not in horarios:
                 horarios.append(
-                    {'key': sessao.sessao.horarioid.fim, 'value': sessao.sessao.horarioid.fim})
+                    {'key': str(sessao.sessao.horarioid.fim), 'value': sessao.sessao.horarioid.fim})
         horarios.pop()
         horarios = sorted(horarios, key=lambda k: k['key']) 
         return horarios
