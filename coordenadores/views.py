@@ -190,14 +190,14 @@ def colaboradores(request):
 def grupoInfo(request):
     if request.method == 'POST':
         if 'tarefa' in request.POST and request.POST.get('tarefa') != '':
-            tarefa = Tarefa.objects.get(id=request.POST.get('tarefa'))
-            grupo
+            tarefa = TarefaAcompanhar.objects.get(tarefaid=request.POST.get('tarefa'))
+            info = Inscricao.objects.get(id=tarefa.inscricao.id)
         else:   
             info = Inscricao.objects.get(id=request.POST['grupo_id'])
-    reponsavel = Responsavel.objects.get(inscricao=request.POST['grupo_id'])
+    responsavel = Responsavel.objects.get(inscricao=info.id)
     return render(request=request,
                 template_name='coordenadores/grupoInfo.html',
-                context={'info': info}
+                context={'info': info,'responsavel':responsavel}
             )
 
 def diasGrupo(request):

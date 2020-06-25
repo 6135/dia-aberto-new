@@ -206,8 +206,7 @@ class TransporteTable(tables.Table):
 
     def render_acoes(self,record):
         opers1 = f"""
-            <div>
-                &nbsp;
+            <div style='margin-left: 1.8rem'>  
                 <a id='edit' href="{reverse('configuracao:editarTransporte', kwargs={'id':record.pk})}">
                     <span class="icon is-small">
                         <i class="mdi mdi-circle-edit-outline mdi-24px"></i>

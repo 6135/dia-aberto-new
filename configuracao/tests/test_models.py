@@ -48,8 +48,8 @@ def create_curso(uo):
 
 def create_horario(inicio=time(11,0),fim=time(11,30)):
     return Horario.objects.create(
-        inicio=time(inicio),
-        fim=time(fim)
+        inicio=inicio,
+        fim=fim
     )
 
 def create_menu(campus,horario,diaaberto):
@@ -68,6 +68,41 @@ def create_prato(menu):
         menuid=menu
     )
 
+def create_edificio(campus):
+    return Edificio.objects.create(
+        nome = 'C1',
+        campus = campus,
+        image = 'images/edifi/gambelas.jpg'
+    )
+
+def create_sala(edificio):
+    return Espaco.objects.create(
+        nome = '2.13',
+        edificio = edificio,
+        andar = '0',
+        descricao = 'Uma sala normal'
+    )
+
+def create_transporte(diaaberto):
+    transporte =  Transporte.objects.create(
+        identificador = '01-00',
+        diaaberto = diaaberto,
+        dia = date(1970,1,1)
+    )
+    return  Transportehorario.objects.create(
+        origem = 'Penha',
+        chegada = 'Terminal',
+        horaPartida = time(11,0),
+        horaChegada = time(11,30),
+        transporte = transporte
+    )
+def create_transporteU(transporte):
+    return Transporteuniversitario.objects.create(
+        transporte = transporte,
+        capacidade = 20
+    )
+
+
 class TestModels(TestCase):
 
     def setUp(self):
@@ -82,6 +117,12 @@ class TestModels(TestCase):
             horario=self.lunchTime,
             diaaberto=self.diaaberto
         )
+        self.prato = create_prato(menu=self.menu)
+        self.edificio = create_edificio(self.campus)
+        self.espaco = create_sala(self.edificio)
+        self.transporteH = create_transporte(self.diaaberto)
+        self.transporte = self.transporteH.transporte
+        self.transporteU = create_transporteU(self.transporte)
 
     def tearDown(self):
         self.diaaberto.delete()
@@ -94,6 +135,7 @@ class TestModels(TestCase):
         self.espaco.delete()
         self.edificio.delete()
         self.campus.delete()
+        self.transporte.delete()
         
 
     def test_dia_aberto(self):
