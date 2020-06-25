@@ -93,10 +93,11 @@ def create_UO_0(campus):
 
 
 def create_Curso_0():
-    return Curso.objects.get_or_create(nome="CC",
-    sigla="Ciências da Comunicação",
-    campus=create_UO_0(create_Campus_0()),
-    )[0]
+    return Curso.objects.get_or_create(
+        nome="CC",
+        sigla="Ciências da Comunicação",
+        unidadeorganicaid=create_UO_0(create_Campus_0()),
+        )[0]
 
 
 
@@ -276,16 +277,16 @@ class TestAdministradoresModels(TestCase):
         ''' Teste que verifica o a subclasse do utilizador de um dado utilizador '''
         user0=Utilizador.objects.get(id=self.utilizador0.id)
         user1=Utilizador.objects.get(id=self.utilizador1.id)
-        self.assertEquals(self.utilizador0,user1.getUser())
-        self.assertEquals(self.utilizador1,user.getUser())
+        self.assertEquals(self.utilizador0.username,user0.getUser().username)
+        self.assertEquals(self.utilizador1.username,user1.getUser().username)
 
 
     def test_get_profile(self):
         ''' Teste que verifica o perfil do administrador '''
         user0=Utilizador.objects.get(id=self.utilizador0.id)
         user1=Utilizador.objects.get(id=self.utilizador1.id)
-        self.assertEquals(user0.getUser(),"Administrador")
-        self.assertEquals(self.utilizador1.getUser(),"Administrador")
+        self.assertEquals(user0.getProfile(),"Administrador")
+        self.assertEquals(user1.getProfile(),"Administrador")
 
 
     def test_email_valido_UO(self):
@@ -337,16 +338,16 @@ class TestParticipantesModels(TestCase):
         ''' Teste que verifica o a subclasse do utilizador de um dado utilizador '''
         user0=Utilizador.objects.get(id=self.utilizador0.id)
         user1=Utilizador.objects.get(id=self.utilizador1.id)
-        self.assertEquals(self.utilizador0,user1.getUser())
-        self.assertEquals(self.utilizador1,user.getUser())
+        self.assertEquals(self.utilizador0.username,user0.getUser().username)
+        self.assertEquals(self.utilizador1.username,user1.getUser().username)
 
 
     def test_get_profile(self):
         ''' Teste que verifica o perfil do participante '''
         user0=Utilizador.objects.get(id=self.utilizador0.id)
         user1=Utilizador.objects.get(id=self.utilizador1.id)
-        self.assertEquals(user0.getUser(),"Administrador")
-        self.assertEquals(self.utilizador1.getUser(),"Administrador")
+        self.assertEquals(user0.getProfile(),"Participante")
+        self.assertEquals(user1.getProfile(),"Participante")
 
 
     def test_email_valido_UO(self):
@@ -398,16 +399,16 @@ class TestProfessorUniversitariosModels(TestCase):
         ''' Teste que verifica o a subclasse do utilizador de um dado utilizador '''
         user0=Utilizador.objects.get(id=self.utilizador0.id)
         user1=Utilizador.objects.get(id=self.utilizador1.id)
-        self.assertEquals(self.utilizador0,user1.getUser())
-        self.assertEquals(self.utilizador1,user.getUser())
+        self.assertEquals(self.utilizador0.username,user0.getUser().username)
+        self.assertEquals(self.utilizador1.username,user1.getUser().username)
 
 
     def test_get_profile(self):
         ''' Teste que verifica o perfil do professor universitário '''
         user0=Utilizador.objects.get(id=self.utilizador0.id)
         user1=Utilizador.objects.get(id=self.utilizador1.id)
-        self.assertEquals(user0.getUser(),"ProfessorUniversitario")
-        self.assertEquals(self.utilizador1.getUser(),"ProfessorUniversitario")
+        self.assertEquals(user0.getProfile(),"ProfessorUniversitario")
+        self.assertEquals(user1.getProfile(),"ProfessorUniversitario")
 
 
     def test_email_valido_UO(self):
@@ -435,14 +436,14 @@ class TestProfessorUniversitariosModels(TestCase):
 
 
         
-class TestCoodenadoresModels(TestCase):
+class TestCoordenadoresModels(TestCase):
     ''' Testes para o coordenador - funções dos modelos da componente utilizadores '''
     
     def setUp(self):
         call_command('create_groups')
-        self.utilizador0 = create_Coodenador_0()
-        self.utilizador1 = create_Coodenador_1()
-        self.group = Group.objects.get(name='Coodenador') 
+        self.utilizador0 = create_Coordenador_0()
+        self.utilizador1 = create_Coordenador_0()
+        self.group = Group.objects.get(name='Coordenador') 
         self.group.user_set.add(self.utilizador0)
         self.group.user_set.add(self.utilizador1)
 
@@ -450,24 +451,24 @@ class TestCoodenadoresModels(TestCase):
         ''' Teste que verifica o perfil do coordenador '''
         user0=Utilizador.objects.get(id=self.utilizador0.id)
         user1=Utilizador.objects.get(id=self.utilizador1.id)
-        self.assertEquals(user0.getProfiles(),'Coodenador')
-        self.assertEquals(user1.getProfiles(),'Coodenador')
+        self.assertEquals(user0.getProfiles(),'Coordenador')
+        self.assertEquals(user1.getProfiles(),'Coordenador')
 
 
     def test_get_user(self):
         ''' Teste que verifica o a subclasse do utilizador de um dado utilizador '''
         user0=Utilizador.objects.get(id=self.utilizador0.id)
         user1=Utilizador.objects.get(id=self.utilizador1.id)
-        self.assertEquals(self.utilizador0,user1.getUser())
-        self.assertEquals(self.utilizador1,user.getUser())
+        self.assertEquals(self.utilizador0.username,user0.getUser().username)
+        self.assertEquals(self.utilizador1.username,user1.getUser().username)
 
 
     def test_get_profile(self):
         ''' Teste que verifica o perfil do coordenador '''
         user0=Utilizador.objects.get(id=self.utilizador0.id)
         user1=Utilizador.objects.get(id=self.utilizador1.id)
-        self.assertEquals(user0.getUser(),"Coodenador")
-        self.assertEquals(self.utilizador1.getUser(),"Coodenador")
+        self.assertEquals(user0.getProfile(),"Coordenador")
+        self.assertEquals(user1.getProfile(),"Coordenador")
 
 
     def test_email_valido_UO(self):
@@ -520,16 +521,16 @@ class TestColaboradoresModels(TestCase):
         ''' Teste que verifica o a subclasse do utilizador de um dado utilizador '''
         user0=Utilizador.objects.get(id=self.utilizador0.id)
         user1=Utilizador.objects.get(id=self.utilizador1.id)
-        self.assertEquals(self.utilizador0,user1.getUser())
-        self.assertEquals(self.utilizador1,user.getUser())
+        self.assertEquals(self.utilizador0.username,user0.getUser().username)
+        self.assertEquals(self.utilizador1.username,user1.getUser().username)
 
 
     def test_get_profile(self):
         ''' Teste que verifica o perfil do colaborador '''
         user0=Utilizador.objects.get(id=self.utilizador0.id)
         user1=Utilizador.objects.get(id=self.utilizador1.id)
-        self.assertEquals(user0.getUser(),"Colaborador")
-        self.assertEquals(self.utilizador1.getUser(),"Colaborador")
+        self.assertEquals(user0.getProfile(),"Colaborador")
+        self.assertEquals(user1.getProfile(),"Colaborador")
 
 
     def test_email_valido_UO(self):

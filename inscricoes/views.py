@@ -25,6 +25,8 @@ from django.utils import timezone
 
 
 def InscricaoPDF(request, pk):
+    """ View que gera um PDF com os detalhes da inscrição """
+
     inscricao = get_object_or_404(Inscricao, pk=pk)
     erro_permissoes = nao_tem_permissoes(request, inscricao)
     if erro_permissoes:
@@ -39,6 +41,8 @@ def InscricaoPDF(request, pk):
 
 
 class AtividadesAPIView(ListAPIView):
+    """ View que gera uma API readonly com as informações das Atividades e das suas sessões
+        que vai ser usada para fazer inscrições nas sessões """
 
     class AtividadesPagination(PageNumberPagination):
         page_size = 10

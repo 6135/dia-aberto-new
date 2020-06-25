@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User, Permission, Group
 from django.test import TestCase
-from .models import *
+from utilizadores.models import *
 
 # class UtilizadorGrupoAdministradorTestes(TestCase):
 #     ''' Testes unitarios para a componente utilizadores - Testes para o grupo Administrador '''
