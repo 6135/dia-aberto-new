@@ -198,7 +198,7 @@ def grupoInfo(request):
     return render(request=request,
                 template_name='coordenadores/grupoInfo.html',
                 context={'info': info}
-            ))
+            )
 
 def diasGrupo(request):
     dias=[]
