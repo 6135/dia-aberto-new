@@ -30,7 +30,8 @@ def colab_list(value):
     else:
         str_names = ""
         for colab in value :
-            str_names+=str(colab.full_name) +','
+            if colab is not None:
+                str_names+=str(colab.full_name) +','
         return str_names[:-1]
 
 @register.filter
@@ -40,7 +41,8 @@ def conflict_list(value):
     else:
         str_names = ""
         for colab in value :
-            str_names+=str(colab.full_name) +','
+            if colab is not None:
+                str_names+=str(colab.full_name) +','
         return str_names[:-1]
 
 
