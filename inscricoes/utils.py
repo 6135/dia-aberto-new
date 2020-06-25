@@ -85,7 +85,7 @@ def enviar_mail_confirmacao_inscricao(request, pk):
                      f"dia_aberto_ualg_{ano}.pdf", True).content
     email = EmailMessage(subject, message, source, recipient_list, attachments=[
                          (f"dia_aberto_ualg_{ano}.pdf", pdf, 'application/pdf')])
-    email.send()
+    email.send(fail_silently=True)
 
 
 def coordenador_e_inscricao_nao_do_departamento(request, inscricao):
