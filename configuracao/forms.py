@@ -81,9 +81,10 @@ class menuForm(ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        campus_data = cleaned_data['campus']
-        diaaberto_data = cleaned_data['diaaberto']
-        if campus_data and diaaberto_data:
+        campus_data = cleaned_data.get('campus')
+        diaaberto_data = cleaned_data.get('diaaberto')
+        dia = cleaned_data.get('dia')
+        if campus_data is not None and diaaberto_data is not None:
             cleaned_data['campus'] = Campus.objects.get(id=campus_data)
             cleaned_data['diaaberto'] = Diaaberto.objects.get(id=diaaberto_data)
             self.instance.horarioid = Horario.objects.get(inicio='12:00:00',fim='14:00:00')
@@ -122,7 +123,7 @@ class transporteFilterForm(Form):
 
 
 def get_dia_choices():
-    dia_aberto = Diaaberto.objects.filter(datadiaabertoinicio__gte=datetime.now(timezone.utc)).order_by('datadiaabertoinicio').first()
+    dia_aberto = Diaaberto.current()
     dia_choices = []
     if dia_aberto is None:
         dia_choices = [('','')]
