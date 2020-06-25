@@ -267,7 +267,7 @@ def horarioGrupo(request):
             dia = request.POST['dia']
             default = {
                 'key': '',
-                'value': 'Escolha o dia'
+                'value': 'Escolha o horário'
             }
         
         inscricao = Inscricao.objects.get(id=grupo)
@@ -353,6 +353,8 @@ class ConsultarTarefas(SingleTableMixin, FilterView):
         context = super().get_context_data(**kwargs)
         table = self.get_table(**self.get_table_kwargs())
         context["colabs"] = list(map(lambda x: (x.id, x.full_name), Colaborador.objects.filter(faculdade = self.user.faculdade,utilizador_ptr_id__valido=True)))
+        table.colabs = list(map(lambda x: (x.id, x.full_name), Colaborador.objects.filter(faculdade = self.user.faculdade,utilizador_ptr_id__valido=True)))
+
         context[self.get_context_table_name(table)] = table
         return context
 
@@ -367,7 +369,12 @@ def eliminartarefa(request,id):
         return redirect('coordenadores:consultarTarefa')
     return redirect('coordenadores:consultarTarefa')
 
-
+def atribuirColaborador(request,id):
+    if request.method == 'POST':
+        print(request.POST)
+        colab = Colaborador.objects.get(id = int(request.POST.get('colab')))
+        Tarefa.objects.filter(id=id).update(colab=colab,estado='naoConcluida')
+    return redirect('coordenadores:consultarTarefa')
 
 #def consultartarefa(request):
 #    tarefas=Tarefa.objects.all()
