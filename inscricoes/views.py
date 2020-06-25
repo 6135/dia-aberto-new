@@ -28,7 +28,6 @@ from configuracao.tests.test_models import create_open_day
 
 def InscricaoPDF(request, pk):
     """ View que gera um PDF com os detalhes da inscrição """
-
     inscricao = get_object_or_404(Inscricao, pk=pk)
     erro_permissoes = nao_tem_permissoes(request, inscricao)
     if erro_permissoes:
@@ -42,10 +41,9 @@ def InscricaoPDF(request, pk):
     return render_pdf("inscricoes/pdf.html", context, f"dia_aberto_ualg_{ano}.pdf")
 
 
-class AtividadesAPIView(ListAPIView):
+class AtividadesAPI(ListAPIView):
     """ View que gera uma API readonly com as informações das Atividades e das suas sessões
         que vai ser usada para fazer inscrições nas sessões """
-
     class AtividadesPagination(PageNumberPagination):
         page_size = 10
         page_size_query_param = 'page_size'
@@ -63,6 +61,7 @@ class AtividadesAPIView(ListAPIView):
 
 
 class CriarInscricao(SessionWizardView):
+    """ View que gera o formulário com passos para criar uma nova inscrição """
     form_list = [
         ('info', InfoForm),
         ('responsaveis', ResponsavelForm),

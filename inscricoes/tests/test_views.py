@@ -78,6 +78,15 @@ class TestInscricaoPDFView(TestCase):
             str(response.context['ano']), self.inscricao.diaaberto.ano)
 
 
+class TestAtividadesAPIView(TestCase):
+    """ Teste suite da view "AtividadesAPI" da app "inscricoes" """
+
+    def test_CriarInscricao_GET_semLogin(self):
+        """ Teste de método GET sem login """
+        create_open_day()
+        response = self.client.get(reverse('inscricoes:criar-inscricao'))
+        self.assertRedirects(response, reverse('utilizadores:login'))
+
 class TestCriarInscricaoView(TestCase):
     """ Teste suite da view "CriarInscricao" da app "inscricoes" """
 
