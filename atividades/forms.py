@@ -69,20 +69,6 @@ class MateriaisForm(ModelForm):
 def get_dep_choices():
     return [(-1,'Mostra todos os Departamentos')] + [(departamento.id,departamento.nome) for departamento in Departamento.objects.all()]
 
-class atividadesFilterForm(Form):
-    searchAtividade = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Atividade'}), required=False)
-    Aceite=BooleanField(widget=CheckboxInput(),required=False)
-    Recusada=BooleanField(widget=CheckboxInput(),required=False)
-    Pendente=BooleanField(widget=CheckboxInput(),required=False)
-    diaAbertoAtual=BooleanField(widget=CheckboxInput(),required=False)
-    #departamentos = ChoiceField(choices=get_dep_choices,widget=Select(), required=False)
-    tipo = ChoiceField(choices=[
-        (" ", "Mostrar todos os tipos de Atividade"),
-        ("Atividade Laboratorial", "Atividade Laboratorial"),
-        ("Tertulia", "Tertulia"),
-        ("Palestra", "Palestra")
-     ],widget=Select())
-
 
 def get_campus_choices():
     return Campus.objects.all()
