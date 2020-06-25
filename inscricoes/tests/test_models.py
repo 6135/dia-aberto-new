@@ -107,7 +107,7 @@ class TestInscricoesModels(TestCase):
     def test_Escola_model(self):
         """ Testes do modelo "Escola" """
         escolas = [create_Escola_0(), create_Escola_1(), ]
-        self.assertEquals(str(escolas[0]), "Escola Secundária de Loulé")
+        self.assertEquals(str(escolas[0]), "Escola Secundária de Loulé - Loulé")
 
     def test_Inscricao_model(self):
         """ Testes do modelo "Inscricao" """
