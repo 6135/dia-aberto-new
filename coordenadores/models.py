@@ -85,7 +85,14 @@ class TarefaAcompanhar(models.Model):
         db_table = 'TarefaAcompanhar'
 
     def getDescription(self):
-        msg = "Acompanhar o grupo "+str(self.inscricao.get_grupo())+" de "+self.origem+" a "+self.destino+" no dia "+self.tarefaid.dia.strftime('%d/%m/%y')+" às "+self.tarefaid.horario.strftime('%H horas e %M minutos')+"."
+        if self.origem != 'Check in':
+            origem = Espaco.objects.get(id=int(self.origem))
+        else:
+            origem = self.origem
+        destino = Espaco.objects.get(id=int(self.destino))
+        msg = self.tarefaid.nome+" da sala "+origem.nome+", no edificio "+ origem.edificio.nome\
+        +", á sala "+destino.nome+", no edificio "+ destino.edificio.nome+", no dia "+self.tarefaid.dia.strftime('%d/%m/%y')\
+        +" às "+self.tarefaid.horario.strftime('%H horas e %M minutos')+"."
         return msg
         
 class TarefaAuxiliar(models.Model):
@@ -96,7 +103,7 @@ class TarefaAuxiliar(models.Model):
         db_table = 'TarefaAuxiliar'
     
     def getDescription(self):
-        msg = "Auxiliar na atividade "+self.sessao.atividadeid.nome+"."
+        msg = self.tarefaid.nome+"."
         return msg
 
 class TarefaOutra(models.Model):
