@@ -20,7 +20,7 @@ from django.core.paginator import Paginator
 
 from notificacoes import views
 from django.utils.datetime_safe import date
-
+from utilizadores.views import user_check
 
 
 class consultar_tarefas(SingleTableMixin, FilterView):
@@ -31,6 +31,8 @@ class consultar_tarefas(SingleTableMixin, FilterView):
     paginate_by = 10
 
     def get_queryset(self):
+        user_check_var = user_check(
+            request=request, user_profile=[Colaborador])
         return Tarefa.objects.filter(colab=self.request.user)
     
 
