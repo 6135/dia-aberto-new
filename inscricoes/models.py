@@ -69,7 +69,7 @@ class Inscricao(models.Model):
             inscricao=self).order_by('sessao__dia')
         dias = []
         dias = [sessao.sessao.dia for sessao in inscricao_sessoes]
-        return [{'key': str(dia), 'value': str(dia)} for dia in set(dias)]
+        return [{'key': str(dia), 'value': dia} for dia in set(dias)]
 
     def get_horarios(self, dia):
         inscricao_sessoes = Inscricaosessao.objects.filter(
@@ -95,7 +95,7 @@ class Inscricao(models.Model):
             inscricao_sessoes = Inscricaosessao.objects.filter(
                 inscricao=self, sessao__dia=dia, sessao__horarioid__fim=horario).order_by('sessao__horarioid__inicio')
             for local in inscricao_sessoes:
-                origem.append({'key': local.sessao.atividadeid.espacoid.id,
+                origem.append({'key': local.sessao.atividadeid.espacoid.nome,
                                'value': local.sessao.atividadeid.espacoid.nome})
         return origem
 
@@ -107,16 +107,16 @@ class Inscricao(models.Model):
         if horario == time.strftime(inscricao_sessoes.first().sessao.horarioid.inicio, "%H:%M"):
             for local in inscricao_sessoes:
                 if time.strftime(local.sessao.horarioid.inicio,"%H:%M") == horario:
-                        destino.append({'key': local.sessao.atividadeid.espacoid.id,
+                        destino.append({'key': local.sessao.atividadeid.espacoid.nome,
                                     'value': local.sessao.atividadeid.espacoid.nome})
         else:
             inscricao_sessoes = Inscricaosessao.objects.filter(inscricao=self).filter(
                 sessao__dia=dia, sessao__horarioid__inicio=horario).order_by('sessao__horarioid__inicio')
             for local in inscricao_sessoes:
-                destino.append({'key': local.sessao.atividadeid.espacoid.id,
+                destino.append({'key': local.sessao.atividadeid.espacoid.nome,
                                 'value': local.sessao.atividadeid.espacoid.nome})
         if len(destino) == 0:
-            destino.append({'key': inscricao_sessoes.last().sessao.atividadeid.espacoid.id,
+            destino.append({'key': inscricao_sessoes.last().sessao.atividadeid.espacoid.id.nome,
                             'value': inscricao_sessoes.last().sessao.atividadeid.espacoid.nome})
         return destino
 

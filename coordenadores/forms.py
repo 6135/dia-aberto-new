@@ -2,7 +2,7 @@ from django.forms import *
 from .models import *
 from atividades.models import Atividade,Sessao
 from utilizadores.models import Colaborador,Coordenador
-from configuracao.models import Departamento, Diaaberto, Horario, Espaco
+from configuracao.models import Departamento, Diaaberto, Horario
 from datetime import datetime,timezone,timedelta
 from inscricoes.models import Inscricao,Inscricaosessao
 
@@ -69,13 +69,10 @@ class TarefaAcompanharForm(Form):
     destino = CharField(widget=Select(attrs={'onchange':'colaboradoresSelect()'}))
     colab = CharField(widget=Select(),required=False)
     
-    def save(self,user,id):
+    def save(self,user):
         data = self.cleaned_data
         nome = 'Acompanhar o grupo ' + data.get('grupo')
         grupo = Inscricao.objects.get(id=data.get('grupo'))
-        
-        destino = Espaco.objects.get(id=int(data.get('destino')))
-        
         estado = 'naoConcluida'
         if data.get('colab') == '':
             estado = 'naoAtribuida'
@@ -83,28 +80,20 @@ class TarefaAcompanharForm(Form):
         else:
             colab = Colaborador.objects.get(id = data.get('colab'))
 
-        origem = data.get('origem')
-        
+        tarefa = Tarefa(nome= nome,estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=data.get('horario'))
+        tarefa.save()
+        TarefaAcompanhar(tarefaid=tarefa,origem=data.get('origem'),destino=data.get('destino'),inscricao=grupo).save()   
 
-        if  origem != 'Check in':
-            local = Espaco.objects.filter(id=int(origem))
-            origem = str(local.id)  
-        
-        if id is None:
-            tarefa = Tarefa.objects.create(nome= nome,estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=data.get('horario'))
-            TarefaAcompanhar.objects.create(tarefaid=tarefa,origem=origem,destino=str(destino.id),inscricao=grupo)  
-        else:
-            Tarefa.objects.filter(id=id).update(nome= nome,estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=data.get('horario'))
-            TarefaAcompanhar.objects.filter(tarefaid=id).update(origem=origem,destino=str(destino.id),inscricao=grupo)
-
+def get_dia_choices():
+    return [('','Escolha o dia')]+get_dias()
 
 class TarefaOutraForm(Form):
-    dia = ChoiceField(widget=Select(attrs={'onchange':'sessoesSelect()'}),choices=get_dias())
+    dia = ChoiceField(widget=Select(attrs={'onchange':'sessoesSelect()'}),choices=get_dia_choices())
     horario = TimeField(widget=TimeInput(attrs={'class':'input','type':'time','min':'09:00','max':'18:00','onchange':'colaboradoresSelect();'}))
     descricao = CharField(widget=Textarea(attrs={'class':'textarea'}))
     colab = CharField(widget=Select(),required=False)
 
-    def save(self,user,id=None):
+    def save(self,user):
         data = self.cleaned_data
         nome = self.data.get('descricao')
         estado = 'naoConcluida'
@@ -113,13 +102,10 @@ class TarefaOutraForm(Form):
             colab = None
         else:
             colab = Colaborador.objects.get(id = data.get('colab'))
-        if id is None:
-            tarefa = Tarefa.objects.create(nome= nome[0:18] + '...',estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=data.get('horario'))
-            TarefaOutra(tarefaid=tarefa,descricao=data.get('descricao')).save()
-        elif id:
-            Tarefa.objects.filter(id=id).update(nome= nome[0:18] + '...',estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=data.get('horario'))
-            TarefaOutra.objects.filter(tarefaid=id).update(descricao=data.get('descricao'))
 
+        tarefa = Tarefa(nome= nome[0:18] + '...',estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=data.get('horario'))
+        tarefa.save()
+        TarefaOutra(tarefaid=tarefa,descricao=data.get('descricao')).save()
 
 
 
