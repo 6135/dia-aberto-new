@@ -22,9 +22,11 @@ from django.db.models import F
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
 
-# Verifica se o utilizador que esta logado pertence a pelo menos um dos perfis mencionados 
-# e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
-# Isto faz com que o user que esta logado possa ser qualquer um dos 3 perfeis.
+''' 
+ Verifica se o utilizador que esta logado pertence a pelo menos um dos perfis mencionados 
+ e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
+ Isto faz com que o user que esta logado possa ser qualquer um dos 3 perfis. 
+ '''
 
 def user_check(request, user_profile = None):
     if not request.user.is_authenticated:
@@ -44,7 +46,7 @@ def user_check(request, user_profile = None):
                 }
     raise Exception('Unknown Error!')
 
-# Carregar todos os departamentos para uma determinada faculdade 
+''' Carregar todos os departamentos para uma determinada faculdade '''
 
 def load_departamentos(request):
     faculdadeid = request.GET.get('faculdade')
@@ -53,7 +55,7 @@ def load_departamentos(request):
 
 
 
-# Carregar todos os cursos para uma determinada faculdade 
+''' Carregar todos os cursos para uma determinada faculdade '''
 
 def load_cursos(request):
     faculdadeid = request.GET.get('faculdade')
@@ -61,7 +63,7 @@ def load_cursos(request):
     return render(request, 'utilizadores/curso_dropdown_list_options.html', {'cursos': cursos})
 
 
-# Consultar todos os utilizadores com as funcionalidades dos filtros 
+''' Consultar todos os utilizadores com as funcionalidades dos filtros '''
 
 class consultar_utilizadores(SingleTableMixin, FilterView):
     table_class = UtilizadoresTable
@@ -87,7 +89,7 @@ class consultar_utilizadores(SingleTableMixin, FilterView):
         return context
 
 
-# Escolher tipo de perfil para criar um utilizador
+''' Escolher tipo de perfil para criar um utilizador '''
 
 def escolher_perfil(request):
     if request.user.is_authenticated:    
@@ -113,7 +115,7 @@ def escolher_perfil(request):
 
 
 
-# Criar um novo utilizador que poderá ter de ser validado dependendo do seu tipo
+''' Criar um novo utilizador que poderá ter de ser validado dependendo do seu tipo '''
 
 def criar_utilizador(request, id):
     if request.user.is_authenticated:    
@@ -213,7 +215,7 @@ def criar_utilizador(request, id):
                   context={"form": form, 'perfil': perfil,'u': u,'registo' : tipo,'msg': msg})
 
 
-# Fazer login na plataforma do dia aberto e gestão de acessos à plataforma
+''' Fazer login na plataforma do dia aberto e gestão de acessos à plataforma '''
 
 def login_action(request):
     if request.user.is_authenticated:    
@@ -265,7 +267,7 @@ def login_action(request):
 
 
 
-# Fazer logout na plataforma
+''' Fazer logout na plataforma '''
 
 def logout_action(request):
     logout(request)
@@ -273,7 +275,7 @@ def logout_action(request):
 
 
 
-# Alterar a password do utilizador
+''' Alterar a password do utilizador '''
 
 def alterar_password(request):
     if request.user.is_authenticated:    
@@ -311,7 +313,7 @@ def alterar_password(request):
 
 
 
-# Funcionalidade de rejeitar um utilizador na pagina de consultar utilizadores
+''' Funcionalidade de rejeitar um utilizador na pagina de consultar utilizadores '''
 
 def rejeitar_utilizador(request, id): 
     if request.user.is_authenticated:    
@@ -341,20 +343,18 @@ def rejeitar_utilizador(request, id):
     except User.DoesNotExist:
         return redirect('utilizadores:mensagem',5)
 
-    # except Exception as e: 
-    #     return redirect('utilizadores:mensagem',5)
 
     return redirect('utilizadores:consultar-utilizadores')
 
 
 
-# Alterar o idioma da plataforma
+''' Alterar o idioma da plataforma '''
 
 def alterar_idioma(request):   
      return redirect('utilizadores:mensagem',5)  
 
 
-#Validar um utilizador na pagina consultar utilizadores
+''' Validar um utilizador na pagina consultar utilizadores '''
 
 def validar_utilizador(request, id): 
     if request.user.is_authenticated:    
@@ -384,14 +384,11 @@ def validar_utilizador(request, id):
     except User.DoesNotExist:
         return redirect('utilizadores:mensagem',5)
 
-    # except Exception as e: 
-    #     return redirect('utilizadores:mensagem',5)
-
     return redirect('utilizadores:consultar-utilizadores')
 
 
 
-#Apagar um utilizador na pagina consultar utilizadores
+''' Apagar um utilizador na pagina consultar utilizadores '''
 
 def apagar_utilizador(request, id): 
     if request.user.is_authenticated:    
@@ -458,7 +455,7 @@ def apagar_utilizador(request, id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
-#Apagar a propria conta 
+''' Apagar a própria conta '''
 
 def apagar_proprio_utilizador(request):  
     
@@ -511,7 +508,7 @@ def apagar_proprio_utilizador(request):
     return redirect('utilizadores:mensagem',7)   
 
 
-#Envio de email quando o utilizador é validado na pagina consultar utilizadores
+''' Envio de email quando o utilizador é validado na pagina consultar utilizadores '''
 
 def enviar_email_validar(request,nome,id):  
     msg="A enviar email a "+nome+" a informar que o seu registo foi validado"
@@ -519,7 +516,7 @@ def enviar_email_validar(request,nome,id):
                   template_name="utilizadores/enviar_email_validar.html",
                   context={"msg": msg, "id":id})
 
-#Envio de email quando o utilizador é rejeitado na pagina consultar utilizadores
+''' Envio de email quando o utilizador é rejeitado na pagina consultar utilizadores '''
 
 def enviar_email_rejeitar(request,nome,id):  
     msg="A enviar email a "+nome+" a informar que o seu registo foi rejeitado"
@@ -527,7 +524,7 @@ def enviar_email_rejeitar(request,nome,id):
                   template_name="utilizadores/enviar_email_rejeitar.html",
                   context={"msg": msg, "id":id})
 
-#Funcionalidade de o administrador alterar um utilizador
+''' Funcionalidade de o administrador alterar um utilizador '''
 
 def alterar_utilizador_admin(request,id):
 
@@ -628,7 +625,7 @@ def alterar_utilizador_admin(request,id):
                   context={"form": utilizador_form, 'perfil': perfil,'u': admin,'registo' : tipo,'msg': msg,'id':id})
 
 
-#Funcionalidade de alterar dados de conta
+''' Funcionalidade de alterar dados de conta '''
 
 def alterar_utilizador(request):
     if request.user.is_authenticated:    
@@ -728,7 +725,7 @@ def alterar_utilizador(request):
                   context={"form": utilizador_form, 'perfil': perfil,'u': u,'registo' : tipo,'username':user.username,'msg': msg})
 
 
-#Pagina principal da plataforma
+''' Pagina principal da plataforma '''
 
 def home(request):
     if request.user.is_authenticated:    
@@ -750,7 +747,7 @@ def home(request):
     
     return render(request, "inicio.html",context={ 'u': u})
 
-#Pagina que é mostrada ao utilizador quando faz um registo na plataforma
+''' Página que é mostrada ao utilizador quando faz um registo na plataforma '''
 
 def concluir_registo(request,id):
     if request.user.is_authenticated:    
@@ -778,7 +775,7 @@ def concluir_registo(request,id):
                   context={'participante': participante, 'u': u})
 
 
-#Template de mensagens informativas/erro/sucesso
+''' Template de mensagens informativas/erro/sucesso '''
 
 def mensagem(request, id, *args, **kwargs):
     
@@ -865,8 +862,8 @@ def mensagem(request, id, *args, **kwargs):
 
 
 
-# Funcionalidade de o administrador alterar o perfil de um dado utilizador 
-# Redireciona para uma pagina onde é possivel escolher o perfil que quer alterar
+'''  Funcionalidade de o administrador alterar o perfil de um dado utilizador 
+     Redireciona para uma pagina onde é possível escolher o perfil que quer alterar '''
 
 def mudar_perfil_escolha_admin(request,id):
     if request.user.is_authenticated:    
@@ -897,8 +894,8 @@ def mudar_perfil_escolha_admin(request,id):
     return render(request=request, template_name='utilizadores/mudar_perfil_escolha_admin.html', context={"utilizadores": utilizadores,'u': u,'id':id ,'x':x})
 
 
-# Funcionalidade de o utilizador alterar o seu proprio perfil
-# Redireciona para uma pagina onde é possivel escolher o perfil que quer alterar
+''' Funcionalidade de o utilizador alterar o seu próprio perfil
+    Redireciona para uma pagina onde é possível escolher o perfil que quer alterar '''
 
 def mudar_perfil_escolha(request):
     if request.user.is_authenticated:    
@@ -940,8 +937,9 @@ def mudar_perfil_escolha(request):
 
 
 
-# Funcionalidade de o administrador alterar o perfil de um dado utilizador 
-# Redireciona para uma pagina que contem os dados já existentes do utilizador a alterar sendo que apenas os campos diferentes não estão preenchidos
+''' Funcionalidade de o administrador alterar o perfil de um dado utilizador 
+    Redireciona para uma pagina que contem os dados já existentes do utilizador a alterar sendo 
+    que apenas os campos diferentes não estão preenchidos '''
 
 def mudar_perfil_admin(request,tipo,id):
     if request.user.is_authenticated:    
@@ -1064,8 +1062,8 @@ def mudar_perfil_admin(request,tipo,id):
 
 
 
-# Alterar perfil do proprio utilizador
-# Redireciona para uma pagina que contem os dados já existentes do utilizador a alterar sendo que apenas os campos diferentes não estão preenchidos
+''' Alterar perfil do próprio utilizador
+    Redireciona para uma pagina que contem os dados já existentes do utilizador a alterar sendo que apenas os campos diferentes não estão preenchidos '''
 
 
 def mudar_perfil(request,tipo):       
