@@ -53,7 +53,7 @@
         },
         methods: {
             filterEscolas(input) {
-                this.escolas = this.all_escolas.filter(escola => escola.nome.toLowerCase().includes(input
+                this.escolas = this.all_escolas.filter(escola => escola.toLowerCase().includes(input
                     .toLowerCase())).slice(0, 30);
             },
         }

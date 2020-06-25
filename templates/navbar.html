@@ -309,19 +309,21 @@
 
                 {% endfor %} {% endcomment %}
                 {% for msg in request.user|mensagens %}
-                <div data-tooltip="Click para ver detalhes">
+                <div class="dropdown-item" data-tooltip="Click para ver detalhes">
                   {% if msg.mensagem.lido == True %}
-                  <a href="{% url 'notificacoes:detalhes-mensagem' 0 msg.mensagem.id %}" class="panel-block">
+                  <a href="{% url 'notificacoes:detalhes-mensagem' 0 msg.mensagem.id %}" class="panel-block"
+                    style="flex-direction: column; align-items: stretch;">
                     {% else %}
                     <a href="{% url 'notificacoes:detalhes-mensagem' 0 msg.mensagem.id %}" class="panel-block"
-                      style="background: WhiteSmoke;">
+                      style="background: WhiteSmoke; flex-direction: column; align-items: stretch;">
                       {% endif %}
                       <p>
                         <strong>
                           {{msg.mensagem.titulo}}
                         </strong>
                       </p>
-
+                      <br>
+                      <small>{{msg.mensagem.recetor.full_name}}</small>
                     </a>
                 </div>
                 {%endfor%}
@@ -330,6 +332,7 @@
                   <strong>Não tem mensagens</strong>
                 </div>
                 {% endif %}
+                <hr class="dropdown-divider">
                 <div class="dropdown-item level">
                   <div class="level-left">
                     <span class="icon">

@@ -16,12 +16,15 @@ class Escola(models.Model):
         ordering = ['nome', 'local']
 
     def __str__(self):
-        return self.nome
+        return f"{self.nome} - {self.local}"
 
 
 class Inscricao(models.Model):
     individual = models.BooleanField()
-    nalunos = models.IntegerField()
+    nalunos = models.IntegerField(validators=[
+            validators.MinValueValidator(1),
+            validators.MaxValueValidator(100)
+        ])
     escola = models.ForeignKey(Escola, models.CASCADE)
     ano = models.IntegerField(
         validators=[
@@ -154,7 +157,6 @@ class Inscricaosessao(models.Model):
         validators=[
             validators.MinValueValidator(1),
             validators.MaxValueValidator(300),
-            # TODO: Adicionar validação de nparticipantes <= vagas na sessão
         ]
     )
 
@@ -173,7 +175,6 @@ class Inscricaotransporte(models.Model):
         validators=[
             validators.MinValueValidator(1),
             validators.MaxValueValidator(300),
-            # TODO: Adicionar validação de npassageiros <= vagas no transporte
         ]
     )
 
