@@ -86,6 +86,7 @@ class Inscricao(models.Model):
         return horarios
 
     def get_origem(self, dia, horario):
+        print(horario)
         first_session = Inscricaosessao.objects.filter(
             inscricao=self, sessao__dia=dia).order_by('sessao__horarioid__inicio').first()
         origem = []
@@ -97,6 +98,7 @@ class Inscricao(models.Model):
             for local in inscricao_sessoes:
                 origem.append({'key': local.sessao.atividadeid.espacoid.id,
                                'value': local.sessao.atividadeid.espacoid.nome})
+        print(origem)
         return origem
 
     def get_destino(self, dia, horario):
