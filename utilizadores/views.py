@@ -22,13 +22,14 @@ from django.db.models import F
 from django_tables2 import SingleTableMixin
 from django_filters.views import FilterView
 
-''' 
- Verifica se o utilizador que esta logado pertence a pelo menos um dos perfis mencionados 
- e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
- Isto faz com que o user que esta logado possa ser qualquer um dos 3 perfis. 
- '''
+
 
 def user_check(request, user_profile = None):
+    ''' 
+    Verifica se o utilizador que esta logado pertence a pelo menos um dos perfis mencionados 
+    e.g. user_profile = {Administrador,Coordenador,ProfessorUniversitario}
+    Isto faz com que o user que esta logado possa ser qualquer um dos 3 perfis. 
+    '''
     if not request.user.is_authenticated:
         return {'exists': False, 'render': redirect('utilizadores:login')}
     elif user_profile is not None:
@@ -46,26 +47,29 @@ def user_check(request, user_profile = None):
                 }
     raise Exception('Unknown Error!')
 
-''' Carregar todos os departamentos para uma determinada faculdade '''
+
 
 def load_departamentos(request):
+    ''' Carregar todos os departamentos para uma determinada faculdade '''
     faculdadeid = request.GET.get('faculdade')
     departamentos = Departamento.objects.filter(unidadeorganicaid=faculdadeid).order_by('nome')
     return render(request, 'utilizadores/departamento_dropdown_list_options.html', {'departamentos': departamentos})
 
 
 
-''' Carregar todos os cursos para uma determinada faculdade '''
+
 
 def load_cursos(request):
+    ''' Carregar todos os cursos para uma determinada faculdade '''
     faculdadeid = request.GET.get('faculdade')
     cursos = Curso.objects.filter(unidadeorganicaid=faculdadeid).order_by('nome')
     return render(request, 'utilizadores/curso_dropdown_list_options.html', {'cursos': cursos})
 
 
-''' Consultar todos os utilizadores com as funcionalidades dos filtros '''
+
 
 class consultar_utilizadores(SingleTableMixin, FilterView):
+    ''' Consultar todos os utilizadores com as funcionalidades dos filtros '''
     table_class = UtilizadoresTable
     template_name = 'utilizadores/consultar_utilizadores.html'
     filterset_class = UtilizadoresFilter
@@ -89,9 +93,10 @@ class consultar_utilizadores(SingleTableMixin, FilterView):
         return context
 
 
-''' Escolher tipo de perfil para criar um utilizador '''
+
 
 def escolher_perfil(request):
+    ''' Escolher tipo de perfil para criar um utilizador '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -115,9 +120,10 @@ def escolher_perfil(request):
 
 
 
-''' Criar um novo utilizador que poderá ter de ser validado dependendo do seu tipo '''
+
 
 def criar_utilizador(request, id):
+    ''' Criar um novo utilizador que poderá ter de ser validado dependendo do seu tipo '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -215,9 +221,10 @@ def criar_utilizador(request, id):
                   context={"form": form, 'perfil': perfil,'u': u,'registo' : tipo,'msg': msg})
 
 
-''' Fazer login na plataforma do dia aberto e gestão de acessos à plataforma '''
+
 
 def login_action(request):
+    ''' Fazer login na plataforma do dia aberto e gestão de acessos à plataforma '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -267,17 +274,19 @@ def login_action(request):
 
 
 
-''' Fazer logout na plataforma '''
+
 
 def logout_action(request):
+    ''' Fazer logout na plataforma '''
     logout(request)
     return redirect('utilizadores:mensagem',2)
 
 
 
-''' Alterar a password do utilizador '''
+
 
 def alterar_password(request):
+    ''' Alterar a password do utilizador '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -313,9 +322,10 @@ def alterar_password(request):
 
 
 
-''' Funcionalidade de rejeitar um utilizador na pagina de consultar utilizadores '''
+
 
 def rejeitar_utilizador(request, id): 
+    ''' Funcionalidade de rejeitar um utilizador na pagina de consultar utilizadores '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Administrador").exists():
@@ -348,15 +358,17 @@ def rejeitar_utilizador(request, id):
 
 
 
-''' Alterar o idioma da plataforma '''
 
-def alterar_idioma(request):   
+
+def alterar_idioma(request):  
+    ''' Alterar o idioma da plataforma ''' 
      return redirect('utilizadores:mensagem',5)  
 
 
-''' Validar um utilizador na pagina consultar utilizadores '''
+
 
 def validar_utilizador(request, id): 
+    ''' Validar um utilizador na pagina consultar utilizadores '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Administrador").exists():
@@ -388,9 +400,10 @@ def validar_utilizador(request, id):
 
 
 
-''' Apagar um utilizador na pagina consultar utilizadores '''
+
 
 def apagar_utilizador(request, id): 
+    ''' Apagar um utilizador na pagina consultar utilizadores '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Administrador").exists():
@@ -455,10 +468,10 @@ def apagar_utilizador(request, id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 
-''' Apagar a própria conta '''
+
 
 def apagar_proprio_utilizador(request):  
-    
+    ''' Apagar a própria conta '''
     if request.user.is_authenticated:
         id=request.user.id  
         user = get_user(request)
@@ -508,26 +521,28 @@ def apagar_proprio_utilizador(request):
     return redirect('utilizadores:mensagem',7)   
 
 
-''' Envio de email quando o utilizador é validado na pagina consultar utilizadores '''
 
-def enviar_email_validar(request,nome,id):  
+
+def enviar_email_validar(request,nome,id):
+    ''' Envio de email quando o utilizador é validado na pagina consultar utilizadores '''  
     msg="A enviar email a "+nome+" a informar que o seu registo foi validado"
     return render(request=request,
                   template_name="utilizadores/enviar_email_validar.html",
                   context={"msg": msg, "id":id})
 
-''' Envio de email quando o utilizador é rejeitado na pagina consultar utilizadores '''
+
 
 def enviar_email_rejeitar(request,nome,id):  
+    ''' Envio de email quando o utilizador é rejeitado na pagina consultar utilizadores '''
     msg="A enviar email a "+nome+" a informar que o seu registo foi rejeitado"
     return render(request=request,
                   template_name="utilizadores/enviar_email_rejeitar.html",
                   context={"msg": msg, "id":id})
 
-''' Funcionalidade de o administrador alterar um utilizador '''
+
 
 def alterar_utilizador_admin(request,id):
-
+    ''' Funcionalidade de o administrador alterar um utilizador '''
     if request.user.is_authenticated:    
         utilizador_atual = get_user(request)
         if utilizador_atual.groups.filter(name = "Administrador").exists():
@@ -625,9 +640,10 @@ def alterar_utilizador_admin(request,id):
                   context={"form": utilizador_form, 'perfil': perfil,'u': admin,'registo' : tipo,'msg': msg,'id':id})
 
 
-''' Funcionalidade de alterar dados de conta '''
+
 
 def alterar_utilizador(request):
+    ''' Funcionalidade de alterar dados de conta '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -725,9 +741,10 @@ def alterar_utilizador(request):
                   context={"form": utilizador_form, 'perfil': perfil,'u': u,'registo' : tipo,'username':user.username,'msg': msg})
 
 
-''' Pagina principal da plataforma '''
+
 
 def home(request):
+    ''' Pagina principal da plataforma '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -747,9 +764,10 @@ def home(request):
     
     return render(request, "inicio.html",context={ 'u': u})
 
-''' Página que é mostrada ao utilizador quando faz um registo na plataforma '''
+
 
 def concluir_registo(request,id):
+    ''' Página que é mostrada ao utilizador quando faz um registo na plataforma '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -775,10 +793,10 @@ def concluir_registo(request,id):
                   context={'participante': participante, 'u': u})
 
 
-''' Template de mensagens informativas/erro/sucesso '''
+
 
 def mensagem(request, id, *args, **kwargs):
-    
+    ''' Template de mensagens informativas/erro/sucesso '''
 
     if request.user.is_authenticated:    
         user = get_user(request)
@@ -862,10 +880,11 @@ def mensagem(request, id, *args, **kwargs):
 
 
 
-'''  Funcionalidade de o administrador alterar o perfil de um dado utilizador 
-     Redireciona para uma pagina onde é possível escolher o perfil que quer alterar '''
+
 
 def mudar_perfil_escolha_admin(request,id):
+    '''  Funcionalidade de o administrador alterar o perfil de um dado utilizador 
+     Redireciona para uma pagina onde é possível escolher o perfil que quer alterar '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Administrador").exists():
@@ -894,10 +913,11 @@ def mudar_perfil_escolha_admin(request,id):
     return render(request=request, template_name='utilizadores/mudar_perfil_escolha_admin.html', context={"utilizadores": utilizadores,'u': u,'id':id ,'x':x})
 
 
-''' Funcionalidade de o utilizador alterar o seu próprio perfil
-    Redireciona para uma pagina onde é possível escolher o perfil que quer alterar '''
+
 
 def mudar_perfil_escolha(request):
+    ''' Funcionalidade de o utilizador alterar o seu próprio perfil
+    Redireciona para uma pagina onde é possível escolher o perfil que quer alterar '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Coordenador").exists():
@@ -937,11 +957,12 @@ def mudar_perfil_escolha(request):
 
 
 
-''' Funcionalidade de o administrador alterar o perfil de um dado utilizador 
-    Redireciona para uma pagina que contem os dados já existentes do utilizador a alterar sendo 
-    que apenas os campos diferentes não estão preenchidos '''
+
 
 def mudar_perfil_admin(request,tipo,id):
+    ''' Funcionalidade de o administrador alterar o perfil de um dado utilizador 
+    Redireciona para uma pagina que contem os dados já existentes do utilizador a alterar sendo 
+    que apenas os campos diferentes não estão preenchidos '''
     if request.user.is_authenticated:    
         user = get_user(request)
         if user.groups.filter(name = "Administrador").exists():
@@ -1062,11 +1083,12 @@ def mudar_perfil_admin(request,tipo,id):
 
 
 
-''' Alterar perfil do próprio utilizador
+
+
+def mudar_perfil(request,tipo):  
+    ''' Alterar perfil do próprio utilizador
     Redireciona para uma pagina que contem os dados já existentes do utilizador a alterar sendo que apenas os campos diferentes não estão preenchidos '''
-
-
-def mudar_perfil(request,tipo):       
+     
     if request.user.is_authenticated:    
         user = get_user(request)
         id=user.id
