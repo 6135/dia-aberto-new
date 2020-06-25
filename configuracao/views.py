@@ -362,7 +362,7 @@ def criarTransporte(request, id = None):
 
 	if id is not None:
 
-		transport_by_default = Transportehorario.objects.get(id=id).transporte
+		transport_by_default = Transporte.objects.get(id=id)
 		transport_universitario_default = Transporteuniversitario(transporte=transport_by_default)
 		horario_form_set = HorarioFormSet(queryset=Transportehorario.objects.filter(transporte=transport_by_default))
 		form_transport = transporteForm(instance=transport_by_default)

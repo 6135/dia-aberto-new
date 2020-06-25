@@ -48,8 +48,8 @@ def create_curso(uo):
 
 def create_horario(inicio=time(11,0),fim=time(11,30)):
     return Horario.objects.create(
-        inicio=inicio,
-        fim=fim
+        inicio=time(inicio),
+        fim=time(fim)
     )
 
 def create_menu(campus,horario,diaaberto):
@@ -68,42 +68,7 @@ def create_prato(menu):
         menuid=menu
     )
 
-def create_edificio(campus):
-    return Edificio.objects.create(
-        nome = 'C1',
-        campus = campus,
-        image = 'images/edifi/gambelas.jpg'
-    )
-
-def create_sala(edificio):
-    return Espaco.objects.create(
-        nome = '2.13',
-        edificio = edificio,
-        andar = '0',
-        descricao = 'Uma sala normal'
-    )
-
-def create_transporte(diaaberto):
-    transporte =  Transporte.objects.create(
-        identificador = '01-00',
-        diaaberto = diaaberto,
-        dia = date(1970,1,1)
-    )
-    return  Transportehorario.objects.create(
-        origem = 'Penha',
-        chegada = 'Terminal',
-        horaPartida = time(11,0),
-        horaChegada = time(11,30),
-        transporte = transporte
-    )
-def create_transporteU(transporte):
-    return Transporteuniversitario.objects.create(
-        transporte = transporte,
-        capacidade = 20
-    )
-
 class TestModels(TestCase):
-
 
     def setUp(self):
         self.diaaberto = create_open_day()
@@ -111,34 +76,20 @@ class TestModels(TestCase):
         self.uo = create_uo(self.campus)
         self.dep = create_dep(self.uo)
         self.curso = create_curso(self.uo)
-        self.lunchTime = create_horario(
-            inicio=time(12,0),
-            fim=time(14,0)
-        )
+        self.lunchTime = create_horario(inicio=time(12,0),fim=time(14,0))
         self.menu = create_menu(
             campus=self.campus,
             horario=self.lunchTime,
             diaaberto=self.diaaberto
         )
-        self.prato = create_prato(menu=self.menu)
-        self.edificio = create_edificio(self.campus)
-        self.espaco = create_sala(self.edificio)
-        self.transporteH = create_transporte(self.diaaberto)
-        self.transporte = self.transporteH.transporte
-        self.transporteU = create_transporteU(self.transporte)
 
     def tearDown(self):
         self.diaaberto.delete()
         self.dep.delete()
         self.curso.delete()
         self.uo.delete()
-        self.prato.delete()
-        self.menu.delete()
-        self.lunchTime.delete()
-        self.espaco.detele()
-        self.edificio.delete()
         self.campus.delete()
-        self.transporte.delete()
+        
 
     def test_dia_aberto(self):
         diaaberto = self.diaaberto
@@ -197,8 +148,8 @@ class TestModels(TestCase):
     def test_horario(self):
         horario = self.lunchTime
 
-        self.assertEquals(horario.inicio,time(12,0))
-        self.assertEquals(horario.fim,time(14,0))
+        self.assertEquals(horario.inicio,time('12:00'))
+        self.assertEquals(horario.fim,time('14:00'))
         self.assertEquals(str(horario))
 
     def test_menu(self):
@@ -207,29 +158,10 @@ class TestModels(TestCase):
         self.assertEquals(self.lunchTime, menu.horarioid)
         self.assertEquals(self.campus, menu.campus)
         self.assertEquals(self.diaaberto, menu.diaaberto)
-        self.assertEquals(date(1970,1,1),menu.dia)
+        self.assertEquals(self.dia, date(1970,1,1))
 
         # methods
 
         self.assertEquals(menu.pratos_().first().id, \
             Prato.objects.filter(menuid=menu).id)
-    
-    def test_prato(self):
-        prato = self.prato
-
-        self.assertEquals(prato.prato, str(prato))
-        self.assertEquals(prato.tipo,'Carne')
-        self.assertEquals(prato.nrpratosdisponiveis, 20)
-        self.assertEquals(prato.menuid.id, self.menu.id)
-
-    def test_edificio(self):
-        edifi = self.edificio
-
-        self.assertEquals(edifi.nome, 'C1')
-        self.assertEquals(edifi.campus, self.campus)
-
-        #methods
-
-        self.assertEquals(str(edifi),'<a href=\"/configuracao/imagens/edificio/' + str(edifi.id) + '\">' + edifi.nome + '</a>')
-        self.assertEquals(edifi.salas_().first().id, self.espaco.id)
-        self.assertEquals(edifi.count_salas,1)
+        
