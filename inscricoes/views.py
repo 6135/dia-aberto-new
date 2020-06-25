@@ -116,7 +116,7 @@ class CriarInscricao(SessionWizardView):
         # Necessário para algumas validações especiais de backend, como verificar o número de alunos
         # inscritos para verificar inscritos nos almoços e nas sessões.
         update_post(self.steps.current, self.request.POST, self)
-        print(self.request.POST)
+        # print(self.request.POST)
         return super(CriarInscricao, self).post(*args, **kwargs)
 
     def done(self, form_list, form_dict, **kwargs):
@@ -166,18 +166,16 @@ class ConsultarInscricao(View):
         erro_permissoes = nao_tem_permissoes(request, inscricao)
         if erro_permissoes:
             return erro_permissoes
-        context = {}
-        inscricao = get_object_or_404(Inscricao, pk=pk)
         if user_check(request, [Participante])['exists'] and datetime.now(pytz.UTC) > inscricao.diaaberto.datainscricaoatividadesfim:
             m = f"Não pode alterar a inscrição fora do período: {inscricao.diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {inscricao.diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
             return render(request=request, template_name="mensagem.html", context={'m': m, 'tipo': 'error', 'continuar': 'on'})
         form = init_form(self.step_names[step], inscricao)
-        context.update({'alterar': alterar,
-                        'pk': pk,
-                        'step': step,
-                        'individual': inscricao.individual,
-                        'form': form,
-                        })
+        context = {'alterar': alterar,
+                   'pk': pk,
+                   'step': step,
+                   'individual': inscricao.individual,
+                   'form': form,
+                   }
         update_context(context, self.step_names[step], inscricao=inscricao)
         return render(request, f"{self.template_prefix}_{self.step_names[step]}.html", context)
 
