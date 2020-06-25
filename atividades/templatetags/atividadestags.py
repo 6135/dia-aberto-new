@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 import json
 from django.urls.base import reverse
 from django.utils.safestring import mark_safe
+from atividades.models import Sessao
 
 register = template.Library()
 
@@ -49,3 +50,8 @@ def material_none(value):
         return "N/A"
     else:
         return value
+
+@register.filter
+def inscritos(value):
+    inscritos= value.atividadeid.participantesmaximo- value.vagas
+    return inscritos

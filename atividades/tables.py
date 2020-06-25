@@ -88,7 +88,15 @@ class ProfAtividadesTable(tables.Table):
     def render_coordenador(self,record):
         return format_html(record.get_coord().full_name)
 
+
+
     def render_acoes(self,record):
+        sessoes= Sessao.objects.filter(atividadeid=record)
+        for sessao in sessoes:
+            if sessao.vagas != record.participantesmaximo:
+                return format_html(f"""
+                <div></div>
+                 """)
         return format_html(f"""
             <div>
                     <a id='edit' href="{reverse('atividades:alterarAtividade', kwargs={'id':record.pk})}">

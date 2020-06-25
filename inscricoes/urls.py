@@ -8,7 +8,7 @@ app_name = 'inscricoes'
 
 urlpatterns = [
     path('api/atividades', views.AtividadesAPIView.as_view(), name="api-atividades"),
-    path('criar', views.InscricaoWizard.as_view(),
+    path('criar', views.CriarInscricao.as_view(),
          name='criar-inscricao'),
     path('<int:pk>/pdf', views.InscricaoPDF,
          name='inscricao-pdf'),
