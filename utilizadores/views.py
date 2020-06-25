@@ -140,7 +140,6 @@ def criar_utilizador(request, id):
             u=""     
     else:
         u=""
-    
     msg=False
     if request.method == "POST":
         tipo = id
@@ -225,20 +224,8 @@ def criar_utilizador(request, id):
 
 def login_action(request):
     ''' Fazer login na plataforma do dia aberto e gestão de acessos à plataforma '''
-    if request.user.is_authenticated:    
-        user = get_user(request)
-        if user.groups.filter(name = "Coordenador").exists():
-            u = "Coordenador"
-        elif user.groups.filter(name = "Administrador").exists():
-            u = "Administrador"
-        elif user.groups.filter(name = "ProfessorUniversitario").exists():
-            u = "ProfessorUniversitario"
-        elif user.groups.filter(name = "Colaborador").exists():
-            u = "Colaborador"
-        elif user.groups.filter(name = "Participante").exists():
-            u = "Participante" 
-        else:
-            u=""     
+    if request.user.is_authenticated: 
+        return redirect("utilizadores:logout")   
     else:
         u=""
     msg=False
@@ -302,7 +289,7 @@ def alterar_password(request):
         else:
             u=""     
     else:
-        u=""
+        return redirect('utilizadores:mensagem',5)
     msg=False
     error="" 
     if request.method == 'POST':
@@ -526,6 +513,8 @@ def apagar_proprio_utilizador(request):
 def enviar_email_validar(request,nome,id):
     ''' Envio de email quando o utilizador é validado na pagina consultar utilizadores '''  
     msg="A enviar email a "+nome+" a informar que o seu registo foi validado"
+    user_check_var = user_check(
+        request=request, user_profile=[Coordenador, Administrador])
     return render(request=request,
                   template_name="utilizadores/enviar_email_validar.html",
                   context={"msg": msg, "id":id})
@@ -535,6 +524,8 @@ def enviar_email_validar(request,nome,id):
 def enviar_email_rejeitar(request,nome,id):  
     ''' Envio de email quando o utilizador é rejeitado na pagina consultar utilizadores '''
     msg="A enviar email a "+nome+" a informar que o seu registo foi rejeitado"
+    user_check_var = user_check(
+        request=request, user_profile=[Coordenador, Administrador])
     return render(request=request,
                   template_name="utilizadores/enviar_email_rejeitar.html",
                   context={"msg": msg, "id":id})
@@ -813,7 +804,7 @@ def mensagem(request, id, *args, **kwargs):
         else:
             u=""     
     else:
-        u=""
+        id = 5
 
 
     if id == 400 or id == 500:
@@ -1087,7 +1078,8 @@ def mudar_perfil_admin(request,tipo,id):
 
 def mudar_perfil(request,tipo):  
     ''' Alterar perfil do próprio utilizador
-    Redireciona para uma pagina que contem os dados já existentes do utilizador a alterar sendo que apenas os campos diferentes não estão preenchidos '''
+    Redireciona para uma pagina que contem os dados já existentes do utilizador a alterar
+    sendo que apenas os campos diferentes não estão preenchidos '''
      
     if request.user.is_authenticated:    
         user = get_user(request)
@@ -1105,7 +1097,7 @@ def mudar_perfil(request,tipo):
         else:
             u=""     
     else:
-        u=""
+        return redirect('utilizadores:mensagem',5) 
 
     if tipo == 1:
         form = ParticipanteAlterarPerfilForm()
