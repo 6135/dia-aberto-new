@@ -188,7 +188,7 @@
     <div class="column is-8 is-offset-2">
       <div class="level">
       <div class="level-left">
-         <button  class="button is-medium is-outlined" name="anterior" value="anterior">
+         <button  class="button is-outlined" name="anterior" value="anterior">
             <span class="icon is-medium">
               <i class="mdi fa fa-arrow-left mdi-36px"></i>
             </span>
@@ -197,14 +197,14 @@
       </div>
       <div class="level-right">
       {% if check > 0 %}
-          <button id="concluir"  class="button is-medium is-success is-outlined is-link" name="proximo" value="proximo">
+          <button id="concluir"  class="button is-large is-success is-outlined is-link" name="proximo" value="proximo">
             <span>Proximo</span>
             <span class="icon is-medium">
                   <i class="mdi mdi-forward mdi-36px"></i>
                 </span>
           </button>
           {% else %}
-            <a id="concluir" onclick="alert.warning('A Atividade não pode ser criada sem sessoes !','{% url 'atividades:minhasAtividades' %}')" class="button is-medium is-success is-outlined is-link" name="save" value="Save">
+            <a id="concluir" onclick="alert.warning('A Atividade não pode ser criada sem sessoes !','{% url 'atividades:minhasAtividades' %}')" class="button is-large is-success is-outlined is-link" name="save" value="Save">
             <span>Proximo</span>
             <span class="icon is-medium">
               <i class="mdi mdi-forward mdi-36px"></i>

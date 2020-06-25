@@ -24,7 +24,10 @@ class Tarefa(models.Model):
            return "tarefaAcompanhar"
         elif TarefaAuxiliar.objects.filter(tarefaid=self.id):
             return "tarefaAuxiliar"
-        else: return "tarefaOutra"
+        elif TarefaOutra.objects.filter(tarefaid=self.id): 
+            return "tarefaOutra" 
+        return None 
+
 
     @property
     def tipo_frontend(self):
@@ -32,7 +35,8 @@ class Tarefa(models.Model):
            return "Acompanhar"
         elif TarefaAuxiliar.objects.filter(tarefaid=self.id):
             return "Auxiliar"
-        else: return "Outra"  
+        elif TarefaOutra.objects.filter(tarefaid=self.id): 
+            return "Outra"  
 
     class Meta:
         db_table = 'Tarefa'
