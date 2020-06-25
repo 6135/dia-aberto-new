@@ -31,8 +31,9 @@ class consultar_tarefas(SingleTableMixin, FilterView):
     paginate_by = 10
 
     def get_queryset(self):
-        user_check_var = user_check(
-            request=request, user_profile=[Colaborador])
+        user_check_var = user_check(request=request, user_profile=[Colaborador])
+        if user_check_var.get('exists') == False: 
+            return user_check_var.get('render')
         return Tarefa.objects.filter(colab=self.request.user)
     
 
