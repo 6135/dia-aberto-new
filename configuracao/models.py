@@ -10,7 +10,7 @@ from django.core import validators
 from datetime import datetime,timedelta, timezone
 import time
 from time import mktime
-from datetime import datetime,timedelta, timezone
+from datetime import datetime,timedelta, timezone, time as datetime_time
 from utilizadores.models import Coordenador
 from django.shortcuts import redirect
 from django.utils.safestring import mark_safe
@@ -61,7 +61,7 @@ class Transportehorario(models.Model):
 
     @property
     def get_trip_time(self):
-        return time.strftime(self.horaPartida, "%H:%M") + ' - ' + time.strftime(self.horaChegada, "%H:%M")
+        return datetime_time.strftime(self.horaPartida, "%H:%M") + ' - ' + datetime_time.strftime(self.horaChegada, "%H:%M")
     
     def trip(self):
         return str(self.origem) + ' - ' + str(self.chegada)
