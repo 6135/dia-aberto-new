@@ -79,7 +79,7 @@ def diasAtividade(request):
     atividade = request.POST.get('atividadeid')
     if request.method == 'POST':
         if 'tarefa' in request.POST and request.POST['tarefa']!=''\
-        and TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa'])).sessao.atividadeid.id == atividade.id:
+        and TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa'])).sessao.atividadeid.id == Atividade.objects.get(id=atividade).id:
             tarefa = TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa']))
             default={
                 'key': str(tarefa.tarefaid.dia),
