@@ -16,6 +16,7 @@ from inscricoes.forms import AlmocoForm, InscricaoForm, ResponsavelForm, Sessoes
 import json
 from configuracao.models import Campus, Departamento, Diaaberto, Menu, Prato, Unidadeorganica
 from django.utils.datetime_safe import datetime
+import pytz
 
 
 def link_callback(uri, rel):
@@ -251,7 +252,6 @@ def update_context(context, step, wizard=None, inscricao=None):
             'nresponsaveis': 1,
         })
     elif step == 'sessoes':
-        print()
         context.update({
             'campus': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Campus.objects.all()))),
             'unidades_organicas': json.dumps(list(map(lambda x: {'id': x.id, 'nome': x.nome}, Unidadeorganica.objects.all()))),
@@ -275,10 +275,11 @@ def update_post(step, POST, wizard=None, inscricao=None):
     """
     mutable = POST._mutable
     POST._mutable = True
-    prefix = f"{POST.get('inscricao_wizard-current_step', step)}-" if wizard else ''
-    if step == 'escola' or wizard and POST.get('inscricao_wizard-current_step', '') == 'escola':
+    prefix = f"{step}-" if wizard else ''
+    if step == 'escola':
         try:
-            dia = datetime.strptime(POST[f'{prefix}dia'], "%d/%m/%Y")
+            dia = pytz.utc.localize(datetime.strptime(
+                POST[f'{prefix}dia'], "%d/%m/%Y"))
             diaaberto = Diaaberto.objects.filter(
                 datadiaabertoinicio__lte=dia.replace(hour=23), datadiaabertofim__gte=dia.replace(hour=0)).first()
             if diaaberto:
@@ -287,13 +288,13 @@ def update_post(step, POST, wizard=None, inscricao=None):
             pass
         POST[f'{prefix}individual'] = wizard.get_cleaned_data_for_step('info')[
             'individual'] if wizard else inscricao.individual
-    elif step == 'almoco' or wizard and POST.get('inscricao_wizard-current_step', '') == 'almoco':
+    elif step == 'almoco':
         POST[f'{prefix}nalunos'] = wizard.get_cleaned_data_for_step('escola')[
             'nalunos'] if wizard else inscricao.nalunos
         POST[f'{prefix}nresponsaveis'] = 1
         POST[f'{prefix}individual'] = wizard.get_cleaned_data_for_step('info')[
             'individual'] if wizard else inscricao.individual
-    elif step == 'sessoes' or wizard and POST.get('inscricao_wizard-current_step', '') == 'sessoes':
+    elif step == 'sessoes':
         POST[f'{prefix}nalunos'] = wizard.get_cleaned_data_for_step('escola')[
             'nalunos'] if wizard else inscricao.nalunos
         POST[f'{prefix}dia'] = wizard.get_cleaned_data_for_step('escola')[

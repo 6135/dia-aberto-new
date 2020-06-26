@@ -72,14 +72,21 @@ def create_Atividade_0():
 def create_Horario_0():
     return Horario.objects.get_or_create(
         inicio=time(11, 0),
-        fim=time(11, 30)
+        fim=time(11, 30),
     )[0]
 
 
 def create_Horario_1():
     return Horario.objects.get_or_create(
-        inicio=time(14, 0),
-        fim=time(15, 30)
+        inicio=time(11, 10),
+        fim=time(12, 0),
+    )[0]
+
+
+def create_Horario_2():
+    return Horario.objects.get_or_create(
+        inicio=time(8, 0),
+        fim=time(9, 30),
     )[0]
 
 
@@ -88,7 +95,7 @@ def create_Sessao_0():
         ninscritos=0,
         vagas=35,
         atividadeid=create_Atividade_0(),
-        dia=date(1970, 1, 1),
+        dia=date(2021, 5, 29),
         horarioid=create_Horario_0(),
     )[0]
 
@@ -98,9 +105,20 @@ def create_Sessao_1():
         ninscritos=0,
         vagas=25,
         atividadeid=create_Atividade_0(),
-        dia=date(1970, 1, 1),
+        dia=date(2021, 5, 29),
         horarioid=create_Horario_1(),
     )[0]
+
+
+def create_Sessao_2():
+    return Sessao.objects.get_or_create(
+        ninscritos=0,
+        vagas=30,
+        atividadeid=create_Atividade_0(),
+        dia=date(2021, 5, 29),
+        horarioid=create_Horario_2(),
+    )[0]
+
 
 def create_Transporte_0():
     return Transporte.objects.get_or_create(
@@ -108,6 +126,7 @@ def create_Transporte_0():
         diaaberto=create_Diaaberto_0(),
         dia=date(1970, 1, 1),
     )[0]
+
 
 def create_Transportehorario_0():
     return Transportehorario.objects.get_or_create(
