@@ -24,14 +24,14 @@ Notificacao = load_model('notificacoes', 'Notificacao')
 class NotificacaoTestEnviarMensagens(TestCase):
     ''' Testes unitarios para a componente notificacoes - Testes enviar mensagens '''
     def setUp(self):
-        self.user_recipient = Utilizador(username="andreeee1", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt",contacto="+351967321393",valido="True")
-        self.user_emissor = Utilizador(username="andreeeeeeee1", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt",contacto="+351967321393",valido="True")
+        self.user_recipient = Utilizador(username="andreeee1", password="andre123456", email="test_notificacoes@test_notificacoes.pt",contacto="+351967321393",valido="True")
+        self.user_emissor = Utilizador(username="andreeeeeeee1", password="andre123456", email="test_notificacoes@test_notificacoes.pt",contacto="+351967321393",valido="True")
         self.user_recipient.save()
         self.user_emissor.save()
 
 
 
-    def teste_criar_mensagem(self):
+    def test_criar_mensagem(self):
 
         info = InformacaoMensagem(data=timezone.now() + timedelta(days=5), pendente=True, titulo = "teste",
                               descricao = "teste", emissor = self.user_emissor , recetor = self.user_recipient, tipo = "register" , lido = False)
@@ -45,14 +45,14 @@ class NotificacaoTestInformacaoNotificacao(TestCase):
     ''' Testes unitarios para a componente notificacoes - Testes à tabela InformacaoNotificacao para notificações que demorem mais de 5 dias a ser recebidas.
     Este tipo de notificações são recebidas apenas se ainda fizer sentido o seu envio '''
     def setUp(self):
-        self.user_recipient = Utilizador(username="andreeee", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt",contacto="+351967321393",valido="True")
-        self.user_emissor = Utilizador(username="andreeeeeeee", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt",contacto="+351967321393",valido="True")
+        self.user_recipient = Utilizador(username="andreeee", password="andre123456", email="test_notificacoes@test_notificacoes.pt",contacto="+351967321393",valido="True")
+        self.user_emissor = Utilizador(username="andreeeeeeee", password="andre123456", email="test_notificacoes@test_notificacoes.pt",contacto="+351967321393",valido="True")
         self.user_recipient.save()
         self.user_emissor.save()
 
 
 
-    def teste_criar_notificacao_informacao_temporaria(self):
+    def test_criar_notificacao_informacao_temporaria(self):
 
         info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = "teste",
                               descricao = "teste", emissor = self.user_emissor , recetor = self.user_recipient, tipo = "register" , lido = False)
@@ -60,7 +60,7 @@ class NotificacaoTestInformacaoNotificacao(TestCase):
         self.assertEqual("teste", info.descricao)
 
 
-    def teste_nao_enviar_notificacao_informacao_temporaria(self):
+    def test_nao_enviar_notificacao_informacao_temporaria(self):
 
         info = InformacaoNotificacao(data=timezone.now() + timedelta(days=5), pendente=True, titulo = "teste",
                               descricao = "teste", emissor = self.user_emissor , recetor = self.user_recipient, tipo = "register" , lido = False)
@@ -68,7 +68,7 @@ class NotificacaoTestInformacaoNotificacao(TestCase):
         self.assertEqual(False, timezone.now() >= info.data)
         
 
-    def teste_enviar_notificacao_informacao_temporaria(self):
+    def test_enviar_notificacao_informacao_temporaria(self):
 
         info = InformacaoNotificacao(data=timezone.now() , pendente=True, titulo = "teste",
                               descricao = "teste", emissor = self.user_emissor , recetor = self.user_recipient, tipo = "register" , lido = False)
@@ -80,9 +80,9 @@ class NotificacaoTestGrupos(TestCase):
     ''' Testes unitarios para a componente notificacoes - Grupos e listas de utilizadores '''
     def setUp(self):
         self.nr_mensagem = 10
-        self.other_user = User.objects.create(username="andre1", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt")
-        self.emissor = User.objects.create(username="andre2", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt")
-        self.recetor = User.objects.create(username="andre3", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt")
+        self.other_user = User.objects.create(username="andre1", password="andre123456", email="test_notificacoes@test_notificacoes.pt")
+        self.emissor = User.objects.create(username="andre2", password="andre123456", email="test_notificacoes@test_notificacoes.pt")
+        self.recetor = User.objects.create(username="andre3", password="andre123456", email="test_notificacoes@test_notificacoes.pt")
         self.to_group = Group.objects.create(name="grupo_teste")
         self.recetor_list = User.objects.all()
         self.to_group.user_set.add(self.recetor)
@@ -99,7 +99,7 @@ class NotificacaoTestGrupos(TestCase):
 
 
 
-    def teste_notificar_enviar(self):
+    def test_notificar_enviar(self):
         results = notify.send(self.emissor, recipient=self.recetor, verb='mensagem', action_object=self.emissor)
         for result in results:
             if result[0] is notify_handler:
@@ -109,7 +109,7 @@ class NotificacaoTestGrupos(TestCase):
 
 
 
-    def teste_notificar_enviar_grupo(self):  
+    def test_notificar_enviar_grupo(self):  
         results = notify.send(self.emissor, recipient=self.to_group, verb='mensagem', action_object=self.emissor)
         for result in results:
             if result[0] is notify_handler:
@@ -119,7 +119,7 @@ class NotificacaoTestGrupos(TestCase):
 
 
 
-    def teste_unread(self):
+    def test_unread(self):
         self.assertEqual(Notificacao.objects.unread().count(), self.nr_mensagem)
         notification = Notificacao.objects.filter(recipient=self.recetor).first()
         notification.mark_as_read()
@@ -130,7 +130,7 @@ class NotificacaoTestGrupos(TestCase):
 
 
 
-    def teste_read(self):
+    def test_read(self):
         self.assertEqual(Notificacao.objects.unread().count(), self.nr_mensagem)
         notification = Notificacao.objects.filter(recipient=self.recetor).first()
         notification.mark_as_read()
@@ -141,7 +141,7 @@ class NotificacaoTestGrupos(TestCase):
 
 
 
-    def teste_marcar_como_lido(self):
+    def test_marcar_como_lido(self):
         self.assertEqual(Notificacao.objects.unread().count(), self.nr_mensagem)
         Notificacao.objects.filter(recipient=self.recetor).mark_all_as_read()
         self.assertEqual(self.recetor.notifications.unread().count(), 0)
@@ -152,7 +152,7 @@ class NotificacaoTestGrupos(TestCase):
     @override_settings(DJANGO_NOTIFICATIONS_CONFIG={
         'SOFT_DELETE': True
     })  
-    def teste_marcar_como_lido_com_soft_delete(self):
+    def test_marcar_como_lido_com_soft_delete(self):
         to_delete = Notificacao.objects.filter(recipient=self.recetor).order_by('id')[0]
         to_delete.deleted = True
         to_delete.save()
@@ -163,7 +163,7 @@ class NotificacaoTestGrupos(TestCase):
 
 
 
-    def teste_marcar_como_nao_lido(self):
+    def test_marcar_como_nao_lido(self):
         self.assertEqual(Notificacao.objects.unread().count(), self.nr_mensagem)
         Notificacao.objects.filter(recipient=self.recetor).mark_all_as_read()
         self.assertEqual(self.recetor.notifications.unread().count(), 0)
@@ -173,7 +173,7 @@ class NotificacaoTestGrupos(TestCase):
 
 
 
-    def teste_marcar_tudo_como_apagado_soft_delete(self):  
+    def test_marcar_tudo_como_apagado_soft_delete(self):  
         self.assertRaises(ImproperlyConfigured, Notificacao.objects.active)
         self.assertRaises(ImproperlyConfigured, Notificacao.objects.active)
         self.assertRaises(ImproperlyConfigured, Notificacao.objects.mark_all_as_deleted)
@@ -185,7 +185,7 @@ class NotificacaoTestGrupos(TestCase):
     @override_settings(DJANGO_NOTIFICATIONS_CONFIG={
         'SOFT_DELETE': True
     })
-    def teste_marcar_tudo_como_apagado(self):
+    def test_marcar_tudo_como_apagado(self):
         notification = Notificacao.objects.filter(recipient=self.recetor).first()
         notification.mark_as_read()
         self.assertEqual(Notificacao.objects.read().count(), 1)
@@ -214,9 +214,9 @@ class NotificacaoTestTimezone(TestCase):
     ''' Testes unitarios para a componente notificacoes - Timezone '''
     @override_settings(USE_TZ=True)
     @override_settings(TIME_ZONE='Europe/Lisbon')
-    def teste_timezone(self):
-        emissor = User.objects.create(username="andre", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt")
-        recetor = User.objects.create(username="recetor", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt")
+    def test_timezone(self):
+        emissor = User.objects.create(username="andre", password="andre123456", email="test_notificacoes@test_notificacoes.pt")
+        recetor = User.objects.create(username="recetor", password="andre123456", email="test_notificacoes@test_notificacoes.pt")
         notify.send(emissor, recipient=recetor, verb='mensagem', action_object=emissor)
         notification = Notificacao.objects.get(recipient=recetor)
         delta = (
@@ -230,8 +230,8 @@ class NotificacaoTestTimezone(TestCase):
     @override_settings(USE_TZ=False)
     @override_settings(TIME_ZONE='Europe/Lisbon')
     def test_disable_timezone(self):
-        emissor = User.objects.create(username="andre2", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt")
-        recetor = User.objects.create(username="recetor2", password="andre123456", email="teste_notificacoes@teste_notificacoes.pt")
+        emissor = User.objects.create(username="andre2", password="andre123456", email="test_notificacoes@test_notificacoes.pt")
+        recetor = User.objects.create(username="recetor2", password="andre123456", email="test_notificacoes@test_notificacoes.pt")
         notify.send(emissor, recipient=recetor, verb='mensagem', action_object=emissor)
         notification = Notificacao.objects.get(recipient=recetor)
         delta = timezone.now() - notification.timestamp
