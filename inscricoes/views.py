@@ -111,12 +111,12 @@ class CriarInscricao(SessionWizardView):
     def get_template_names(self):
         return [f'inscricoes/inscricao_wizard_{self.steps.current}.html']
 
-    def post(self, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         # Envia a informação extra necessária para o formulário atual, após preenchê-lo.
         # Necessário para algumas validações especiais de backend, como verificar o número de alunos
         # inscritos para verificar inscritos nos almoços e nas sessões.
-        update_post(self.steps.current, self.request.POST, self)
-        # print(self.request.POST)
+        update_post(request.POST.get(
+            'criar_inscricao-current_step', self.steps.current), request.POST, self)
         return super(CriarInscricao, self).post(*args, **kwargs)
 
     def done(self, form_list, form_dict, **kwargs):

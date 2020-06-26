@@ -22,9 +22,9 @@ class Escola(models.Model):
 class Inscricao(models.Model):
     individual = models.BooleanField()
     nalunos = models.IntegerField(validators=[
-            validators.MinValueValidator(1),
-            validators.MaxValueValidator(100)
-        ])
+        validators.MinValueValidator(1),
+        validators.MaxValueValidator(100)
+    ])
     escola = models.ForeignKey(Escola, models.CASCADE)
     ano = models.IntegerField(
         validators=[
@@ -85,7 +85,7 @@ class Inscricao(models.Model):
                 horarios.append(
                     {'key': str(sessao.sessao.horarioid.fim), 'value': sessao.sessao.horarioid.fim})
         horarios.pop()
-        horarios = sorted(horarios, key=lambda k: k['key']) 
+        horarios = sorted(horarios, key=lambda k: k['key'])
         return horarios
 
     def get_origem(self, dia, horario):
@@ -106,15 +106,15 @@ class Inscricao(models.Model):
         inscricao_sessoes = Inscricaosessao.objects.filter(
             inscricao=self, sessao__dia=dia).order_by('sessao__horarioid__inicio')
         destino = []
-        
+
         if horario == time.strftime(inscricao_sessoes.first().sessao.horarioid.inicio, "%H:%M"):
             for local in inscricao_sessoes:
-                if time.strftime(local.sessao.horarioid.inicio,"%H:%M") == horario:
-                        destino.append({'key': local.sessao.atividadeid.espacoid.id,
+                if time.strftime(local.sessao.horarioid.inicio, "%H:%M") == horario:
+                    destino.append({'key': local.sessao.atividadeid.espacoid.id,
                                     'value': local.sessao.atividadeid.espacoid.nome})
         else:
             inscricao_sessoes = Inscricaosessao.objects.filter(inscricao=self,
-                sessao__dia=dia, sessao__horarioid__inicio__gt=horario).order_by('sessao__horarioid__inicio')
+                                                               sessao__dia=dia, sessao__horarioid__inicio__gt=horario).order_by('sessao__horarioid__inicio')
             for local in inscricao_sessoes:
                 destino.append({'key': local.sessao.atividadeid.espacoid.id,
                                 'value': local.sessao.atividadeid.espacoid.nome})
@@ -140,8 +140,18 @@ class Inscricaoprato(models.Model):
     inscricao = models.ForeignKey(Inscricao, models.CASCADE)
     # prato = models.ForeignKey('configuracao.Prato', models.CASCADE)
     campus = models.ForeignKey('configuracao.Campus', models.CASCADE)
-    npratosalunos = models.IntegerField()
-    npratosdocentes = models.IntegerField()
+    npratosalunos = models.IntegerField(
+        validators=[
+            validators.MinValueValidator(0),
+            validators.MaxValueValidator(100)
+        ]
+    )
+    npratosdocentes = models.IntegerField(
+        validators=[
+            validators.MinValueValidator(0),
+            validators.MaxValueValidator(100)
+        ]
+    )
 
     class Meta:
         db_table = 'InscricaoPrato'
@@ -156,7 +166,7 @@ class Inscricaosessao(models.Model):
     nparticipantes = models.IntegerField(
         validators=[
             validators.MinValueValidator(1),
-            validators.MaxValueValidator(300),
+            validators.MaxValueValidator(100),
         ]
     )
 
