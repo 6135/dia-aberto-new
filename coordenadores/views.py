@@ -165,13 +165,15 @@ def colaboradores(request):
             )
 
 def grupoInfo(request):
+    info = ''
+    responsavel = ''
     if request.method == 'POST':
         if 'tarefa' in request.POST and request.POST.get('tarefa') != '':
             tarefa = TarefaAcompanhar.objects.get(tarefaid=request.POST.get('tarefa'))
             info = Inscricao.objects.get(id=tarefa.inscricao.id)
-        else:   
+        elif request.POST['grupo_id'] != '':   
             info = Inscricao.objects.get(id=request.POST['grupo_id'])
-    responsavel = Responsavel.objects.get(inscricao=info.id)
+            responsavel = Responsavel.objects.get(inscricao=info.id)
     return render(request=request,
                 template_name='coordenadores/grupoInfo.html',
                 context={'info': info,'responsavel':responsavel}
