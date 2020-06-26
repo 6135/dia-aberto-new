@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.core import serializers
 from django.forms.models import modelformset_factory
 from django.forms.widgets import Select
-from atividades.forms import SessaoForm
+
 
 from notificacoes import views as nviews
 from utilizadores.views import user_check
