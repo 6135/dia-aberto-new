@@ -89,6 +89,7 @@ class AtividadesCoordenador(SingleTableMixin, FilterView):
 
 def conflict_array():
     sessoes=Sessao.objects.all().exclude(atividadeid__estado = 'nsub')
+    sessoes= sessoes.exclude(atividadeid__estado = 'Recusada')
     conflito2= []
     for sessao1 in sessoes:
         for sessao2 in sessoes:
