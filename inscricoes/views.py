@@ -151,6 +151,7 @@ class CriarInscricao(SessionWizardView):
 
 
 class ConsultarInscricao(View):
+    """ View que gera o formulário com passos para consultar ou alterar uma inscrição """
     template_prefix = 'inscricoes/consultar_inscricao'
     step_names = [
         'responsaveis',
@@ -214,6 +215,7 @@ class ConsultarInscricao(View):
 
 
 class ConsultarInscricoes(SingleTableMixin, FilterView):
+    """ View base para gerar tabelas com inscrições """
     table_class = InscricoesTable
 
     filterset_class = InscricaoFilter
@@ -233,6 +235,7 @@ class ConsultarInscricoes(SingleTableMixin, FilterView):
 
 
 class MinhasInscricoes(ConsultarInscricoes):
+    """ View que gera uma tabela com as inscrições do participante """
     template_name = 'inscricoes/consultar_inscricoes_participante.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -247,6 +250,8 @@ class MinhasInscricoes(ConsultarInscricoes):
 
 
 class InscricoesDepartamento(ConsultarInscricoes):
+    """ View que gera uma tabela com as inscrições com pelo menos uma sessão do departamento 
+    do coordenador """
     template_name = 'inscricoes/consultar_inscricoes_coordenador.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -265,6 +270,7 @@ class InscricoesDepartamento(ConsultarInscricoes):
 
 
 class InscricoesAdmin(ConsultarInscricoes):
+    """ View que gera uma tabela com as todas as inscrições """
     template_name = 'inscricoes/consultar_inscricoes_admin.html'
 
     def dispatch(self, request, *args, **kwargs):
@@ -276,6 +282,7 @@ class InscricoesAdmin(ConsultarInscricoes):
 
 
 def ApagarInscricao(request, pk):
+    """ View que apaga uma inscrição """
     inscricao = get_object_or_404(Inscricao, pk=pk)
     erro_permissoes = nao_tem_permissoes(request, inscricao)
     if erro_permissoes:
