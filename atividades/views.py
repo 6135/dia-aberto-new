@@ -387,10 +387,6 @@ def inserirsessao(request,id):
         sessoes=Sessao.objects.all().filter(atividadeid=id)
         check= len(sessoes)
         if request.method == "POST":
-            if 'proximo' in request.POST:
-                return redirect('atividades:verResumo', id)
-            if 'anterior' in request.POST :
-                return redirect('atividades:alterarAtividade',id)
             if 'new' in request.POST:
                 diasessao=request.POST["diasessao"]
                 print(diasessao)

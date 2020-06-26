@@ -38,7 +38,29 @@ class TestForms(TestCase):
         self.assertFalse(form.is_valid())
         self.assertEquals(len(form.errors),8)
 
-    def test_Materiais(self):
+
+    def test_AtividadeForm_1(self):
+        form = AtividadeForm(data={
+            'nome': 'Phyton',
+            'tipo': 'Palestra',
+            'descricao': 'Apreendendo Phyton',
+            'publicoalvo': 'Economia',
+            'nrcolaboradoresnecessario':1,
+            'participantesmaximo': 35,
+            'duracaoesperada': 25,
+            'tema': self.tema.id,
+        })
+        self.assertTrue(form.is_valid())
+
+        form = AtividadeForm(data={
+            'nome': 'Phyton',
+            'tipo': 'Palestra',
+            'descricao': 'Apreendendo Phyton'})
+        self.assertFalse(form.is_valid())
+        self.assertEquals(len(form.errors),5)
+
+
+    def test_MateriaisForm(self):
         form = MateriaisForm(data={
             'nomematerial': 'Ratos'
         })
