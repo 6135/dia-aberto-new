@@ -118,7 +118,6 @@ class Inscricao(models.Model):
             for local in inscricao_sessoes:
                 destino.append({'key': local.sessao.atividadeid.espacoid.id,
                                 'value': local.sessao.atividadeid.espacoid.nome})
-        print(inscricao_sessoes)
         if len(destino) == 0:
             destino.append({'key': inscricao_sessoes.last().sessao.atividadeid.espacoid.id,
                             'value': inscricao_sessoes.last().sessao.atividadeid.espacoid.nome})

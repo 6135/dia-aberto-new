@@ -179,7 +179,6 @@ class SessoesForm(forms.Form):
     def clean(self):
         cleaned_data = super(SessoesForm, self).clean()
         try:
-            print(cleaned_data.get('sessoes'))
             cleaned_data['sessoes'] = cleaned_data.get(
                 'sessoes', '{}').replace('\\', '')
             pattern = re.compile(

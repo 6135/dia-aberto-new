@@ -10,7 +10,7 @@ import pytz
 from unittest.mock import Mock
 from inscricoes.tests.test_models import create_Inscricao_0, create_Inscricao_1
 from dia_aberto.views import error404
-from inscricoes.tests.samples import create_Campus_0, create_Diaaberto_0, create_Sessao_0, create_Sessao_1
+from inscricoes.tests.samples import create_Atividade_0, create_Campus_0, create_Diaaberto_0, create_Sessao_0, create_Sessao_1
 
 
 class TestInscricaoPDFView(TestCase):
@@ -80,7 +80,7 @@ class TestAtividadesAPIView(TestCase):
     """ Teste suite da view "AtividadesAPI" da app "inscricoes" """
 
     def test_AtividadesAPI_GET_vazia(self):
-        """ Teste de método GET sem login """
+        """ Teste de método GET com a API vazia """
         response = self.client.get(reverse('inscricoes:api-atividades'))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data, {
@@ -89,6 +89,15 @@ class TestAtividadesAPIView(TestCase):
             'previous': None,
             'results': [],
         })
+
+    def test_AtividadesAPI_GET_atividade(self):
+        """ Teste de método GET com uma atividade """
+        sessao = create_Sessao_0()
+        atividade = sessao.atividadeid
+        response = self.client.get(
+            reverse('inscricoes:api-atividades'), format='json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.data['results']), 1)
 
 
 class TestCriarInscricaoView(TestCase):
