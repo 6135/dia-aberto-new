@@ -75,7 +75,7 @@ class Transporteuniversitario(models.Model):
     # Field name made lowercase.
     capacidade = models.IntegerField(db_column='Capacidade')
     def __str__(self):
-        return str(self.transporte.id) + ' ' + str(self.capacidade) + ' ' + str(self.vagas)
+        return str(self.transporte.id) + ' ' + str(self.capacidade)
     class Meta:
         db_table = 'TransporteUniversitario'
 
