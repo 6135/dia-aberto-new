@@ -3,7 +3,7 @@ from django.test import SimpleTestCase
 from atividades.models import *
 from datetime import datetime,date, time
 import pytz
-from utilizadores.tests.test_models import create_Coordenador_0, create_ProfessorUniversitario_0, create_ProfessorUniversitario_1
+from utilizadores.tests.test_models import create_Coordenador_0, create_ProfessorUniversitario_0
 from configuracao.tests.test_models import create_campus, create_dep, create_edificio, create_horario, create_menu, create_open_day, create_sala, create_transporteH, create_transporteU, create_uo
 
 
