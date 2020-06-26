@@ -1,6 +1,6 @@
 from django.test import TestCase
 from inscricoes.models import Escola, Inscricao, Inscricaoprato, Inscricaosessao, Inscricaotransporte, Responsavel
-from utilizadores.tests.test_models import create_Participante_0, create_ProfessorUniversitario_0
+from utilizadores.tests.test_models import create_Campus_0, create_Participante_0, create_ProfessorUniversitario_0
 from configuracao.tests.test_models import create_campus, create_edificio, create_horario, create_open_day, create_sala, create_transporteH
 from atividades.tests.test_models import create_atividade, create_sessao, create_tema
 import datetime
@@ -96,7 +96,7 @@ def create_Responsavel_1():
 def create_Inscricaoprato_0():
     return Inscricaoprato.objects.get_or_create(
         inscricao=create_Inscricao_0(),
-        campus=create_campus(),
+        campus=create_Campus_0(),
         npratosalunos=20,
         npratosdocentes=2,
     )[0]
@@ -105,7 +105,7 @@ def create_Inscricaoprato_0():
 def create_Inscricaoprato_1():
     return Inscricaoprato.objects.get_or_create(
         inscricao=create_Inscricao_0(),
-        campus=create_campus(),
+        campus=create_Campus_0(),
         npratosalunos=15,
         npratosdocentes=1,
     )[0]
@@ -115,7 +115,7 @@ def create_Inscricaosessao_0():
     return Inscricaosessao.objects.get_or_create(
         inscricao=create_Inscricao_0(),
         sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(
-        ), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
+        ), create_sala(create_edificio(create_Campus_0())), create_tema()), create_horario()),
         nparticipantes=20,
     )[0]
 
@@ -124,7 +124,7 @@ def create_Inscricaosessao_1():
     return Inscricaosessao.objects.get_or_create(
         inscricao=create_Inscricao_0(),
         sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(
-        ), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
+        ), create_sala(create_edificio(create_Campus_0())), create_tema()), create_horario()),
         nparticipantes=13,
     )[0]
 
@@ -133,7 +133,7 @@ def create_Inscricaosessao_2():
     return Inscricaosessao.objects.get_or_create(
         inscricao=create_Inscricao_1(),
         sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(
-        ), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
+        ), create_sala(create_edificio(create_Campus_0())), create_tema()), create_horario()),
         nparticipantes=12,
     )[0]
 
