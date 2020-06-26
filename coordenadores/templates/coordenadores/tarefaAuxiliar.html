@@ -6,13 +6,12 @@
                 <div class="select is-fullwidth">
                     {% if ativ%}
                     <select name="atividade" onchange="diasSelect();" id="id_atividade">
-                        {% for atividade in  atividades%}
-                        {% if atividade.id == ativ.id %}
-                            <option selected value="{{ option.key}}">{{ option.value }}</option> 
-                        {% else %}
-                            <option value="{{atividade.id}}">{{atividade.nome}}</option>
-                        {% endif %}
-                        {% endfor %}
+                        <option selected value='{{ativ.id}}'>{{ativ.nome}}</option>
+                            {% for option in options %}
+                                {% if option.id != ativ.id %}
+                                    <option  value="{{ option.id}}">{{ option.nome }}</option>
+                                {% endif %}
+                            {% endfor %}
                     </select>    
                     {% else %}
                         {{form.atividade}}

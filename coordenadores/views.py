@@ -72,24 +72,23 @@ def tipoTarefa(request):
                 form = TarefaOutraForm(initial={'dia':tarefa.tarefaid.dia,'horario':tarefa.tarefaid.horario,'descricao':tarefa.descricao,'colab':tarefa.tarefaid.colab})      
             else:
                   form = TarefaOutraForm()          
-    return render(request=request,template_name=template,context={'form':form,'atividades':atividades,'ativ':ativ})
+    return render(request=request,template_name=template,context={'form':form,'options':atividades,'ativ':ativ})
 
 def diasAtividade(request):
     dias=[] 
+    default = {
+        'key': '',
+        'value': 'Escolha o dia'
+    }
     atividade = request.POST.get('atividadeid')
     if request.method == 'POST':
-        if 'tarefa' in request.POST and request.POST['tarefa']!=''\
-        and TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa'])).sessao.atividadeid.id == Atividade.objects.get(id=atividade).id:
-            tarefa = TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa']))
-            default={
-                'key': str(tarefa.tarefaid.dia),
-                'value': tarefa.tarefaid.dia
-            }
-        else:
-            default = {
-                'key': '',
-                'value': 'Escolha o dia'
-            }
+        if 'tarefa' in request.POST and request.POST['tarefa']!='':
+            if TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa'])).sessao.atividadeid.id == Atividade.objects.get(id=atividade).id:
+                tarefa = TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa']))
+                default={
+                    'key': str(tarefa.tarefaid.dia),
+                    'value': tarefa.tarefaid.dia
+                }
    
     atividade = Atividade.objects.get(id=atividade)   
     dias = atividade.get_dias()  
@@ -99,22 +98,28 @@ def diasAtividade(request):
             )
 
 def sessoesAtividade(request):
-    if request.method == 'POST':
-        if 'tarefa' in request.POST and request.POST['tarefa']!='':
-            tarefa = TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa']))
-            atividade = tarefa.sessao.atividadeid.id
-            dia = tarefa.tarefaid.dia
-            default={
-                'key': str(tarefa.sessao.id),
-                'value': str(tarefa.sessao.horarioid.inicio) + ' até ' + str(tarefa.sessao.horarioid.fim)
-            }
-        else:
-            default = {
+    atividade= request.POST['atividadeid']
+    print(request.POST['dia'])
+    dia = str(request.POST['dia'])
+    default = {
                 'key': '',
                 'value': 'Escolha a sessão'
             }
-            dia = request.POST['dia']
-        atividade= request.POST['atividadeid']
+    if request.method == 'POST':
+
+        if 'tarefa' in request.POST and request.POST['tarefa']!='':
+            tarefa =TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa']))
+            if tarefa.sessao.atividadeid.id == Atividade.objects.get(id=atividade).id\
+                and (tarefa.sessao.dia == dia or dia == ''):
+                atividade = tarefa.sessao.atividadeid.id
+                dia = str(tarefa.tarefaid.dia)
+                default={
+                    'key': str(tarefa.sessao.id),
+                    'value': str(tarefa.sessao.horarioid.inicio) + ' até ' + str(tarefa.sessao.horarioid.fim)
+                }
+            
+        print(dia)
+        print(dia.__class__)
         sessoes = Sessao.tarefas_get_sessoes(atividade=atividade,dia=dia)
     
         options = [{
@@ -174,6 +179,7 @@ def grupoInfo(request):
 
 def diasGrupo(request):
     dias=[]
+    default=[]
     if request.POST['grupo_id'] != '':
         if 'tarefa' in request.POST and request.POST.get('tarefa')!='':
             tarefa = Tarefa.objects.get(id=request.POST.get('tarefa'))
@@ -300,7 +306,6 @@ class ConsultarTarefas(SingleTableMixin, FilterView):
         table = self.get_table(**self.get_table_kwargs())
         context["colabs"] = list(map(lambda x: (x.id, x.full_name), Colaborador.objects.filter(faculdade = self.user.faculdade,utilizador_ptr_id__valido=True)))
         table.colabs = list(map(lambda x: (x.id, x.full_name), Colaborador.objects.filter(faculdade = self.user.faculdade,utilizador_ptr_id__valido=True)))
-
         context[self.get_context_table_name(table)] = table
         return context
 

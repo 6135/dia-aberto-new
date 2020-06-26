@@ -10,6 +10,7 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse
 import html
 from coordenadores.models import TarefaAuxiliar
+from datetime import date
 
 class Anfiteatro(models.Model):
     # Field name made lowercase.
@@ -217,6 +218,7 @@ class Sessao(models.Model):
     def tarefas_get_sessoes(atividade,dia):
         tarefa_sessoes=[]
         sessoes = Sessao.objects.filter(atividadeid=atividade,dia=dia)
+        #print(sessao.dia)
         for sessao in sessoes:
             tarefa = TarefaAuxiliar.objects.filter(sessao=sessao.id)
             if tarefa.count() < sessao.atividadeid.nrcolaboradoresnecessario:
