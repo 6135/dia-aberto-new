@@ -4,7 +4,19 @@
             <label class="label">Atividade</label>
             <div class="control">
                 <div class="select is-fullwidth">
-                    {{form.atividade}}
+                    {% if ativ%}
+                    <select name="atividade" onchange="diasSelect();" id="id_atividade">
+                        {% for atividade in  atividades%}
+                        {% if atividade.id == ativ.id %}
+                            <option selected value="{{ option.key}}">{{ option.value }}</option> 
+                        {% else %}
+                            <option value="{{atividade.id}}">{{atividade.nome}}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>    
+                    {% else %}
+                        {{form.atividade}}
+                    {% endif %}  
                 </div>
             </div>
         </div>

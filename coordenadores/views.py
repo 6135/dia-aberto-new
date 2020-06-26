@@ -16,57 +16,6 @@ from django_filters.views import FilterView
 from coordenadores.tables import TarefaTable
 from coordenadores.filters import TarefaFilter
 from utilizadores.views import user_check
-#def adicionartarefa(request, id = None):
-#    tarefa = Tarefa()
-#    if id is not None:
-#        tarefa=Tarefa.objects.get(id=id)
-#        temp = "alterar" #Enviar Notificacao Automatica !!!!!!
-#    else: #Enviar Notificacao Automatica !!!!!!
-#        temp = "atribuir" #Enviar Notificacao Automatica !!!!!!    
-#    form_tarefa=TarefaForm(user=request.user.id,instance=tarefa)
-#    if request.method == 'POST':
-#        form_tarefa=TarefaForm(user=request.user.id,data=request.POST,instance=tarefa)
-#        print(form_tarefa.errors)
-#        if form_tarefa.is_valid():
-#            tarefa_saved=form_tarefa.save()
-#            if request.POST['tipo'] == 'tarefaAuxiliar':        
-#                auxiliar_form = TarefaAuxiliarForm(request.POST,instance=TarefaAuxiliar(tarefaid=tarefa_saved))
-#                print(auxiliar_form.errors)
-#                if auxiliar_form.is_valid():
-#                    auxiliar_form.save()
-#                    #if temp == "atribuir": #Enviar Notificacao Automatica !!!!!!
-#                    #    views.enviar_notificacao_automatica(request,"tarefaAtribuida",id) #Enviar Notificacao Automatica !!!!!!
-#                    #elif temp == "alterar": #Enviar Notificacao Automatica !!!!!!
-#                    #    views.enviar_notificacao_automatica(request,"tarefaAlterada",id) #Enviar Notificacao Automatica !!!!!!
-#                    return redirect('coordenadores:consultarTarefa') 
-#            elif request.POST['tipo'] == 'tarefaOutra': 
-#                outra_form = TarefaOutraForm(request.POST,instance=TarefaOutra(tarefaid=tarefa_saved)) 
-#                print(outra_form.errors)
-#                if outra_form.is_valid():
-#                    outra_form.save()
-#                    #if temp == "atribuir" and tarefa_saved.colab: #Enviar Notificacao Automatica !!!!!!
-#                    #    views.enviar_notificacao_automatica(request,"tarefaAtribuida",id) #Enviar Notificacao Automatica !!!!!!
-#                    #elif temp == "alterar" and tarefa_saved.colab: #Enviar Notificacao Automatica !!!!!!
-#                    #    views.enviar_notificacao_automatica(request,"tarefaAlterada",id) #Enviar Notificacao Automatica !!!!!!
-#                    return redirect('coordenadores:consultarTarefa') 
-#            elif request.POST['tipo'] == 'tarefaAcompanhar': 
-#                acompanhar_form = TarefaAcompanharForm(request.POST,instance=TarefaAcompanhar(tarefaid=tarefa_saved)) 
-#                
-#                if acompanhar_form.is_valid():
-#                    acompanhar_form.save()
-#                    #if temp == "atribuir": #Enviar Notificacao Automatica !!!!!!
-#                    #    views.enviar_notificacao_automatica(request,"tarefaAtribuida",id) #Enviar Notificacao Automatica !!!!!!
-#                    #elif temp == "alterar": #Enviar Notificacao Automatica !!!!!!
-#                    #    views.enviar_notificacao_automatica(request,"tarefaAlterada",id) #Enviar Notificacao Automatica !!!!!!
-#                    return redirect('coordenadores:consultarTarefa') 
-#                print(acompanhar_form.errors)
-#            else:
-#                tarefa_saved.delete()      
-#    return render(request=request,
-#                template_name='coordenadores/criarTarefa.html',
-#                context={'formTarefa':form_tarefa}
-#    )
-#
 
 def adicionartarefa(request,id=None):
     if id:
@@ -90,22 +39,23 @@ def adicionartarefa(request,id=None):
             else:
                 views.enviar_notificacao_automatica(request,sigla="tarefaAtribuida",id=save)
             return redirect('coordenadores:consultarTarefa')
-
     return render(request = request,template_name='coordenadores/criarTarefa.html',context={'tarefa':tarefa})
-
-
 
 def tipoTarefa(request):
     template =''
     form = ''
+    atividades = None
+    ativ = None
     if request.method == 'POST':
         tipo = request.POST['tipo']
         if tipo == 'tarefaAuxiliar':
             template = 'coordenadores/tarefaAuxiliar.html'
             if request.POST.get('id'):
                 tarefa = TarefaAuxiliar.objects.get(tarefaid=int(request.POST['id']))
-                form = TarefaAuxiliarForm(initial={'atividade':tarefa.sessao.atividadeid.id,'dia':tarefa.tarefaid.dia,'horario':tarefa.tarefaid.horario,
-                                            'sessao':tarefa.sessao})
+                form = TarefaAuxiliarForm(initial={'atividade':tarefa.sessao.atividadeid.id,'dia':tarefa.tarefaid.dia,
+                                                    'horario':tarefa.tarefaid.horario,'sessao':tarefa.sessao})
+                atividades = Atividade.tarefas_get_atividades()
+                ativ = tarefa.sessao.atividadeid
             else:
                 form = TarefaAuxiliarForm()       
         elif tipo == 'tarefaAcompanhar':
@@ -121,17 +71,16 @@ def tipoTarefa(request):
                 tarefa = TarefaOutra.objects.get(tarefaid=int(request.POST['id']))
                 form = TarefaOutraForm(initial={'dia':tarefa.tarefaid.dia,'horario':tarefa.tarefaid.horario,'descricao':tarefa.descricao,'colab':tarefa.tarefaid.colab})      
             else:
-                  form = TarefaOutraForm()
-            
-    return render(request=request,template_name=template,context={'form':form})
+                  form = TarefaOutraForm()          
+    return render(request=request,template_name=template,context={'form':form,'atividades':atividades,'ativ':ativ})
 
 def diasAtividade(request):
-    
-    dias=[]
+    dias=[] 
+    atividade = request.POST.get('atividadeid')
     if request.method == 'POST':
-        if 'tarefa' in request.POST and request.POST['tarefa']!='':
+        if 'tarefa' in request.POST and request.POST['tarefa']!=''\
+        and TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa'])).sessao.atividadeid.id == atividade.id:
             tarefa = TarefaAuxiliar.objects.get(tarefaid=int(request.POST['tarefa']))
-            atividade = tarefa.sessao.atividadeid.id
             default={
                 'key': str(tarefa.tarefaid.dia),
                 'value': tarefa.tarefaid.dia
@@ -141,7 +90,7 @@ def diasAtividade(request):
                 'key': '',
                 'value': 'Escolha o dia'
             }
-            atividade = request.POST.get('atividadeid')
+   
     atividade = Atividade.objects.get(id=atividade)   
     dias = atividade.get_dias()  
     return render(request=request,
@@ -165,7 +114,7 @@ def sessoesAtividade(request):
                 'value': 'Escolha a sessão'
             }
             dia = request.POST['dia']
-            atividade= request.POST['atividadeid']
+        atividade= request.POST['atividadeid']
         sessoes = Sessao.tarefas_get_sessoes(atividade=atividade,dia=dia)
     
         options = [{
