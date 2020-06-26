@@ -293,6 +293,7 @@
       var dia = document.getElementById("id_dia").value;
       var grupo_id = document.getElementById("id_grupo").value; 
       var horario = document.getElementById("id_horario").value;
+      console.log('horario: ' + horario)
       var tarefa = "{{tarefa.id}}";
       $.ajax({                       
         url: "{% url 'coordenadores:locaisOrigem' %}", 

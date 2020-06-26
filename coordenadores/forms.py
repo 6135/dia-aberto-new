@@ -69,7 +69,7 @@ def get_inscricao_choices():
     return [('','Escolha um grupo')]+[(grupo.id,'Grupo '+str(grupo.id)) for grupo in Inscricao.objects.filter(individual=False)]
 
 class TarefaAcompanharForm(Form):
-    grupo = ChoiceField(widget=Select(attrs={'onchange':'diasGrupo();grupoInfo();'}),choices=get_inscricao_choices)
+    grupo = ChoiceField(widget=Select(attrs={'onchange':'diasGrupo();grupoInfo();grupoHorario();grupoOrigem();grupoDestino();'}),choices=get_inscricao_choices)
     dia = DateField(widget=Select(attrs={'onchange':'grupoHorario()'}))
     horario = TimeField(widget=Select(attrs={'onchange':'grupoOrigem()'}))
     origem = CharField(widget=Select(attrs={'onchange':'grupoDestino()'}))

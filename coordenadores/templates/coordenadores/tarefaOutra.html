@@ -13,7 +13,7 @@
         <div class="field">
             <label class="label">Horário</label>
             <div class="control">
-                {{form.horario}}
+                <input type="time" name="horario" value="{{form.horario.value|date:'H:i'}}" class="input" onchange="colaboradoresSelect();" required id="id_horario">
             </div>
         </div>
     </div>         
