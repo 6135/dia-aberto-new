@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , MateriaisForm, CampusForm
+from .forms import AtividadeForm , MateriaisForm
 from .models import *
 from configuracao.models import Horario
 from .models import Atividade, Sessao, Tema, Materiais
@@ -149,8 +149,12 @@ def alterarAtividade(request,id):
             activity_object_form = AtividadeForm(submitted_data, instance=activity_object)
             materiais_object_form = MateriaisForm(request.POST, instance=materiais_object)
             if activity_object_form.is_valid() and materiais_object_form.is_valid():
+                
                     #-------Guardar as mudancas a atividade em si------
                     activity_object_formed = activity_object_form.save(commit=False) 
+                    espacoid=request.POST["espacoid"] 
+                    espaco=Espaco.objects.get(id=espacoid) 
+                    activity_object.espacoid= espaco
                     if  activity_object_formed.estado == "nsub":
                         activity_object_formed.estado = "nsub"
                         activity_object_formed.save()
@@ -176,6 +180,9 @@ def alterarAtividade(request,id):
                         print("hello")
                         print(Atividade.objects.get(id=id) == activity_object_formed)
                         if Atividade.objects.get(id=id) != activity_object_formed or Materiais.objects.get(atividadeid=id) != materiais_object_form.instance:
+                            espacoid=request.POST["espacoid"] 
+                            espaco=Espaco.objects.get(id=espacoid) 
+                            activity_object.espacoid= espaco
                             activity_object_formed.estado = "Pendente"
                             activity_object_formed.dataalteracao = datetime.now()
                             activity_object_formed.save()

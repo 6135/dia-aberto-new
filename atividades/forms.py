@@ -59,12 +59,3 @@ class MateriaisForm(ModelForm):
 def get_dep_choices():
     return [(-1,'Mostra todos os Departamentos')] + [(departamento.id,departamento.nome) for departamento in Departamento.objects.all()]
 
-
-def get_campus_choices():
-    return Campus.objects.all()
-
-class CampusForm(Form):
-    campus= ChoiceField(choices=get_campus_choices,label='Campus')
-
-    class Meta:
-        fields=('campus')
