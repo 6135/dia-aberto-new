@@ -81,7 +81,7 @@ class TarefaAcompanharForm(Form):
         nome = 'Acompanhar o grupo ' + data.get('grupo')
         grupo = Inscricao.objects.get(id=data.get('grupo'))
         
-        destino = Espaco.objects.filter(id=int(data.get('destino')))
+        destino = Espaco.objects.filter(id=int(data.get('destino'))).first()
         
         estado = 'naoConcluida'
         if data.get('colab') == '':
