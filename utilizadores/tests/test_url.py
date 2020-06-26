@@ -37,7 +37,7 @@ class TestUrlsConsultarUntilizadores(TestCase):
     def test_url_consultar_utilizadores(self):
         """ Testes do url "consultar-utilizadores" """
         url = self.client.get(reverse('utilizadores:consultar-utilizadores'))
-        self.assertEquals(url.resolver_match.func, consultar_utilizadores)
+        self.assertEquals(url.resolver_match.func.__name__, consultar_utilizadores.as_view().__name__)
         
 
 class TestCriarUtilizadoresUrls(TestCase):
@@ -121,12 +121,12 @@ class TestValidarRejeitarUrls(TestCase):
 
     def test_url_validar(self):
         """ Testes do url "validar-utilizador" """
-        url = self.client.get(reverse('utilizadores:validar-utilizador'))
+        url = self.client.get(reverse('utilizadores:validar-utilizador',kwargs={'id':1}))
         self.assertEquals(url.resolver_match.func, validar_utilizador)
     
     def test_url_validar(self):    
         """ Testes do url "rejeitar-utilizador" """
-        url = self.client.get(reverse('utilizadores:rejeitar-utilizador'))
+        url = self.client.get(reverse('utilizadores:rejeitar-utilizador',kwargs={'id':1}))
         self.assertEquals(url.resolver_match.func, rejeitar_utilizador)
 
 
@@ -150,12 +150,12 @@ class TestMensagensUrls(TestCase):
 
     def test_url_resolved(self):
         """ Testes do url "validar" """
-        url = self.client.get(reverse('utilizadores:validar', kwargs={'id':1}))
+        url = self.client.get(reverse('utilizadores:validar', kwargs={'nome':"andre",'id':1}))
         self.assertEquals(url.resolver_match.func, enviar_email_validar)
 
     def test_url_resolved(self):
         """ Testes do url "rejeitar" """
-        url = self.client.get(reverse('utilizadores:rejeitar', kwargs={'id':1}))
+        url = self.client.get(reverse('utilizadores:rejeitar', kwargs={'nome':"andre",'id':1}))
         self.assertEquals(url.resolver_match.func, enviar_email_rejeitar)
 
 
@@ -194,7 +194,7 @@ class TestAlterarPerfilUrls(TestCase):
 
     def test_url_alterar_perfil_admin(self): 
         """ Testes do url "mudar-perfil-admin" """
-        url = self.client.get(reverse('utilizadores:mudar-perfil-admin', kwargs={'id':5}))
+        url = self.client.get(reverse('utilizadores:mudar-perfil-admin', kwargs={'tipo':1,'id':1}))
         self.assertEquals(url.resolver_match.func, mudar_perfil_admin)
 
     def test_url_alterar_perfil_escolha(self): 
