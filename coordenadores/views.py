@@ -18,6 +18,8 @@ from coordenadores.filters import TarefaFilter
 from utilizadores.views import user_check
 
 def adicionartarefa(request,id=None):
+    user_check_var = user_check(request=request, user_profile=[Coordenador])
+    if not user_check_var.get('exists'): return user_check_var.get('render')
     if id:
         tarefa = Tarefa.objects.get(id=id)
     else:
@@ -42,6 +44,8 @@ def adicionartarefa(request,id=None):
     return render(request = request,template_name='coordenadores/criarTarefa.html',context={'tarefa':tarefa})
 
 def tipoTarefa(request):
+    user_check_var = user_check(request=request, user_profile=[Coordenador])
+    if not user_check_var.get('exists'): return user_check_var.get('render')
     template =''
     form = ''
     atividades = None
@@ -325,6 +329,8 @@ def eliminartarefa(request,id):
     return redirect('coordenadores:consultarTarefa')
 
 def atribuirColaborador(request,id):
+    user_check_var = user_check(request=request, user_profile=[Coordenador])
+    if not user_check_var.get('exists'): return user_check_var.get('render')
     if request.method == 'POST':
         colab = Colaborador.objects.get(id = int(request.POST.get('colab')))
         Tarefa.objects.filter(id=id).update(colab=colab,estado='naoConcluida')
