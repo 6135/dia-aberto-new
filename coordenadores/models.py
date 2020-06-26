@@ -45,10 +45,13 @@ class Tarefa(models.Model):
 
     @property
     def eliminar(self):
-        if ((self.estado == 'Iniciada' or self.estado == 'naoConcluida') and self.dia < date.today()):
+        if (self.estado == 'Iniciada' and self.dia < date.today()) or\
+            self.estado == 'naoConcluida' or\
+            self.estado == 'Concluida' or\
+            self.estado == 'Cancelada' or\
+            self.estado == 'naoAtribuida':
             return True
-        else:
-            return False
+        return False
         
         
     def getDescription(self):

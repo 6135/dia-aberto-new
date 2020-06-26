@@ -7,7 +7,7 @@ def colab_none(colab):
     if colab is None or str(colab) == 'None':
         return 'N/A'
     else:
-        return colab
+        return colab.full_name
 
 @register.filter
 def local(id):

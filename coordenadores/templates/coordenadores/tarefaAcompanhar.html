@@ -48,7 +48,9 @@
             <label class="label">Horário</label>
             <div class="control">
                 <div class="select is-fullwidth">
-                    {{form.horario}}
+                    <select name="horario" onchange="grupoOrigem()" id="id_horario">
+                        <option value="">Escolha o horário</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -61,7 +63,9 @@
             <label class="label">Local de encontro</label>
             <div class="control">
                 <div class="select is-fullwidth">
-                    {{form.origem}}
+                    <select name="origem" onchange="grupoDestino()" id="id_origem">
+                        <option value="">Escolha o local de encontro</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -73,7 +77,9 @@
             <label class="label">Local de destino</label>
             <div class="control">
                 <div class="select is-fullwidth">
-                    {{form.destino}}
+                    <select name="destino" onchange="colaboradoresSelect()" id="id_destino">
+                        <option value="">Escolha o local de destino</option>
+                    </select>
                 </div>
             </div>
         </div>
