@@ -11,3 +11,5 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         for group in GROUPS:
             new_group, created = Group.objects.get_or_create(name=group)
+        
+        self.stdout.write(self.style.SUCCESS('Grupos criados com sucesso'))
