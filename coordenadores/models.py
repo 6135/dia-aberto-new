@@ -41,6 +41,7 @@ class Tarefa(models.Model):
 
     class Meta:
         db_table = 'Tarefa'
+        ordering = ['dia']
 
     @property
     def eliminar(self):
