@@ -87,7 +87,7 @@ def create_MensagemEnviada_1():
     )[0]
 
 
-class TestMensagemModels(TestCase):
+class TestNotificacoesModels(TestCase):
     ''' Testes para as notificacoes - funções dos modelos da componente notificacoes '''
 
     def test_Notificacao_model(self):
