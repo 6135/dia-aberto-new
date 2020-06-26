@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect  
-from .forms import AtividadeForm , MateriaisForm, atividadesFilterForm, CampusForm
+from .forms import AtividadeForm , MateriaisForm
 from .models import *
 from configuracao.models import Horario
 from .models import Atividade, Sessao, Tema, Materiais
@@ -12,7 +12,7 @@ from django.db.models import Q
 from django.core import serializers
 from django.forms.models import modelformset_factory
 from django.forms.widgets import Select
-from atividades.forms import SessaoForm
+
 
 from notificacoes import views as nviews
 from utilizadores.views import user_check
@@ -21,24 +21,6 @@ from atividades.tables import *
 from atividades.filters import *
 from django_tables2 import SingleTableMixin, SingleTableView
 from django_filters.views import FilterView
-
-def filters(request):
-    filters=[]
-    if request.POST.get('Aceite'):
-        filters.append('Aceite')
-    else:
-        filters.append('')
-
-    if request.POST.get('Recusada'):
-        filters.append('Recusada')
-    else:
-        filters.append('')
-
-    if request.POST.get('Pendente'):
-        filters.append('Pendente')
-    else:
-        filters.append('')
-    return filters
 
 
 class AtividadesProfessor(SingleTableMixin, FilterView):
@@ -167,8 +149,12 @@ def alterarAtividade(request,id):
             activity_object_form = AtividadeForm(submitted_data, instance=activity_object)
             materiais_object_form = MateriaisForm(request.POST, instance=materiais_object)
             if activity_object_form.is_valid() and materiais_object_form.is_valid():
+                
                     #-------Guardar as mudancas a atividade em si------
                     activity_object_formed = activity_object_form.save(commit=False) 
+                    espacoid=request.POST["espacoid"] 
+                    espaco=Espaco.objects.get(id=espacoid) 
+                    activity_object.espacoid= espaco
                     if  activity_object_formed.estado == "nsub":
                         activity_object_formed.estado = "nsub"
                         activity_object_formed.save()
@@ -194,6 +180,9 @@ def alterarAtividade(request,id):
                         print("hello")
                         print(Atividade.objects.get(id=id) == activity_object_formed)
                         if Atividade.objects.get(id=id) != activity_object_formed or Materiais.objects.get(atividadeid=id) != materiais_object_form.instance:
+                            espacoid=request.POST["espacoid"] 
+                            espaco=Espaco.objects.get(id=espacoid) 
+                            activity_object.espacoid= espaco
                             activity_object_formed.estado = "Pendente"
                             activity_object_formed.dataalteracao = datetime.now()
                             activity_object_formed.save()
@@ -398,10 +387,6 @@ def inserirsessao(request,id):
         sessoes=Sessao.objects.all().filter(atividadeid=id)
         check= len(sessoes)
         if request.method == "POST":
-            if 'proximo' in request.POST:
-                return redirect('atividades:verResumo', id)
-            if 'anterior' in request.POST :
-                return redirect('atividades:alterarAtividade',id)
             if 'new' in request.POST:
                 diasessao=request.POST["diasessao"]
                 print(diasessao)
@@ -497,20 +482,6 @@ class TimeC():
 
 
 
-
-
-def sessaoRow(request):
-    value = int(request.POST.get('extra'))
-    dias = Diaaberto.objects.get(datapropostasatividadesincio__lte=datetime.now(),dataporpostaatividadesfim__gte=datetime.now()).days_as_array()
-    data = {
-		'form_dia': "form-" + str(value-1) + "-dia",
-		'form_dia': "form-" + str(value-1) + "-dia",
-		'form_horario': "form-" + str(value-1) + "-horarioid",
-		'form_horario': "form-" + str(value-1) + "-horarioid",
-		'form_id': 'form-' + str(value-1) + '-id',
-        'dias': dias,
-	}
-    return render(request=request, template_name='atividades/sessaoRow.html', context=data)
 
 def veredificios(request):
     campus=request.POST["valuecampus"]

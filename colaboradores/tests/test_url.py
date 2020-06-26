@@ -1,93 +1,100 @@
-from django.test import TestCase
-from django.test import SimpleTestCase
-from django.urls import resolve,reverse
-from configuracao import views
+from django.test import Client, TestCase, TestCase
+from colaboradores.models import *
+from django.utils.datetime_safe import datetime
+import pytz
+from django.urls import reverse
+from colaboradores.views import *
+
+
 
 #Create your tests here.
-class TestUrls(SimpleTestCase):
+
+
+def create_Campus_0():
+    return Campus.objects.get_or_create(nome='Penha')[0]
+
+
+
+def create_UO_0(campus):
+    return Unidadeorganica.objects.get_or_create(
+        nome = 'Faculdade de Ciencias e Tecnologias',
+        sigla = 'FCT',
+        campusid = campus
+        )[0]
+
+
+
+def create_Curso_0():
+    return Curso.objects.get_or_create(
+        nome="CC",
+        sigla="Ciências da Comunicação",
+        unidadeorganicaid=create_UO_0(create_Campus_0()),
+        )[0]
+
+
+
+def create_Departamento_0(uo):
+    return Departamento.objects.get_or_create(
+        nome = 'Departamento de Engenharia Informatica e Eletronica',
+        sigla = 'DEEI',
+        unidadeorganicaid = uo
+    )[0]
+
+
+
+
+def create_Colaborador_0():
+    return Colaborador.objects.get_or_create(
+        username="andre10",
+        first_name="André",
+        last_name="Barrocas",
+        password="andre123456", 
+        email="teste10@teste.pt",
+        contacto="+351967321393",
+        valido="False",
+        curso=create_Curso_0(),
+        faculdade=create_UO_0(create_Campus_0()),
+        departamento=create_Departamento_0(create_UO_0(create_Campus_0()))
+
+    )[0]
+
+
+class TestColaboradoresUrls(TestCase):
+    """ Teste suite dos urls da app "colaboradores" """
+    @classmethod
+    def setUpTestData(cls):
+        cls.colaborador = create_Colaborador_0()
+      
+
+    def setUp(self):
+        self.client.force_login(self.colaborador)
     
-    def test_url_is_resolved(self):
-        url = reverse('configuracao:diasAbertos')
-        self.assertEquals(resolve(url).func.__name__, views.viewDays.__name__)
-        url = reverse('configuracao:editarDia', kwargs={'id':1})
-        self.assertEquals(resolve(url).func, views.newDay)
-        url = reverse('configuracao:novoDia')
-        self.assertEquals(resolve(url).func, views.newDay)
-        url = reverse('configuracao:eliminarDia', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.delDay)
-        url = reverse('configuracao:verMenus')
-        self.assertEquals(resolve(url).func.__name__, views.verMenus.__name__)
-        url = reverse('configuracao:eliminarMenu', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.delMenu)
-        url = reverse('configuracao:editarMenu', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.newMenu)
-        url = reverse('configuracao:novoMenu')
-        self.assertEquals(resolve(url).func, views.newMenu)
-        url = reverse('configuracao:verTransportes')
-        self.assertEquals(resolve(url).func.__name__, views.verTransportes.__name__)
-        url = reverse('configuracao:criarTransporte')
-        self.assertEquals(resolve(url).func, views.criarTransporte)
-        url = reverse('configuracao:editarTransporte', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.criarTransporte)
-        url = reverse('configuracao:atribuirTransporte', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.atribuirTransporte)
-        url = reverse('configuracao:eliminarAtribuicao', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.eliminarAtribuicao)
-        url = reverse('configuracao:eliminarTransporte', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.eliminarTransporte)
-        url = reverse('configuracao:verEdificioImagem', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.verEdificioImagem)
-        url = reverse('configuracao:verEdificios')
-        self.assertEquals(resolve(url).func.__name__, views.verEdificios.__name__)
-        url = reverse('configuracao:adicionarEdificio')
-        self.assertEquals(resolve(url).func, views.configurarEdificio)
-        url = reverse('configuracao:editarEdificio', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.configurarEdificio)
-        url = reverse('configuracao:eliminarEdificio', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.eliminarEdificio)
-        url = reverse('configuracao:verUOs')
-        self.assertEquals(resolve(url).func.__name__, views.verUOs.__name__)
-        url = reverse('configuracao:adicionarUO')
-        self.assertEquals(resolve(url).func, views.configurarUO)
-        url = reverse('configuracao:editarUO', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.configurarUO)
-        url = reverse('configuracao:eliminarUO', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.eliminarUO)
-        url = reverse('configuracao:verTemas')
-        self.assertEquals(resolve(url).func.__name__, views.verTemas.__name__)
-        url = reverse('configuracao:adicionarTema')
-        self.assertEquals(resolve(url).func, views.configurarTema)
-        url = reverse('configuracao:editarTema', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.configurarTema)
-        url = reverse('configuracao:eliminarTema', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.eliminarTema)
-        url = reverse('configuracao:verDepartamentos')
-        self.assertEquals(resolve(url).func.__name__, views.verDepartamentos.__name__)
-        url = reverse('configuracao:adicionarDepartamento')
-        self.assertEquals(resolve(url).func, views.configurarDepartamento)
-        url = reverse('configuracao:editarDepartamento', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.configurarDepartamento)
-        url = reverse('configuracao:eliminarDepartamento', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.eliminarDepartamento)
-        url = reverse('configuracao:verCursos')
-        self.assertEquals(resolve(url).func.__name__, views.verCursos.__name__)
-        url = reverse('configuracao:adicionarCurso')
-        self.assertEquals(resolve(url).func, views.configurarCurso)
-        url = reverse('configuracao:editarCurso', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.configurarCurso)
-        url = reverse('configuracao:eliminarCurso', kwargs={'id':10})
-        self.assertEquals(resolve(url).func, views.eliminarCurso)
-        url = reverse('configuracao:getDias')
-        self.assertEquals(resolve(url).func, views.getDias)
-        url = reverse('configuracao:ajaxAddHorarioRow')
-        self.assertEquals(resolve(url).func, views.newHorarioRow)
-        url = reverse('configuracao:ajaxAddPratoRow')
-        self.assertEquals(resolve(url).func, views.newPratoRow)
-        url = reverse('configuracao:ajaxAddEspacoRow')
-        self.assertEquals(resolve(url).func, views.newEspacoRow)
-        url = reverse('configuracao:ajaxAddUORow')
-        self.assertEquals(resolve(url).func, views.newUORow)
-        url = reverse('configuracao:ajaxAddDepartamentoRow')
-        self.assertEquals(resolve(url).func, views.newDepartamentoRow)
-        url = reverse('configuracao:ajaxAddCursoRow')
-        self.assertEquals(resolve(url).func, views.newCursoRow)
+    def test_url_consultar_tarefas(self):
+        """ Testes do url "consultar-tarefas" """
+        url = self.client.get(reverse('colaboradores:consultar-tarefas'))
+        self.assertEquals(url.resolver_match.func.__name__, consultar_tarefas.as_view().__name__)
+    
+    def test_url_concluir_tarefa(self):    
+        """ Testes do url "concluir-tarefa" """
+        url = self.client.get(reverse('colaboradores:concluir-tarefa', kwargs={'id':1}))
+        self.assertEquals(url.resolver_match.func, concluir_tarefa)
+    
+    def test_url_iniciar_tarefa(self): 
+        """ Testes do url "iniciar-tarefa" """   
+        url = self.client.get(reverse('colaboradores:iniciar-tarefa', kwargs={'id':1}))
+        self.assertEquals(url.resolver_match.func, iniciar_tarefa)
+
+    def test_url_cancelar_tarefa(self):
+        """ Testes do url "cancelar-tarefa" """
+        url = self.client.get(reverse('colaboradores:cancelar-tarefa', kwargs={'id':1}))
+        self.assertEquals(url.resolver_match.func, cancelar_tarefa)
+    
+    def test_url_rejeitar_cancelamento_tarefa(self):    
+        """ Testes do url "rejeitar-cancelamento-tarefa" """
+        url = self.client.get(reverse('colaboradores:rejeitar-cancelamento-tarefa', kwargs={'id_notificacao':1}))
+        self.assertEquals(url.resolver_match.func, rejeitar_cancelamento_tarefa)
+    
+    def test_url_validar_cancelamento_tarefa(self): 
+        """ Testes do url "validar-cancelamento-tarefa" """   
+        url = self.client.get(reverse('colaboradores:validar-cancelamento-tarefa', kwargs={'id_notificacao':1}))
+        self.assertEquals(url.resolver_match.func, validar_cancelamento_tarefa)

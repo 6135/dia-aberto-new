@@ -66,4 +66,4 @@ class TestViews(TestCase):
         self.assertContains(response,status_code=200,text='Inicio submissao Atividades:',count=0) #vemos se o dia aparece na lista
 
     def test_novo_dia(self):
-        
+        pass

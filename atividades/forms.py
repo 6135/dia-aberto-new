@@ -41,22 +41,12 @@ class AtividadeForm(ModelForm):
             'descricao': Textarea(attrs={'class':'textarea'}),
             'publicoalvo': Select(),
             'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input'}),
-            'tempo': DateField(widget=DateInput(attrs={'class':'timepicker'})),
+            #'tempo': DateField(widget=DateInput(attrs={'class':'timepicker'})),
             'participantesmaximo': NumberInput(attrs={'class': 'input'}),
             'duracaoesperada': Select(),
             }
 
 
-class SessaoForm(ModelForm):
-    horarioid=CharField(widget=Select(attrs={'class':'input horario-sessao'}))   
-
-    class Meta:
-        model = Sessao
-        exclude = ['id','ninscritos','vagas','atividadeid','horarioid']
-        widgets={
-			'dia': Select(attrs={'class': 'input dia-sessao'}),
-        }
-        
 
 class MateriaisForm(ModelForm):
     class Meta:
@@ -69,26 +59,3 @@ class MateriaisForm(ModelForm):
 def get_dep_choices():
     return [(-1,'Mostra todos os Departamentos')] + [(departamento.id,departamento.nome) for departamento in Departamento.objects.all()]
 
-class atividadesFilterForm(Form):
-    searchAtividade = CharField(widget=TextInput(attrs={'class': 'input','placeholder':'Atividade'}), required=False)
-    Aceite=BooleanField(widget=CheckboxInput(),required=False)
-    Recusada=BooleanField(widget=CheckboxInput(),required=False)
-    Pendente=BooleanField(widget=CheckboxInput(),required=False)
-    diaAbertoAtual=BooleanField(widget=CheckboxInput(),required=False)
-    #departamentos = ChoiceField(choices=get_dep_choices,widget=Select(), required=False)
-    tipo = ChoiceField(choices=[
-        (" ", "Mostrar todos os tipos de Atividade"),
-        ("Atividade Laboratorial", "Atividade Laboratorial"),
-        ("Tertulia", "Tertulia"),
-        ("Palestra", "Palestra")
-     ],widget=Select())
-
-
-def get_campus_choices():
-    return Campus.objects.all()
-
-class CampusForm(Form):
-    campus= ChoiceField(choices=get_campus_choices,label='Campus')
-
-    class Meta:
-        fields=('campus')
