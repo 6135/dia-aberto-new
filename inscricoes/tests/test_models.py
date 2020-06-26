@@ -20,6 +20,13 @@ def create_Escola_1():
     )[0]
 
 
+def create_Escola_2():
+    return Escola.objects.get_or_create(
+        nome="Universidade do Algarve",
+        local="Faro",
+    )[0]
+
+
 def create_Inscricao_0():
     return Inscricao.objects.get_or_create(
         individual=False,
@@ -107,21 +114,26 @@ def create_Inscricaoprato_1():
 def create_Inscricaosessao_0():
     return Inscricaosessao.objects.get_or_create(
         inscricao=create_Inscricao_0(),
-        sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
+        sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(
+        ), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
         nparticipantes=20,
     )[0]
+
 
 def create_Inscricaosessao_1():
     return Inscricaosessao.objects.get_or_create(
         inscricao=create_Inscricao_0(),
-        sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
+        sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(
+        ), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
         nparticipantes=13,
     )[0]
+
 
 def create_Inscricaosessao_2():
     return Inscricaosessao.objects.get_or_create(
         inscricao=create_Inscricao_1(),
-        sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
+        sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(
+        ), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
         nparticipantes=12,
     )[0]
 
@@ -141,31 +153,57 @@ def create_Inscricaotransporte_1():
         npassageiros=14,
     )[0]
 
+
 class TestInscricoesModels(TestCase):
     """ Teste suite dos modelos da app "inscricoes" """
 
     def test_Escola_model(self):
         """ Testes do modelo "Escola" """
-        escolas = [create_Escola_0(), create_Escola_1(), ]
-        self.assertEquals(str(escolas[0]), "Escola Secundária de Loulé - Loulé")
+        escolas = [
+            create_Escola_0(),
+            create_Escola_1(),
+            create_Escola_2(),
+        ]
+        self.assertEquals(
+            str(escolas[0]), "Escola Secundária de Loulé - Loulé")
+        self.assertEquals(
+            str(escolas[1]), "Escola Básica e Secundária do Cadaval - Cadaval")
+        self.assertEquals(
+            str(escolas[2]), "Universidade do Algarve - Faro")
 
     def test_Inscricao_model(self):
         """ Testes do modelo "Inscricao" """
-        inscricoes = [create_Inscricao_0(), create_Inscricao_1(),
-                      create_Inscricao_2(), ]
+        inscricoes = [
+            create_Inscricao_0(),
+            create_Inscricao_1(),
+            create_Inscricao_2(),
+        ]
 
     def test_Responsavel_model(self):
         """ Testes do modelo "Responsavel" """
-        responsaveis = [create_Responsavel_0()]
+        responsaveis = [
+            create_Responsavel_0(),
+            create_Responsavel_1(),
+        ]
 
     def test_Inscricaoprato_model(self):
         """ Testes do modelo "Inscricaoprato" """
-        inscricoesprato = [create_Inscricaoprato_0()]
+        inscricoesprato = [
+            create_Inscricaoprato_0(),
+            create_Inscricaoprato_1(),
+        ]
 
     def test_Inscricaosessao_model(self):
         """ Testes do modelo "Inscricaosessao" """
-        inscricoessessao = [create_Inscricaosessao_0()]
+        inscricoessessao = [
+            create_Inscricaosessao_0(),
+            create_Inscricaosessao_1(),
+            create_Inscricaosessao_2(),
+        ]
 
     def test_Inscricaotransporte_model(self):
         """ Testes do modelo "Inscricaotransporte" """
-        inscricoesprato = [create_Inscricaotransporte_0()]
+        inscricoesprato = [
+            create_Inscricaotransporte_0(),
+            create_Inscricaotransporte_1(),
+        ]
