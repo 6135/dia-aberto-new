@@ -64,7 +64,7 @@ class TestNotificacoesUrls(TestCase):
     def test_url_criar_mensagem(self):
         """ Testes do url "escrever-mensagem" """
         url = self.client.get(reverse('notificacoes:escrever-mensagem', kwargs={'id':1}))
-        self.assertEquals(url.resolver_match.func, criar_mensagem.as_view())
+        self.assertEquals(url.resolver_match.func, criar_mensagem)
     
     def test_url_criar_mensagem_uo(self):    
         """ Testes do url "criar-mensagem-uo" """
@@ -95,7 +95,7 @@ class TestNotificacoesUrls(TestCase):
     def test_url_detalhes_mensagens(self):
         """ Testes do url "detalhes-mensagem" """
         url = self.client.get(reverse('notificacoes:detalhes-mensagem', kwargs={'id':1,'nr':1}))
-        self.assertEquals(url.resolver_match.func, detalhes_mensagens.as_view())
+        self.assertEquals(url.resolver_match.func, detalhes_mensagens)
     
     def test_url_apagar_mensagem(self):    
         """ Testes do url "apagar-mensagem" """
