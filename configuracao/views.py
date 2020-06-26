@@ -79,36 +79,6 @@ class TimeC():
 	def __ne__(self, other):
 		return not self.__eq__(self,other=other)
 
-def orderBy(request, list_diaaberto):
-	if request.method == 'POST':
-		search_specific = request.POST['searchAno']
-		if search_specific != "" and int(search_specific) > 0:
-			list_diaaberto = list_diaaberto.filter(ano=search_specific)
-		sort_by = request.POST['orderBy']
-		if sort_by == "":
-			sort_by = '-ano'
-		list_diaaberto = list_diaaberto.order_by(sort_by)
-
-	else:
-		list_diaaberto = list_diaaberto.order_by('-ano')
-		search_specific = ""
-
-	return {'list_diaaberto': list_diaaberto,
-			'current': {'specific_year': search_specific,}
-			}
-
-def showBy(request, list_diaaberto):
-	if request.method == 'POST':
-		today = datetime.now(timezone.utc)
-		if request.POST['showBy'] == '1':
-			list_diaaberto = list_diaaberto.filter(datadiaabertofim__gte=today)
-		elif request.POST['showBy'] == '2':
-			list_diaaberto = list_diaaberto.filter(dataporpostaatividadesfim__gte=today)
-		elif request.POST['showBy'] == '3':
-			list_diaaberto = list_diaaberto.filter(datainscricaoatividadesfim__gte=today)
-	return list_diaaberto
-
-
 class viewDays(SingleTableMixin, FilterView):
 
 	table_class = DiaAbertoTable
@@ -148,9 +118,8 @@ def newDay(request, id=None):
 
 	user_check_var = user_check(request=request, user_profile=[Administrador])
 	if user_check_var.get('exists') == False: return user_check_var.get('render')
-	if Diaaberto.current() is not None:
+	if Diaaberto.current() is not None and id is None:
 		return redirect('configuracao:diasAbertos')
-
 
 	logged_admin = Administrador.objects.get(utilizador_ptr_id = request.user.id)
 
@@ -185,24 +154,6 @@ def delDay(request, id=None):
 		dia_aberto = Diaaberto.objects.filter(id=id)
 		dia_aberto.delete()
 	return redirect('configuracao:diasAbertos')
-
-def filterMenus(request, menus):
-	if request.method == 'POST':
-		search_specific = request.POST['searchAno']
-		if search_specific != "" and int(search_specific) > 0:
-			menus = menus.filter(diaaberto = Diaaberto.objects.get(ano=search_specific))
-		filters=['','','']
-		if request.POST.get('penha'):
-			filters[0]='Penha'
-		if  request.POST.get('gambelas'):
-			filters[1]='Gambelas'
-		if  request.POST.get('portimao'):
-			filters[2]='Portimao'
-		if request.POST.get('portimao') or request.POST.get('gambelas') or request.POST.get('penha'):
-			menus = menus.filter(Q(campus=Campus.objects.filter(nome=filters[0]).first())
-						| Q(campus=Campus.objects.filter(nome=filters[1]).first())
-						| Q(campus=Campus.objects.filter(nome=filters[2]).first()))
-	return menus
 
 class verMenus(SingleTableMixin, FilterView):
 
@@ -243,6 +194,7 @@ def newMenu(request, id = None):
 	if request.method == 'POST':
 		menu_form = menuForm(request.POST,instance=menu_object)
 		prato_form_set = PratoFormSet(request.POST)
+		#print(request.POST)
 		if menu_form.is_valid() and prato_form_set.is_valid():
 			menu_object = menu_form.save()
 			instances = prato_form_set.save(commit=False)
@@ -325,18 +277,6 @@ def getDias(request):
 				  template_name='configuracao/dropdown.html',
 				  context={'options':options, 'default': default}
 				)
-
-def filtrarTransportes(request, transportes):
-	search_specific = None
-	if request.method == 'POST':
-		search_specific = request.POST.get('searchId')
-		if search_specific != '':
-			transportes = transportes.filter(transporte__identificador = search_specific)
-		if request.POST.get('filter_to') != '':
-			transportes = transportes.filter(chegada = request.POST.get('filter_to'))
-		if  request.POST.get('filter_from') != '':
-			transportes = transportes.filter(origem = request.POST.get('filter_from'))
-	return transportes
 
 class verTransportes(SingleTableMixin, FilterView):
 
@@ -837,6 +777,7 @@ def configurarCurso(request, id = None):
 		allowMore, allowDelete = False, False	
 
 	if(request.method == 'POST'):
+		
 		departamentoforms = departamentoformSet(request.POST)
 		if departamentoforms.is_valid():
 			departamentoforms.save()
