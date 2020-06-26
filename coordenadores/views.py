@@ -18,6 +18,8 @@ from coordenadores.filters import TarefaFilter
 from utilizadores.views import user_check
 
 def adicionartarefa(request,id=None):
+    user_check_var = user_check(request=request, user_profile=[Coordenador])
+    if not user_check_var.get('exists'): return user_check_var.get('render')
     if id:
         tarefa = Tarefa.objects.get(id=id)
     else:
@@ -42,6 +44,8 @@ def adicionartarefa(request,id=None):
     return render(request = request,template_name='coordenadores/criarTarefa.html',context={'tarefa':tarefa})
 
 def tipoTarefa(request):
+    user_check_var = user_check(request=request, user_profile=[Coordenador])
+    if not user_check_var.get('exists'): return user_check_var.get('render')
     template =''
     form = ''
     atividades = None
@@ -165,13 +169,15 @@ def colaboradores(request):
             )
 
 def grupoInfo(request):
+    info = ''
+    responsavel = ''
     if request.method == 'POST':
         if 'tarefa' in request.POST and request.POST.get('tarefa') != '':
             tarefa = TarefaAcompanhar.objects.get(tarefaid=request.POST.get('tarefa'))
             info = Inscricao.objects.get(id=tarefa.inscricao.id)
-        else:   
+        elif request.POST['grupo_id'] != '':   
             info = Inscricao.objects.get(id=request.POST['grupo_id'])
-    responsavel = Responsavel.objects.get(inscricao=info.id)
+            responsavel = Responsavel.objects.get(inscricao=info.id)
     return render(request=request,
                 template_name='coordenadores/grupoInfo.html',
                 context={'info': info,'responsavel':responsavel}
@@ -180,22 +186,23 @@ def grupoInfo(request):
 def diasGrupo(request):
     dias=[]
     default=[]
-    if request.POST['grupo_id'] != '':
-        if 'tarefa' in request.POST and request.POST.get('tarefa')!='':
-            tarefa = Tarefa.objects.get(id=request.POST.get('tarefa'))
-            
+    grupo = request.POST['grupo_id']
+    default = {
+        'key': '',
+        'value': 'Escolha o dia'
+    }
+    if 'tarefa' in request.POST and request.POST.get('tarefa')!='':
+        tarefa = TarefaAcompanhar.objects.get(tarefaid=request.POST.get('tarefa'))
+        if int(tarefa.inscricao.id) == int(grupo) or grupo=='':
             default={
-                'key': str(tarefa.dia),
-                'value': tarefa.dia
+                'key': str(tarefa.tarefaid.dia),
+                'value': tarefa.tarefaid.dia
             }
-        else:
-            default = {
-                'key': '',
-                'value': 'Escolha o dia'
-            }
-        inscricaoid = request.POST.get('grupo_id')
-        inscricao = Inscricao.objects.get(id=inscricaoid)
-        dias = inscricao.get_dias()
+            
+
+    inscricao = Inscricao.objects.get(id=grupo)
+    dias = inscricao.get_dias()
+     
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':dias, 'default': default}
@@ -203,24 +210,23 @@ def diasGrupo(request):
 
 def horarioGrupo(request):
     horario = []
-    default = []
+    dia = request.POST['dia']
+    default = {
+        'key': '',
+        'value': 'Escolha o horário'
+    }
+    grupo = request.POST.get('grupo_id')
     if request.method == 'POST':    
         if 'tarefa' in request.POST and request.POST.get('tarefa')!='':
             tarefa = TarefaAcompanhar.objects.get(tarefaid=request.POST.get('tarefa'))
-            grupo = tarefa.inscricao.id
-            dia = str(tarefa.tarefaid.dia)
-            default={
-                'key': str(tarefa.tarefaid.horario),
-                'value': time.strftime(tarefa.tarefaid.horario,"%H:%M")
-            }
+            if (tarefa.tarefaid.dia == dia or dia == ''):
             
-        else:
-            grupo = request.POST.get('grupo_id')
-            dia = request.POST['dia']
-            default = {
-                'key': '',
-                'value': 'Escolha o horário'
-            }
+                grupo = tarefa.inscricao.id
+                dia = str(tarefa.tarefaid.dia)
+                default={
+                    'key': str(tarefa.tarefaid.horario),
+                    'value': tarefa.tarefaid.horario
+                 } 
         
         inscricao = Inscricao.objects.get(id=grupo)
         horario = inscricao.get_horarios(dia)
@@ -230,55 +236,63 @@ def horarioGrupo(request):
             )
 
 def locaisOrigem(request):
+    origens = []
+    dia = request.POST['dia']
+    horario = request.POST.get('horario')
+    default = {
+        'key': '',
+        'value': 'Escolha o local de encontro'
+    }
+    grupo = request.POST.get('grupo_id')
     if request.method == 'POST':    
         if 'tarefa' in request.POST and request.POST.get('tarefa')!='':
             tarefa = TarefaAcompanhar.objects.get(tarefaid=request.POST.get('tarefa'))
-            grupo = tarefa.inscricao.id
-            horario = tarefa.tarefaid.horario
-            dia = str(tarefa.tarefaid.dia)
-            local = Espaco.objects.get(id=int(tarefa.origem))
-            default={
-                'key': str(local.id),
-                'value': local.nome
-            }
+            if tarefa.tarefaid.horario == horario or horario == '':
+                grupo = tarefa.inscricao.id
+                horario = tarefa.tarefaid.horario
+                dia = str(tarefa.tarefaid.dia)
+                if tarefa.origem != 'Check in':
+                    local = Espaco.objects.get(id=int(tarefa.origem))
+                    local_nome = local.nome
+                    local = local.id
+                else: 
+                    local = "Check in"
+                    local_nome = "Check in"
+                default={
+                    'key': str(local),
+                    'value': local_nome
+                }
             
-        else:
-            grupo = request.POST.get('grupo_id')
-            dia = request.POST['dia']
-            horario = request.POST.get('horario')
-            default = {
-                'key': '',
-                'value': 'Escolha o local de encontro'
-            }
-        origens = []
         inscricao = Inscricao.objects.get(id=grupo)
         origens =  inscricao.get_origem(dia,horario)
+
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':origens, 'default': default}
             )  
 
 def locaisDestino(request):
+    grupo = request.POST.get('grupo_id')
+    dia = request.POST['dia']
+    horario = request.POST.get('horario')
+    default = {
+        'key': '',
+        'value': 'Escolha o local de destino'
+    }
+    destinos = []
     if request.method == 'POST':    
         if 'tarefa' in request.POST and request.POST.get('tarefa')!='':
             tarefa = TarefaAcompanhar.objects.get(tarefaid=request.POST.get('tarefa'))
-            grupo = tarefa.inscricao.id
-            horario = tarefa.tarefaid.horario
-            dia = str(tarefa.tarefaid.dia)
-            local = Espaco.objects.get(id=int(tarefa.destino))
-            default={
-                'key': tarefa.destino,
-                'value': local.nome
-            }         
-        else:
-            grupo = request.POST.get('grupo_id')
-            dia = request.POST['dia']
-            horario = request.POST.get('horario')
-            default = {
-                'key': '',
-                'value': 'Escolha o local de destino'
-            }
-        destinos = []
+            if tarefa.tarefaid.horario == horario or horario == '':
+                grupo = tarefa.inscricao.id
+                horario = tarefa.tarefaid.horario
+                dia = str(tarefa.tarefaid.dia)
+                local = Espaco.objects.get(id=int(tarefa.destino))
+                default={
+                    'key': tarefa.destino,
+                    'value': local.nome
+                }         
+        
         inscricao = Inscricao.objects.get(id=grupo)
         destinos =  inscricao.get_destino(dia,horario)
 
@@ -323,6 +337,8 @@ def eliminartarefa(request,id):
     return redirect('coordenadores:consultarTarefa')
 
 def atribuirColaborador(request,id):
+    user_check_var = user_check(request=request, user_profile=[Coordenador])
+    if not user_check_var.get('exists'): return user_check_var.get('render')
     if request.method == 'POST':
         colab = Colaborador.objects.get(id = int(request.POST.get('colab')))
         Tarefa.objects.filter(id=id).update(colab=colab,estado='naoConcluida')

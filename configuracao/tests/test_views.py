@@ -179,6 +179,34 @@ class TestViews(TestCase):
         self.assertContains(response,status_code=200,text='Feijoada')
         self.assertContains(response,status_code=200,text='Carne')
 
+        
+    def test_menus_POST(self):
+        client = self.client
+        data = {
+            'campus': ['1'],
+            'diaaberto': ['10'],
+            'dia': ['2021-05-23'],
+            'form-TOTAL_FORMS': ['1'],
+            'form-INITIAL_FORMS': ['1'],
+            'form-MIN_NUM_FORMS': ['1'],
+            'form-MAX_NUM_FORMS': ['1000'],
+            'form-0-id': ['24'],
+            'form-0-prato':['Carne Alentejana'],
+            'form-0-tipo': ['Carne'],
+            'form-0-nrpratosdisponiveis': ['1']          
+        }
+
+        response = client.get(reverse('configuracao:novoMenu'))
+        self.assertEquals(response.status_code,302) #Redirect if user not logged in
+
+        response = client.get(reverse('configuracao:novoMenu'),follow=True)#Not logged in goes to message
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response, 'utilizadores/login.html')
+
+        client.force_login(user=create_Coordenador_0()) #now we test with wrong loggin
+        response = client.get(reverse('configuracao:novoMenu'))
+        self.assertContains(response,status_code=200,text='Não tem permissões para aceder a esta página!')
+
 
 
        
