@@ -70,7 +70,6 @@ class Inscricao(models.Model):
     def get_dias(self):
         inscricao_sessoes = Inscricaosessao.objects.filter(
             inscricao=self).order_by('sessao__dia')
-        dias = []
         dias = [sessao.sessao.dia for sessao in inscricao_sessoes]
         return [{'key': str(dia), 'value': dia} for dia in set(dias)]
 
