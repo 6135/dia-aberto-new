@@ -76,6 +76,7 @@ class Tarefa(models.Model):
             return ""
 
 
+
 class TarefaAcompanhar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
     origem = models.CharField(max_length=255, db_column='origem', blank=False, null=False)
@@ -96,7 +97,22 @@ class TarefaAcompanhar(models.Model):
         msg = self.tarefaid.nome+extra+" á sala "+destino.nome+", no edifício "+ destino.edificio.nome+", no dia "+self.tarefaid.dia.strftime('%d/%m/%y')\
         +" às "+self.tarefaid.horario.strftime('%H horas e %M minutos')+"."
         return msg
-   
+
+
+ 
+    def get_origem(self):
+        if self.origem != 'Check in':
+            local = Espaco.objects.get(id=int(self.origem))
+            origem = local.nome
+            return "Sala "+origem+", edifício "+ local.edificio.nome
+        else:
+            return self.origem
+
+    def get_destino(self):
+        destino = Espaco.objects.get(id=int(self.destino))          
+        return destino.nome+", edifício "+ destino.edificio.nome
+
+
 class TarefaAuxiliar(models.Model):
     tarefaid = models.OneToOneField(Tarefa, models.CASCADE, db_column='tarefaid', primary_key=True)
     sessao = models.ForeignKey('atividades.Sessao', models.CASCADE, db_column='sessao')

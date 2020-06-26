@@ -28,7 +28,10 @@ def apagar_notificacao_automatica(request, id ,nr):
         user = get_user(request)
     else:
         return redirect('utilizadores:mensagem', 5)
-    notificacao = Notificacao.objects.get(id=nr)
+    try:    
+        notificacao = Notificacao.objects.get(id=nr)
+    except:
+        return redirect("utilizadores:mensagem", 5)
     if notificacao == None:
         return redirect("utilizadores:mensagem", 5)
     notificacao.delete()
@@ -168,9 +171,12 @@ def categorias_notificacao_automatica(request, id, nr):
     
     x = len(notificacoes)
     if nr!=0:
-        notificacao = Notificacao.objects.get(id=nr)
-        if notificacao == None:
-            return redirect("notificacoes:sem-notificacoes", id) 
+        try:
+            notificacao = Notificacao.objects.get(id=nr)
+            if notificacao == None:
+                return redirect("notificacoes:sem-notificacoes", id) 
+        except:  
+            return redirect("notificacoes:sem-notificacoes", id)      
     else:
         if x>0:
             notificacao = notificacoes[0]
@@ -847,9 +853,12 @@ def detalhes_mensagens(request, id, nr):
     
     x = len(notificacoes)
     if nr!=0:
-        notificacao = MensagemRecebida.objects.get(mensagem=nr)
-        if notificacao == None:
-            return redirect("notificacoes:sem-mensagens", id) 
+        try:
+            notificacao = MensagemRecebida.objects.get(mensagem=nr)
+            if notificacao == None:
+                return redirect("notificacoes:sem-mensagens", id) 
+        except:
+            return redirect("notificacoes:sem-mensagens", id)       
     else:
         if x>0:
             notificacao = notificacoes[0]
