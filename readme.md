@@ -136,6 +136,12 @@ python manage.py migrate
 python manage.py create_groups
 ```
 
+14. Criar o primeiro administrador
+
+```SH
+python manage.py create_admin [password]
+```
+
 
 ## Comandos fundamentais
 
