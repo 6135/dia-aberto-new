@@ -68,7 +68,7 @@
                     <div class="control">
                         <div class="select is-fullwidth">
                           <select name="colab" id="id_colab">
-                            <option value="" selected="">Escolha o colaborador</option>
+                            <option value="" selected>Não atribuir</option>
                           </select>
                         </div>
                     </div>
@@ -117,7 +117,6 @@
         if ("{{tarefa}}"){
           var tipo="{{tarefa.tipo}}";
           var tarefa = "{{tarefa.id}}"
-          console.log(tarefa)
           $.ajax({                       
           url: "{% url 'coordenadores:tipoTarefa' %}", 
           method: 'POST',             
@@ -183,7 +182,6 @@
 /*---------------->AuxiliarAtividade<--------------------*/
     function diasSelect(){
       var atividadeId = document.getElementById("id_atividade").value; 
-      console.log(atividadeId)
       var tarefa = "{{tarefa.id}}";
       $.ajax({                       
         url: "{% url 'coordenadores:diasAtividade' %}", 
@@ -202,7 +200,6 @@
 
     function sessoesSelect(){
       var dia = document.getElementById("id_dia").value; 
- 
       var atividadeId = document.getElementById("id_atividade").value; 
       var tarefa = "{{tarefa.id}}";
       $.ajax({                       
@@ -293,7 +290,6 @@
       var dia = document.getElementById("id_dia").value;
       var grupo_id = document.getElementById("id_grupo").value; 
       var horario = document.getElementById("id_horario").value;
-      console.log('horario: ' + horario)
       var tarefa = "{{tarefa.id}}";
       $.ajax({                       
         url: "{% url 'coordenadores:locaisOrigem' %}", 

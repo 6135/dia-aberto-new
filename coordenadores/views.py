@@ -35,7 +35,6 @@ def adicionartarefa(request,id=None):
         if form.is_valid():
             coord = Coordenador.objects.get(id=request.user.id)
             save=form.save(user=coord,id=id)
-            print(save)
             if id:
                 views.enviar_notificacao_automatica(request,sigla="tarefaAlterada",id=id)
             else:
@@ -103,7 +102,6 @@ def diasAtividade(request):
 
 def sessoesAtividade(request):
     atividade= request.POST['atividadeid']
-    print(request.POST['dia'])
     dia = str(request.POST['dia'])
     default = {
                 'key': '',
@@ -121,9 +119,6 @@ def sessoesAtividade(request):
                     'key': str(tarefa.sessao.id),
                     'value': str(tarefa.sessao.horarioid.inicio) + ' até ' + str(tarefa.sessao.horarioid.fim)
                 }
-            
-        print(dia)
-        print(dia.__class__)
         sessoes = Sessao.tarefas_get_sessoes(atividade=atividade,dia=dia)
     
         options = [{
@@ -138,6 +133,10 @@ def sessoesAtividade(request):
 
 def colaboradores(request):
     default=[]
+    default = {
+                    'key': '',
+                    'value': 'Não atribuir'
+                }
     if request.method == 'POST':
         if 'tarefa' in request.POST and request.POST['tarefa']!='':
             tarefa = Tarefa.objects.get(id=int(request.POST['tarefa']))
@@ -146,19 +145,12 @@ def colaboradores(request):
                     'key': str(tarefa.colab.utilizador_ptr_id),
                     'value': str(tarefa.colab.full_name)
                 } 
-            else:
-                default = {
-                    'key': '',
-                    'value': 'Escolha o colaborador'
-                }
-        else:
-            default = {
-                'key': '',
-                'value': 'Escolha o colaborador'
-            }
         coordenador = Coordenador.objects.get(id = request.user.id)
         colabs = Colaborador.objects.filter(faculdade = coordenador.faculdade,utilizador_ptr_id__valido=True)
         options = [{
+                    'key': '',
+                    'value': 'Não atribuir'
+                }]+[{
                     'key':	str(colab.utilizador_ptr_id),
                     'value':	str(colab.full_name)
                 } for colab in colabs
