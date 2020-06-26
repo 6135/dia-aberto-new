@@ -316,12 +316,13 @@ class ConsultarTarefas(SingleTableMixin, FilterView):
         return context
 
 def eliminartarefa(request,id):
-    tarefa = ''
     user_check_var = user_check(request=request, user_profile=[Coordenador])
     if not user_check_var.get('exists'): return user_check_var.get('render')
+    
+    tarefa = ''
     if Tarefa.objects.filter(id=id).exists():
         tarefa = Tarefa.objects.get(id=id)
-    if tarefa.coord.id == user_check_var.get('firstProfile').id:
+    if tarefa.coord.id == user_check_var.get('firstProfile').id and tarefa.eliminar == True:
         if tarefa.colab is not None:
             views.enviar_notificacao_automatica(request,"tarefaApagada",id)
         tarefa.delete()    
