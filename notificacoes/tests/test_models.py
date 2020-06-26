@@ -1,207 +1,131 @@
 from django.test import TestCase
-
-from django.test import TestCase
 from utilizadores.models import *
 from configuracao.models import *
 from django.core.management import call_command
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+from notificacoes.models import InformacaoMensagem, InformacaoNotificacao, MensagemEnviada, MensagemRecebida, Notificacao
+from utilizadores.tests.test_models import create_Administrador_0, create_Colaborador_1, create_Coordenador_0, create_Coordenador_1, create_Participante_0, create_ProfessorUniversitario_0, create_Utilizador_0, create_Utilizador_1
+from datetime import datetime
+import pytz
+from notifications.signals import notify
 
-def create_Utilizador_0():
-    return Utilizador.objects.get_or_create(
-        username="andre0",
-        first_name="André",
-        last_name="Barrocas", 
-        password="andre123456", 
-        email="teste@teste.pt",
-        contacto="+351967321393",
-        valido="False"
+
+def create_InformacaoNotificacao_0():
+    return InformacaoNotificacao.objects.get_or_create(
+        data=datetime.now(pytz.UTC) + timedelta(days=5),
+        pendente=True,
+        titulo="teste",
+        descricao="teste",
+        emissor=create_Administrador_0(),
+        recetor=create_Coordenador_0(),
+        tipo="register",
+        lido=False
     )[0]
 
 
+def create_InformacaoNotificacao_1():
+    return InformacaoNotificacao.objects.get_or_create(
+        data=datetime.now(pytz.UTC) + timedelta(days=7),
+        pendente=True,
+        titulo="teste1",
+        descricao="teste1",
+        emissor=create_Administrador_0(),
+        recetor=create_Coordenador_1(),
+        tipo="register",
+        lido=False
+    )[0]
 
-def create_Utilizador_1():
-    return Utilizador.objects.get_or_create(
-        username="andre1",
-        first_name="André",
-        last_name="Barrocas", 
-        password="andre123456", 
-        email="teste1@teste.pt",
-        contacto="+351967321393",
-        valido="False"
-    )[0]    
 
-
-
-def create_Mensagem_0():
+def create_InformacaoMensagem_0():
     return InformacaoMensagem.objects.get_or_create(
-        data=timezone.now() + timedelta(days=5),
-        pendente=True, 
-        titulo = "teste",
-        descricao = "teste", 
-        emissor = self.user_emissor , 
-        recetor = self.user_recipient, 
-        tipo = "register" , 
-        lido = False
-    )[0]        
+        data=datetime.now(pytz.UTC) + timedelta(days=5),
+        pendente=True,
+        titulo="teste2",
+        descricao="teste2",
+        emissor=create_Utilizador_0(),
+        recetor=create_Utilizador_1(),
+        tipo="register",
+        lido=False
+    )[0]
 
 
-def create_Mensagem_1():
+def create_InformacaoMensagem_1():
     return InformacaoMensagem.objects.get_or_create(
-        data=timezone.now() + timedelta(days=5),
-        pendente=True, 
-        titulo = "teste",
-        descricao = "teste", 
-        emissor = self.user_emissor , 
-        recetor = self.user_recipient, 
-        tipo = "register" , 
-        lido = False
-    )[0]        
-
-
-
-def create_NotificacaoNaoImediata_0():
-    return InformacaoMensagem.objects.get_or_create(
-        data=timezone.now() + timedelta(days=5),
-        pendente=True, 
-        titulo = "teste",
-        descricao = "teste", 
-        emissor = self.user_emissor , 
-        recetor = self.user_recipient, 
-        tipo = "register" , 
-        lido = False
-    )[0]        
-
-
-def create_NotificacaoNaoImediata_1():
-    return InformacaoMensagem.objects.get_or_create(
-        data=timezone.now() + timedelta(days=5),
-        pendente=True, 
-        titulo = "teste",
-        descricao = "teste", 
-        emissor = self.user_emissor , 
-        recetor = self.user_recipient, 
-        tipo = "register" , 
-        lido = False
-    )[0]        
-
-
-
+        data=datetime.now(pytz.UTC) + timedelta(days=5),
+        pendente=True,
+        titulo="teste3",
+        descricao="teste3",
+        emissor=create_Participante_0(),
+        recetor=create_Coordenador_1(),
+        tipo="register",
+        lido=False
+    )[0]
 
 
 def create_MensagemRecebida_0():
-    return InformacaoMensagem.objects.get_or_create(
-        data=timezone.now() + timedelta(days=5),
-        pendente=True, 
-        titulo = "teste",
-        descricao = "teste", 
-        emissor = self.user_emissor , 
-        recetor = self.user_recipient, 
-        tipo = "register" , 
-        lido = False
-    )[0]        
+    return MensagemRecebida.objects.get_or_create(
+        mensagem=create_InformacaoMensagem_0()
+    )[0]
 
 
 def create_MensagemRecebida_1():
-    return InformacaoMensagem.objects.get_or_create(
-        data=timezone.now() + timedelta(days=5),
-        pendente=True, 
-        titulo = "teste",
-        descricao = "teste", 
-        emissor = self.user_emissor , 
-        recetor = self.user_recipient, 
-        tipo = "register" , 
-        lido = False
-    )[0]       
-
-
+    return MensagemRecebida.objects.get_or_create(
+        mensagem=create_InformacaoMensagem_1()
+    )[0]
 
 
 def create_MensagemEnviada_0():
-    return InformacaoMensagem.objects.get_or_create(
-        data=timezone.now() + timedelta(days=5),
-        pendente=True, 
-        titulo = "teste",
-        descricao = "teste", 
-        emissor = self.user_emissor , 
-        recetor = self.user_recipient, 
-        tipo = "register" , 
-        lido = False
-    )[0]        
+    return MensagemEnviada.objects.get_or_create(
+        mensagem=create_InformacaoMensagem_0()
+    )[0]
 
 
 def create_MensagemEnviada_1():
-    return InformacaoMensagem.objects.get_or_create(
-        data=timezone.now() + timedelta(days=5),
-        pendente=True, 
-        titulo = "teste",
-        descricao = "teste", 
-        emissor = self.user_emissor , 
-        recetor = self.user_recipient, 
-        tipo = "register" , 
-        lido = False
-    )[0]        
- 
+    return MensagemEnviada.objects.get_or_create(
+        mensagem=create_InformacaoMensagem_1()
+    )[0]
 
 
 class TestMensagemModels(TestCase):
-    ''' Testes para o utilizador - funções dos modelos da componente utilizadores '''
-    
-    def setUp(self):
-        call_command('create_groups')
-        self.utilizador0 = create_Utilizador_0()
-        self.utilizador1 = create_Utilizador_1()
+    ''' Testes para as notificacoes - funções dos modelos da componente notificacoes '''
 
+    def test_Notificacao_model(self):
+        """ Testes do modelo "Notificacao" """
+        professor = create_ProfessorUniversitario_0()
+        notify.send(create_Administrador_0(),
+                    recipient=professor,
+                    verb='O seu registo foi validado')
+        assert professor.notifications.unread().count() == 1
+        notify.send(create_Coordenador_0(),
+                    recipient=professor,
+                    verb='A sua atividade foi aceite')
+        assert professor.notifications.unread().count() == 2
 
+    def test_InformacaoNotificacao_model(self):
+        """ Testes do modelo "InformacaoNotificacao" """
+        notificacoes = [
+            create_InformacaoNotificacao_0(),
+            create_InformacaoNotificacao_1(),
+        ]
 
-    def test_get_profiles(self):
-        ''' Teste que verifica o perfil do utilizador '''
-        self.assertEquals(self.utilizador0.getProfiles(),'')
-        self.assertEquals(self.utilizador1.getProfiles(),'')
+    def test_InformacaoMensagem_model(self):
+        """ Testes do modelo "InformacaoMensagem" """
+        mensagens = [
+            create_InformacaoMensagem_0(),
+            create_InformacaoMensagem_1(),
+        ]
 
+    def test_MensagemRecebida_model(self):
+        """ Testes do modelo "MensagemRecebida" """
+        mensagens = [
+            create_MensagemRecebida_0(),
+            create_MensagemRecebida_1(),
+        ]
 
-    def test_get_user(self):
-        ''' Teste que verifica o a subclasse do utilizador de um dado utilizador '''
-        self.assertEquals(self.utilizador0.getUser(),None)
-        self.assertEquals(self.utilizador1.getUser(),None)
-
-
-    def test_get_profile(self):
-        ''' Teste que verifica o perfil do utilizador '''
-        self.assertEquals(self.utilizador0.getProfile(),None)
-        self.assertEquals(self.utilizador1.getProfile(),None)
-
-
-    def test_email_valido_UO(self):
-        ''' Teste que verifica pelo email de um utilizador se é da mesma unidade orgânica que outro '''
-        self.assertEquals(self.utilizador0.emailValidoUO(create_UO_0(create_Campus_0())),False)
-        self.assertEquals(self.utilizador1.emailValidoUO(create_UO_0(create_Campus_0())),False)   
-
-
-    def test_email_valido_participante(self):
-        ''' Teste que verifica que um utilizador é do tipo administrador pelo email '''
-        self.assertEquals(self.utilizador0.emailValidoParticipante(),False)
-        self.assertEquals(self.utilizador1.emailValidoParticipante(),False)
-
-
-    def test_full_name(self):
-        ''' Teste que verifica se o nome completo de um utilizador é correto '''
-        self.assertEquals(self.utilizador0.full_name,"André Barrocas")
-        self.assertEquals(self.utilizador1.full_name,"André Barrocas")
-
-
-
-class TestNotificacaoNaoImediataModels(TestCase):
-    ''' Testes para o utilizador - funções dos modelos da componente utilizadores '''
-
-
-
-
-class TestMensagemRecebidaModels(TestCase):
-    ''' Testes para o utilizador - funções dos modelos da componente utilizadores '''
-
-
-
-
-class TestMensagemRecebidaEnviada(TestCase):
-    ''' Testes para o utilizador - funções dos modelos da componente utilizadores '''
+    def test_MensagemEnviada_model(self):
+        """ Testes do modelo "MensagemEnviada" """
+        mensagens = [
+            create_MensagemEnviada_0(),
+            create_MensagemEnviada_1(),
+        ]
