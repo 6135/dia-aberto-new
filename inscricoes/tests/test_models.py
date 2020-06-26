@@ -1,7 +1,8 @@
 from django.test import TestCase
-from inscricoes.models import Escola, Inscricao, Inscricaoprato, Inscricaotransporte, Responsavel
-from utilizadores.tests.test_models import create_Participante_0
-from configuracao.tests.test_models import create_campus, create_open_day, create_transporteH
+from inscricoes.models import Escola, Inscricao, Inscricaoprato, Inscricaosessao, Inscricaotransporte, Responsavel
+from utilizadores.tests.test_models import create_Participante_0, create_ProfessorUniversitario_0
+from configuracao.tests.test_models import create_campus, create_edificio, create_horario, create_open_day, create_sala, create_transporteH
+from atividades.tests.test_models import create_atividade, create_sessao, create_tema
 import datetime
 
 
@@ -76,30 +77,69 @@ def create_Responsavel_0():
     )[0]
 
 
+def create_Responsavel_1():
+    return Responsavel.objects.get_or_create(
+        inscricao=create_Inscricao_1(),
+        nome="Miguel Afonso",
+        email="miguelafonso@mail.mail",
+        tel="+351931231231",
+    )[0]
+
+
 def create_Inscricaoprato_0():
     return Inscricaoprato.objects.get_or_create(
         inscricao=create_Inscricao_0(),
         campus=create_campus(),
-        npratosalunos=300,
-        npratosdocentes=200,
+        npratosalunos=20,
+        npratosdocentes=2,
     )[0]
 
 
-# def create_Inscricaosessao_0():
-#     return Inscricaotransporte.objects.get_or_create(
-#         inscricao=create_Inscricao_0(),
-#         sessao=create_sessao(),
-#         nparticipantes=20,
-#     )[0]
+def create_Inscricaoprato_1():
+    return Inscricaoprato.objects.get_or_create(
+        inscricao=create_Inscricao_0(),
+        campus=create_campus(),
+        npratosalunos=15,
+        npratosdocentes=1,
+    )[0]
+
+
+def create_Inscricaosessao_0():
+    return Inscricaosessao.objects.get_or_create(
+        inscricao=create_Inscricao_0(),
+        sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
+        nparticipantes=20,
+    )[0]
+
+def create_Inscricaosessao_1():
+    return Inscricaosessao.objects.get_or_create(
+        inscricao=create_Inscricao_0(),
+        sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
+        nparticipantes=13,
+    )[0]
+
+def create_Inscricaosessao_2():
+    return Inscricaosessao.objects.get_or_create(
+        inscricao=create_Inscricao_1(),
+        sessao=create_sessao(create_atividade(create_ProfessorUniversitario_0(), create_open_day(), create_sala(create_edificio(create_campus())), create_tema()), create_horario()),
+        nparticipantes=12,
+    )[0]
 
 
 def create_Inscricaotransporte_0():
     return Inscricaotransporte.objects.get_or_create(
         inscricao=create_Inscricao_0(),
         transporte=create_transporteH(create_open_day()),
-        npassageiros=40,
+        npassageiros=20,
     )[0]
 
+
+def create_Inscricaotransporte_1():
+    return Inscricaotransporte.objects.get_or_create(
+        inscricao=create_Inscricao_1(),
+        transporte=create_transporteH(create_open_day()),
+        npassageiros=14,
+    )[0]
 
 class TestInscricoesModels(TestCase):
     """ Teste suite dos modelos da app "inscricoes" """
@@ -122,9 +162,9 @@ class TestInscricoesModels(TestCase):
         """ Testes do modelo "Inscricaoprato" """
         inscricoesprato = [create_Inscricaoprato_0()]
 
-    # def test_Inscricaosessao_model(self):
-    #     """ Testes do modelo "Inscricaosessao" """
-    #     inscricoessessao = [create_Inscricaosessao_0()]
+    def test_Inscricaosessao_model(self):
+        """ Testes do modelo "Inscricaosessao" """
+        inscricoessessao = [create_Inscricaosessao_0()]
 
     def test_Inscricaotransporte_model(self):
         """ Testes do modelo "Inscricaotransporte" """

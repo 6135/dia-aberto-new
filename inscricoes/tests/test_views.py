@@ -9,7 +9,7 @@ from utilizadores.tests.test_models import create_Administrador_0, create_Colabo
 from unittest import mock
 import pytz
 from unittest.mock import Mock
-from inscricoes.tests.test_models import create_Inscricao_0
+from inscricoes.tests.test_models import create_Inscricao_0, create_Inscricao_1
 from dia_aberto.views import error404
 
 
@@ -272,7 +272,7 @@ class TestConsultarInscricaoView(TestCase):
 
     def test_ConsultarInscricao_GET_semLogin(self):
         """ Teste de método GET sem login """
-        response = self.client.post(
+        response = self.client.get(
             reverse('inscricoes:consultar-inscricao', kwargs={'pk': self.inscricao.pk}))
         self.assertRedirects(response, reverse('utilizadores:login'))
 
@@ -293,7 +293,7 @@ class TestConsultarInscricaoView(TestCase):
                         create_ProfessorUniversitario_0(),
                         create_Colaborador_0()]
         for utilizador in utilizadores:
-            self.client.force_login(create_Administrador_0())
+            self.client.force_login(utilizador)
             response = self.client.get(
                 reverse('inscricoes:consultar-inscricao', kwargs={'pk': self.inscricao.pk}))
             self.assertTemplateUsed(response, 'mensagem.html')
@@ -343,7 +343,7 @@ class TestConsultarInscricaoView(TestCase):
                         create_ProfessorUniversitario_0(),
                         create_Colaborador_0()]
         for utilizador in utilizadores:
-            self.client.force_login(create_Administrador_0())
+            self.client.force_login(utilizador)
             response = self.client.post(
                 reverse('inscricoes:consultar-inscricao', kwargs={'pk': self.inscricao.pk}))
             self.assertTemplateUsed(response, 'mensagem.html')
@@ -369,3 +369,174 @@ class TestConsultarInscricaoView(TestCase):
         self.assertEquals(response.status_code, 200)
         self.assertTemplateUsed(
             response, 'inscricoes/consultar_inscricao_responsaveis.html')
+
+class TestMinhasInscricoesView(TestCase):
+    """ Teste suite da view "MinhasInscricoes" da app "inscricoes" """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.inscricao = create_Inscricao_0()
+
+    def test_MinhasInscricoes_GET_semLogin(self):
+        """ Teste de método GET sem login """
+        response = self.client.get(
+            reverse('inscricoes:consultar-inscricoes-participante'))
+        self.assertRedirects(response, reverse('utilizadores:login'))
+
+    def test_MinhasInscricoes_GET_naoParticipante(self):
+        """ Teste de método GET sem ser participante """
+        utilizadores = [create_Utilizador_0(),
+                        create_ProfessorUniversitario_0(),
+                        create_Administrador_0(),
+                        create_Coordenador_0(),
+                        create_Colaborador_0(),]
+        for utilizador in utilizadores:
+            self.client.force_login(utilizador)
+            response = self.client.get(
+                reverse('inscricoes:consultar-inscricoes-participante'))
+            self.assertTemplateUsed(response, 'mensagem.html')
+            self.assertEquals(response.context['tipo'], 'error')
+            self.assertEquals(response.context['m'], 'Não tem permissões para aceder a esta página!')
+            self.client.logout()
+
+    def test_MinhasInscricoes_GET_ok(self):
+        """ Teste de método GET sucesso """
+        self.client.force_login(self.inscricao.participante)
+        response = self.client.get(
+            reverse('inscricoes:consultar-inscricoes-participante'))
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'inscricoes/consultar_inscricoes_participante.html')
+        self.assertIsNotNone(response.context['table'])
+
+class TestInscricoesDepartamentoView(TestCase):
+    """ Teste suite da view "InscricoesDepartamento" da app "inscricoes" """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.inscricao = create_Inscricao_0()
+
+    def test_InscricoesDepartamento_GET_semLogin(self):
+        """ Teste de método GET sem login """
+        response = self.client.get(
+            reverse('inscricoes:consultar-inscricoes-coordenador'))
+        self.assertRedirects(response, reverse('utilizadores:login'))
+
+    def test_InscricoesDepartamento_GET_naoCoordenador(self):
+        """ Teste de método GET sem ser coordenador """
+        utilizadores = [create_Utilizador_0(),
+                        create_ProfessorUniversitario_0(),
+                        create_Administrador_0(),
+                        create_Participante_0(),
+                        create_Colaborador_0(),]
+        for utilizador in utilizadores:
+            self.client.force_login(utilizador)
+            response = self.client.get(
+                reverse('inscricoes:consultar-inscricoes-coordenador'))
+            self.assertTemplateUsed(response, 'mensagem.html')
+            self.assertEquals(response.context['tipo'], 'error')
+            self.assertEquals(response.context['m'], 'Não tem permissões para aceder a esta página!')
+            self.client.logout()
+
+    def test_InscricoesDepartamento_GET_ok(self):
+        """ Teste de método GET sucesso """
+        self.client.force_login(create_Coordenador_0())
+        response = self.client.get(
+            reverse('inscricoes:consultar-inscricoes-coordenador'))
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'inscricoes/consultar_inscricoes_coordenador.html')
+        self.assertIsNotNone(response.context['table'])
+
+
+class TestInscricoesAdminView(TestCase):
+    """ Teste suite da view "InscricoesAdmin" da app "inscricoes" """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.inscricao = create_Inscricao_0()
+
+    def test_InscricoesAdmin_GET_semLogin(self):
+        """ Teste de método GET sem login """
+        response = self.client.get(
+            reverse('inscricoes:consultar-inscricoes-admin'))
+        self.assertRedirects(response, reverse('utilizadores:login'))
+
+    def test_InscricoesAdmin_GET_naoAdministrador(self):
+        """ Teste de método GET sem ser administrador """
+        utilizadores = [create_Utilizador_0(),
+                        create_ProfessorUniversitario_0(),
+                        create_Coordenador_0(),
+                        create_Participante_0(),
+                        create_Colaborador_0(),]
+        for utilizador in utilizadores:
+            self.client.force_login(utilizador)
+            response = self.client.get(
+                reverse('inscricoes:consultar-inscricoes-admin'))
+            self.assertTemplateUsed(response, 'mensagem.html')
+            self.assertEquals(response.context['tipo'], 'error')
+            self.assertEquals(response.context['m'], 'Não tem permissões para aceder a esta página!')
+            self.client.logout()
+
+    def test_InscricoesAdmin_GET_ok(self):
+        """ Teste de método GET sucesso """
+        self.client.force_login(create_Administrador_0())
+        response = self.client.get(
+            reverse('inscricoes:consultar-inscricoes-admin'))
+        self.assertEquals(response.status_code, 200)
+        self.assertTemplateUsed(response, 'inscricoes/consultar_inscricoes_admin.html')
+        self.assertIsNotNone(response.context['table'])
+
+
+class TestApagarInscricaoView(TestCase):
+    """ Teste suite da view "ApagarInscricao" da app "inscricoes" """
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.inscricao = create_Inscricao_0()
+
+    def test_ApagarInscricao_GET_semLogin(self):
+        """ Teste de método GET sem login """
+        response = self.client.post(
+            reverse('inscricoes:apagar-inscricao', kwargs={'pk': self.inscricao.pk}))
+        self.assertRedirects(response, reverse('utilizadores:login'))
+
+    def test_ApagarInscricao_GET_inscricaoNaoExiste(self):
+        """ Teste de método GET quando inscrição não existe """
+        self.client.force_login(self.inscricao.participante)
+        pk = 2
+        while Inscricao.objects.filter(pk=pk).count() > 0:
+            pk += 1
+        response = self.client.get(
+            reverse('inscricoes:apagar-inscricao', kwargs={'pk': pk}))
+        self.assertRedirects(response, reverse(
+            'utilizadores:mensagem', args=[404]))
+
+    def test_ApagarInscricao_GET_naoParticipanteCoordenadorAdministrador(self):
+        """ Teste de método GET sem ser participante, coordenador ou administrador """
+        utilizadores = [create_Utilizador_0(),
+                        create_ProfessorUniversitario_0(),
+                        create_Colaborador_0()]
+        for utilizador in utilizadores:
+            self.client.force_login(utilizador)
+            response = self.client.get(
+                reverse('inscricoes:apagar-inscricao', kwargs={'pk': self.inscricao.pk}))
+            self.assertTemplateUsed(response, 'mensagem.html')
+            self.assertEquals(response.context['tipo'], 'error')
+            self.assertEquals(response.context['m'], 'Não tem permissões para aceder a esta página!')
+            self.client.logout()
+
+    def test_ApagarInscricao_GET_outroParticipante(self):
+        """ Teste de método GET sendo outro participante """
+        self.client.force_login(create_Participante_1())
+        response = self.client.get(
+            reverse('inscricoes:apagar-inscricao', kwargs={'pk': self.inscricao.pk}))
+        self.assertTemplateUsed(response, 'mensagem.html')
+        self.assertEquals(response.context['tipo'], 'error')
+        self.assertEquals(response.context['m'], 'Não tem permissões para aceder a esta página!')
+
+    def test_ApagarInscricao_GET_ok(self):
+        """ Teste de método GET sucesso """
+        inscricao = create_Inscricao_1()
+        self.client.force_login(create_Administrador_0())
+        response = self.client.get(
+            reverse('inscricoes:apagar-inscricao', kwargs={'pk': inscricao.pk}))
+        assert not Inscricao.objects.filter(pk=inscricao.pk).exists()

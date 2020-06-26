@@ -20,8 +20,8 @@ from django.utils.datetime_safe import datetime
 
 def link_callback(uri, rel):
     """
-    Convert HTML URIs to absolute system paths so xhtml2pdf can access those
-    resources
+    Converte HTML URIs em caminhos absolutos de sistem para que o
+    xhtml2pdf possa aceder aos ficheiros estáticos
     """
     result = finders.find(uri)
     if result:
@@ -42,7 +42,6 @@ def link_callback(uri, rel):
         else:
             return uri
 
-    # make sure that file exists
     if not os.path.isfile(path):
         raise Exception(
             'media URI must start with %s or %s' % (sUrl, mUrl)
@@ -50,23 +49,28 @@ def link_callback(uri, rel):
     return path
 
 
-def render_pdf(template_path, context={}, filename="file.pdf", send=False):
-    # Create a Django response object, and specify content_type as pdf
+def render_pdf(template_path, context={}, filename="file.pdf"):
+    """
+    Cria um PDF e retorna-o ou retorna um erro HTTP de BadRequest.
+
+    Recebe um caminho para um template, um contexto opcional e um nome
+    de ficheiro opcional
+    """
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
-    # find the template and render it.
     template = get_template(template_path)
     html = template.render(context)
-    # create a pdf
     pisa_status = pisa.CreatePDF(
         html, dest=response, link_callback=link_callback)
-    # if error then show some funy view
     if pisa_status.err:
         return HttpResponseBadRequest()
     return response
 
 
 def enviar_mail_confirmacao_inscricao(request, pk):
+    """
+    Envia um email com um PDF da inscrição
+    """
     inscricao = get_object_or_404(Inscricao, pk=pk)
     ano = inscricao.diaaberto.ano
     context = {
@@ -82,13 +86,18 @@ def enviar_mail_confirmacao_inscricao(request, pk):
     source = settings.EMAIL_HOST_USER
     recipient_list = [inscricao.responsavel_set.first().email, ]
     pdf = render_pdf("inscricoes/pdf.html", context,
-                     f"dia_aberto_ualg_{ano}.pdf", True).content
+                     f"dia_aberto_ualg_{ano}.pdf").content
     email = EmailMessage(subject, message, source, recipient_list, attachments=[
                          (f"dia_aberto_ualg_{ano}.pdf", pdf, 'application/pdf')])
     email.send(fail_silently=True)
 
 
 def coordenador_e_inscricao_nao_do_departamento(request, inscricao):
+    """
+    Retorna a página de "Não tem permissões" se o utilizador logado for 
+    coordenador e a inscrição não tiver sessões do seu departamento.
+    Caso contrário retorna False
+    """
     user_check_var = user_check(request=request, user_profile=[Coordenador])
     if user_check_var.get('exists'):
         coordenador = Coordenador.objects.get(user_ptr=request.user)
@@ -98,6 +107,11 @@ def coordenador_e_inscricao_nao_do_departamento(request, inscricao):
 
 
 def participante_e_inscricao_doutro(request, inscricao):
+    """
+    Retorna a página de "Não tem permissões" se o utilizador logado for
+    participante e a inscrição não lhe pertencer. Caso contrário retorna
+    False
+    """
     user_check_var = user_check(request=request, user_profile=[Participante])
     if user_check_var.get('exists'):
         participante = Participante.objects.get(user_ptr=request.user.id)
@@ -107,6 +121,13 @@ def participante_e_inscricao_doutro(request, inscricao):
 
 
 def nao_tem_permissoes(request, inscricao):
+    """
+    Retorna a página de "Não tem permissões" se o utilizador logado não
+    for participante, coordenador ou administrador, se for coordenador e
+    a inscrição não tiver sessões do seu departamento ou se for
+    participante e a inscrição não lhe pertencer. Caso contrário retorna
+    False
+    """
     user_check_var = user_check(request=request, user_profile=[
                                 Coordenador, Participante, Administrador])
     if not user_check_var.get('exists'):
@@ -119,6 +140,9 @@ def nao_tem_permissoes(request, inscricao):
 
 
 def add_vagas_sessao(sessaoid, vagas):
+    """
+    Adiciona o nº de vagas à sessão, numa transação thread safe
+    """
     with transaction.atomic():
         sessao = Sessao.objects.select_for_update().get(pk=sessaoid)
         sessao.vagas = F('vagas') + vagas
@@ -126,6 +150,10 @@ def add_vagas_sessao(sessaoid, vagas):
 
 
 def init_form(step, inscricao, POST=None):
+    """
+    Função chamada pelas views com passos de formulário (wizard forms)
+    para inicializar os formulários
+    """
     form = None
     if step == 'responsaveis':
         responsavel = inscricao.responsavel_set.first()
@@ -188,6 +216,10 @@ def init_form(step, inscricao, POST=None):
 
 
 def update_context(context, step, wizard=None, inscricao=None):
+    """
+    Função chamada pelas views com passos de formulário (wizard forms)
+    para atualizar os contextos
+    """
     if step == 'escola':
         prox_diaaberto = Diaaberto.current()
         context.update({
@@ -237,6 +269,10 @@ def update_context(context, step, wizard=None, inscricao=None):
 
 
 def update_post(step, POST, wizard=None, inscricao=None):
+    """
+    Função chamada pelas views com passos de formulário (wizard forms)
+    para atualizar o conteúdo do POST
+    """
     mutable = POST._mutable
     POST._mutable = True
     prefix = f"{POST.get('inscricao_wizard-current_step', step)}-" if wizard else ''
@@ -266,6 +302,10 @@ def update_post(step, POST, wizard=None, inscricao=None):
 
 
 def save_form(step, form, inscricao):
+    """
+    Função chamada pelas views com passos de formulário (wizard forms)
+    para guardar os conteúdos dos formulários na base de dados
+    """
     if step == 'almoco':
         almoco = form.save(commit=False)
         if almoco is not None:
