@@ -41,22 +41,12 @@ class AtividadeForm(ModelForm):
             'descricao': Textarea(attrs={'class':'textarea'}),
             'publicoalvo': Select(),
             'nrcolaboradoresnecessario': NumberInput(attrs={'class': 'input'}),
-            'tempo': DateField(widget=DateInput(attrs={'class':'timepicker'})),
+            #'tempo': DateField(widget=DateInput(attrs={'class':'timepicker'})),
             'participantesmaximo': NumberInput(attrs={'class': 'input'}),
             'duracaoesperada': Select(),
             }
 
 
-class SessaoForm(ModelForm):
-    horarioid=CharField(widget=Select(attrs={'class':'input horario-sessao'}))   
-
-    class Meta:
-        model = Sessao
-        exclude = ['id','ninscritos','vagas','atividadeid','horarioid']
-        widgets={
-			'dia': Select(attrs={'class': 'input dia-sessao'}),
-        }
-        
 
 class MateriaisForm(ModelForm):
     class Meta:
