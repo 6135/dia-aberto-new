@@ -18,5 +18,7 @@ urlpatterns = [
     path('verhorarios',views.verhorarios,name="verHorarios"),
     path('verresumo/<int:id>',views.verresumo,name='verResumo'),
     path('confirmar/<int:id>',views.confirmarResumo,name='confirmarResumo'),
+    path('atividadesadmin',views.AtividadesAdmin.as_view(),name="atividadesAdmin"),
+    path('verdeps',views.verdeps,name="verDepartamentos"),
 ]
 
