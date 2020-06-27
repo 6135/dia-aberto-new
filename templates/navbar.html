@@ -284,7 +284,7 @@
                   <span>
                     <span class="icon">
                       {% if request.user|nr_mensagens > 0 %}
-                      <span id="badge-inject" title="Badge top right"
+                      <span id="badge-inject"
                         class="badge is-warning">{{request.user|nr_mensagens}}</span>
                       {% endif %}
                       <i class="mdi mdi-message mdi-24px"></i>
@@ -296,21 +296,6 @@
             <div class="dropdown-menu" id="dropdown-menu6" role="menu" style="min-width: 23rem">
               <div class="dropdown-content">
                 {% if request.user|nr_mensagens > 0 %}
-                {% comment %} {% for msg in request.user|mensagens %}
-                <div data-tooltip="Click para ver detalhes">
-                  {% if msg.mensagem.lido == False %}
-                  <div class="dropdown-item" style="background: Gainsboro;">
-                    <strong>{{msg.mensagem.titulo}}</strong>
-                  </div>
-                  {% else %}
-                  <div class="dropdown-item">
-                    <strong>{{msg.mensagem.titulo}}</strong>
-                  </div>
-                  {% endif %}
-                </div>
-                <hr class="dropdown-divider">
-
-                {% endfor %} {% endcomment %}
                 {% for msg in request.user|mensagens %}
                 <div class="dropdown-item" data-tooltip="Click para ver detalhes">
                   {% if msg.mensagem.lido == True %}
@@ -326,7 +311,7 @@
                         </strong>
                       </p>
                       <br>
-                      <small>{{msg.mensagem.recetor.full_name}}</small>
+                      <small>{{msg.mensagem.emissor.full_name}}</small>
                     </a>
                 </div>
                 {%endfor%}
