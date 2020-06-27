@@ -301,47 +301,25 @@ def proporatividade(request):
     if request.method == "POST":
         
         activity_object_form = AtividadeForm(request.POST)
-        campus=Campus.objects.all()
-        activity_object_form = AtividadeForm(request.POST)
         material_object_form= MateriaisForm(request.POST)
-        if activity_object_form.is_valid():  
-            espacoid=request.POST["espacoid"] 
-            espaco=Espaco.objects.get(id=espacoid)  
-        else:
-            return render(request,'atividades/testAtividades.html',{'form': activity_object_form,'campus': Campus.objects.all(),"materiais": material_object_form,
-                            'horarios': "" , 'sessions_activity':sessoes, 'dias': dias_diaaberto, "id":-1,"style1": "", "style2":"display:none"
-                            })   
-        if "new" in request.POST:
-            print("new")
-            new_form = Atividade(professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id),
+
+        espacoid=request.POST["espacoid"] 
+        espaco=Espaco.objects.get(id=espacoid)  
+        new_form = Atividade(professoruniversitarioutilizadorid = ProfessorUniversitario.objects.get(utilizador_ptr_id = request.user.id),
                              estado = "nsub", diaabertoid = diaabertopropostas,espacoid= Espaco.objects.get(id=espaco.id),
                              tema=Tema.objects.get(id=request.POST['tema']))
-            activity_object_form = AtividadeForm(request.POST, instance=new_form)
+        activity_object_form = AtividadeForm(request.POST, instance=new_form)
+        if activity_object_form.is_valid():  
             activity_object_form.save()
             idAtividade= Atividade.objects.all().order_by('-id').first()
             new_material= Materiais(atividadeid=idAtividade)
             material_object_form= MateriaisForm(request.POST, instance= new_material)
             material_object_form.save()
-            diasessao=request.POST["diasessao"]
-            inicio= request.POST['horarioid']
-            splitinicio=inicio.split(":")
-            print(splitinicio)
-            duracaoesperada= idAtividade.duracaoesperada
-            hfim= horariofim(splitinicio,duracaoesperada)
-            horario= Horario.objects.filter(inicio= request.POST['horarioid'], fim=hfim).first()
-            if horario is None:
-                new_Horario= Horario(inicio=inicio, fim=hfim)
-                new_Horario.save()
-            else:
-                new_Horario= horario
-            new_Sessao= Sessao(vagas=idAtividade.participantesmaximo,ninscritos=0 ,horarioid=Horario.objects.get(id=new_Horario.id), atividadeid=idAtividade,dia=diasessao)
-            new_Sessao.save()
             return redirect('atividades:inserirSessao', idAtividade.id)
     else:
         material_object_form= MateriaisForm() 
         activity_object_form= AtividadeForm()
-    return render(request,'atividades/testAtividades.html',{'form': activity_object_form,'campus': Campus.objects.all(),"materiais": material_object_form,
-                            'horarios': "" , 'sessions_activity':sessoes, 'dias': dias_diaaberto, "id":-1, "style1": "", "style2":"display:none"
+    return render(request,'atividades/proporAtividadeAtividade.html',{'form': activity_object_form,'campus': Campus.objects.all(),"materiais": material_object_form
                             })
 
 
