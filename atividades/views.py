@@ -40,7 +40,7 @@ class AtividadesProfessor(SingleTableMixin, FilterView):
         return super().dispatch(request, *args, **kwargs)
         
     def get_queryset(self):
-        return Atividade.objects.filter(professoruniversitarioutilizadorid=self.user_check_var.get('firstProfile')).exclude(estado="nsub")
+        return Atividade.objects.filter(professoruniversitarioutilizadorid=self.user_check_var.get('firstProfile')).order_by('-id').exclude(estado="nsub")
     
 
 
@@ -67,7 +67,7 @@ class AtividadesCoordenador(SingleTableMixin, FilterView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Atividade.objects.filter(professoruniversitarioutilizadorid__faculdade=self.user_check_var.get('firstProfile').faculdade).exclude(estado="nsub")
+        return Atividade.objects.filter(professoruniversitarioutilizadorid__faculdade=self.user_check_var.get('firstProfile').faculdade).order_by('-id').exclude(estado="nsub")
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -101,7 +101,7 @@ class AtividadesAdmin(SingleTableMixin, FilterView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Atividade.objects.all().exclude(estado="nsub")
+        return Atividade.objects.all().order_by('-id').exclude(estado="nsub")
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -345,12 +345,11 @@ def proporatividade(request):
                              tema=Tema.objects.get(id=request.POST['tema']))
         activity_object_form = AtividadeForm(request.POST, instance=new_form)
         if activity_object_form.is_valid():  
-            activity_object_form.save()
-            idAtividade= Atividade.objects.all().order_by('-id').first()
-            new_material= Materiais(atividadeid=idAtividade)
+            activity_object_formed= activity_object_form.save()
+            new_material= Materiais(atividadeid=activity_object_formed)
             material_object_form= MateriaisForm(request.POST, instance= new_material)
             material_object_form.save()
-            return redirect('atividades:inserirSessao', idAtividade.id)
+            return redirect('atividades:inserirSessao', activity_object_formed.id)
     else:
         material_object_form= MateriaisForm() 
         activity_object_form= AtividadeForm()
