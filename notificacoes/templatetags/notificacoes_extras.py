@@ -167,6 +167,14 @@ def mensagens(user):
 @register.filter(name='nr_mensagens') 
 def nr_mensagens(user):
     if user.is_authenticated:    
+        msg = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id)
+        return len(msg)
+    else:
+        return 0
+
+@register.filter(name='nr_mensagens') 
+def nr_mensagens_nao_lidas(user):
+    if user.is_authenticated:    
         msg = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=False)
         return len(msg)
     else:
