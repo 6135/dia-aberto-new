@@ -269,7 +269,7 @@ def enviar_notificacao_automatica(request, sigla, id):
             "\", por esse motivo a tarefa deixou de lhe estar atribuída."
         user_recipient = Utilizador.objects.get(id=tarefa.colab.id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=tarefa,
-                    target=None, level="warning", description=titulo, public=False, timestamp=timezone.now())
+                    target=None, level="error", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação tarefa alterada - colaborador
     elif sigla == "tarefaAlterada":
         tarefa = Tarefa.objects.get(id=id)
@@ -287,7 +287,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         user_recipient = Utilizador.objects.get(
             id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
-                    target=None, level="warning", description=titulo, public=False, timestamp=timezone.now())
+                    target=None, level="error", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação atividade alterada - coordenador
     elif sigla == "atividadeAlterada":
         titulo = "Foi alterada uma atividade"
