@@ -35,52 +35,11 @@ def apagar_notificacao_automatica(request, id ,nr):
     if notificacao == None:
         return redirect("utilizadores:mensagem", 5)
     notificacao.delete()
-    x = 0 
-    nr = 0  
-    if id == 1:
-        notificacoes = user.notifications.unread().order_by('-id') 
-    elif id ==2:
-        notificacoes = user.notifications.read().order_by('-id') 
-    elif id == 3:
-        notificacoes = Notificacao.objects.filter(recipient_id=user , public=False).order_by('-id')
-    elif id ==4:    
-        notificacoes = Notificacao.objects.filter(recipient_id=user , public=True).order_by('-id')
-    elif id == 5:
-        notificacoes = Notificacao.objects.filter(recipient_id=user , level="info").order_by('-id')
-    elif id ==6:  
-        notificacoes = Notificacao.objects.filter(recipient_id=user , level="warning").order_by('-id')
-    elif id ==7: 
-        notificacoes = Notificacao.objects.filter(recipient_id=user , level="error").order_by('-id')
-    elif id ==8:  
-        notificacoes = Notificacao.objects.filter(recipient_id=user , level="success").order_by('-id')
-    else:
-        notificacoes = user.notifications.all().order_by('-id')
-    
-    x = len(notificacoes)
-    if nr!=0:
-        notificacao = Notificacao.objects.get(id=nr)
-        if notificacao == None:
-            return redirect("notificacoes:sem-notificacoes", 10) 
-    else:
-        if x>0:
-            notificacao = notificacoes[0]
-        else:
-            return redirect("notificacoes:sem-notificacoes", 10)    
-    nr_notificacoes_por_pagina = 15
-    paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
+   
     page=request.GET.get('page')
-    notificacoes = paginator.get_page(page)
-    total = x
-    if notificacao != None:
-        notificacao.unread = False
-        notificacao.save()
-    else:
-        return redirect("utilizadores:mensagem", 5)
-    return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
-        'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,'total':total
-    })
-
-
+    response = redirect('notificacoes:categorias-notificacao-automatica', id, 0)
+    response['Location'] += '?page='+page
+    return response
 
 
 def limpar_notificacoes(request, id):
