@@ -283,9 +283,9 @@
                   style="margin-right: 0.9rem">
                   <span>
                     <span class="icon">
-                      {% if request.user|nr_mensagens > 0 %}
+                      {% if request.user|nr_mensagens_nao_lidas > 0 %}
                       <span id="badge-inject"
-                        class="badge is-warning">{{request.user|nr_mensagens}}</span>
+                        class="badge is-warning">{{request.user|nr_mensagens_nao_lidas}}</span>
                       {% endif %}
                       <i class="mdi mdi-message mdi-24px"></i>
                     </span>
@@ -317,7 +317,7 @@
                 {%endfor%}
                 {% else %}
                 <div class="dropdown-item">
-                  <strong>Não tem mensagens</strong>
+                  <strong>Não tem mensagens recebidas</strong>
                 </div>
                 {% endif %}
                 <hr class="dropdown-divider">
