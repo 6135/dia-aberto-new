@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 
 from .forms import *
 
-
+from django.http import HttpResponseRedirect
 
 def apagar_notificacao_automatica(request, id ,nr):
     ''' Apagar uma notificação automática '''
@@ -691,8 +691,11 @@ def apagar_mensagem(request, id ,nr):
         tmp.delete()
     except:
          return redirect('utilizadores:mensagem', 404)   
-
-    return redirect("notificacoes:detalhes-mensagem", id,0) 
+    page=request.GET.get('page')
+    # return redirect("notificacoes:detalhes-mensagem", id,0) 
+    response = redirect('notificacoes:detalhes-mensagem', id, 0)
+    response['Location'] += '?page='+page
+    return response
 
 
 
@@ -811,10 +814,11 @@ def detalhes_mensagens(request, id, nr):
     if nr!=0:
         try:
             notificacao = MensagemRecebida.objects.get(mensagem=nr)
-            if notificacao == None:
-                return redirect("notificacoes:sem-mensagens", id) 
         except:
-            return redirect("notificacoes:sem-mensagens", id)       
+            if x>0:
+                notificacao = notificacoes[0]
+            else:
+                return redirect("notificacoes:sem-mensagens", id)       
     else:
         if x>0:
             notificacao = notificacoes[0]
