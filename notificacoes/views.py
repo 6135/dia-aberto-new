@@ -691,8 +691,8 @@ def apagar_mensagem(request, id ,nr):
         tmp.delete()
     except:
          return redirect('utilizadores:mensagem', 404)   
+    
     page=request.GET.get('page')
-    # return redirect("notificacoes:detalhes-mensagem", id,0) 
     response = redirect('notificacoes:detalhes-mensagem', id, 0)
     response['Location'] += '?page='+page
     return response
@@ -740,7 +740,7 @@ def mensagem_como_lida(request, id):
         msg.mensagem.lido = True
         msg.mensagem.save()
         msg.save()
-    return redirect('notificacoes:categorias-notificacao-automatica',0,0)
+    return redirect('notificacoes:detalhes-mensagem',0,0)
 
 
 
