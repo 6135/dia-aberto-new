@@ -6,6 +6,8 @@ import os
 from django.urls import reverse
 from utilizadores.models import Participante
 from utilizadores.tests.test_models import create_Participante_0
+from notificacoes.tests.test_models import create_MensagemRecebida_0
+from selenium.webdriver.support.wait import WebDriverWait
 
 # Firefox, Edge, Safari, Chrome
 
