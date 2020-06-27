@@ -172,7 +172,7 @@ def nr_mensagens(user):
     else:
         return 0
 
-@register.filter(name='nr_mensagens') 
+@register.filter(name='nr_mensagens_nao_lidas') 
 def nr_mensagens_nao_lidas(user):
     if user.is_authenticated:    
         msg = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=False)
