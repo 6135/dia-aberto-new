@@ -692,51 +692,7 @@ def apagar_mensagem(request, id ,nr):
     except:
          return redirect('utilizadores:mensagem', 404)   
 
-    x = 0   
-    nr = 0
-    if id == 1:
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=False).order_by('-id') 
-    elif id == 2:
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__lido=True).order_by('-id') 
-    elif id == 3:
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__pendente=False).order_by('-id') 
-    elif id == 4:    
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id,mensagem__pendente=True).order_by('-id')
-    elif id == 5:    
-        notificacoes = MensagemEnviada.objects.select_related('mensagem__emissor').filter(mensagem__emissor=user.id).order_by('-id')
-    else:
-        notificacoes = MensagemRecebida.objects.select_related('mensagem__recetor').filter(mensagem__recetor=user.id).order_by('-id')
-    
-    x = len(notificacoes)
-    if nr!=0:
-        if id != 5:
-            notificacao = MensagemRecebida.objects.get(mensagem=nr)
-        else:
-            notificacao = MensagemEnviada.objects.get(mensagem=nr)
-        if notificacao == None:
-            return redirect("notificacoes:sem-mensagens", id) 
-    else:
-        if x>0:
-            notificacao = notificacoes[0]
-        else:
-            return redirect("notificacoes:sem-mensagens", id) 
-
-    nr_notificacoes_por_pagina = 5
-    paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
-    page=request.GET.get('page')
-    notificacoes = paginator.get_page(page)
-    total = x
-    if notificacao != None:
-        if id != 5:
-            notificacao.mensagem.lido = True  
-            notificacao.mensagem.save()
-            notificacao.save()
-    else:
-        return redirect("utilizadores:mensagem", 5)
-    return render(request, 'notificacoes/detalhes_mensagens.html', {
-        "form": form,'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,'total':total,"msg": msg,"m":m
-    })
-
+    return redirect("notificacoes:detalhes-mensagem", id,0) 
 
 
 

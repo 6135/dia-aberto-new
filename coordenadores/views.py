@@ -16,6 +16,7 @@ from django_filters.views import FilterView
 from coordenadores.tables import TarefaTable
 from coordenadores.filters import TarefaFilter
 from utilizadores.views import user_check
+from django.http.response import HttpResponse
 
 def adicionartarefa(request,id=None):
     user_check_var = user_check(request=request, user_profile=[Coordenador])
@@ -35,7 +36,6 @@ def adicionartarefa(request,id=None):
         if form.is_valid():
             coord = Coordenador.objects.get(id=request.user.id)
             save=form.save(user=coord,id=id)
-            print(save)
             if id:
                 views.enviar_notificacao_automatica(request,sigla="tarefaAlterada",id=id)
             else:
@@ -44,8 +44,7 @@ def adicionartarefa(request,id=None):
     return render(request = request,template_name='coordenadores/criarTarefa.html',context={'tarefa':tarefa})
 
 def tipoTarefa(request):
-    user_check_var = user_check(request=request, user_profile=[Coordenador])
-    if not user_check_var.get('exists'): return user_check_var.get('render')
+    
     template =''
     form = ''
     atividades = None
@@ -75,8 +74,10 @@ def tipoTarefa(request):
                 tarefa = TarefaOutra.objects.get(tarefaid=int(request.POST['id']))
                 form = TarefaOutraForm(initial={'dia':tarefa.tarefaid.dia,'horario':tarefa.tarefaid.horario,'descricao':tarefa.descricao,'colab':tarefa.tarefaid.colab})      
             else:
-                  form = TarefaOutraForm()          
-    return render(request=request,template_name=template,context={'form':form,'options':atividades,'ativ':ativ})
+                  form = TarefaOutraForm() 
+    if template != '':         
+        return render(request=request,template_name=template,context={'form':form,'options':atividades,'ativ':ativ})
+    else: return HttpResponse()
 
 def diasAtividade(request):
     dias=[] 
@@ -103,7 +104,6 @@ def diasAtividade(request):
 
 def sessoesAtividade(request):
     atividade= request.POST['atividadeid']
-    print(request.POST['dia'])
     dia = str(request.POST['dia'])
     default = {
                 'key': '',
@@ -121,9 +121,6 @@ def sessoesAtividade(request):
                     'key': str(tarefa.sessao.id),
                     'value': str(tarefa.sessao.horarioid.inicio) + ' até ' + str(tarefa.sessao.horarioid.fim)
                 }
-            
-        print(dia)
-        print(dia.__class__)
         sessoes = Sessao.tarefas_get_sessoes(atividade=atividade,dia=dia)
     
         options = [{
@@ -138,6 +135,10 @@ def sessoesAtividade(request):
 
 def colaboradores(request):
     default=[]
+    default = {
+                    'key': '',
+                    'value': 'Não atribuir'
+                }
     if request.method == 'POST':
         if 'tarefa' in request.POST and request.POST['tarefa']!='':
             tarefa = Tarefa.objects.get(id=int(request.POST['tarefa']))
@@ -146,19 +147,12 @@ def colaboradores(request):
                     'key': str(tarefa.colab.utilizador_ptr_id),
                     'value': str(tarefa.colab.full_name)
                 } 
-            else:
-                default = {
-                    'key': '',
-                    'value': 'Escolha o colaborador'
-                }
-        else:
-            default = {
-                'key': '',
-                'value': 'Escolha o colaborador'
-            }
         coordenador = Coordenador.objects.get(id = request.user.id)
         colabs = Colaborador.objects.filter(faculdade = coordenador.faculdade,utilizador_ptr_id__valido=True)
         options = [{
+                    'key': '',
+                    'value': 'Não atribuir'
+                }]+[{
                     'key':	str(colab.utilizador_ptr_id),
                     'value':	str(colab.full_name)
                 } for colab in colabs
@@ -324,12 +318,13 @@ class ConsultarTarefas(SingleTableMixin, FilterView):
         return context
 
 def eliminartarefa(request,id):
-    tarefa = ''
     user_check_var = user_check(request=request, user_profile=[Coordenador])
     if not user_check_var.get('exists'): return user_check_var.get('render')
+    
+    tarefa = ''
     if Tarefa.objects.filter(id=id).exists():
         tarefa = Tarefa.objects.get(id=id)
-    if tarefa.coord.id == user_check_var.get('firstProfile').id:
+    if tarefa.coord.id == user_check_var.get('firstProfile').id and tarefa.eliminar == True:
         if tarefa.colab is not None:
             views.enviar_notificacao_automatica(request,"tarefaApagada",id)
         tarefa.delete()    
