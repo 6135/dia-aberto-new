@@ -132,10 +132,11 @@ def categorias_notificacao_automatica(request, id, nr):
     if nr!=0:
         try:
             notificacao = Notificacao.objects.get(id=nr)
-            if notificacao == None:
-                return redirect("notificacoes:sem-notificacoes", id) 
         except:  
-            return redirect("notificacoes:sem-notificacoes", id)      
+            if x>0:
+                notificacao = notificacoes[0]
+            else:
+                return redirect("notificacoes:sem-notificacoes", id)      
     else:
         if x>0:
             notificacao = notificacoes[0]
