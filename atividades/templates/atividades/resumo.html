@@ -207,7 +207,7 @@
            
         <div class="level-right">
         {% if nsub == 1 %}
-          <a id="concluir" onclick= "alert.render('Tem a certeza que pretende finalizar esta proposta?(Terá sempre possibilidade de a alterar até ao prazo das propostas terminar)','{% url 'atividades:confirmarResumo' atividade.id %}')" class="button is-medium is-success is-outlined is-link">
+          <a id="concluir" onclick= "alert.render('Deseja finalizar esta proposta?','{% url 'atividades:confirmarResumo' atividade.id %}')" class="button is-medium is-success is-outlined is-link">
          
             <span>Submeter Proposta</span>
             <span class="icon is-medium">

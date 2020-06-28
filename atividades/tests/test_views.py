@@ -123,7 +123,7 @@ class TestProporAtividadesView(TestCase):
             response = self.client.get(
                 reverse('atividades:proporAtividade'))
             self.assertEquals(response.status_code, 200)
-            self.assertTemplateUsed(response, 'atividades/testAtividades.html')
+            self.assertTemplateUsed(response, 'atividades/proporAtividadeAtividade.html')
 
 
 class TestAlterarAtividadeView(TestCase):
