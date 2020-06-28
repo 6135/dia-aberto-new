@@ -54,6 +54,9 @@
       <a href="{% url 'configuracao:diasAbertos' %}" class="navbar-item">
         Dias Abertos
       </a>
+      <a href="{% url 'atividades:atividadesAdmin' %}" class="navbar-item">
+        Atividades
+      </a>
       <a href="{% url 'configuracao:verTransportes' %}" class="navbar-item">
         Transportes
       </a>
@@ -280,9 +283,9 @@
                   style="margin-right: 0.9rem">
                   <span>
                     <span class="icon">
-                      {% if request.user|nr_mensagens > 0 %}
-                      <span id="badge-inject" title="Badge top right"
-                        class="badge is-warning">{{request.user|nr_mensagens}}</span>
+                      {% if request.user|nr_mensagens_nao_lidas > 0 %}
+                      <span id="badge-inject"
+                        class="badge is-warning">{{request.user|nr_mensagens_nao_lidas}}</span>
                       {% endif %}
                       <i class="mdi mdi-message mdi-24px"></i>
                     </span>
@@ -293,21 +296,6 @@
             <div class="dropdown-menu" id="dropdown-menu6" role="menu" style="min-width: 23rem">
               <div class="dropdown-content">
                 {% if request.user|nr_mensagens > 0 %}
-                {% comment %} {% for msg in request.user|mensagens %}
-                <div data-tooltip="Click para ver detalhes">
-                  {% if msg.mensagem.lido == False %}
-                  <div class="dropdown-item" style="background: Gainsboro;">
-                    <strong>{{msg.mensagem.titulo}}</strong>
-                  </div>
-                  {% else %}
-                  <div class="dropdown-item">
-                    <strong>{{msg.mensagem.titulo}}</strong>
-                  </div>
-                  {% endif %}
-                </div>
-                <hr class="dropdown-divider">
-
-                {% endfor %} {% endcomment %}
                 {% for msg in request.user|mensagens %}
                 <div class="dropdown-item" data-tooltip="Click para ver detalhes">
                   {% if msg.mensagem.lido == True %}
@@ -323,13 +311,13 @@
                         </strong>
                       </p>
                       <br>
-                      <small>{{msg.mensagem.recetor.full_name}}</small>
+                      <small>{{msg.mensagem.emissor.full_name}}</small>
                     </a>
                 </div>
                 {%endfor%}
                 {% else %}
                 <div class="dropdown-item">
-                  <strong>Não tem mensagens</strong>
+                  <strong>Não tem mensagens recebidas</strong>
                 </div>
                 {% endif %}
                 <hr class="dropdown-divider">
@@ -378,16 +366,7 @@
 
                     </a>
 
-                    <a href="" role="listitem" tabindex="0" class="dropdown-item">
 
-                      <span class="icon">
-                        <i class="mdi mdi-bell-circle mdi-24px"></i>
-                      </span>
-
-                      <strong>Gerir notificações</strong>
-
-
-                    </a>
 
                     <a href="{% url 'utilizadores:alterar-password' %}" role="listitem" tabindex="0"
                       class="dropdown-item is-disabled">
@@ -401,17 +380,6 @@
                     </a>
 
 
-
-                    <a href="{% url 'utilizadores:alterar-idioma' %}" role="listitem" tabindex="0"
-                      class="dropdown-item is-disabled">
-
-                      <span class="icon">
-                        <i class="mdi mdi-web mdi-24px"></i>
-                      </span>
-
-                      <strong>Idioma</strong>
-
-                    </a>
 
 
 

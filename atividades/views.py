@@ -3,8 +3,8 @@ from .forms import AtividadeForm , MateriaisForm
 from .models import *
 from configuracao.models import Horario
 from .models import Atividade, Sessao, Tema, Materiais
-from utilizadores.models import ProfessorUniversitario, Coordenador
-from configuracao.models import Campus, Departamento, Diaaberto, Edificio, Espaco, Horario
+from utilizadores.models import Administrador, Coordenador, ProfessorUniversitario
+from configuracao.models import Campus, Departamento, Diaaberto, Edificio, Espaco, Horario, Unidadeorganica
 from django.http import HttpResponseRedirect
 from datetime import datetime, date,timezone
 from _datetime import timedelta
@@ -40,7 +40,7 @@ class AtividadesProfessor(SingleTableMixin, FilterView):
         return super().dispatch(request, *args, **kwargs)
         
     def get_queryset(self):
-        return Atividade.objects.filter(professoruniversitarioutilizadorid=self.user_check_var.get('firstProfile')).exclude(estado="nsub")
+        return Atividade.objects.filter(professoruniversitarioutilizadorid=self.user_check_var.get('firstProfile')).order_by('-id').exclude(estado="nsub")
     
 
 
@@ -67,7 +67,7 @@ class AtividadesCoordenador(SingleTableMixin, FilterView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Atividade.objects.filter(professoruniversitarioutilizadorid__faculdade=self.user_check_var.get('firstProfile').faculdade).exclude(estado="nsub")
+        return Atividade.objects.filter(professoruniversitarioutilizadorid__faculdade=self.user_check_var.get('firstProfile').faculdade).order_by('-id').exclude(estado="nsub")
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -77,6 +77,41 @@ class AtividadesCoordenador(SingleTableMixin, FilterView):
         table.conflitos = conflict_array()
         #This goes to un-detailed view
         context["deps"] = list(map(lambda x: (x.id, x.nome), Departamento.objects.filter(unidadeorganicaid=self.user_check_var.get('firstProfile').faculdade)))
+        #----------
+    
+        context[self.get_context_table_name(table)] = table
+        return context
+
+
+class AtividadesAdmin(SingleTableMixin, FilterView):
+    
+    table_class = AdminAtividadesTable
+    template_name = 'atividades/atividadesAdmin.html'
+    filterset_class = AdminAtividadesFilter
+    table_pagination = {
+		'per_page': 10
+	}
+    
+    def dispatch(self, request, *args, **kwargs):
+        user_check_var = user_check(request=request, user_profile=[Administrador])
+        if not user_check_var.get('exists'): return user_check_var.get('render')
+        self.user_check_var = user_check_var
+        today= datetime.now(timezone.utc) - timedelta(hours=1, minutes=00)
+        Atividade.objects.filter(estado="nsub",datasubmissao__lte=today).delete()
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        return Atividade.objects.all().order_by('-id').exclude(estado="nsub")
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        table = self.get_table(**self.get_table_kwargs())
+
+        #Everything below goes to details
+        table.conflitos = conflict_array()
+        #This goes to un-detailed view
+        context["deps"] = list(map(lambda x: (x.id, x.nome), Departamento.objects.all()))
+        context["uos"] = list(map(lambda x: (x.id, x.nome), Unidadeorganica.objects.all()))
         #----------
     
         context[self.get_context_table_name(table)] = table
@@ -310,12 +345,11 @@ def proporatividade(request):
                              tema=Tema.objects.get(id=request.POST['tema']))
         activity_object_form = AtividadeForm(request.POST, instance=new_form)
         if activity_object_form.is_valid():  
-            activity_object_form.save()
-            idAtividade= Atividade.objects.all().order_by('-id').first()
-            new_material= Materiais(atividadeid=idAtividade)
+            activity_object_formed= activity_object_form.save()
+            new_material= Materiais(atividadeid=activity_object_formed)
             material_object_form= MateriaisForm(request.POST, instance= new_material)
             material_object_form.save()
-            return redirect('atividades:inserirSessao', idAtividade.id)
+            return redirect('atividades:inserirSessao', activity_object_formed.id)
     else:
         material_object_form= MateriaisForm() 
         activity_object_form= AtividadeForm()
@@ -467,13 +501,13 @@ def veredificios(request):
     edificios = Edificio.objects.filter(campus=campus)
     print(request.POST["valuecampus"])
     print(edificios)
-    return render(request, template_name="atividades/generic_list_options.html", context={"generic": edificios})
+    return render(request, template_name="atividades/generic_list_options.html", context={"default": "Escolha um Edificio","generic": edificios})
 
 def versalas(request):
     edificios=request.POST["valueedificio"]
     print(request.POST["valueedificio"])
     salas = Espaco.objects.filter(edificio=edificios)
-    return render(request, template_name="atividades/generic_list_options.html", context={"generic": salas})
+    return render(request, template_name="atividades/generic_list_options.html", context={"default": "Escolha uma Sala","generic": salas})
 
 
 class Chorarios:
@@ -639,6 +673,41 @@ def confirmarResumo(request,id):
                                 'tipo':'error',
                                 'm':'Não tem permissões para esta ação!'
                             })
+def is_int(value):
+    try:
+        val = int(value)
+        return val
+    except:
+        return False
 
-#---------------------End David
+def verdeps(request):
+    value_uo = request.POST.get("value_uo")
+    value_dep = request.POST.get('value_dep')
+    print(value_dep)
+    value_uo = is_int(value_uo)
+    if value_uo != 'None' and value_uo is not None and value_uo is not False:
+        uo= Unidadeorganica.objects.filter(id=value_uo).first()
+        departamentos= Departamento.objects.filter(unidadeorganicaid=  uo)
+    else:
+        departamentos= Departamento.objects.all()
+
+    deps= []
+    for dep in departamentos:    
+        deps.append({'key': dep.id ,'value': dep.nome})
+    value_dep = is_int(value_dep)
+    default= {}
+    if value_dep != 'None' and value_dep is not None and value_dep is not False:
+        dep= Departamento.objects.get(id=value_dep)
+        default={
+                    'key': dep.id,
+                    'value': dep.nome
+        } 
+    else:
+        default={
+                        'key': "",
+                        'value': "Qualquer Departamento"
+            } 
+    return render(request=request,template_name='configuracao/dropdown.html',context={'options':deps, 'default': default})  
+
+    
     

@@ -45,7 +45,6 @@ class CoordAtividadesTable(tables.Table):
         return str(record.professoruniversitarioutilizadorid.full_name)
 
 
-
 class ProfAtividadesTable(tables.Table):
     
     acoes = tables.Column('Operações', empty_values=())
@@ -112,3 +111,44 @@ class ProfAtividadesTable(tables.Table):
                     </a> 
             </div> 
         """)
+
+
+
+class AdminAtividadesTable(tables.Table):
+    
+    professoruniversitarioutilizadorid = tables.Column('Professor')
+    datasubmissao = tables.Column('Data de Submissão')
+    class Meta:
+        model = Atividade
+        sequence = ('nome','professoruniversitarioutilizadorid','tipo','datasubmissao','estado')
+    def before_render(self, request):
+        self.columns.hide('id')
+        self.columns.hide('descricao')
+        self.columns.hide('nrcolaboradoresnecessario')
+        self.columns.hide('publicoalvo')
+        self.columns.hide('dataalteracao')
+        self.columns.hide('duracaoesperada')
+        self.columns.hide('participantesmaximo')
+        self.columns.hide('espacoid')
+        self.columns.hide('tema')
+        self.columns.hide('diaabertoid')
+
+    def render_estado(self,record):
+        fancy_box = ""
+        if record.estado == 'Aceite':
+            fancy_box = f"""
+            <span class="tag text is-success" style="width: 7rem;font-size: small;">Aceite</span>
+            """
+        elif record.estado == 'Pendente':
+            fancy_box = f"""
+            <span class="tag text is-warning" style="width: 7rem;font-size: small;">Pendente</span>
+            """
+        else:
+            fancy_box = f"""
+            <span class="tag text is-danger" style="width: 7rem;font-size: small;">Recusada</span>
+            """          
+        return format_html(fancy_box)
+
+
+    def render_professoruniversitarioutilizadorid(self,record):
+        return str(record.professoruniversitarioutilizadorid.full_name)
