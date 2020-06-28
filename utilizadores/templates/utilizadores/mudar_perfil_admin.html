@@ -255,10 +255,22 @@
                         <div class="message-body">
                         <p style="text-align: center;">
                             {% if form.non_field_errors %}
-                            {% for error in form.non_field_errors %}
-                                <p style="color: #ff0000; text-align:center">{{error}}</p>
-                            {% endfor %}
-                            {% endif %} 
+                  {% for error in form.non_field_errors %}
+                  <p style="color: #ff0000; text-align:center">{{error}}</p>
+                  {% endfor %}
+                  {% endif %}
+                  {% for error in erros %}
+                  <p style="color: #ff0000; text-align:center">{{error}}</p>
+                  {% endfor %}
+
+                
+                  {% for field in form %}
+                  {% for error in field.errors %}
+                  {% if field.name == "email" %}
+                  <p style="color: #ff0000;">{{ error }}</p>
+                  {% endif %}
+                  {% endfor %}
+                  {% endfor %}
 
                         </p>
                         </div>

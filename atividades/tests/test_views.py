@@ -91,6 +91,43 @@ class TestConsultarAtividadesCoordView(TestCase):
             self.assertIsNotNone(response.context['table'])
 
 
+class TestConsultarAtividadesProfView(TestCase):
+    
+
+    @classmethod
+    def setUp(self):
+        self.admin = create_Administrador_0()
+
+    def test_ProfAtividades_GET_semLogin(self):
+        """ Teste de método GET sem login """
+        response = self.client.get(
+            reverse('atividades:atividadesAdmin'))
+        self.assertRedirects(response, reverse('utilizadores:login'))
+
+    def test_ConsultarAtividadesProf_GET_naoProfessor(self):
+        utilizadores = [create_Utilizador_0(),
+                        create_Colaborador_0(),
+                        create_ProfessorUniversitario_0(),
+                        create_Coordenador_0(),
+                        create_Participante_0(),]
+        for utilizador in utilizadores:
+            self.client.force_login(utilizador)
+            response = self.client.get(
+                reverse('atividades:atividadesAdmin'))
+            self.assertTemplateUsed(response, 'mensagem.html')
+            self.assertEquals(response.context['tipo'], 'error')
+            self.assertEquals(response.context['m'], 'Não tem permissões para aceder a esta página!')
+            self.client.logout()
+
+        def test_ConsultarAtividadesProf_GET_ok(self):
+            self.client.force_login(self.professor)
+            response = self.client.get(
+                reverse('atividades:minhasAtividades'))
+            self.assertEquals(response.status_code, 200)
+            self.assertTemplateUsed(response, 'atividades/atividadesAdmin.html')
+            self.assertIsNotNone(response.context['table'])
+
+
 class TestProporAtividadesView(TestCase):
     
 
@@ -123,7 +160,7 @@ class TestProporAtividadesView(TestCase):
             response = self.client.get(
                 reverse('atividades:proporAtividade'))
             self.assertEquals(response.status_code, 200)
-            self.assertTemplateUsed(response, 'atividades/testAtividades.html')
+            self.assertTemplateUsed(response, 'atividades/proporAtividadeAtividade.html')
 
 
 class TestAlterarAtividadeView(TestCase):
@@ -169,6 +206,8 @@ class TestAlterarAtividadeView(TestCase):
         self.assertEquals(response.context['tipo'], 'error')
         self.assertEquals(
             response.context['m'], 'Não tem permissões para esta ação!')
+
+
 
 class TestInserirSessaoView(TestCase):
     
