@@ -336,10 +336,8 @@ def rejeitar_utilizador(request, id):
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [u.email,]
         send_mail( subject, message, email_from, recipient_list )
-
-
-    except User.DoesNotExist:
-        return redirect('utilizadores:mensagem',5)
+    except:
+        pass
 
 
     return redirect('utilizadores:consultar-utilizadores')
@@ -379,10 +377,8 @@ def validar_utilizador(request, id):
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [u.email,]
         send_mail( subject, message, email_from, recipient_list )
-
-
-    except User.DoesNotExist:
-        return redirect('utilizadores:mensagem',5)
+    except:
+        pass
 
     return redirect('utilizadores:consultar-utilizadores')
 

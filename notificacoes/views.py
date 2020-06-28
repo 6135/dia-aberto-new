@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 
 from .forms import *
 
-
+from django.http import HttpResponseRedirect
 
 def apagar_notificacao_automatica(request, id ,nr):
     ''' Apagar uma notificação automática '''
@@ -35,52 +35,11 @@ def apagar_notificacao_automatica(request, id ,nr):
     if notificacao == None:
         return redirect("utilizadores:mensagem", 5)
     notificacao.delete()
-    x = 0 
-    nr = 0  
-    if id == 1:
-        notificacoes = user.notifications.unread().order_by('-id') 
-    elif id ==2:
-        notificacoes = user.notifications.read().order_by('-id') 
-    elif id == 3:
-        notificacoes = Notificacao.objects.filter(recipient_id=user , public=False).order_by('-id')
-    elif id ==4:    
-        notificacoes = Notificacao.objects.filter(recipient_id=user , public=True).order_by('-id')
-    elif id == 5:
-        notificacoes = Notificacao.objects.filter(recipient_id=user , level="info").order_by('-id')
-    elif id ==6:  
-        notificacoes = Notificacao.objects.filter(recipient_id=user , level="warning").order_by('-id')
-    elif id ==7: 
-        notificacoes = Notificacao.objects.filter(recipient_id=user , level="error").order_by('-id')
-    elif id ==8:  
-        notificacoes = Notificacao.objects.filter(recipient_id=user , level="success").order_by('-id')
-    else:
-        notificacoes = user.notifications.all().order_by('-id')
-    
-    x = len(notificacoes)
-    if nr!=0:
-        notificacao = Notificacao.objects.get(id=nr)
-        if notificacao == None:
-            return redirect("notificacoes:sem-notificacoes", 10) 
-    else:
-        if x>0:
-            notificacao = notificacoes[0]
-        else:
-            return redirect("notificacoes:sem-notificacoes", 10)    
-    nr_notificacoes_por_pagina = 15
-    paginator= Paginator(notificacoes,nr_notificacoes_por_pagina)
+   
     page=request.GET.get('page')
-    notificacoes = paginator.get_page(page)
-    total = x
-    if notificacao != None:
-        notificacao.unread = False
-        notificacao.save()
-    else:
-        return redirect("utilizadores:mensagem", 5)
-    return render(request, 'notificacoes/detalhes_notificacao_automatica.html', {
-        'atual': notificacao, 'notificacoes':notificacoes,'categoria':id,'total':total
-    })
-
-
+    response = redirect('notificacoes:categorias-notificacao-automatica', id, 0)
+    response['Location'] += '?page='+page
+    return response
 
 
 def limpar_notificacoes(request, id):
@@ -173,10 +132,11 @@ def categorias_notificacao_automatica(request, id, nr):
     if nr!=0:
         try:
             notificacao = Notificacao.objects.get(id=nr)
-            if notificacao == None:
-                return redirect("notificacoes:sem-notificacoes", id) 
         except:  
-            return redirect("notificacoes:sem-notificacoes", id)      
+            if x>0:
+                notificacao = notificacoes[0]
+            else:
+                return redirect("notificacoes:sem-notificacoes", id)      
     else:
         if x>0:
             notificacao = notificacoes[0]
@@ -269,7 +229,7 @@ def enviar_notificacao_automatica(request, sigla, id):
             "\", por esse motivo a tarefa deixou de lhe estar atribuída."
         user_recipient = Utilizador.objects.get(id=tarefa.colab.id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=tarefa,
-                    target=None, level="warning", description=titulo, public=False, timestamp=timezone.now())
+                    target=None, level="error", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação tarefa alterada - colaborador
     elif sigla == "tarefaAlterada":
         tarefa = Tarefa.objects.get(id=id)
@@ -287,7 +247,7 @@ def enviar_notificacao_automatica(request, sigla, id):
         user_recipient = Utilizador.objects.get(
             id=atividade.get_coord().id)
         notify.send(sender=user_sender, recipient=user_recipient, verb=descricao, action_object=None,
-                    target=None, level="warning", description=titulo, public=False, timestamp=timezone.now())
+                    target=None, level="error", description=titulo, public=False, timestamp=timezone.now())
     # Enviar notificação atividade alterada - coordenador
     elif sigla == "atividadeAlterada":
         titulo = "Foi alterada uma atividade"
@@ -690,9 +650,12 @@ def apagar_mensagem(request, id ,nr):
 
         tmp.delete()
     except:
-         return redirect('utilizadores:mensagem', 404)   
-
-    return redirect("notificacoes:detalhes-mensagem", id,0) 
+        return redirect('utilizadores:mensagem', 404)   
+    
+    page=request.GET.get('page')
+    response = redirect('notificacoes:detalhes-mensagem', id, 0)
+    response['Location'] += '?page='+page
+    return response
 
 
 
@@ -737,7 +700,7 @@ def mensagem_como_lida(request, id):
         msg.mensagem.lido = True
         msg.mensagem.save()
         msg.save()
-    return redirect('notificacoes:categorias-notificacao-automatica',0,0)
+    return redirect('notificacoes:detalhes-mensagem',0,0)
 
 
 
@@ -811,10 +774,11 @@ def detalhes_mensagens(request, id, nr):
     if nr!=0:
         try:
             notificacao = MensagemRecebida.objects.get(mensagem=nr)
-            if notificacao == None:
-                return redirect("notificacoes:sem-mensagens", id) 
         except:
-            return redirect("notificacoes:sem-mensagens", id)       
+            if x>0:
+                notificacao = notificacoes[0]
+            else:
+                return redirect("notificacoes:sem-mensagens", id)       
     else:
         if x>0:
             notificacao = notificacoes[0]

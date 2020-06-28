@@ -4,7 +4,7 @@ from dia_aberto import settings
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from inscricoes.models import Escola, Inscricao, Inscricaosessao
 from django.core.mail import EmailMessage
 from utilizadores.views import user_check
@@ -115,9 +115,13 @@ def participante_e_inscricao_doutro(request, inscricao):
     """
     user_check_var = user_check(request=request, user_profile=[Participante])
     if user_check_var.get('exists'):
-        participante = Participante.objects.get(user_ptr=request.user.id)
-        if inscricao.participante != participante:
-            return user_check_var.get('render')
+        if inscricao.participante != user_check_var['firstProfile']:
+            return render(request=request,
+                          template_name='mensagem.html',
+                          context={
+                              'tipo': 'error',
+                              'm': 'Não tem permissões para aceder a esta página!'
+                          })
     return False
 
 
@@ -129,14 +133,22 @@ def nao_tem_permissoes(request, inscricao):
     participante e a inscrição não lhe pertencer. Caso contrário retorna
     False
     """
+    result = False
     user_check_var = user_check(request=request, user_profile=[
                                 Coordenador, Participante, Administrador])
     if not user_check_var.get('exists'):
         return user_check_var.get('render')
     if coordenador_e_inscricao_nao_do_departamento(request, inscricao):
-        return user_check_var.get('render')
+        result = True
     if participante_e_inscricao_doutro(request, inscricao):
-        return user_check_var.get('render')
+        result = True
+    if result:
+        return render(request=request,
+                      template_name='mensagem.html',
+                      context={
+                          'tipo': 'error',
+                                    'm': 'Não tem permissões para aceder a esta página!'
+                      })
     return False
 
 
@@ -298,7 +310,7 @@ def update_post(step, POST, wizard=None, inscricao=None):
         POST[f'{prefix}nalunos'] = wizard.get_cleaned_data_for_step('escola')[
             'nalunos'] if wizard else inscricao.nalunos
         POST[f'{prefix}dia'] = wizard.get_cleaned_data_for_step('escola')[
-            'dia'] if wizard else inscricao.dia
+            'dia'].strftime("%d/%m/%Y") if wizard else inscricao.dia.strftime("%d/%m/%Y")
     POST._mutable = mutable
 
 
