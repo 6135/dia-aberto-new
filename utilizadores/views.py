@@ -338,9 +338,10 @@ def rejeitar_utilizador(request, id):
         send_mail( subject, message, email_from, recipient_list )
     except:
         pass
-
-
-    return redirect('utilizadores:consultar-utilizadores')
+    if 'consultar_utilizadores' not in request.session:
+        return redirect('utilizadores:consultar-utilizadores')
+    else:    
+        return HttpResponseRedirect(request.session['consultar_utilizadores'])
 
 
 
@@ -380,7 +381,10 @@ def validar_utilizador(request, id):
     except:
         pass
 
-    return redirect('utilizadores:consultar-utilizadores')
+    if 'consultar_utilizadores' not in request.session:
+        return redirect('utilizadores:consultar-utilizadores')
+    else:    
+        return HttpResponseRedirect(request.session['consultar_utilizadores'])
 
 
 
@@ -548,6 +552,7 @@ def enviar_email_validar(request,nome,id):
     user_check_var = user_check(request=request, user_profile=[Coordenador, Administrador])
     if user_check_var.get('exists') == False: 
         return user_check_var.get('render')
+    request.session['consultar_utilizadores'] = request.META.get('HTTP_REFERER', '/')
     return render(request=request,
                   template_name="utilizadores/enviar_email_validar.html",
                   context={"msg": msg, "id":id})
@@ -560,6 +565,7 @@ def enviar_email_rejeitar(request,nome,id):
     user_check_var = user_check(request=request, user_profile=[Coordenador, Administrador])
     if user_check_var.get('exists') == False: 
         return user_check_var.get('render')
+    request.session['consultar_utilizadores'] = request.META.get('HTTP_REFERER', '/')
     return render(request=request,
                   template_name="utilizadores/enviar_email_rejeitar.html",
                   context={"msg": msg, "id":id})
