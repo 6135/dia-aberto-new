@@ -11,12 +11,12 @@ class Command(BaseCommand):
     help = 'Corre testes funcionais. Exemplo: manage.py test_funcionais firefox [--test inscricoes] [--custom]'
 
     def add_arguments(self, parser):
-        parser.add_argument('app', type=str,
-                            help='Especifica a app a testar')
+        parser.add_argument('tests_path', type=str,
+                            help='Especifica os sítios ou app dos testes')
         parser.add_argument('browser', type=str,
                             help='O browser no qual correr os testes')
 
-        # Optional argument
+        # Optional arguments
         parser.add_argument('-c', '--custom', action='store_true',
                             help='Utiliza o driver que estiver na PATH')
         parser.add_argument('-k', '--keepdb', action='store_true',
@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         browser = options['browser']
-        app = options['app']
+        tests_path = options['tests_path']
         custom = options['custom']
         keepdb = options['keepdb']
 
@@ -37,5 +37,8 @@ class Command(BaseCommand):
         if keepdb:
             _args.append('--keepdb')
 
+        if not tests_path.contains('.'):
+            tests_path = f'{tests_path}.tests.funcionais'
+
         call_command(
-            'test', f'{app}/tests/funcionais', *_args)
+            'test', tests_path, *_args)

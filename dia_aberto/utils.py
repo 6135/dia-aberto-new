@@ -1,7 +1,7 @@
 from selenium import webdriver
 import os
 
-browser = None
+browser = 'chrome'
 use_custom_driver = False
 
 drivers = {
