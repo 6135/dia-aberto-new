@@ -16,6 +16,7 @@ from inscricoes.tests.samples import create_Diaaberto_0, create_Espaco_0, create
 from notificacoes.tests.test_models import create_MensagemRecebida_0
 from selenium.webdriver.support.wait import WebDriverWait
 from seleniumlogin import force_login
+import time
 
 
 def create_Inscricao_0():
@@ -27,7 +28,7 @@ def create_Inscricao_0():
         turma="A",
         areacientifica="Ciências e Tecnologia",
         participante=create_Participante_Rafael(),
-        dia=datetime.date(2020, 8, 21),
+        dia=datetime.date(2020, 8, 28),
         diaaberto=create_Diaaberto_0(),
         meio_transporte='comboio',
         hora_chegada=datetime.time(10, 30, 00),
@@ -157,15 +158,13 @@ class CriarInscricaoChromeTest(StaticLiveServerTestCase):
         cls.driver.implicitly_wait(10)
 
     def setUp(self):
-        self.inscricao = create_Inscricao_0()
-        self.inscricao.save()
+        self.diaAberto = create_Diaaberto_0()
         self.atividade = create_Atividade_0()
         self.atividade.save()
-        self.responsavel = create_Responsavel_0()
-        self.responsavel.save()
+        self.participante = create_Participante_Rafael()
         group = Group.objects.get(name='Participante')
-        group.user_set.add(self.inscricao.participante)
-        force_login(self.inscricao.participante,
+        group.user_set.add(self.participante)
+        force_login(self.participante,
                     self.driver, self.live_server_url)
 
     @classmethod
@@ -173,9 +172,8 @@ class CriarInscricaoChromeTest(StaticLiveServerTestCase):
         cls.driver.quit()
         super().tearDownClass()
 
-    def test_criar_inscricao_Responsavel(self):
+    def test_criar_inscricao_1(self):
         self.driver.get('%s%s' % (self.live_server_url, reverse('home')))
-        self.driver.set_window_size(1918, 1027)
         self.driver.find_element(By.LINK_TEXT, "Criar Inscrição").click()
         assert self.driver.find_element(
             By.CSS_SELECTOR, ".button:nth-child(2) > span:nth-child(2)").text == "Escola (Turma)"
@@ -187,5 +185,41 @@ class CriarInscricaoChromeTest(StaticLiveServerTestCase):
             By.CSS_SELECTOR, ".column:nth-child(2) .label").text == "E-mail"
         element = self.driver.find_element(By.ID, "id_responsaveis-nome")
         assert element.is_enabled() is True
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".is-success > span:nth-child(1)").click()
+
+        button = self.driver.find_element(By.NAME, "escola-dia")
+        self.driver.execute_script("arguments[0].click();", button)
+        time.sleep(1)
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".is-selectable:nth-child(6) > span").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".b-numberinput .input").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".b-numberinput .input").send_keys("2")
+        self.driver.find_element(By.ID, "id_escola-nome_escola").click()
+        self.driver.find_element(
+            By.ID, "id_escola-nome_escola").send_keys("Judice Fialho")
+        self.driver.find_element(By.ID, "id_escola-local").click()
+        self.driver.find_element(
+            By.ID, "id_escola-local").send_keys("Portimao")
+        self.driver.find_element(By.ID, "id_escola-ano").click()
+        self.driver.find_element(By.ID, "id_escola-ano").send_keys("12")
+        self.driver.find_element(By.ID, "id_escola-turma").click()
+        self.driver.find_element(By.ID, "id_escola-turma").send_keys("A")
+        self.driver.find_element(By.ID, "id_escola-areacientifica").click()
+        self.driver.find_element(
+            By.ID, "id_escola-areacientifica").send_keys("Ciências e Tecnologia")
+        element = self.driver.find_element(
+            By.CSS_SELECTOR, ".b-numberinput .input")
+        assert element.is_enabled() is True
+        element = self.driver.find_element(By.NAME, "escola-dia")
+        assert element.is_enabled() is True
+        value = self.driver.find_element(
+            By.ID, "id_escola-nome_escola").get_attribute("value")
+        assert value == "Judice Fialho"
+        value = self.driver.find_element(
+            By.ID, "id_escola-areacientifica").get_attribute("value")
+        assert value == "Ciências e Tecnologia"
         self.driver.find_element(
             By.CSS_SELECTOR, ".is-success > span:nth-child(1)").click()
