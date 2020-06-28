@@ -650,7 +650,7 @@ def apagar_mensagem(request, id ,nr):
 
         tmp.delete()
     except:
-         return redirect('utilizadores:mensagem', 404)   
+        return redirect('utilizadores:mensagem', 404)   
     
     page=request.GET.get('page')
     response = redirect('notificacoes:detalhes-mensagem', id, 0)
