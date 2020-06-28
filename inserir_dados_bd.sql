@@ -144,7 +144,7 @@ INSERT INTO Campus VALUES ('2','Gambelas');
 INSERT INTO Campus VALUES ('3','Portimao');
 
 
-INSERT INTO UnidadeOrganica (ID,Nome,Sigla,CampusID) VALUES ('1','ESEC', 'Escola Superior de Educação e Comunicação','1'),
+INSERT INTO UnidadeOrganica (ID,Sigla,Nome,CampusID) VALUES ('1','ESEC', 'Escola Superior de Educação e Comunicação','1'),
 ('2','ESGHT', 'Escola Superior de Gestão Hotelaria e Turismo','3'),
 ('3','ESS', 'Escola Superior de Saúde','2'),
 ('4','ISE', 'Instituto Superior de Engenharia','1'),
@@ -153,7 +153,7 @@ INSERT INTO UnidadeOrganica (ID,Nome,Sigla,CampusID) VALUES ('1','ESEC', 'Escola
 ('7','FE', 'Faculdade de Economia','2'),
 ('8','DCBM', 'Departamento de Ciências Biomédicas e Medicina','2');
 
-INSERT INTO Departamento (ID,Sigla,Nome,UnidadeOrganicaID) VALUES ('1','Ciências Sociais e da Educação','Ciências Sociais e da Educação','1'),
+INSERT INTO Departamento (ID,Sigla,Nome,UnidadeOrganicaID) VALUES ('1','CSE','Ciências Sociais e da Educação','1'),
 ('2','CAD','Comunicação, Artes e Design','1'),
 ('3','LLC','Línguas, Literaturas e Culturas','1'),
 ('4','CNND','Ciências Exatas, Naturais e Desporto','1');
