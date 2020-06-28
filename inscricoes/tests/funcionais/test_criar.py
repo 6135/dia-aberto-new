@@ -18,6 +18,24 @@ from selenium.webdriver.support.wait import WebDriverWait
 from seleniumlogin import force_login
 
 
+def create_Inscricao_0():
+    return Inscricao.objects.get_or_create(
+        individual=False,
+        nalunos=20,
+        escola=create_Escola_0(),
+        ano=12,
+        turma="A",
+        areacientifica="Ciências e Tecnologia",
+        participante=create_Participante_Rafael(),
+        dia=datetime.date(2020, 8, 21),
+        diaaberto=create_Diaaberto_0(),
+        meio_transporte='comboio',
+        hora_chegada=datetime.time(10, 30, 00),
+        local_chegada="Estação de Comboios de Faro",
+        entrecampi=True,
+    )[0]
+
+
 def create_Inscricao_1():
     return Inscricao.objects.get_or_create(
         individual=True,
@@ -30,6 +48,13 @@ def create_Inscricao_1():
         hora_chegada=datetime.time(8, 40, 0),
         local_chegada="Terminal Rodoviário de Faro",
         entrecampi=True,
+    )[0]
+
+
+def create_Escola_0():
+    return Escola.objects.get_or_create(
+        nome="Judice Fialho",
+        local="Portimao",
     )[0]
 
 
@@ -118,7 +143,7 @@ def create_Atividade_0():
 
 
 class CriarInscricaoChromeTest(StaticLiveServerTestCase):
-    """ Testes funcionais do consultar inscrição no Chrome """
+    """ Testes funcionais do criar inscrição no Chrome """
 
     @classmethod
     def setUpClass(cls):
@@ -132,7 +157,7 @@ class CriarInscricaoChromeTest(StaticLiveServerTestCase):
         cls.driver.implicitly_wait(10)
 
     def setUp(self):
-        self.inscricao = create_Inscricao_1()
+        self.inscricao = create_Inscricao_0()
         self.inscricao.save()
         self.atividade = create_Atividade_0()
         self.atividade.save()
@@ -147,3 +172,20 @@ class CriarInscricaoChromeTest(StaticLiveServerTestCase):
     def tearDownClass(cls):
         cls.driver.quit()
         super().tearDownClass()
+
+    def test_criar_inscricao_Responsavel(self):
+        self.driver.get('%s%s' % (self.live_server_url, reverse('home')))
+        self.driver.set_window_size(1918, 1027)
+        self.driver.find_element(By.LINK_TEXT, "Criar Inscrição").click()
+        assert self.driver.find_element(
+            By.CSS_SELECTOR, ".button:nth-child(2) > span:nth-child(2)").text == "Escola (Turma)"
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".button:nth-child(2) > span:nth-child(2)").click()
+        assert self.driver.find_element(
+            By.CSS_SELECTOR, ".column:nth-child(1) .label").text == "Nome"
+        assert self.driver.find_element(
+            By.CSS_SELECTOR, ".column:nth-child(2) .label").text == "E-mail"
+        element = self.driver.find_element(By.ID, "id_responsaveis-nome")
+        assert element.is_enabled() is True
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".is-success > span:nth-child(1)").click()
