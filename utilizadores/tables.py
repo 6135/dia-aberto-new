@@ -13,7 +13,7 @@ class UtilizadoresTable(django_tables.Table):
     valido = django_tables.Column('Estado', attrs={"th": {"width": "130"}})
     tipo = django_tables.Column(accessor='firstProfile', orderable=False)
     acoes = django_tables.Column('Ações', empty_values=(),
-                                 orderable=False, attrs={"th": {"width": "110"}})
+                                 orderable=False, attrs={"th": {"width": "150"}})
 
     class Meta:
         model = Utilizador
@@ -57,16 +57,29 @@ class UtilizadoresTable(django_tables.Table):
     def render_acoes(self, record):
         primeiro_botao = """<span class="icon"></span>"""
         if self.request.user != record.user_ptr and not (record.firstProfile == 'Administrador' and not self.request.user.groups.filter(name='Administrador').exists()):
-            if record.valido != "True":
+            if record.valido == "Rejeitado":
                 primeiro_botao = f"""
                 <a data-tooltip="Validar" href="{reverse('utilizadores:validar', args=[record.first_name, record.id])}">
                     <span class="icon">
                         <i class="fas fa-check" style="color: #32CD32"></i>
                     </span>
                 </a>
-                    """
+                """
+            elif record.valido == "True":
+                primeiro_botao = f"""
+                <a data-tooltip="Rejeitar" onclick="alert.render('Tem a certeza que pretende rejeitar este utilizador?','{reverse('utilizadores:rejeitar', args=[record.first_name, record.id])}')">
+                    <span class="icon has-text-danger">
+                        <i class="fas fa-ban"></i>
+                    </span>
+                </a>
+                """
             else:
                 primeiro_botao = f"""
+                <a data-tooltip="Validar" href="{reverse('utilizadores:validar', args=[record.first_name, record.id])}">
+                    <span class="icon">
+                        <i class="fas fa-check" style="color: #32CD32"></i>
+                    </span>
+                </a>
                 <a data-tooltip="Rejeitar" onclick="alert.render('Tem a certeza que pretende rejeitar este utilizador?','{reverse('utilizadores:rejeitar', args=[record.first_name, record.id])}')">
                     <span class="icon has-text-danger">
                         <i class="fas fa-ban"></i>
