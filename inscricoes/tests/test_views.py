@@ -8,9 +8,11 @@ from utilizadores.tests.test_models import create_Administrador_0, create_Colabo
 from unittest import mock
 import pytz
 from unittest.mock import Mock
-from inscricoes.tests.test_models import create_Inscricao_0, create_Inscricao_1
+from inscricoes.tests.test_models import create_Escola_0, create_Inscricao_0, create_Inscricao_1, create_Inscricaoprato_0, create_Inscricaosessao_0, create_Inscricaosessao_1, create_Inscricaotransporte_0, create_Responsavel_0
 from dia_aberto.views import error404
-from inscricoes.tests.samples import create_Atividade_0, create_Campus_0, create_Diaaberto_0, create_Sessao_0, create_Sessao_1
+from inscricoes.tests.samples import create_Atividade_0, create_Campus_0, create_Diaaberto_0, create_Sessao_0, create_Sessao_1, create_Sessao_2
+from django.contrib.auth.models import Group
+from django.core.management import call_command
 
 
 class TestInscricaoPDFView(TestCase):
@@ -486,7 +488,7 @@ class TestCriarInscricaoView(TestCase):
 
     def test_CriarInscricao_POST_almoco_erroCampusEscolhidoMasSemPessoas(self):
         """ Teste de método POST passo "almoco" > "sessoes" erro campus escolhido sem pessoas """
-        self.test_CriarInscricao_POST_escola_ok()
+        self.test_CriarInscricao_POST_transporte_ok()
         POST = {
             'criar_inscricao-current_step': ['almoco'],
             'almoco-campus': [f'{self.campus.id}'],
@@ -501,7 +503,7 @@ class TestCriarInscricaoView(TestCase):
 
     def test_CriarInscricao_POST_almoco_erroEscolhidasPessoasMasSemCampus(self):
         """ Teste de método POST passo "almoco" > "sessoes" erro escolhidas pessoas sem campus """
-        self.test_CriarInscricao_POST_escola_ok()
+        self.test_CriarInscricao_POST_transporte_ok()
         POST = {
             'criar_inscricao-current_step': ['almoco'],
             'almoco-campus': [''],
@@ -516,7 +518,7 @@ class TestCriarInscricaoView(TestCase):
 
     def test_CriarInscricao_POST_almoco_erroAlmocosExcedemInscritos(self):
         """ Teste de método POST passo "almoco" > "sessoes" erro nº de almoços excede nº de inscritos """
-        self.test_CriarInscricao_POST_escola_ok()
+        self.test_CriarInscricao_POST_transporte_ok()
         POST = {
             'criar_inscricao-current_step': ['almoco'],
             'almoco-campus': [''],
@@ -531,7 +533,7 @@ class TestCriarInscricaoView(TestCase):
 
     def test_CriarInscricao_POST_almoco_ok(self):
         """ Teste de método POST passo "almoco" > "sessoes" sucesso """
-        self.test_CriarInscricao_POST_escola_ok()
+        self.test_CriarInscricao_POST_transporte_ok()
         POST = {
             'criar_inscricao-current_step': ['almoco'],
             'almoco-campus': [f'{self.campus.id}'],
@@ -689,13 +691,44 @@ class TestCriarInscricaoView(TestCase):
             response, 'inscricoes/inscricao_wizard_sessoes.html')
         self.assertTrue(response.context['form'].errors)
 
+    def test_CriarInscricao_POST_sessoes_ok(self):
+        """ Teste de método POST passo "sessoes" > "submissao" sucesso """
+        self.test_CriarInscricao_POST_almoco_ok()
+        # inscritos: 30
+        sessao0 = create_Sessao_0()
+        sessao1 = create_Sessao_1()
+        POST = {
+            'criar_inscricao-current_step': ['sessoes'],
+            'sessoes-sessoes': ['{"'+str(sessao0.id)+'": 10,"'+str(sessao1.id)+'": 20}'],
+            'sessoes-sessoes_info': ['[]'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:criar-inscricao'), POST, follow=True)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_submissao.html')
 
-class TestConsultarInscricaoView(TestCase):
+
+class TestConsultarAlterarInscricaoView(TestCase):
     """ Teste suite da view "ConsultarInscricao" da app "inscricoes" """
 
     @classmethod
     def setUpTestData(cls):
+        call_command('create_groups')
         cls.inscricao = create_Inscricao_0()
+        group = Group.objects.get(name='Participante')
+        group.user_set.add(cls.inscricao.participante)
+        group.save()
+        cls.inscricao.participante.save()
+        for info in [
+            create_Responsavel_0(),
+            create_Inscricaoprato_0(),
+            create_Inscricaotransporte_0(),
+            create_Inscricaosessao_0(),
+            create_Inscricaosessao_1(),
+        ]:
+            info.inscricao = cls.inscricao
+            info.save()
+        cls.inscricao.save()
 
     def test_ConsultarInscricao_GET_semLogin(self):
         """ Teste de método GET sem login """
@@ -791,15 +824,474 @@ class TestConsultarInscricaoView(TestCase):
         self.assertEquals(
             response.context['m'], 'Não tem permissões para aceder a esta página!')
 
-    def test_ConsultarInscricao_POST_ok(self):
-        """ Teste de método POST sucesso """
-        participante = create_Participante_0()
-        self.client.force_login(participante)
+    @mock.patch('inscricoes.views.datetime', Mock(now=Mock(return_value=datetime(2021, 4, 1, 9, 30, tzinfo=pytz.UTC))))
+    def test_AlterarInscricao_POST_depoisDoPeriodoDeInscricoes(self):
+        """ Teste de método POST depois do período de inscricões """
+        self.inscricao.diaaberto.datainscricaoatividadesinicio = datetime(
+            2021, 1, 1, 9, 30, tzinfo=pytz.UTC)
+        self.inscricao.diaaberto.datainscricaoatividadesfim = datetime(
+            2021, 3, 1, 9, 30, tzinfo=pytz.UTC)
+        self.inscricao.diaaberto.save()
+        self.inscricao.save()
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 0,
+        }
         response = self.client.post(
-            reverse('inscricoes:consultar-inscricao', kwargs={'pk': self.inscricao.pk}))
-        self.assertEquals(response.status_code, 200)
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), follow=True)
+        self.assertTemplateUsed(
+            response, 'mensagem.html')
+        self.assertEquals(response.context['tipo'], 'error')
+        self.assertEquals(
+            response.context[-1]['m'], f'Não pode alterar a inscrição fora do período: 01/01/2021 até 01/03/2021')
+
+    def test_AlterarInscricao_POST_responsaveis_erroCamposVazios(self):
+        """ Teste de método POST passo "responsaveis" erro campos vazios """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 0,
+        }
+        POST = {
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
         self.assertTemplateUsed(
             response, 'inscricoes/consultar_inscricao_responsaveis.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_responsaveis_erroEmailInvalido(self):
+        """ Teste de método POST passo "responsaveis" erro email inválido """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 0,
+        }
+        POST = {
+            'nome': ['Rafael Ricardo'],
+            'email': ['email@invalido'],
+            'tel': ['+351931231234'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_responsaveis.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_responsaveis_erroTelInvalido(self):
+        """ Teste de método POST passo "responsaveis" erro tel inválido """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 0,
+        }
+        POST = {
+            'nome': ['Rafael Ricardo'],
+            'email': ['email@valido.com'],
+            'tel': ['981231234'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_responsaveis.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_responsaveis_ok(self):
+        """ Teste de método POST passo "responsaveis" sucesso """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 0,
+        }
+        POST = {
+            'nome': ['Rafael Ricardo'],
+            'email': ['email@valido.com'],
+            'tel': ['931231234'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST, follow=True)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_responsaveis.html')
+        self.assertFalse(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_escola_erroCamposVazios(self):
+        """ Teste de método POST passo "escola" erro campos vazios """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 1,
+        }
+        POST = {
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_escola.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_escola_inscricaoEscolaEInfoTurmaVazia(self):
+        """ Teste de método POST passo "escola" inscrição de escola e info da turma vazia """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 1,
+        }
+        POST = {
+            'dia': ['29/05/2021'],
+            'nalunos': ['7'],
+            'nome_escola': ['Escola Secundária de Loulé'],
+            'local': ['Loulé'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_escola.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_escola_nalunosInvalido(self):
+        """ Teste de método POST passo "escola" > "transporte" nº de alunos inválido """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 1,
+        }
+        POST = {
+            'dia': ['29/05/2021'],
+            'nalunos': ['0'],
+            'nome_escola': ['Escola Secundária de Loulé'],
+            'local': ['Loulé'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_escola.html')
+        self.assertTrue(response.context['form'].errors)
+        POST.update({
+            'nalunos': ['300'],
+        })
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_escola.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_escola_ok(self):
+        """ Teste de método POST passo "escola" sucesso """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 1,
+        }
+        POST = {
+            'dia': ['29/05/2021'],
+            'nalunos': ['30'],
+            'nome_escola': ['Escola Secundária de Loulé'],
+            'local': ['Loulé'],
+            'ano': ['12'],
+            'turma': ['B'],
+            'areacientifica': ['Ciências e Tecnologia'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST, follow=True)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_escola.html')
+        self.assertFalse(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_transporte_erroCamposVazios(self):
+        """ Teste de método POST passo "transporte" erro campos vazios """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 2,
+        }
+        POST = {
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_transporte.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_transporte_ok(self):
+        """ Teste de método POST passo "transporte" sucesso """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 2,
+        }
+        POST = {
+            'meio': ['autocarro'],
+            'hora_chegada': ['8:55'],
+            'local_chegada': ['Terminal Rodoviário de Faro'],
+            'entrecampi': ['']
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST, follow=True)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_transporte.html')
+        self.assertFalse(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_almoco_erroCampusEscolhidoMasSemPessoas(self):
+        """ Teste de método POST passo "almoco" erro campus escolhido sem pessoas """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 3,
+        }
+        POST = {
+            'campus': [f'{create_Campus_0().id}'],
+            'npratosalunos': ['0'],
+            'npratosdocentes': ['0'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_almoco.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_almoco_erroEscolhidasPessoasMasSemCampus(self):
+        """ Teste de método POST passo "almoco" erro escolhidas pessoas sem campus """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 3,
+        }
+        POST = {
+            'campus': [''],
+            'npratosalunos': ['2'],
+            'npratosdocentes': ['0'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_almoco.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_almoco_erroAlmocosExcedemInscritos(self):
+        """ Teste de método POST passo "almoco" erro nº de almoços excede nº de inscritos """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 3,
+        }
+        POST = {
+            'campus': [''],
+            'npratosalunos': ['40'],
+            'npratosdocentes': ['2'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_almoco.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_almoco_ok(self):
+        """ Teste de método POST passo "almoco" sucesso """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 3,
+        }
+        POST = {
+            'campus': [f'{create_Campus_0().id}'],
+            'npratosalunos': ['3'],
+            'npratosdocentes': ['0'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST, follow=True)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_almoco.html')
+        self.assertFalse(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_sessoes_erroSemVariáveis(self):
+        """ Teste de método POST passo "sessoes" nenhuma variável enviada """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 4,
+        }
+        POST = {
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_sessoes.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_sessoes_erroVariáveisInválidas(self):
+        """ Teste de método POST passo "sessoes" variáveis inválidas """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 4,
+        }
+        POST = {
+            'sessoes': ['{<script>alert("Script Injection")</script>}'],
+            'sessoes_info': ['[]'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_sessoes.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_sessoes_erroNenhumaSessao(self):
+        """ Teste de método POST passo "sessoes" nenhuma sessão """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 4,
+        }
+        POST = {
+            'sessoes': ['{}'],
+            'sessoes_info': ['[]'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_sessoes.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_sessoes_erroSessaoNaoExiste(self):
+        """ Teste de método POST passo "sessoes" sessão não existe """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 4,
+        }
+        POST = {
+            'sessoes': ['{"1": 2}'],
+            'sessoes_info': ['[]'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_sessoes.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_sessoes_erroAtividadeNaoValidada(self):
+        """ Teste de método POST passo "sessoes" atividade não validada """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 4,
+        }
+        sessao = create_Sessao_0()
+        sessao.atividadeid.estado = "Pendente"
+        sessao.atividadeid.save()
+        sessao.save()
+        POST = {
+            'sessoes': ['{"'+str(sessao.id)+'": 2}'],
+            'sessoes_info': ['[]'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_sessoes.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_sessoes_erroSessaoDeOutroDia(self):
+        """ Teste de método POST passo "sessoes" sessão de outro dia """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 4,
+        }
+        # dia escolhido: 21/08/2020
+        sessao = create_Sessao_0()
+        sessao.dia = date(2021, 5, 28)
+        sessao.save()
+        POST = {
+            'sessoes': ['{"'+str(sessao.id)+'": 2}'],
+            'sessoes_info': ['[]'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_sessoes.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_sessoes_erroMaisInscritosQueVagas(self):
+        """ Teste de método POST passo "sessoes" mais inscritos que vagas """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 4,
+        }
+        sessao = create_Sessao_0()
+        POST = {
+            'sessoes': ['{"'+str(sessao.id)+'": '+str(sessao.vagas + 1)+'}'],
+            'sessoes_info': ['[]'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_sessoes.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_sessoes_erroMaisIncritosQueDisponiveis(self):
+        """ Teste de método POST passo "sessoes" > "submissao" mais alunos inscritos em sessões que disponíveis na inscrição """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 4,
+        }
+        # inscritos: 20
+        sessao = create_Sessao_0()
+        POST = {
+            'sessoes': ['{"'+str(sessao.id)+'": 31}'],
+            'sessoes_info': ['[]'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_sessoes.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_sessoes_erroHorariosSobrepostos(self):
+        """ Teste de método POST passo "sessoes" sessões com horários sobrepostos """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 4,
+        }
+        # inscritos: 20
+        sessao0 = create_Sessao_0()
+        sessao1 = create_Sessao_1()
+        POST = {
+            'sessoes': ['{"'+str(sessao0.id)+'": 20,"'+str(sessao1.id)+'": 20}'],
+            'sessoes_info': ['[]'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_sessoes.html')
+        self.assertTrue(response.context['form'].errors)
+
+    def test_AlterarInscricao_POST_sessoes_ok(self):
+        """ Teste de método POST passo "sessoes" sucesso """
+        self.client.force_login(self.inscricao.participante)
+        GET = {
+            'pk': self.inscricao.pk,
+            'step': 4,
+        }
+        # inscritos: 20
+        sessao0 = create_Sessao_0()
+        sessao1 = create_Sessao_2()
+        sessao0.dia = self.inscricao.dia
+        sessao1.dia = self.inscricao.dia
+        sessao0.save()
+        sessao1.save()
+        POST = {
+            'sessoes': ['{"'+str(sessao0.id)+'": 10,"'+str(sessao1.id)+'": 20}'],
+            'sessoes_info': ['[]'],
+        }
+        response = self.client.post(
+            reverse('inscricoes:alterar-inscricao', kwargs=GET), POST, follow=True)
+        self.assertTemplateUsed(
+            response, 'inscricoes/consultar_inscricao_sessoes.html')
+        self.assertFalse(response.context['form'].errors)
 
 
 class TestMinhasInscricoesView(TestCase):

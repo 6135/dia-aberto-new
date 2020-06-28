@@ -15,10 +15,12 @@ class Command(BaseCommand):
         if Administrador.objects.all().count() > 0:
             raise CommandError(
                 'Este comando só pode ser usado quando não existe nenhum administrador')
-
+        try:
+            my_group = Group.objects.get(name='Administrador')
+        except:
+            raise CommandError('Crie os grupos primeiro: manage.py create_groups')
         admin = Administrador.objects.create(
             username="admin", first_name="admin", last_name="admin", password="", valido=True)
-        my_group = Group.objects.get(name='Administrador')
         my_group.user_set.add(admin)
         admin.set_password(options['password'])
         admin.save()
