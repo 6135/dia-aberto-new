@@ -294,13 +294,14 @@
                   <p style="color: #ff0000; text-align:center">{{error}}</p>
                   {% endfor %}
 
-                  {% comment %}
+                
                   {% for field in form %}
                   {% for error in field.errors %}
-                  <p style="color: #ff0000;">{{field.label_tag}} {{ error }}</p>
+                  {% if field.name == "email" %}
+                  <p style="color: #ff0000;">{{ error }}</p>
+                  {% endif %}
                   {% endfor %}
                   {% endfor %}
-                  {% endcomment %}
 
 
 
