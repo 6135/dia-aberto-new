@@ -186,24 +186,25 @@ class ConsultarInscricao(View):
         if erro_permissoes:
             return erro_permissoes
         context = {}
-        inscricao = get_object_or_404(Inscricao, pk=pk)
-        if user_check(request, [Participante])['exists'] and datetime.now(pytz.UTC) > inscricao.diaaberto.datainscricaoatividadesfim:
-            m = f"Não pode alterar a inscrição fora do período: {inscricao.diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {inscricao.diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
-            return render(request=request, template_name="mensagem.html", context={'m': m, 'tipo': 'error', 'continuar': 'on'})
-        update_post(self.step_names[step], request.POST, inscricao=inscricao)
-        form = init_form(self.step_names[step], inscricao, request.POST)
-        inscricoessessao = inscricao.inscricaosessao_set.all()
-        if self.step_names[step] == 'sessoes':
-            for inscricao_sessao in inscricoessessao:
-                add_vagas_sessao(inscricao_sessao.sessao.id,
-                                 inscricao_sessao.nparticipantes)
-        if form.is_valid():
-            save_form(self.step_names[step], form, inscricao)
-            return HttpResponseRedirect(reverse('inscricoes:consultar-inscricao', args=[pk, step]))
-        if self.step_names[step] == 'sessoes':
-            for inscricao_sessao in inscricoessessao:
-                add_vagas_sessao(inscricao_sessao.sessao.id,
-                                 -inscricao_sessao.nparticipantes)
+        if alterar:
+            if request.user.groups.filter(name="Participante").exists() and datetime.now(pytz.UTC) > inscricao.diaaberto.datainscricaoatividadesfim:
+                m = f"Não pode alterar a inscrição fora do período: {inscricao.diaaberto.datainscricaoatividadesinicio.strftime('%d/%m/%Y')} até {inscricao.diaaberto.datainscricaoatividadesfim.strftime('%d/%m/%Y')}"
+                return render(request=request, template_name="mensagem.html", context={'m': m, 'tipo': 'error', 'continuar': 'on'})
+            update_post(self.step_names[step],
+                        request.POST, inscricao=inscricao)
+            form = init_form(self.step_names[step], inscricao, request.POST)
+            inscricoessessao = inscricao.inscricaosessao_set.all()
+            if self.step_names[step] == 'sessoes':
+                for inscricao_sessao in inscricoessessao:
+                    add_vagas_sessao(inscricao_sessao.sessao.id,
+                                     inscricao_sessao.nparticipantes)
+            if form.is_valid():
+                save_form(self.step_names[step], form, inscricao)
+                return HttpResponseRedirect(reverse('inscricoes:consultar-inscricao', kwargs={'pk': pk, 'step': step}))
+            if self.step_names[step] == 'sessoes':
+                for inscricao_sessao in inscricoessessao:
+                    add_vagas_sessao(inscricao_sessao.sessao.id,
+                                     -inscricao_sessao.nparticipantes)
         context.update({'alterar': alterar,
                         'pk': pk,
                         'step': step,

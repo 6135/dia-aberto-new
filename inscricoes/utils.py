@@ -298,7 +298,7 @@ def update_post(step, POST, wizard=None, inscricao=None):
         POST[f'{prefix}nalunos'] = wizard.get_cleaned_data_for_step('escola')[
             'nalunos'] if wizard else inscricao.nalunos
         POST[f'{prefix}dia'] = wizard.get_cleaned_data_for_step('escola')[
-            'dia'] if wizard else inscricao.dia
+            'dia'].strftime("%d/%m/%Y") if wizard else inscricao.dia.strftime("%d/%m/%Y")
     POST._mutable = mutable
 
 
