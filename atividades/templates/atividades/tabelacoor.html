@@ -87,7 +87,7 @@
                             <p class="has-text-danger">
                             {% for conf in table.conflitos %}
                                 {% if sessao.id == conf.atividade1.id  %}
-                                    {{conf.atividade2.atividadeid.nome}} ({{conf.atividade2.horarioid.inicio}}- {{conf.atividade2.horarioid.fim}}) , 
+                                    {{conf.atividade2.atividadeid.nome}} , 
                                 {% endif %}
                             {% endfor %}
                             </p>
