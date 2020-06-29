@@ -479,64 +479,149 @@ class TestViews(TestCase):
 
         client.force_login(user=self.admin) #now we test with proper loggin
         response = client.get(reverse('configuracao:verEdificios'))
-        self.assertContains(response,status_code=200,text='Departamento de Engenharia Informatica e Eletronica')
+        self.assertContains(response,status_code=200,text='C1')
 
         
     def test_edificios_POST(self):
         client = self.client
         data = {
-           'form-TOTAL_FORMS': ['1'],
-           'form-INITIAL_FORMS': ['0'],
-           'form-MIN_NUM_FORMS': ['1'],
-           'form-MAX_NUM_FORMS': ['1000'],
-           'form-0-id': [''],
-           'form-0-sigla': ['DEEI'],
-           'form-0-nome': ['Departamento de Engenharia Informatica e Eletronica'],
-           'id_form-0-unidadeorganicaid': [str(self.uo.id)] 
+            'nome': ['C1'],
+            'campus': [str(self.campus.id)],
+            'form-TOTAL_FORMS': ['1'],
+            'form-INITIAL_FORMS': ['0'],
+            'form-MIN_NUM_FORMS': ['1'],
+            'form-MAX_NUM_FORMS': ['1000'],
+            'form-0-id': [''],
+            'form-0-nome': [str(self.espaco.nome)],
+            'form-0-andar': [str(self.espaco.andar)],
+            'form-0-descricao': [str(self.espaco.descricao)]
         }
 
-        response = client.get(reverse('configuracao:adicionarDepartamento'))
+        response = client.get(reverse('configuracao:adicionarEdificio'))
         self.assertEquals(response.status_code,302) #Redirect if user not logged in
 
-        response = client.get(reverse('configuracao:adicionarDepartamento'),follow=True)#Not logged in goes to message
+        response = client.get(reverse('configuracao:adicionarEdificio'),follow=True)#Not logged in goes to message
         self.assertEquals(response.status_code,200)
         self.assertTemplateUsed(response, 'utilizadores/login.html')
 
         client.force_login(user=create_Coordenador_0()) #now we test with wrong loggin
-        response = client.get(reverse('configuracao:adicionarDepartamento'))
+        response = client.get(reverse('configuracao:adicionarEdificio'))
         self.assertContains(response,status_code=200,text='Não tem permissões para aceder a esta página!')
 
-        Departamento.objects.all().delete()
+        Edificio.objects.all().delete()
         client.force_login(user=self.admin) #now we test with proper loggin
-        response = client.post(reverse('configuracao:adicionarDepartamento'),data=data)
+        response = client.post(reverse('configuracao:adicionarEdificio'),data=data)
         #print(response)
-        self.assertEquals(len(Departamento.objects.all()),1)
-        self.assertEquals(Departamento.objects.all().first().nome, 'Faculdade de TESTE')
+        self.assertEquals(len(Edificio.objects.all()),1)
+        self.assertEquals(Edificio.objects.all().first().nome, 'C1')
 
-        edificioId = Departamento.objects.filter().first().id
+        edificioId = Edificio.objects.filter().first().id
         #lets edit it
-        data['form-0-nome'] = ['Departamento de Engenharia Informatica']
-        response = client.post(reverse('configuracao:editarDepartamento', kwargs={'id':edificioId}),data=data)
-        self.assertEquals(Departamento.objects.filter().first().nome, 'Departamento de Engenharia Informatica')
-        Departamento.objects.all().delete()
+        #'nome': ['C2'], 'campus': ['1'], 'image': [''], 'form-TOTAL_FORMS': ['1'], 'form-INITIAL_FORMS': ['1'], 'form-MIN_NUM_FORMS': ['1'], 'form-MAX_NUM_FORMS': ['1000'], 'form-0-id': ['7'], 'form-0-nome': ['Sala 2'], 'form-0-andar': ['2'], 'form-0-descricao': ['Sala de Aula']}>
+        data['nome'] = ['C2']
+        data['form-INITIAL_FORMS'] = ['1']
+        data['form-0-id'] = [str(edificioId)]
+        data['form-0-nome'] = ['2']
+        response = client.post(reverse('configuracao:editarEdificio', kwargs={'id':edificioId}),data=data)
+        self.assertEquals(Edificio.objects.get(id=edificioId).nome, 'C2')
+        self.assertEquals(Espaco.objects.get(edificio__id=edificioId).nome, '2')
+        Edificio.objects.all().delete()
 
     def test_edificio_delete(self):
         client = self.client
-        response = client.get(reverse('configuracao:eliminarDepartamento', kwargs={'id':self.edificio.id}))
+        response = client.get(reverse('configuracao:eliminarEdificio', kwargs={'id':self.edificio.id}))
         self.assertEquals(response.status_code,302) #Redirect if user not logged in
 
-        response = client.get(reverse('configuracao:eliminarDepartamento', kwargs={'id':self.edificio.id}),follow=True)#Not logged in goes to message
+        response = client.get(reverse('configuracao:eliminarEdificio', kwargs={'id':self.edificio.id}),follow=True)#Not logged in goes to message
         self.assertEquals(response.status_code,200)
         self.assertTemplateUsed(response, 'utilizadores/login.html')
 
         client.force_login(user=create_Coordenador_0()) #now we test with wrong loggin
-        response = client.get(reverse('configuracao:eliminarDepartamento', kwargs={'id':self.edificio.id}))
+        response = client.get(reverse('configuracao:eliminarEdificio', kwargs={'id':self.edificio.id}))
         self.assertEquals(response.status_code,200) #200 means it printed the error message on return (success is a redirect)
 
         client.force_login(user=self.admin) #now we test with proper loggin
-        response = client.get(reverse('configuracao:eliminarDepartamento', kwargs={'id':self.edificio.id}))
+        response = client.get(reverse('configuracao:eliminarEdificio', kwargs={'id':self.edificio.id}))
         self.assertEquals(response.status_code,302) #redirect means it worked
-        self.assertEquals(len(Departamento.objects.filter()),0) #must be empty!
+        self.assertEquals(len(Edificio.objects.filter()),0) #must be empty!
+
+    def test_view_curso(self):
+        client = self.client
+
+        response = client.get(reverse('configuracao:verCursos'))
+        self.assertEquals(response.status_code,302) #Redirect if user not logged in
+
+        response = client.get(reverse('configuracao:verCursos'),follow=True)#Not logged in goes to message
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response, 'utilizadores/login.html')
+
+        client.force_login(user=create_Coordenador_0()) #now we test with wrong loggin
+        response = client.get(reverse('configuracao:verCursos'))
+        self.assertContains(response,status_code=200,text='Não tem permissões para aceder a esta página!')
+
+        client.force_login(user=self.admin) #now we test with proper loggin
+        response = client.get(reverse('configuracao:verCursos'))
+        self.assertContains(response,status_code=200,text='Licensiatura Engenharia Informatica')
+
+        
+    def test_curso_POST(self):
+        client = self.client
+        data = {
+            'form-TOTAL_FORMS': ['1'],
+            'form-INITIAL_FORMS': ['0'],
+            'form-MIN_NUM_FORMS': ['1'],
+            'form-MAX_NUM_FORMS': ['1000'],
+            'form-0-id': [''],
+            'form-0-nome': [str(self.curso.nome)],
+            'form-0-sigla': [str(self.curso.sigla)],
+            'form-0-unidadeorganicaid': [str(self.curso.unidadeorganicaid.id)]
+        }
+
+        response = client.get(reverse('configuracao:adicionarCurso'))
+        self.assertEquals(response.status_code,302) #Redirect if user not logged in
+
+        response = client.get(reverse('configuracao:adicionarCurso'),follow=True)#Not logged in goes to message
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response, 'utilizadores/login.html')
+
+        client.force_login(user=create_Coordenador_0()) #now we test with wrong loggin
+        response = client.get(reverse('configuracao:adicionarCurso'))
+        self.assertContains(response,status_code=200,text='Não tem permissões para aceder a esta página!')
+
+        Curso.objects.all().delete()
+        client.force_login(user=self.admin) #now we test with proper loggin
+        response = client.post(reverse('configuracao:adicionarCurso'),data=data)
+        #print(response)
+        self.assertEquals(len(Curso.objects.all()),1)
+        self.assertEquals(Curso.objects.all().first().nome, 'Licensiatura Engenharia Informatica')
+
+        cursoId = Curso.objects.filter().first().id
+        #lets edit it
+        data['form-0-nome'] = ['Licensiatura Engenharia Eletronica']
+        data['form-INITIAL_FORMS'] = ['1']
+        data['form-0-id'] = [str(cursoId)]
+        response = client.post(reverse('configuracao:editarCurso', kwargs={'id':cursoId}),data=data)
+        self.assertEquals(Curso.objects.get(id=cursoId).nome, 'Licensiatura Engenharia Eletronica')
+        Curso.objects.all().delete()
+
+    def test_curso_delete(self):
+        client = self.client
+        response = client.get(reverse('configuracao:eliminarCurso', kwargs={'id':self.curso.id}))
+        self.assertEquals(response.status_code,302) #Redirect if user not logged in
+
+        response = client.get(reverse('configuracao:eliminarCurso', kwargs={'id':self.curso.id}),follow=True)#Not logged in goes to message
+        self.assertEquals(response.status_code,200)
+        self.assertTemplateUsed(response, 'utilizadores/login.html')
+
+        client.force_login(user=create_Coordenador_0()) #now we test with wrong loggin
+        response = client.get(reverse('configuracao:eliminarCurso', kwargs={'id':self.curso.id}))
+        self.assertEquals(response.status_code,200) #200 means it printed the error message on return (success is a redirect)
+
+        client.force_login(user=self.admin) #now we test with proper loggin
+        response = client.get(reverse('configuracao:eliminarCurso', kwargs={'id':self.curso.id}))
+        self.assertEquals(response.status_code,302) #redirect means it worked
+        self.assertEquals(len(Curso.objects.filter()),0) #must be empty!
+
 #<
 #QueryDict: {'csrfmiddlewaretoken': ['wnVI0xRKO8X7DGgbZS9g24r16kiAdEj6dIepN9xrt337AV3ioOgBm1FcB5cUKO7I'], 
 #'campus': ['1'],

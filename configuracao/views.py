@@ -775,12 +775,10 @@ def configurarCurso(request, id = None):
 		allowMore, allowDelete = False, False	
 
 	if(request.method == 'POST'):
-		
 		departamentoforms = departamentoformSet(request.POST)
 		if departamentoforms.is_valid():
 			departamentoforms.save()
 			return redirect('configuracao:verCursos')
-
 	return render(request=request,
 				template_name='configuracao/criarCursos.html',
 				context={'formset': departamentoforms,
