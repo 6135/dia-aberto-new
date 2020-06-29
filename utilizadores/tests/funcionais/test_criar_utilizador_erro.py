@@ -13,8 +13,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 
     
-class CriarParticipante(StaticLiveServerTestCase):
-    """ Testes funcionais do criar participante - Erro """
+class CriarUtilizador(StaticLiveServerTestCase):
+    """ Testes funcionais criar utilizador - Erro """
 
     @classmethod
     def setUpClass(cls):
@@ -37,8 +37,8 @@ class CriarParticipante(StaticLiveServerTestCase):
         super().tearDownClass()
 
 
-    def test_criar_participante_erro(self):
-        """ Testes funcionais do criar participante - Erro """
+    def test_criar_utilizador_erro(self):
+        """ Testes funcionais criar utilizador - Erro """
         self.driver.get('%s%s' % (self.live_server_url, reverse('home')))
         self.driver.find_element(By.CSS_SELECTOR, "strong").click()
         self.driver.find_element(By.CSS_SELECTOR, ".has-addons > a:nth-child(1) > .button").click()

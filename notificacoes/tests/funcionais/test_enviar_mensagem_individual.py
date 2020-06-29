@@ -15,7 +15,7 @@ from django.contrib.auth.models import Group
 
 
 class EnviarMensagemAdmiGrupo(StaticLiveServerTestCase):
-    """ Testes funcionais rejeitar utilizador """
+    """ Testes funcionais enviar mensagem individual """
 
     @classmethod
     def setUpClass(cls):
@@ -48,14 +48,23 @@ class EnviarMensagemAdmiGrupo(StaticLiveServerTestCase):
 
 
     def test_enviar_mensagem_individual(self):
-        """ Testes funcionais rejeitar utilizador """
+        """ Teste funcional enviar mensagem individual entre utilizadores """
         self.driver.get('%s%s' % (self.live_server_url, reverse('home')))
         self.driver.find_element(By.CSS_SELECTOR, ".button > span:nth-child(2)").click()
         self.driver.find_element(By.ID, "id_username").click()
         self.driver.find_element(By.ID, "id_username").send_keys(self.administrador.username)
         self.driver.find_element(By.ID, "id_password").click()
         self.driver.find_element(By.ID, "id_password").send_keys("andre123456")
-        self.driver.find_element(By.CSS_SELECTOR, ".is-outlined").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".is-success > span").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".mdi-message").click()
+        self.driver.find_element(By.LINK_TEXT, "Nova mensagem").click()
         self.driver.find_element(By.CSS_SELECTOR, "a:nth-child(1) > .button").click()
-        self.driver.find_element(By.LINK_TEXT, "Utilizadores").click()
-    
+        self.driver.find_element(By.ID, "id_email").click()
+        self.driver.find_element(By.ID, "id_email").send_keys(self.administrador1.email)
+        self.driver.find_element(By.ID, "id_titulo").click()
+        self.driver.find_element(By.ID, "id_titulo").send_keys("Oi")
+        self.driver.find_element(By.NAME, "mensagem").click()
+        self.driver.find_element(By.NAME, "mensagem").send_keys("Oi")
+        self.driver.find_element(By.CSS_SELECTOR, ".is-success > span").click()
+        elements = self.driver.find_elements(By.CSS_SELECTOR, ".title")
+        assert len(elements) > 0
