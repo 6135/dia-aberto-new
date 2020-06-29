@@ -153,7 +153,7 @@ class Atividade(models.Model):
             self.tema == other.tema
 
     def ne(self, other):
-        return False if self == other else True
+        return False if self.eq(other) else True
 
     @staticmethod
     def tarefas_get_atividades():
@@ -180,7 +180,7 @@ class Materiais(models.Model):
             self.nomematerial == other.nomematerial
 
     def ne(self, other):
-        return False if self == other else True
+        return False if self.eq(other) else True
 
     class Meta:
         db_table = 'Materiais'

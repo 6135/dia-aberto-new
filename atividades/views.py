@@ -190,7 +190,7 @@ def alterarAtividade(request,id):
                     activity_object_formed = activity_object_form.save(commit=False) 
                     espacoid=request.POST["espacoid"] 
                     espaco=Espaco.objects.get(id=espacoid) 
-                    activity_object.espacoid= espaco
+                    activity_object_formed.espacoid= espaco
                     if  activity_object_formed.estado == "nsub":
                         activity_object_formed.estado = "nsub"
                         activity_object_formed.save()
@@ -218,7 +218,7 @@ def alterarAtividade(request,id):
                         if Atividade.objects.get(id=id).ne(activity_object_formed) or Materiais.objects.get(atividadeid=id).ne(materiais_object_form.instance):
                             espacoid=request.POST["espacoid"] 
                             espaco=Espaco.objects.get(id=espacoid) 
-                            activity_object.espacoid= espaco
+                            activity_object_formed.espacoid= espaco
                             activity_object_formed.estado = "Pendente"
                             activity_object_formed.dataalteracao = datetime.now()
                             activity_object_formed.save()
