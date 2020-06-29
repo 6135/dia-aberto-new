@@ -4,8 +4,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
-
+from atividades import models as amodels
+from coordenadores import models as coordmodels
+from django.db.models import Q
 class Utilizador(User):
     contacto = PhoneNumberField(max_length=20, blank=False, null=False)
     valido = models.CharField(max_length=255, blank=False, null=False)
@@ -156,3 +157,31 @@ class Colaborador(Utilizador):
     class Meta:
         db_table = 'Colaborador'
 
+    @staticmethod
+    def get_free_colabs(coord,dia,horario,sessao=None):
+        free_colabs=[]
+        print(horario)
+        colabs = Colaborador.objects.filter(faculdade = coord.faculdade,utilizador_ptr_id__valido=True)
+        free = True
+        for colab in colabs:      
+            tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,horario=horario,dia=dia)
+            if tarefas.exists():
+                continue
+            elif sessao is not None:
+                print(sessao)
+                s = amodels.Sessao.objects.get(id=int(sessao))
+                inicio = s.horarioid.inicio
+                fim = s.horarioid.fim
+                if coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia,horario__gte=inicio).filter(horario__lte=fim).exists(): 
+                    continue
+                if coordmodels.TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia,sessao__horarioid__inicio__lte=inicio,sessao__horarioid__fim__gte=inicio).exists():
+                    continue
+                free_colabs.append(colab)
+            elif sessao is None:
+                if coordmodels.TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia)\
+                    .filter(sessao__horarioid__inicio__lte=horario,sessao__horarioid__fim__gte=horario).exists(): 
+                    continue
+                free_colabs.append(colab)
+
+        print(free_colabs)
+        return free_colabs

@@ -114,7 +114,7 @@
 {% block scripts %}
 <script>
     $(document).ready(function(){
-        if ("{{tarefa}}"){
+        if ("{{tarefa}}"!="None"){
           var tipo="{{tarefa.tipo}}";
           var tarefa = "{{tarefa.id}}"
           $.ajax({                       
@@ -143,25 +143,6 @@
           });
         }
     });
-
-    function defaultDias(){
-      var atividadeId = document.getElementById("id_atividades").value;
-      if(typeof ativiadeId === 'undefined') 
-        atividadeId = '';
-      $.ajax({                       
-        url: "{% url 'coordenadores:diasAtividade' %}", 
-        method: 'POST',             
-        data: {
-            'atividadeid': atividadeId,
-            csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-            'default': '{{form.instance.id}}'
-        },
-        success: function (data) {   
-          $("#id_dias").html(data);
-          $("#id_sessaoid").html('<option value="">Escolha uma sessão</option>');       
-        }
-      });
-    }
 
     $('input:radio').change(function(){
         var tipo=this.value;
@@ -193,7 +174,8 @@
         },
         success: function (data) {   
           $("#id_dia").html(data);
-          $("#id_sessao").html('<option value="">Escolha a sessão</option>');       
+          $("#id_sessao").html('<option value="">Escolha a sessão</option>');
+          $("#id_colab").html('<option value="">Não Atribuir</option>');
         }
       });
     }
@@ -219,11 +201,25 @@
 
     function colaboradoresSelect(){
       var tarefa = "{{tarefa.id}}";
+
+      var dia = document.getElementById("id_dia").value; 
+      if(document.getElementById("id_horario"))
+        var horario =document.getElementById("id_horario").value;
+      else
+        var horario="";
+      
+      if(document.getElementById("id_sessao"))
+        var sessao =document.getElementById("id_sessao").value; 
+      else
+        var sessao = "";
       $.ajax({                       
         url: "{% url 'coordenadores:colaboradores' %}", 
         method: 'POST',             
         data: {
             'tarefa': tarefa,
+            'sessao':sessao,
+            'horario':horario,
+            'dia':dia,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
@@ -328,5 +324,6 @@
       });
     }
 /*----------------->EndAcompanharAtividade<--------------*/
+
 </script>
 {% endblock scripts %}

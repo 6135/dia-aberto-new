@@ -106,14 +106,15 @@ class Inscricao(models.Model):
             inscricao=self, sessao__dia=dia).order_by('sessao__horarioid__inicio')
         destino = []
 
-        if horario == time.strftime(inscricao_sessoes.first().sessao.horarioid.inicio, "%H:%M"):
+        if horario == time.strftime(inscricao_sessoes.first().sessao.horarioid.inicio, "%H:%M:%S"):
             for local in inscricao_sessoes:
-                if time.strftime(local.sessao.horarioid.inicio, "%H:%M") == horario:
+                if time.strftime(local.sessao.horarioid.inicio, "%H:%M:%S") == horario:
+                    print('asdasd')
                     destino.append({'key': local.sessao.atividadeid.espacoid.id,
                                     'value': local.sessao.atividadeid.espacoid.nome})
         else:
             inscricao_sessoes = Inscricaosessao.objects.filter(inscricao=self,
-                                                               sessao__dia=dia, sessao__horarioid__inicio__gt=horario).order_by('sessao__horarioid__inicio')
+                                                               sessao__dia=dia, sessao__horarioid__inicio__gte=horario).order_by('sessao__horarioid__inicio')
             for local in inscricao_sessoes:
                 destino.append({'key': local.sessao.atividadeid.espacoid.id,
                                 'value': local.sessao.atividadeid.espacoid.nome})

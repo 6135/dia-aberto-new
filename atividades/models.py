@@ -156,9 +156,10 @@ class Atividade(models.Model):
         return False if self == other else True
 
     @staticmethod
-    def tarefas_get_atividades():
+    def tarefas_get_atividades(fac):
         atividades=[]
-        sessoes = Sessao.objects.filter(atividadeid__estado='Aceite',atividadeid__nrcolaboradoresnecessario__gt=0)
+        print(fac)
+        sessoes = Sessao.objects.filter(atividadeid__estado='Aceite',atividadeid__nrcolaboradoresnecessario__gt=0,atividadeid__professoruniversitarioutilizadorid__faculdade__id=fac)
         for sessao in sessoes:
             tarefa = TarefaAuxiliar.objects.filter(sessao=sessao.id)
             if tarefa.count() < sessao.atividadeid.nrcolaboradoresnecessario:
