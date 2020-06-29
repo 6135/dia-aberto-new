@@ -416,12 +416,12 @@ def atribuirTransporte(request, id):
 					isessaopartidalocal= isessaopartida.sessao.atividadeid.espacoid.edificio.campus.nome	# campus ultima sessao da inscricao
 					isessaopartidahorario= isessaopartida.sessao.horarioid.fim #horario de fim da ultima sessao
 					horapartida= (transportehorario.horaPartida.hour*60 + transportehorario.horaPartida.minute) - (isessaopartidahorario.hour*60 + isessaopartidahorario.minute) # diferença entre horario transporte e da ultima sessao
-					if isessaopartidalocal == transportehorario.origem  and horapartida <=60:
+					if isessaopartidalocal == transportehorario.origem  and horapartida <=60 and  horapartida >= 0:
 						chepart= ChegadaPartida(inscricao.id, inscricao.nalunos,inscricao.local_chegada, isessaopartidahorario, 1)
 				else:
 					isessaochegadalocal= isessaochegada.sessao.atividadeid.espacoid.edificio.campus.nome
 					horachegada= (transportehorario.horaChegada.hour*60 + transportehorario.horaChegada.minute )- (inscricao.hora_chegada.hour*60 + inscricao.hora_chegada.minute)
-					if isessaochegadalocal == transportehorario.chegada and horachegada <=60:
+					if isessaochegadalocal == transportehorario.chegada and horachegada <=60 and horachegada >=0:
 						chepart= ChegadaPartida(inscricao.id,inscricao.nalunos,inscricao.local_chegada,inscricao.hora_chegada, 0)
 
 				dadoschepart.append(chepart)
