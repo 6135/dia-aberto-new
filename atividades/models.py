@@ -171,7 +171,7 @@ class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
     atividadeid = models.ForeignKey(
-        Atividade, models.DO_NOTHING, db_column='AtividadeID')
+        Atividade, models.CASCADE, db_column='AtividadeID')
     nomematerial = models.CharField(
         db_column='nome', max_length=255, blank=True, null=True)
 
