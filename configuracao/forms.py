@@ -106,6 +106,11 @@ class menuForm(ModelForm):
         widgets = {
             'dia': Select()
         }
+        error_messages = {
+            NON_FIELD_ERRORS: {
+                'unique_together': "O conjunto Campus, dia aberto e dia não são unicos",
+            }
+        }
 
 
 class pratosForm(ModelForm):
