@@ -190,7 +190,7 @@ def alterarAtividade(request,id):
                     activity_object_formed = activity_object_form.save(commit=False) 
                     espacoid=request.POST["espacoid"] 
                     espaco=Espaco.objects.get(id=espacoid) 
-                    activity_object.espacoid= espaco
+                    activity_object_formed.espacoid= espaco
                     if  activity_object_formed.estado == "nsub":
                         activity_object_formed.estado = "nsub"
                         activity_object_formed.save()
@@ -218,7 +218,7 @@ def alterarAtividade(request,id):
                         if Atividade.objects.get(id=id).ne(activity_object_formed) or Materiais.objects.get(atividadeid=id).ne(materiais_object_form.instance):
                             espacoid=request.POST["espacoid"] 
                             espaco=Espaco.objects.get(id=espacoid) 
-                            activity_object.espacoid= espaco
+                            activity_object_formed.espacoid= espaco
                             activity_object_formed.estado = "Pendente"
                             activity_object_formed.dataalteracao = datetime.now()
                             activity_object_formed.save()
@@ -240,7 +240,7 @@ def alterarAtividade(request,id):
                                 sessao.horarioid=Horario.objects.get(id=new_Horario.id)
                                 sessao.vagas= activity_object_formed.participantesmaximo
                                 sessao.save()
-                    nviews.enviar_notificacao_automatica(request,"atividadeAlterada",activity_object_formed.id) #Enviar Notificacao Automatica !!!!!!
+                    #nviews.enviar_notificacao_automatica(request,"atividadeAlterada",activity_object_formed.id) #Enviar Notificacao Automatica !!!!!!
                     return redirect('atividades:inserirSessao',id)          
         return render(request=request,
                         template_name='atividades/proporAtividadeAtividade.html',
@@ -663,8 +663,10 @@ def confirmarResumo(request,id):
         if atividade.estado == "nsub":
             atividade.estado= "Pendente"
             atividade.save()
-        print(atividade.id)
-        nviews.enviar_notificacao_automatica(request,"validarAtividades",atividade.id) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
+            print(atividade.id)
+            nviews.enviar_notificacao_automatica(request,"validarAtividades",atividade.id) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
+        else:
+            nviews.enviar_notificacao_automatica(request,"atividadeAlterada",atividade.id) #Enviar Notificacao Automatica !!!!!!
         return redirect("atividades:minhasAtividades")
     else:
         return    render(request=request,
