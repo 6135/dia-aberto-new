@@ -41,15 +41,16 @@
       <a href="{% url 'atividades:atividadesUOrganica' %}" class="navbar-item">
         Atividades dos Departamentos
       </a>
+      <a href="{% url 'coordenadores:consultarTarefa' %}" class="navbar-item">
+        Tarefas
+      </a>
       <a href="{% url 'inscricoes:consultar-inscricoes-coordenador' %}" class="navbar-item">
         Inscrições
       </a>
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
         Utilizadores
       </a>
-      <a href="{% url 'coordenadores:consultarTarefa' %}" class="navbar-item">
-        Tarefas
-      </a>
+
       {% elif request.user|has_group:'Administrador'%}
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">
@@ -78,7 +79,6 @@
         Utilizadores
       </a>
       </div>
-
       {% else %}
       <a href="" class="navbar-item">
 
