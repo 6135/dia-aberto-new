@@ -11,6 +11,28 @@
                     <div class="field">
                         <div class="control has-icons-left">
                             <div class="select is-fullwidth">
+                                <select name="{{ filter.form.campus_id.name }}"
+                                    value="{{filter.form.campus_id.value}}" id= "id_{{ filter.form.campus_id.name }}">
+                                    <option value="">Qualquer Campus</option>
+                                    {% for value, camp in campus %}
+                                        {% if value != "" %}    
+                                        <option value="{{ value }}"
+                                            {% if value|stringformat:'s' == filter.form.campus_id.value %} selected
+                                            {% endif %}>
+                                            {{ camp }}
+                                        </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
                                 <select name="{{ filter.form.uo_id.name }}"
                                     value="{{filter.form.uo_id.value}}" id= "id_{{ filter.form.uo_id.name }}">
                                     <option value="">Qualquer Faculdade</option>
@@ -136,6 +158,21 @@ tr.detail{
  $(document).ready(function(){
             var value_uo= "{{ filter.form.uo_id.value }}";
             var value_dep= "{{filter.form.departamento_id.value}}";
+            var value_campus= "{{filter.form.campus_id.value}}";
+            console.log(value_campus)
+            $.ajax({
+                url:"{% url 'atividades:verFaculdades' %}",
+                method: 'POST',
+                data: {
+                    'value_campus': value_campus,
+                    'value_uo': value_uo,
+                    csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(), 
+                },
+                success: function(data){
+                    $("#id_{{ filter.form.uo_id.name }}").html(data)
+                }
+    
+            })
             console.log(value_dep)
             $.ajax({
             url:"{% url 'atividades:verDepartamentos' %}",
@@ -149,9 +186,41 @@ tr.detail{
                 $("#id_{{ filter.form.departamento_id.name }}").html(data)
                 }
             })
-
     });
 
+     $("#id_{{ filter.form.campus_id.name }}").change(function()
+    {
+        var value_campus= $(this).val();
+        console.log(value_campus)
+        $.ajax({
+            url:"{% url 'atividades:verFaculdades' %}",
+            method: 'POST',
+            data: {
+                'value_campus': value_campus,
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(), 
+            },
+            success: function(data){
+                $("#id_{{ filter.form.uo_id.name }}").html(data)
+                $("#id_{{ filter.form.departamento_id.name }}").html('<option value="">---------</option>')
+            }
+
+        })
+        var value_uo= $(this).val();
+        $.ajax({
+            url:"{% url 'atividades:verDepartamentos' %}",
+            method: 'POST',
+            data: {
+                'value_uo': value_uo,
+                csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(), 
+            },
+            success: function(data){
+                $("#id_{{ filter.form.departamento_id.name }}").html(data)
+
+            }
+
+        })
+
+    })
 
     $("#id_{{ filter.form.uo_id.name }}").change(function()
     {
