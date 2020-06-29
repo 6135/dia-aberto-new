@@ -138,22 +138,22 @@ class Atividade(models.Model):
     def get_tema(self):
         return self.tema.tema
 
-    #def __eq__(self, other):
-    #    return self.nome == other.nome and \
-    #        self.descricao == other.descricao and \
-    #        self.publicoalvo == other.publicoalvo and \
-    #        self.nrcolaboradoresnecessario == other.nrcolaboradoresnecessario and \
-    #        self.tipo == other.tipo and \
-    #        self.professoruniversitarioutilizadorid == other.professoruniversitarioutilizadorid and \
-    #        self.datasubmissao == other.datasubmissao and \
-    #        self.duracaoesperada == other.duracaoesperada and \
-    #        self.participantesmaximo == other.participantesmaximo and \
-    #        self.diaabertoid == other.diaabertoid and \
-    #        self.espacoid == other.espacoid and \
-    #        self.tema == other.tema
+    def eq(self, other):
+        return self.nome == other.nome and \
+            self.descricao == other.descricao and \
+            self.publicoalvo == other.publicoalvo and \
+            self.nrcolaboradoresnecessario == other.nrcolaboradoresnecessario and \
+            self.tipo == other.tipo and \
+            self.professoruniversitarioutilizadorid == other.professoruniversitarioutilizadorid and \
+            self.datasubmissao == other.datasubmissao and \
+            self.duracaoesperada == other.duracaoesperada and \
+            self.participantesmaximo == other.participantesmaximo and \
+            self.diaabertoid == other.diaabertoid and \
+            self.espacoid == other.espacoid and \
+            self.tema == other.tema
 
-    #def __ne__(self, other):
-    #    return False if self == other else True
+    def ne(self, other):
+        return False if self == other else True
 
     @staticmethod
     def tarefas_get_atividades():
