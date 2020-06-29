@@ -85,7 +85,8 @@ class ProfAtividadesTable(tables.Table):
 
 
     def render_coordenador(self,record):
-        return format_html(record.get_coord().full_name)
+        if record.get_coord() is not None:
+            return format_html(record.get_coord().full_name)
 
 
 
