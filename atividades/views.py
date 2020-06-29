@@ -215,7 +215,7 @@ def alterarAtividade(request,id):
                     else:
                         print("hello")
                         print(Atividade.objects.get(id=id) == activity_object_formed)
-                        if Atividade.objects.get(id=id) != activity_object_formed or Materiais.objects.get(atividadeid=id) != materiais_object_form.instance:
+                        if Atividade.objects.get(id=id).ne(activity_object_formed) or Materiais.objects.get(atividadeid=id).ne(materiais_object_form.instance):
                             espacoid=request.POST["espacoid"] 
                             espaco=Espaco.objects.get(id=espacoid) 
                             activity_object.espacoid= espaco

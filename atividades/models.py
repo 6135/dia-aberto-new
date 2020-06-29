@@ -175,11 +175,11 @@ class Materiais(models.Model):
     nomematerial = models.CharField(
         db_column='nome', max_length=255, blank=True, null=True)
 
-    def __eq__(self, other):
+    def eq(self, other):
         return self.atividadeid == other.atividadeid and \
             self.nomematerial == other.nomematerial
 
-    def __ne__(self, other):
+    def ne(self, other):
         return False if self == other else True
 
     class Meta:
