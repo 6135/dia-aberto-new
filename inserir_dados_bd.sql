@@ -139,6 +139,8 @@
 --     ('6', 'Imagem Animada'),
 -- )
 
+INSERT INTO Horario (inicio,fim) VALUES ('12:00','14:00')
+
 INSERT INTO Campus VALUES ('1','Penha');
 INSERT INTO Campus VALUES ('2','Gambelas');
 INSERT INTO Campus VALUES ('3','Portimao');

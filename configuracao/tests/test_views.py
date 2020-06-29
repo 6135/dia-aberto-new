@@ -466,19 +466,19 @@ class TestViews(TestCase):
     def test_view_edificios(self):
         client = self.client
 
-        response = client.get(reverse('configuracao:verDepartamentos'))
+        response = client.get(reverse('configuracao:verEdificios'))
         self.assertEquals(response.status_code,302) #Redirect if user not logged in
 
-        response = client.get(reverse('configuracao:verDepartamentos'),follow=True)#Not logged in goes to message
+        response = client.get(reverse('configuracao:verEdificios'),follow=True)#Not logged in goes to message
         self.assertEquals(response.status_code,200)
         self.assertTemplateUsed(response, 'utilizadores/login.html')
 
         client.force_login(user=create_Coordenador_0()) #now we test with wrong loggin
-        response = client.get(reverse('configuracao:verDepartamentos'))
+        response = client.get(reverse('configuracao:verEdificios'))
         self.assertContains(response,status_code=200,text='Não tem permissões para aceder a esta página!')
 
         client.force_login(user=self.admin) #now we test with proper loggin
-        response = client.get(reverse('configuracao:verDepartamentos'))
+        response = client.get(reverse('configuracao:verEdificios'))
         self.assertContains(response,status_code=200,text='Departamento de Engenharia Informatica e Eletronica')
 
         
