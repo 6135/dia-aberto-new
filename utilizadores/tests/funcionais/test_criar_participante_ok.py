@@ -38,3 +38,26 @@ class CriarParticipante(StaticLiveServerTestCase):
 
     def test_criar_participante_ok(self):
         """ Testes funcionais do criar participante - Sucesso """
+        self.driver.get('%s%s' % (self.live_server_url, reverse('home')))
+        self.driver.find_element(By.CSS_SELECTOR, "strong").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".has-addons > a:nth-child(1) > .button").click()
+        self.driver.find_element(By.ID, "id_first_name").click()
+        self.driver.find_element(By.ID, "id_first_name").send_keys("participante1")
+        self.driver.find_element(By.ID, "id_last_name").click()
+        self.driver.find_element(By.ID, "id_last_name").send_keys("participante1")
+        self.driver.find_element(By.ID, "id_username").click()
+        self.driver.find_element(By.ID, "id_username").send_keys("participante1")
+        self.driver.find_element(By.ID, "id_email").click()
+        self.driver.find_element(By.ID, "id_email").send_keys("participante1@ualg.pt")
+        self.driver.find_element(By.ID, "id_contacto").click()
+        self.driver.find_element(By.ID, "id_contacto").send_keys("967321393")
+        self.driver.find_element(By.ID, "id_password1").click()
+        self.driver.find_element(By.ID, "id_password1").send_keys("andre123456")
+        self.driver.find_element(By.ID, "id_password2").click()
+        self.driver.find_element(By.ID, "id_password2").send_keys("andre123456")
+
+  
+
+
+
+

@@ -14,7 +14,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 
     
 class CriarParticipante(StaticLiveServerTestCase):
-    """ Testes funcionais do criar participante - Sucesso """
+    """ Testes funcionais do criar participante - Erro """
 
     @classmethod
     def setUpClass(cls):
@@ -43,16 +43,19 @@ class CriarParticipante(StaticLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, "strong").click()
         self.driver.find_element(By.CSS_SELECTOR, ".has-addons > a:nth-child(1) > .button").click()
         self.driver.find_element(By.ID, "id_first_name").click()
-        self.driver.find_element(By.ID, "id_first_name").send_keys("andre")
+        self.driver.find_element(By.ID, "id_first_name").send_keys("Teste")
         self.driver.find_element(By.ID, "id_last_name").click()
-        self.driver.find_element(By.ID, "id_last_name").send_keys("andre")
+        self.driver.find_element(By.ID, "id_last_name").send_keys("Teste")
         self.driver.find_element(By.ID, "id_username").click()
-        self.driver.find_element(By.ID, "id_username").send_keys("andre4")
+        self.driver.find_element(By.ID, "id_username").send_keys("teste1")
         self.driver.find_element(By.ID, "id_email").click()
-        self.driver.find_element(By.ID, "id_email").send_keys("andre@andre.pt")
+        self.driver.find_element(By.ID, "id_email").send_keys("andre@ualg.pt")
         self.driver.find_element(By.ID, "id_contacto").click()
-        self.driver.find_element(By.ID, "id_contacto").send_keys("9678")
+        self.driver.find_element(By.ID, "id_contacto").send_keys("967321393")
         self.driver.find_element(By.ID, "id_password1").click()
+        self.driver.find_element(By.ID, "id_password1").send_keys("andre12345678987654")
         self.driver.find_element(By.ID, "id_password2").click()
-        self.driver.find_element(By.ID, "id_password2").send_keys("andre123456")
+        self.driver.find_element(By.ID, "id_password2").send_keys("andre123456789876543234567")
         self.driver.find_element(By.CSS_SELECTOR, ".is-success > span").click()
+        elements = self.driver.find_elements(By.CSS_SELECTOR, ".message-body")
+        assert len(elements) > 0
