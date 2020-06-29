@@ -186,9 +186,9 @@ def criar_utilizador(request, id):
             if request.user.is_authenticated:    
                 user = get_user(request)
                 if user.groups.filter(name = "Coordenador").exists():
-                    return redirect('utilizadores:mensagem',9)  
+                    return redirect("utilizadores:concluir-registo",2)
                 elif user.groups.filter(name = "Administrador").exists():
-                    return redirect('utilizadores:mensagem',9)  
+                    return redirect("utilizadores:concluir-registo",2)  
             else:   
                 return redirect("utilizadores:concluir-registo",p)
         else:
@@ -336,13 +336,12 @@ def rejeitar_utilizador(request, id):
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [u.email,]
         send_mail( subject, message, email_from, recipient_list )
-
-
-    except User.DoesNotExist:
-        return redirect('utilizadores:mensagem',5)
-
-
-    return redirect('utilizadores:consultar-utilizadores')
+    except:
+        pass
+    if 'consultar_utilizadores' not in request.session:
+        return redirect('utilizadores:consultar-utilizadores')
+    else:    
+        return HttpResponseRedirect(request.session['consultar_utilizadores'])
 
 
 
@@ -379,12 +378,13 @@ def validar_utilizador(request, id):
         email_from = settings.EMAIL_HOST_USER
         recipient_list = [u.email,]
         send_mail( subject, message, email_from, recipient_list )
+    except:
+        pass
 
-
-    except User.DoesNotExist:
-        return redirect('utilizadores:mensagem',5)
-
-    return redirect('utilizadores:consultar-utilizadores')
+    if 'consultar_utilizadores' not in request.session:
+        return redirect('utilizadores:consultar-utilizadores')
+    else:    
+        return HttpResponseRedirect(request.session['consultar_utilizadores'])
 
 
 
@@ -552,6 +552,7 @@ def enviar_email_validar(request,nome,id):
     user_check_var = user_check(request=request, user_profile=[Coordenador, Administrador])
     if user_check_var.get('exists') == False: 
         return user_check_var.get('render')
+    request.session['consultar_utilizadores'] = request.META.get('HTTP_REFERER', '/')
     return render(request=request,
                   template_name="utilizadores/enviar_email_validar.html",
                   context={"msg": msg, "id":id})
@@ -564,6 +565,7 @@ def enviar_email_rejeitar(request,nome,id):
     user_check_var = user_check(request=request, user_profile=[Coordenador, Administrador])
     if user_check_var.get('exists') == False: 
         return user_check_var.get('render')
+    request.session['consultar_utilizadores'] = request.META.get('HTTP_REFERER', '/')
     return render(request=request,
                   template_name="utilizadores/enviar_email_rejeitar.html",
                   context={"msg": msg, "id":id})
@@ -813,10 +815,12 @@ def concluir_registo(request,id):
             u=""   
     else:
         u=""
-    if id==1:
-        participante=True
-    else:
-        participante=False
+    if id == 1:
+        participante="True"
+    elif id == 0:
+        participante="False"
+    elif id == 2:
+        participante="Admin"   
     return render(request=request,
                   template_name="utilizadores/concluir_registo.html",
                   context={'participante': participante, 'u': u})

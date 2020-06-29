@@ -138,7 +138,7 @@ class Atividade(models.Model):
     def get_tema(self):
         return self.tema.tema
 
-    def __eq__(self, other):
+    def eq(self, other):
         return self.nome == other.nome and \
             self.descricao == other.descricao and \
             self.publicoalvo == other.publicoalvo and \
@@ -152,8 +152,8 @@ class Atividade(models.Model):
             self.espacoid == other.espacoid and \
             self.tema == other.tema
 
-    def __ne__(self, other):
-        return False if self == other else True
+    def ne(self, other):
+        return False if self.eq(other) else True
 
     @staticmethod
     def tarefas_get_atividades(fac):
@@ -172,16 +172,16 @@ class Materiais(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
     atividadeid = models.ForeignKey(
-        Atividade, models.DO_NOTHING, db_column='AtividadeID')
+        Atividade, models.CASCADE, db_column='AtividadeID')
     nomematerial = models.CharField(
         db_column='nome', max_length=255, blank=True, null=True)
 
-    def __eq__(self, other):
+    def eq(self, other):
         return self.atividadeid == other.atividadeid and \
             self.nomematerial == other.nomematerial
 
-    def __ne__(self, other):
-        return False if self == other else True
+    def ne(self, other):
+        return False if self.eq(other) else True
 
     class Meta:
         db_table = 'Materiais'
@@ -196,7 +196,7 @@ class Sessao(models.Model):
     vagas = models.IntegerField(db_column='Vagas')
     # Field name made lowercase.
     atividadeid = models.ForeignKey(
-        Atividade, models.DO_NOTHING, db_column='AtividadeID')
+        Atividade, models.CASCADE, db_column='AtividadeID')
     # Field name made lowercase.
     dia = models.DateField(db_column='Dia', blank=True, null=True)
     # Field name made lowercase.

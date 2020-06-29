@@ -90,7 +90,7 @@
                                 class="mdi mdi-email-mark-as-unread mdi-18px"></i></div>
                     </a>
                     {% endif %}
-                    <a href="{% url 'notificacoes:detalhes-mensagem' categoria atual.id %}" class="button is-small">
+                    <a href="{% url 'notificacoes:detalhes-mensagem' categoria atual.mensagem.id %}?page={{notificacoes.number}}" class="button is-small">
                         <i class="mdi mdi-reload mdi-18px"></i>
                     </a>
                 </div>

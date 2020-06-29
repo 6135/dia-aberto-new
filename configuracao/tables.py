@@ -19,13 +19,13 @@ class CursoTable(tables.Table):
     def render_acoes(self,record):
         return format_html(f"""
             <div> 
-                <a id='edit' href="">
+                <a id='edit' href="{reverse('configuracao:editarCurso', kwargs={'id':record.pk})}">
                     <span class="icon is-small">
                         <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
                     </span>
                 </a>
                 &nbsp;                
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este curso?','')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este curso?','{reverse('configuracao:eliminarCurso', kwargs={'id':record.pk})}')">
                     <span class="icon is-small">
                         <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                     </span>
@@ -85,7 +85,7 @@ class DepartamentoTable(tables.Table):
                     </span>
                 </a>
                 &nbsp;            
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este Departamento?<strong>Isto ira eliminar todos os curso e atividades contidas!</strong>','{reverse('configuracao:eliminarDepartamento', kwargs={'id':record.pk})}')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este Departamento? <strong>Isto ira eliminar todos os curso e atividades contidas!</strong>','{reverse('configuracao:eliminarDepartamento', kwargs={'id':record.pk})}')">
                     <span class="icon is-small">
                         <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                     </span>
@@ -117,7 +117,7 @@ class EdificioTable(tables.Table):
                     </span>
                 </a>
                 &nbsp;             
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este Edificio?<strong>Isto ira eliminar todos os espaços e atividades contidas!</strong>','{reverse('configuracao:eliminarEdificio', kwargs={'id':record.pk})}')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este Edificio? <strong>Isto ira eliminar todos os espaços e atividades contidas!</strong>','{reverse('configuracao:eliminarEdificio', kwargs={'id':record.pk})}')">
                     <span class="icon is-small">
                         <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                     </span>
@@ -147,7 +147,7 @@ class UOTable(tables.Table):
                     </span>
                 </a>
                 &nbsp;                
-                <a onclick="alert.render('Tem a certeza que pretende eliminar esta Unidade Organica?<strong>Isto ira eliminar todos os departamentos e cursos da respetiva!</strong>','{reverse('configuracao:eliminarUO', kwargs={'id':record.pk})}')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar esta Unidade Organica? <strong>Isto ira eliminar todos os departamentos e cursos da respetiva!</strong>','{reverse('configuracao:eliminarUO', kwargs={'id':record.pk})}')">
                     <span class="icon is-small">
                         <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                     </span>
@@ -213,7 +213,7 @@ class TransporteTable(tables.Table):
                     </span>
                 </a>
                 &nbsp;          
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este tema?','{reverse('configuracao:eliminarTransporte', kwargs={'id':record.pk})}')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este transporte?','{reverse('configuracao:eliminarTransporte', kwargs={'id':record.pk})}')">
                     <span class="icon is-small">
                         <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                     </span>
@@ -234,7 +234,7 @@ class TransporteTable(tables.Table):
                     </span>
                 </a>
                 &nbsp;          
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este tema?','{reverse('configuracao:eliminarTransporte', kwargs={'id':record.pk})}')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este transporte?','{reverse('configuracao:eliminarTransporte', kwargs={'id':record.pk})}')">
                     <span class="icon is-small">
                         <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                     </span>
@@ -276,7 +276,7 @@ class DiaAbertoTable(tables.Table):
                     </span>
                 </a>
                 &nbsp;          
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia?<strong>Isto vai eliminar tudo!</strong>','{reverse('configuracao:eliminarDia', kwargs={'id':record.pk})}')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia? <strong>Isto vai eliminar tudo!</strong>','{reverse('configuracao:eliminarDia', kwargs={'id':record.pk})}')">
                     <span class="icon is-small">
                         <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                     </span>

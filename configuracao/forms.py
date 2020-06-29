@@ -79,6 +79,15 @@ class menuForm(ModelForm):
     diaaberto = ChoiceField(choices=get_diaaberto_choices,widget=Select())
     campus = ChoiceField(choices=get_campus_choices,widget=Select())
 
+    def __init__(self,*args, **kwargs):
+        super(menuForm, self).__init__(*args, **kwargs)
+        self.data = self.data.copy()
+        campus = self.data.get('campus')
+        diaaberto = self.data.get('diaaberto')
+        if campus is not None and diaaberto is not None:
+            self.data['campus'] = Campus.objects.get(id=campus).id
+            self.data['diaaberto'] = Diaaberto.objects.get(id=diaaberto).id
+
     def clean(self):
         cleaned_data = super().clean()
         campus_data = cleaned_data.get('campus')

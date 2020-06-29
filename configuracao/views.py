@@ -396,10 +396,10 @@ def atribuirTransporte(request, id):
 		ocupadas+=ocp.npassageiros
 	#print(ocupadas)
 	transportevagas= transportehorario.transporte.transporteuniversitario.capacidade - ocupadas
-	inscricoestotais = Inscricao.objects.filter(nalunos__lte=transportevagas,dia=transportehorario.transporte.dia)
-	dadoschepart= []
+	inscricoestotais = Inscricao.objects.filter(nalunos__lte=transportevagas,dia=transportehorario.transporte.dia).exclude(hora_chegada = None)
 	inscricoes= []
 	chepart= 0
+	dadoschepart=[]
 	for t in inscricaotransporte:
 		inscricoesindisponiveis.append(t.inscricao)
 	
@@ -409,22 +409,23 @@ def atribuirTransporte(request, id):
 		
 	for inscricao in inscricoes:
 		isessaochegada=Inscricaosessao.objects.filter(inscricao=inscricao).order_by('sessao__horarioid__inicio').first()
-		if isessaochegada.sessao.dia == transportehorario.transporte.dia:
-			if transportehorario.origem == "Gambelas" or transportehorario.origem == "Penha":
-				isessaopartida=Inscricaosessao.objects.filter(inscricao=inscricao.id).order_by('-sessao__horarioid__inicio').first() # ultima sessao da inscricao
-				isessaopartidalocal= isessaopartida.sessao.atividadeid.espacoid.edificio.campus.nome	# campus ultima sessao da inscricao
-				isessaopartidahorario= isessaopartida.sessao.horarioid.fim #horario de fim da ultima sessao
-				horapartida= (transportehorario.horaPartida.hour*60 + transportehorario.horaPartida.minute) - (isessaopartidahorario.hour*60 + isessaopartidahorario.minute) # diferença entre horario transporte e da ultima sessao
-				if isessaopartidalocal == transportehorario.origem  and horapartida <=60:
-					chepart= ChegadaPartida(inscricao.id, inscricao.nalunos,inscricao.local_chegada, isessaopartidahorario, 1)
-			else:
-				isessaochegadalocal= isessaochegada.sessao.atividadeid.espacoid.edificio.campus.nome
-				horachegada= (transportehorario.horaChegada.hour*60 + transportehorario.horaChegada.minute )- (inscricao.hora_chegada.hour*60 + inscricao.hora_chegada.minute)
-				if isessaochegadalocal == transportehorario.chegada and horachegada <=60:
-					chepart= ChegadaPartida(inscricao.id,inscricao.nalunos,inscricao.local_chegada,inscricao.hora_chegada, 0)
+		if isessaochegada != None:	
+			if isessaochegada.sessao.dia == transportehorario.transporte.dia:
+				if transportehorario.origem == "Gambelas" or transportehorario.origem == "Penha":
+					isessaopartida=Inscricaosessao.objects.filter(inscricao=inscricao.id).order_by('-sessao__horarioid__inicio').first() # ultima sessao da inscricao
+					isessaopartidalocal= isessaopartida.sessao.atividadeid.espacoid.edificio.campus.nome	# campus ultima sessao da inscricao
+					isessaopartidahorario= isessaopartida.sessao.horarioid.fim #horario de fim da ultima sessao
+					horapartida= (transportehorario.horaPartida.hour*60 + transportehorario.horaPartida.minute) - (isessaopartidahorario.hour*60 + isessaopartidahorario.minute) # diferença entre horario transporte e da ultima sessao
+					if isessaopartidalocal == transportehorario.origem  and horapartida <=60:
+						chepart= ChegadaPartida(inscricao.id, inscricao.nalunos,inscricao.local_chegada, isessaopartidahorario, 1)
+				else:
+					isessaochegadalocal= isessaochegada.sessao.atividadeid.espacoid.edificio.campus.nome
+					horachegada= (transportehorario.horaChegada.hour*60 + transportehorario.horaChegada.minute )- (inscricao.hora_chegada.hour*60 + inscricao.hora_chegada.minute)
+					if isessaochegadalocal == transportehorario.chegada and horachegada <=60:
+						chepart= ChegadaPartida(inscricao.id,inscricao.nalunos,inscricao.local_chegada,inscricao.hora_chegada, 0)
 
-			dadoschepart.append(chepart)
-			dadoschepart=list(dict.fromkeys(dadoschepart))
+				dadoschepart.append(chepart)
+				dadoschepart=list(dict.fromkeys(dadoschepart))
 
 	
 
@@ -628,8 +629,7 @@ def configurarUO(request, id = None):
 		uOforms = uOformSet(request.POST)
 		if uOforms.is_valid():
 			uOforms.save()
-		return redirect('configuracao:verUOs')
-
+			return redirect('configuracao:verUOs')
 	return render(request=request,
 				template_name='configuracao/criarUOs.html',
 				context={'formset': uOforms,
@@ -702,10 +702,8 @@ def configurarDepartamento(request, id = None):
 	if(request.method == 'POST'):
 		departamentoforms = departamentoformSet(request.POST)
 		if departamentoforms.is_valid():
-			departamentoforms.save()
-		else: return redirect('/err')
-		return redirect('configuracao:verDepartamentos')
-
+			objectDep = departamentoforms.save()
+			return redirect('configuracao:verDepartamentos')
 	return render(request=request,
 				template_name='configuracao/criarDepartamentos.html',
 				context={'formset': departamentoforms,
@@ -765,7 +763,7 @@ def configurarCurso(request, id = None):
 	user_check_var = user_check(request=request, user_profile=[Administrador])
 	if user_check_var.get('exists') == False: return user_check_var.get('render')
 
-	departamentoformSet = departamentoFormset()
+	departamentoformSet = cursoFormSet()
 	departamentoforms = departamentoformSet(queryset=Curso.objects.none())
 	departamento = Curso()
 	allowMore = True
@@ -777,13 +775,10 @@ def configurarCurso(request, id = None):
 		allowMore, allowDelete = False, False	
 
 	if(request.method == 'POST'):
-		
 		departamentoforms = departamentoformSet(request.POST)
 		if departamentoforms.is_valid():
 			departamentoforms.save()
-		else: return redirect('/err')
-		return redirect('configuracao:verCursos')
-
+			return redirect('configuracao:verCursos')
 	return render(request=request,
 				template_name='configuracao/criarCursos.html',
 				context={'formset': departamentoforms,
@@ -791,7 +786,7 @@ def configurarCurso(request, id = None):
 					'allowDelete': allowDelete,
 				})
 
-def departamentoFormset(extra = 0, minVal = 1):
+def cursoFormSet(extra = 0, minVal = 1):
 	formSets = modelformset_factory(model=Curso, exclude = ['id'],widgets={
 			'nome': TextInput(attrs={'class': 'input'}),
 			'sigla': TextInput(attrs={'class': 'input'}),
