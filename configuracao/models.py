@@ -246,7 +246,7 @@ class Prato(models.Model):
 class Espaco(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=False)  # Field name made lowercase.
-    edificio = models.ForeignKey('Edificio', models.DO_NOTHING, db_column='Edificio', blank=True, null=False)  # Field name made lowercase.
+    edificio = models.ForeignKey('Edificio', models.CASCADE, db_column='Edificio', blank=True, null=False)  # Field name made lowercase.
     andar = models.CharField(db_column='Andar', max_length=255, blank=True, null=False)  # Field name made lowercase.
     descricao = models.CharField(db_column='Descricao', max_length=255, blank=True, null = True)  # Field name made lowercase.
 
@@ -262,7 +262,7 @@ class Espaco(models.Model):
 class Edificio(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=64)  # Field name made lowercase.
-    campus = models.ForeignKey('Campus', models.DO_NOTHING, db_column='Campus', null=False)  # Field name made lowercase.
+    campus = models.ForeignKey('Campus', models.CASCADE, db_column='Campus', null=False)  # Field name made lowercase.
     image = models.ImageField(upload_to='images/edifi',db_column='image', blank=True, null=True)
 
     def espacos_(self):
@@ -359,7 +359,7 @@ class Unidadeorganica(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
     sigla = models.CharField(db_column='Sigla', max_length=255)  # Field name made lowercase.
-    campusid = models.ForeignKey(Campus, models.DO_NOTHING, db_column='CampusID')  # Field name made lowercase.
+    campusid = models.ForeignKey(Campus, models.CASCADE, db_column='CampusID')  # Field name made lowercase.
 
     class Meta:
         db_table = 'UnidadeOrganica'

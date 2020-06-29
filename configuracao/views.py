@@ -629,8 +629,7 @@ def configurarUO(request, id = None):
 		uOforms = uOformSet(request.POST)
 		if uOforms.is_valid():
 			uOforms.save()
-		return redirect('configuracao:verUOs')
-
+			return redirect('configuracao:verUOs')
 	return render(request=request,
 				template_name='configuracao/criarUOs.html',
 				context={'formset': uOforms,
@@ -703,10 +702,8 @@ def configurarDepartamento(request, id = None):
 	if(request.method == 'POST'):
 		departamentoforms = departamentoformSet(request.POST)
 		if departamentoforms.is_valid():
-			departamentoforms.save()
-		else: return redirect('/err')
-		return redirect('configuracao:verDepartamentos')
-
+			objectDep = departamentoforms.save()
+			return redirect('configuracao:verDepartamentos')
 	return render(request=request,
 				template_name='configuracao/criarDepartamentos.html',
 				context={'formset': departamentoforms,
@@ -766,7 +763,7 @@ def configurarCurso(request, id = None):
 	user_check_var = user_check(request=request, user_profile=[Administrador])
 	if user_check_var.get('exists') == False: return user_check_var.get('render')
 
-	departamentoformSet = departamentoFormset()
+	departamentoformSet = cursoFormSet()
 	departamentoforms = departamentoformSet(queryset=Curso.objects.none())
 	departamento = Curso()
 	allowMore = True
@@ -782,8 +779,7 @@ def configurarCurso(request, id = None):
 		departamentoforms = departamentoformSet(request.POST)
 		if departamentoforms.is_valid():
 			departamentoforms.save()
-		else: return redirect('/err')
-		return redirect('configuracao:verCursos')
+			return redirect('configuracao:verCursos')
 
 	return render(request=request,
 				template_name='configuracao/criarCursos.html',
@@ -792,7 +788,7 @@ def configurarCurso(request, id = None):
 					'allowDelete': allowDelete,
 				})
 
-def departamentoFormset(extra = 0, minVal = 1):
+def cursoFormSet(extra = 0, minVal = 1):
 	formSets = modelformset_factory(model=Curso, exclude = ['id'],widgets={
 			'nome': TextInput(attrs={'class': 'input'}),
 			'sigla': TextInput(attrs={'class': 'input'}),
