@@ -138,22 +138,22 @@ class Atividade(models.Model):
     def get_tema(self):
         return self.tema.tema
 
-    def __eq__(self, other):
-        return self.nome == other.nome and \
-            self.descricao == other.descricao and \
-            self.publicoalvo == other.publicoalvo and \
-            self.nrcolaboradoresnecessario == other.nrcolaboradoresnecessario and \
-            self.tipo == other.tipo and \
-            self.professoruniversitarioutilizadorid == other.professoruniversitarioutilizadorid and \
-            self.datasubmissao == other.datasubmissao and \
-            self.duracaoesperada == other.duracaoesperada and \
-            self.participantesmaximo == other.participantesmaximo and \
-            self.diaabertoid == other.diaabertoid and \
-            self.espacoid == other.espacoid and \
-            self.tema == other.tema
+    #def __eq__(self, other):
+    #    return self.nome == other.nome and \
+    #        self.descricao == other.descricao and \
+    #        self.publicoalvo == other.publicoalvo and \
+    #        self.nrcolaboradoresnecessario == other.nrcolaboradoresnecessario and \
+    #        self.tipo == other.tipo and \
+    #        self.professoruniversitarioutilizadorid == other.professoruniversitarioutilizadorid and \
+    #        self.datasubmissao == other.datasubmissao and \
+    #        self.duracaoesperada == other.duracaoesperada and \
+    #        self.participantesmaximo == other.participantesmaximo and \
+    #        self.diaabertoid == other.diaabertoid and \
+    #        self.espacoid == other.espacoid and \
+    #        self.tema == other.tema
 
-    def __ne__(self, other):
-        return False if self == other else True
+    #def __ne__(self, other):
+    #    return False if self == other else True
 
     @staticmethod
     def tarefas_get_atividades():
@@ -195,7 +195,7 @@ class Sessao(models.Model):
     vagas = models.IntegerField(db_column='Vagas')
     # Field name made lowercase.
     atividadeid = models.ForeignKey(
-        Atividade, models.DO_NOTHING, db_column='AtividadeID')
+        Atividade, models.CASCADE, db_column='AtividadeID')
     # Field name made lowercase.
     dia = models.DateField(db_column='Dia', blank=True, null=True)
     # Field name made lowercase.
