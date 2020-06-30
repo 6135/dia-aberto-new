@@ -288,7 +288,6 @@ class InscricoesAdmin(ConsultarInscricoes):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        coordenador = Coordenador.objects.get(user_ptr=self.request.user)
         context["departamentos"] = list(
             map(lambda x: (x.id, x.nome), Departamento.objects.all()))
         return context
