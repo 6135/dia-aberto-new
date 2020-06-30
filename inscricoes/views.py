@@ -115,8 +115,23 @@ class CriarInscricao(SessionWizardView):
         # Envia a informação extra necessária para o formulário atual, após preenchê-lo.
         # Necessário para algumas validações especiais de backend, como verificar o número de alunos
         # inscritos para verificar inscritos nos almoços e nas sessões.
-        update_post(request.POST.get(
-            'criar_inscricao-current_step', self.steps.current), request.POST, self)
+        current_step = request.POST.get(
+            'criar_inscricao-current_step', self.steps.current)
+        update_post(current_step, request.POST, self)
+        go_to_step = self.request.POST.get(
+            'wizard_goto_step', None)  # get the step name
+        if go_to_step is not None:
+            form = self.get_form(data=self.request.POST,
+                                 files=self.request.FILES)
+
+            if self.get_cleaned_data_for_step(current_step):
+                if form.is_valid():
+                    self.storage.set_step_data(self.steps.current,
+                                               self.process_step(form))
+                    self.storage.set_step_files(self.steps.current,
+                                                self.process_step_files(form))
+                else:
+                    return self.render(form)
         return super(CriarInscricao, self).post(*args, **kwargs)
 
     def done(self, form_list, form_dict, **kwargs):
