@@ -243,13 +243,14 @@ def update_context(context, step, wizard=None, inscricao=None):
     elif step == 'almoco':
         diaaberto = Diaaberto.current()
         campi = Campus.objects.all()
+        dia = wizard.get_cleaned_data_for_step('escola')['dia'] if wizard else inscricao.dia
         pratos_info = {}
         for tipoid, tipo in Prato.tipos:
             pratos_info[tipo] = {}
             for campus in campi:
                 pratos_info[tipo][campus] = []
                 menu_filter = Menu.objects.filter(
-                    diaaberto=diaaberto, campus=campus)
+                    diaaberto=diaaberto, campus=campus, dia=dia)
                 if menu_filter.exists():
                     menu = menu_filter.first()
                     for prato in menu.prato_set.filter(tipo=tipoid):
