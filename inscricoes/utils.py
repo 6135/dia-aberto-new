@@ -316,10 +316,10 @@ def update_post(step, POST, wizard=None, inscricao=None):
     POST._mutable = mutable
 
 
-def save_form(step, form, inscricao):
+def save_form(request, step, form, inscricao):
     """
     Função chamada pelas views com passos de formulário (wizard forms)
-    para guardar os conteúdos dos formulários na base de dados
+    para guardar os conteúdos dos formulários na base de dados e enviar email
     """
     if step == 'almoco':
         almoco = form.save(commit=False)
@@ -349,3 +349,4 @@ def save_form(step, form, inscricao):
                 inscricao_sessao.save()
     else:
         form.save()
+    enviar_mail_confirmacao_inscricao(request, inscricao.pk)

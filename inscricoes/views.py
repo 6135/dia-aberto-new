@@ -199,7 +199,7 @@ class ConsultarInscricao(View):
                     add_vagas_sessao(inscricao_sessao.sessao.id,
                                      inscricao_sessao.nparticipantes)
             if form.is_valid():
-                save_form(self.step_names[step], form, inscricao)
+                save_form(request, self.step_names[step], form, inscricao)
                 return HttpResponseRedirect(reverse('inscricoes:consultar-inscricao', kwargs={'pk': pk, 'step': step}))
             if self.step_names[step] == 'sessoes':
                 for inscricao_sessao in inscricoessessao:

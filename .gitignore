@@ -7,8 +7,7 @@
 script.sh
 
 # Secret Environment Variables
-.env
-gui.env
+*.env
 
 # Migrations
 migrations
@@ -105,6 +104,3 @@ target/
 *.pyc
 __pycache__/
 local_settings.py
-
-.env
-db.sqlite3
