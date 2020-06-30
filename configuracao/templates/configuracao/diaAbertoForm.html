@@ -12,7 +12,14 @@
 <div style="padding: 3rem 2vw 1rem">
   <form method="POST" action="">
     {% csrf_token %}
-    {{ form.non_field_errors }}
+    <article class="message is-danger">
+      <div class="message-body">
+        <p style="text-align: center;">
+          <strong>{{ form.non_field_errors }}</strong>
+        </p>
+      </div>
+    </article>
+    
     <div class="b-steps">
       <section class="step-content">
         <div class="step-item">
@@ -74,7 +81,7 @@
                 <div class="column">
                   <strong>{{form.datadiaabertoinicio.errors}}</strong>            
                   <div class="field">
-                    <label class="label">Início Dia Aberto</label>
+                    <label class="label">Início Dia Aberto <small>(AAAA-MM-DD HH:MM)</small></label> 
                     <div class="control">
                       {{form.datadiaabertoinicio}}
                     </div>
@@ -83,7 +90,7 @@
                 <div class="column">
                   <strong>{{form.datadiaabertofim.errors}}</strong>
                   <div class="field">
-                    <label class="label">Fim do Dia Aberto</label>
+                    <label class="label">Fim do Dia Aberto <small>(AAAA-MM-DD HH:MM)</small></label>
                     <div class="control">
                       {{form.datadiaabertofim}}
                     </div>
@@ -95,7 +102,7 @@
                 <div class="column">  
                   <strong>{{form.datapropostasatividadesincio.errors}}</strong>            
                   <div class="field">
-                    <label class="label">Início do registo de atividades</label>
+                    <label class="label">Início do registo de atividades <small>(AAAA-MM-DD HH:MM)</small></label> 
                     <div class="control">
                       {{form.datapropostasatividadesincio}}
                     </div>
@@ -105,7 +112,7 @@
                   <strong>{{form.dataporpostaatividadesfim.errors}}</strong>
                   <div class="field">
                   
-                    <label class="label">Fim do registo de atividades</label>
+                    <label class="label">Fim do registo de atividades <small>(AAAA-MM-DD HH:MM)</small></label> 
                     {{form.dataporpostaatividadesfim}}
                   </div>
                 </div>
@@ -115,7 +122,7 @@
                 <div class="column">  
                   <strong>{{form.datainscricaoatividadesinicio.errors}}</strong>            
                   <div class="field">
-                    <label class="label">Início das incrições</label>
+                    <label class="label">Início das incrições <small>(AAAA-MM-DD HH:MM)</small></label> 
                     <div class="control">
                       {{form.datainscricaoatividadesinicio}}
                     </div>
@@ -124,7 +131,7 @@
                 <div class="column">
                   <strong>{{form.datainscricaoatividadesfim.errors}}</strong>
                   <div class="field">
-                    <label class="label">Fim das inscrições</label>
+                    <label class="label">Fim das inscrições <small>(AAAA-MM-DD HH:MM)</small></label> 
                     {{form.datainscricaoatividadesfim}}
                   </div>
                 </div>
@@ -136,7 +143,7 @@
                 <div class="column">  
                   <strong>{{form.precoprofessores.errors}}</strong>            
                   <div class="field">
-                    <label class="label">Preço Professores</label>
+                    <label class="label">Preço Professores</label> 
                     <div class="control">
                       {{form.precoprofessores}}
                     </div>
@@ -158,7 +165,7 @@
                 <div class="column is-half">  
                   <strong>{{form.escalasessoes.errors}}</strong>            
                   <div class="field">
-                    <label class="label">Duração das sessões</label>
+                    <label class="label">Duração das sessões <small>(HH:MM)</small></label> 
                     <div class="control">
                       <input type="time" name="escalasessoes" value="{{form.escalasessoes.value}}" class="input" step="00:05" min="00:05" max="00:59" required id="id_escalasessoes">
                     </div>

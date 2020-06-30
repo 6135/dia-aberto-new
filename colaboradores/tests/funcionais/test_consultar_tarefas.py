@@ -45,7 +45,7 @@ class TestConsultarTarefas(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def test_login_ok(self):
-        """ Teste funcional de login sucesso """
+        """ Teste funcional consultar tarefas de um colaborador - sucesso """
         self.driver.get('%s%s' % (self.live_server_url, reverse('home')))
         self.driver.find_element(
             By.CSS_SELECTOR, ".button > span:nth-child(2)").click()
@@ -59,4 +59,3 @@ class TestConsultarTarefas(StaticLiveServerTestCase):
         self.driver.find_element(By.CSS_SELECTOR, "a:nth-child(1) > .button").click()
         self.driver.find_element(By.LINK_TEXT, "Minhas Tarefas").click()
         self.driver.find_element(By.CSS_SELECTOR, ".menu-label").click()
-        assert self.driver.find_element(By.CSS_SELECTOR, ".menu-label").text == "Filtros Tarefas"

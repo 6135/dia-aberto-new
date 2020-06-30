@@ -276,7 +276,7 @@ class DiaAbertoTable(tables.Table):
                     </span>
                 </a>
                 &nbsp;          
-                <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia? <strong>Isto vai eliminar tudo!</strong>','{reverse('configuracao:eliminarDia', kwargs={'id':record.pk})}')">
+                <a onclick="alert.render('Tem a certeza que pretende eliminar este Dia? <strong>Isto vai eliminar tudo o que depende do dia aberto como as Atividades e as Inscrições</strong>','{reverse('configuracao:eliminarDia', kwargs={'id':record.pk})}')">
                     <span class="icon is-small">
                         <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
                     </span>

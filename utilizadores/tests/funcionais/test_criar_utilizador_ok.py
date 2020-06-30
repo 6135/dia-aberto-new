@@ -12,8 +12,8 @@ from selenium.webdriver.support.wait import WebDriverWait
 # Firefox, Edge, Safari, Chrome
 
 
-class CriarParticipante(StaticLiveServerTestCase):
-    """ Testes funcionais do criar participante - Sucesso """
+class CriarUtilizador(StaticLiveServerTestCase):
+    """ Testes funcionais criar utilizador - Sucesso """
 
     @classmethod
     def setUpClass(cls):
@@ -36,8 +36,8 @@ class CriarParticipante(StaticLiveServerTestCase):
         super().tearDownClass()
 
 
-    def test_criar_participante_ok(self):
-        """ Testes funcionais do criar participante - Sucesso """
+    def test_criar_utilizador_ok(self):
+        """ Testes funcionais criar utilizador - Sucesso """
         self.driver.get('%s%s' % (self.live_server_url, reverse('home')))
         self.driver.find_element(By.CSS_SELECTOR, "strong").click()
         self.driver.find_element(By.CSS_SELECTOR, ".has-addons > a:nth-child(1) > .button").click()

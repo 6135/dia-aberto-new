@@ -1,21 +1,22 @@
+
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import os
 from django.urls import reverse
-from utilizadores.models import Administrador
-from utilizadores.tests.test_models import create_Administrador_0, create_Administrador_1
 from notificacoes.tests.test_models import create_MensagemRecebida_0
 from selenium.webdriver.support.wait import WebDriverWait
+from utilizadores.models import Administrador
+from utilizadores.tests.test_models import create_Administrador_0
 from django.core.management import call_command
 from django.contrib.auth.models import Group
 
 # Firefox, Edge, Safari, Chrome
 
 
-class EnviarMensagemAdmiGrupo(StaticLiveServerTestCase):
-    """ Testes funcionais rejeitar utilizador """
+class CriarParticipante(StaticLiveServerTestCase):
+    """ Testes funcionais alterar utilizador - Erro """
 
     @classmethod
     def setUpClass(cls):
@@ -35,11 +36,7 @@ class EnviarMensagemAdmiGrupo(StaticLiveServerTestCase):
         self.administrador.set_password('andre123456')
         self.administrador.save()
         self.my_group.user_set.add(self.administrador)
-        self.administrador1 = create_Administrador_1()
-        self.administrador1.valido = "True"
-        self.administrador1.set_password('andre123456')
-        self.administrador1.save()
-        self.my_group.user_set.add(self.administrador1)
+
 
     @classmethod
     def tearDownClass(cls):
@@ -47,15 +44,19 @@ class EnviarMensagemAdmiGrupo(StaticLiveServerTestCase):
         super().tearDownClass()
 
 
-    def test_enviar_mensagem_individual(self):
-        """ Testes funcionais rejeitar utilizador """
+    def test_criar_participante_ok(self):
+        """ Testes funcionais alterar utilizador - Erro """
         self.driver.get('%s%s' % (self.live_server_url, reverse('home')))
         self.driver.find_element(By.CSS_SELECTOR, ".button > span:nth-child(2)").click()
         self.driver.find_element(By.ID, "id_username").click()
         self.driver.find_element(By.ID, "id_username").send_keys(self.administrador.username)
         self.driver.find_element(By.ID, "id_password").click()
         self.driver.find_element(By.ID, "id_password").send_keys("andre123456")
-        self.driver.find_element(By.CSS_SELECTOR, ".is-outlined").click()
-        self.driver.find_element(By.CSS_SELECTOR, "a:nth-child(1) > .button").click()
-        self.driver.find_element(By.LINK_TEXT, "Utilizadores").click()
-    
+        self.driver.find_element(By.CSS_SELECTOR, ".is-success > span").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".mdi-account-circle").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".is-disabled:nth-child(1) > strong").click()
+        self.driver.find_element(By.ID, "id_contacto").click()
+        self.driver.find_element(By.ID, "id_contacto").send_keys("967321393")
+        self.driver.find_element(By.CSS_SELECTOR, ".is-success > span").click()
+        elements = self.driver.find_elements(By.CSS_SELECTOR, ".message-body")
+        assert len(elements) > 0

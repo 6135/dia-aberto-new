@@ -41,48 +41,44 @@
       <a href="{% url 'atividades:atividadesUOrganica' %}" class="navbar-item">
         Atividades dos Departamentos
       </a>
+      <a href="{% url 'coordenadores:consultarTarefa' %}" class="navbar-item">
+        Tarefas
+      </a>
       <a href="{% url 'inscricoes:consultar-inscricoes-coordenador' %}" class="navbar-item">
         Inscrições
       </a>
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
         Utilizadores
       </a>
-      <a href="{% url 'coordenadores:consultarTarefa' %}" class="navbar-item">
-        Tarefas
-      </a>
+
       {% elif request.user|has_group:'Administrador'%}
-      <a href="{% url 'configuracao:diasAbertos' %}" class="navbar-item">
-        Dias Abertos
-      </a>
-      <a href="{% url 'atividades:atividadesAdmin' %}" class="navbar-item">
-        Atividades
-      </a>
-      <a href="{% url 'configuracao:verTransportes' %}" class="navbar-item">
-        Transportes
-      </a>
-      <a href="{% url 'inscricoes:consultar-inscricoes-admin' %}" class="navbar-item">
-        Inscrições
-      </a>
-      <a href="{% url 'configuracao:verMenus' %}" class="navbar-item">
-        Almoços
-      </a>
-      <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
-        Utilizadores
-      </a>
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">
           Configurações
         </a>
-
         <div class="navbar-dropdown">
-          <a href="{% url 'configuracao:verEdificios' %}" class="navbar-item">Edificios e Espaços</a>
-          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Temas</a>
           <a href="{% url 'configuracao:verUOs' %}" class="navbar-item">Unidades Organicas</a>
+          <a href="{% url 'configuracao:verEdificios' %}" class="navbar-item">Edificios e Espaços</a>
           <a href="{% url 'configuracao:verDepartamentos' %}" class="navbar-item">Departamentos</a>
           <a href="{% url 'configuracao:verCursos' %}" class="navbar-item">Cursos</a>
+          <a href="{% url 'configuracao:verTransportes' %}" class="navbar-item">Transportes</a>
+          <a href="{% url 'configuracao:verMenus' %}" class="navbar-item">Almoços</a>
+          <a href="{% url 'configuracao:verTemas' %}" class="navbar-item">Temas</a>
         </div>
       </div>
-
+      <a href="{% url 'configuracao:diasAbertos' %}" class="navbar-item">
+        Dias Abertos
+      </a>
+      <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
+        Utilizadores
+      </a>
+      <a href="{% url 'atividades:atividadesAdmin' %}" class="navbar-item">
+        Atividades
+      </a>
+      <a href="{% url 'inscricoes:consultar-inscricoes-admin' %}" class="navbar-item">
+        Inscrições
+      </a>
+      </div>
       {% else %}
       <a href="" class="navbar-item">
 

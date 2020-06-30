@@ -112,6 +112,7 @@ class AtividadesAdmin(SingleTableMixin, FilterView):
         #This goes to un-detailed view
         context["deps"] = list(map(lambda x: (x.id, x.nome), Departamento.objects.all()))
         context["uos"] = list(map(lambda x: (x.id, x.nome), Unidadeorganica.objects.all()))
+        context["campus"] = list(map(lambda x: (x.id, x.nome), Campus.objects.all()))
         #----------
     
         context[self.get_context_table_name(table)] = table
@@ -240,7 +241,7 @@ def alterarAtividade(request,id):
                                 sessao.horarioid=Horario.objects.get(id=new_Horario.id)
                                 sessao.vagas= activity_object_formed.participantesmaximo
                                 sessao.save()
-                    nviews.enviar_notificacao_automatica(request,"atividadeAlterada",activity_object_formed.id) #Enviar Notificacao Automatica !!!!!!
+                    #nviews.enviar_notificacao_automatica(request,"atividadeAlterada",activity_object_formed.id) #Enviar Notificacao Automatica !!!!!!
                     return redirect('atividades:inserirSessao',id)          
         return render(request=request,
                         template_name='atividades/proporAtividadeAtividade.html',
@@ -663,8 +664,10 @@ def confirmarResumo(request,id):
         if atividade.estado == "nsub":
             atividade.estado= "Pendente"
             atividade.save()
-        print(atividade.id)
-        nviews.enviar_notificacao_automatica(request,"validarAtividades",atividade.id) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
+            print(atividade.id)
+            nviews.enviar_notificacao_automatica(request,"validarAtividades",atividade.id) #Enviar Notificacao Automatica !!!!!!!!!!!!!!!!!!!!!!!!!
+        else:
+            nviews.enviar_notificacao_automatica(request,"atividadeAlterada",atividade.id) #Enviar Notificacao Automatica !!!!!!
         return redirect("atividades:minhasAtividades")
     else:
         return    render(request=request,
@@ -710,4 +713,33 @@ def verdeps(request):
     return render(request=request,template_name='configuracao/dropdown.html',context={'options':deps, 'default': default})  
 
     
-    
+def verfaculdades(request):
+    value_campus = request.POST.get('value_campus')
+    value_uo = request.POST.get('value_uo')
+    print(value_campus)
+    value_campus = is_int(value_campus)
+    if value_campus != 'None' and value_campus is not None and value_campus is not False:
+        campus= Campus.objects.filter(id=value_campus).first()
+        print(campus)
+        faculdades = Unidadeorganica.objects.filter(campusid= campus)
+    else:
+        faculdades= Unidadeorganica.objects.all()
+
+    uos= []
+    for uo in faculdades:    
+        uos.append({'key': uo.id ,'value': uo.nome})
+    value_uo = is_int(value_uo)
+    default= {}
+    if value_uo != 'None' and value_uo is not None and value_uo is not False:
+        uo= Unidadeorganica.objects.get(id=value_uo)
+        default={
+                    'key': uo.id,
+                    'value': uo.nome
+        } 
+    else:
+        default={
+                        'key': "",
+                        'value': "Qualquer Faculdade"
+            } 
+    return render(request=request,template_name='configuracao/dropdown.html',context={'options':uos, 'default': default})  
+

@@ -20,5 +20,6 @@ urlpatterns = [
     path('confirmar/<int:id>',views.confirmarResumo,name='confirmarResumo'),
     path('atividadesadmin',views.AtividadesAdmin.as_view(),name="atividadesAdmin"),
     path('verdeps',views.verdeps,name="verDepartamentos"),
+    path('veruos',views.verfaculdades,name="verFaculdades"),
 ]
 
