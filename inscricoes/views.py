@@ -247,6 +247,18 @@ class ConsultarInscricoes(SingleTableMixin, FilterView):
         context[self.get_context_table_name(table)] = table
         return context
 
+    def get_filterset_kwargs(self, filterset_class):
+        kwargs = super(ConsultarInscricoes, self).get_filterset_kwargs(
+            filterset_class)
+        if kwargs["data"] is None:
+            kwargs["data"] = {"diaaberto": Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id}
+        elif "diaaberto" not in kwargs["data"]:
+            kwargs["data"] = kwargs["data"].copy()
+            kwargs["data"]["diaaberto"] = Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id
+        return kwargs
+
 
 class MinhasInscricoes(ConsultarInscricoes):
     """ View que gera uma tabela com as inscrições do participante """

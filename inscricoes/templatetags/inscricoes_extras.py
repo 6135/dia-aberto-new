@@ -4,6 +4,7 @@ import urllib
 from django import template
 from ..models import Inscricao
 from utilizadores.models import Participante
+from configuracao.models import Diaaberto
 
 register = template.Library()
 
@@ -28,3 +29,19 @@ def get64(url):
 @register.simple_tag
 def sala(request, atividade):
     return atividade.get_sala_str(request)
+
+
+@register.filter
+def min_date(diaaberto):
+    try:
+        return Diaaberto.objects.get(id=diaaberto).datadiaabertoinicio.strftime("%d/%m/%Y")
+    except:
+        return ''
+
+
+@register.filter
+def max_date(diaaberto):
+    try:
+        return Diaaberto.objects.get(id=diaaberto).datadiaabertofim.strftime("%d/%m/%Y")
+    except:
+        return ''

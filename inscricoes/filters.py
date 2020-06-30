@@ -1,6 +1,7 @@
 import django_filters
 from .models import *
 from django.db.models import Exists, OuterRef
+from configuracao.models import Diaaberto
 
 
 def filter_departamento(queryset, name, value):
@@ -35,3 +36,8 @@ class InscricaoFilter(django_filters.FilterSet):
     class Meta:
         model = Inscricao
         fields = '__all__'
+
+    def __init__(self, data=None, *args, **kwargs):
+        super().__init__(data, *args, **kwargs)
+        self.form.initial['diaaberto'] = Diaaberto.objects.filter(
+            ano__lte=datetime.now().year).order_by('-ano').first().id
