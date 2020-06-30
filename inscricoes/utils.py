@@ -290,6 +290,8 @@ def update_post(step, POST, wizard=None, inscricao=None):
     prefix = f"{step}-" if wizard else ''
     if step == 'escola':
         try:
+            if not wizard:
+                POST['dia'] = inscricao.dia.strftime("%d/%m/%Y")
             dia = pytz.utc.localize(datetime.strptime(
                 POST[f'{prefix}dia'], "%d/%m/%Y"))
             diaaberto = Diaaberto.objects.filter(

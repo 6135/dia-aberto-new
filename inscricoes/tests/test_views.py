@@ -984,7 +984,6 @@ class TestConsultarAlterarInscricaoView(TestCase):
             'step': 1,
         }
         POST = {
-            'dia': ['29/05/2021'],
             'nalunos': ['30'],
             'nome_escola': ['Escola Secundária de Loulé'],
             'local': ['Loulé'],
