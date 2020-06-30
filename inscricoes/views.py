@@ -230,8 +230,6 @@ class ConsultarInscricoes(SingleTableMixin, FilterView):
         table = self.get_table(**self.get_table_kwargs())
         table.fixed = True
         context[self.get_context_table_name(table)] = table
-        context["departamentos"] = list(
-            map(lambda x: (x.id, x.nome), Departamento.objects.all()))
         return context
 
 
@@ -250,8 +248,8 @@ class MinhasInscricoes(ConsultarInscricoes):
         return Inscricao.objects.filter(participante__user_ptr=self.request.user)
 
 
-class InscricoesDepartamento(ConsultarInscricoes):
-    """ View que gera uma tabela com as inscrições com pelo menos uma sessão do departamento 
+class InscricoesUO(ConsultarInscricoes):
+    """ View que gera uma tabela com as inscrições com pelo menos uma sessão do departamento
     do coordenador """
     template_name = 'inscricoes/consultar_inscricoes_coordenador.html'
 
@@ -260,14 +258,21 @@ class InscricoesDepartamento(ConsultarInscricoes):
             Coordenador])
         if not user_check_var.get('exists'):
             return user_check_var.get('render')
-        coordenador = Coordenador.objects.get(user_ptr=self.request.user)
+        coordenador = Coordenador.objects.get(user_ptr=request.user)
         self.queryset = Inscricao.objects.filter(
             Exists(Inscricaosessao.objects.filter(
                 inscricao=OuterRef('pk'),
-                sessao__atividadeid__professoruniversitarioutilizadorid__departamento=coordenador.departamento
+                sessao__atividadeid__professoruniversitarioutilizadorid__faculdade=coordenador.faculdade
             ))
         )
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        coordenador = Coordenador.objects.get(user_ptr=self.request.user)
+        context["departamentos"] = list(
+            map(lambda x: (x.id, x.nome), Departamento.objects.filter(unidadeorganicaid=coordenador.faculdade)))
+        return context
 
 
 class InscricoesAdmin(ConsultarInscricoes):
@@ -280,6 +285,13 @@ class InscricoesAdmin(ConsultarInscricoes):
         if not user_check_var.get('exists'):
             return user_check_var.get('render')
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        coordenador = Coordenador.objects.get(user_ptr=self.request.user)
+        context["departamentos"] = list(
+            map(lambda x: (x.id, x.nome), Departamento.objects.all()))
+        return context
 
 
 def ApagarInscricao(request, pk):

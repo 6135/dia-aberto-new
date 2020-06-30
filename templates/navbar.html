@@ -42,7 +42,7 @@
         Atividades dos Departamentos
       </a>
       <a href="{% url 'inscricoes:consultar-inscricoes-coordenador' %}" class="navbar-item">
-        Inscrições
+        Inscrições dos Departamentos
       </a>
       <a href="{% url 'utilizadores:consultar-utilizadores' %}" class="navbar-item">
         Utilizadores
@@ -284,8 +284,7 @@
                   <span>
                     <span class="icon">
                       {% if request.user|nr_mensagens_nao_lidas > 0 %}
-                      <span id="badge-inject"
-                        class="badge is-warning">{{request.user|nr_mensagens_nao_lidas}}</span>
+                      <span id="badge-inject" class="badge is-warning">{{request.user|nr_mensagens_nao_lidas}}</span>
                       {% endif %}
                       <i class="mdi mdi-message mdi-24px"></i>
                     </span>
