@@ -33,14 +33,18 @@ class CustomTimeWidget(TimeInput):
         else: 
             self.format = '%H:%M'
 
-def get_atividades_choices():
-    return [(" ",'Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.tarefas_get_atividades()]
+def get_atividades_choices(fac):
+    return [("",'Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.tarefas_get_atividades(fac)]
 
 class TarefaAuxiliarForm(Form):
-    atividade = ChoiceField(widget=Select(attrs={'onchange':'diasSelect();'}),choices=get_atividades_choices)
+    atividade = ChoiceField(widget=Select(attrs={'onchange':'diasSelect();'}))
     dia = DateField(widget=Select(attrs={'onchange':'sessoesSelect()'}))
     sessao = IntegerField(widget=Select(attrs={'onchange':'colaboradoresSelect()'}))
     colab = CharField(widget=Select(),required=False)
+
+    def __init__(self,facul,*args, **kwargs):
+        super(TarefaAuxiliarForm,self).__init__(*args, **kwargs)
+        self.fields['atividade'] =  ChoiceField(widget=Select(attrs={'onchange':'diasSelect();'}),choices = get_atividades_choices(facul))
 
     def save(self,user,id=None):
         data = self.cleaned_data
@@ -108,7 +112,7 @@ class TarefaAcompanharForm(Form):
 
 
 class TarefaOutraForm(Form):
-    dia = ChoiceField(widget=Select(attrs={'onchange':'sessoesSelect()'}),choices=get_dias())
+    dia = ChoiceField(widget=Select(attrs={'onchange':'colaboradoresSelect()'}),choices=get_dias())
     horario = TimeField(widget=TimeInput(attrs={'class':'input','type':'time','min':'09:00','max':'18:00','onchange':'colaboradoresSelect();'}))
     descricao = CharField(widget=Textarea(attrs={'class':'textarea'}))
     colab = CharField(widget=Select(),required=False)

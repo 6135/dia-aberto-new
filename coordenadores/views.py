@@ -17,6 +17,7 @@ from coordenadores.tables import TarefaTable
 from coordenadores.filters import TarefaFilter
 from utilizadores.views import user_check
 from django.http.response import HttpResponse
+from atividades.models import Sessao
 
 def adicionartarefa(request,id=None):
     user_check_var = user_check(request=request, user_profile=[Coordenador])
@@ -28,7 +29,7 @@ def adicionartarefa(request,id=None):
 
     if request.method == 'POST':
         if request.POST['tipo']=='tarefaAuxiliar':
-            form = TarefaAuxiliarForm(request.POST)
+            form = TarefaAuxiliarForm(data=request.POST,facul=user_check_var.get('firstProfile').faculdade.id)
         elif request.POST['tipo']=='tarefaAcompanhar':
             form = TarefaAcompanharForm(request.POST)
         elif request.POST['tipo']=='tarefaOutra':
@@ -41,10 +42,13 @@ def adicionartarefa(request,id=None):
             else:
                 views.enviar_notificacao_automatica(request,sigla="tarefaAtribuida",id=save)
             return redirect('coordenadores:consultarTarefa')
-    return render(request = request,template_name='coordenadores/criarTarefa.html',context={'tarefa':tarefa})
+    return render(request = request,template_name='coordenadores/criarTarefa.html',context={
+        'tarefa':tarefa,
+    })
 
-def tipoTarefa(request):
-    
+def tipoTarefa(request):  
+    user_check_var = user_check(request=request, user_profile=[Coordenador])
+
     template =''
     form = ''
     atividades = None
@@ -56,11 +60,12 @@ def tipoTarefa(request):
             if request.POST.get('id'):
                 tarefa = TarefaAuxiliar.objects.get(tarefaid=int(request.POST['id']))
                 form = TarefaAuxiliarForm(initial={'atividade':tarefa.sessao.atividadeid.id,'dia':tarefa.tarefaid.dia,
-                                                    'horario':tarefa.tarefaid.horario,'sessao':tarefa.sessao})
-                atividades = Atividade.tarefas_get_atividades()
+                                                    'horario':tarefa.tarefaid.horario,'sessao':tarefa.sessao},
+                                                    facul=user_check_var.get('firstProfile').faculdade.id)
+                atividades = Atividade.tarefas_get_atividades(user_check_var.get('firstProfile').faculdade.id)
                 ativ = tarefa.sessao.atividadeid
             else:
-                form = TarefaAuxiliarForm()       
+                form = TarefaAuxiliarForm(facul=user_check_var.get('firstProfile').faculdade.id)       
         elif tipo == 'tarefaAcompanhar':
             template = 'coordenadores/tarefaAcompanhar.html'
             if request.POST.get('id'):
@@ -94,9 +99,9 @@ def diasAtividade(request):
                     'key': str(tarefa.tarefaid.dia),
                     'value': tarefa.tarefaid.dia
                 }
-   
-    atividade = Atividade.objects.get(id=atividade)   
-    dias = atividade.get_dias()  
+        if atividade !='': 
+            atividade = Atividade.objects.get(id=atividade)   
+            dias = atividade.get_dias()  
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':dias, 'default': default}
@@ -109,6 +114,7 @@ def sessoesAtividade(request):
                 'key': '',
                 'value': 'Escolha a sessão'
             }
+    options=[]
     if request.method == 'POST':
 
         if 'tarefa' in request.POST and request.POST['tarefa']!='':
@@ -121,11 +127,13 @@ def sessoesAtividade(request):
                     'key': str(tarefa.sessao.id),
                     'value': str(tarefa.sessao.horarioid.inicio) + ' até ' + str(tarefa.sessao.horarioid.fim)
                 }
-        sessoes = Sessao.tarefas_get_sessoes(atividade=atividade,dia=dia)
+
+        if dia !='':
+            sessoes = Sessao.tarefas_get_sessoes(atividade=atividade,dia=dia)
     
-        options = [{
+            options = [{
                     'key':	str(sessao.id),
-                    'value':	str(sessao.horarioid.inicio) + ' até ' + str(sessao.horarioid.fim)
+                    'value':	sessao.horarioid.inicio.strftime('%H:%M') +' até '+ sessao.horarioid.fim.strftime('%H:%M')
                 } for sessao in sessoes
             ]
     return render(request=request,
@@ -135,28 +143,48 @@ def sessoesAtividade(request):
 
 def colaboradores(request):
     default=[]
+    horario = ''
+    sessao= None
+    options=[]
     default = {
-                    'key': '',
-                    'value': 'Não atribuir'
-                }
+        'key': '',
+        'value': 'Não atribuir'
+    }
     if request.method == 'POST':
         if 'tarefa' in request.POST and request.POST['tarefa']!='':
             tarefa = Tarefa.objects.get(id=int(request.POST['tarefa']))
+    
+            if tarefa.tipo == 'tarefaAuxiliar':
+                sessao=tarefa.tarefaauxiliar.sessao.id
+
+            dia = tarefa.dia
+            horario = tarefa.horario
+
             if tarefa.colab is not None:
                 default={
                     'key': str(tarefa.colab.utilizador_ptr_id),
                     'value': str(tarefa.colab.full_name)
                 } 
+        else:
+            if request.POST.get('sessao') !='' or request.POST.get('sessao'):
+                s = Sessao.objects.get(id=int(request.POST.get('sessao')))
+                sessao = s.id
+                horario = s.horarioid.inicio
+            if request.POST.get('horario') !='' or request.POST.get('horario'):
+                horario = request.POST.get('horario')
+                sessao = None
+            dia = request.POST.get('dia')
         coordenador = Coordenador.objects.get(id = request.user.id)
-        colabs = Colaborador.objects.filter(faculdade = coordenador.faculdade,utilizador_ptr_id__valido=True)
-        options = [{
-                    'key': '',
-                    'value': 'Não atribuir'
-                }]+[{
-                    'key':	str(colab.utilizador_ptr_id),
-                    'value':	str(colab.full_name)
-                } for colab in colabs
-            ]
+        if horario !='':
+            colabs = Colaborador.get_free_colabs(coord = coordenador,dia = dia, horario=horario, sessao = sessao)
+            options = [{
+                        'key': '',
+                        'value': 'Não atribuir'
+                    }]+[{
+                        'key':	str(colab.utilizador_ptr_id),
+                        'value':	str(colab.full_name)
+                    } for colab in colabs
+                ]
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':options, 'default': default}
@@ -221,9 +249,9 @@ def horarioGrupo(request):
                     'key': str(tarefa.tarefaid.horario),
                     'value': tarefa.tarefaid.horario
                  } 
-        
-        inscricao = Inscricao.objects.get(id=grupo)
-        horario = inscricao.get_horarios(dia)
+        if dia!='' and dia is not None: 
+            inscricao = Inscricao.objects.get(id=grupo)
+            horario = inscricao.get_horarios(dia)
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':horario, 'default': default}
@@ -256,9 +284,9 @@ def locaisOrigem(request):
                     'key': str(local),
                     'value': local_nome
                 }
-            
-        inscricao = Inscricao.objects.get(id=grupo)
-        origens =  inscricao.get_origem(dia,horario)
+        if horario !='' and horario is not None and dia!='' and dia is not None:        
+            inscricao = Inscricao.objects.get(id=grupo)
+            origens =  inscricao.get_origem(dia,horario)
 
     return render(request=request,
                 template_name='configuracao/dropdown.html',
@@ -286,9 +314,9 @@ def locaisDestino(request):
                     'key': tarefa.destino,
                     'value': local.nome
                 }         
-        
-        inscricao = Inscricao.objects.get(id=grupo)
-        destinos =  inscricao.get_destino(dia,horario)
+        if horario !='' and horario is not None and dia!='' and dia is not None: 
+            inscricao = Inscricao.objects.get(id=grupo)
+            destinos =  inscricao.get_destino(dia,horario)
 
     return render(request=request,template_name='configuracao/dropdown.html',context={'options':destinos, 'default': default})  
 
@@ -307,7 +335,7 @@ class ConsultarTarefas(SingleTableMixin, FilterView):
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
-        return Tarefa.objects.filter(coord=self.user)
+        return Tarefa.objects.filter(coord=self.user).order_by('-created_at')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -322,13 +350,13 @@ def eliminartarefa(request,id):
     if not user_check_var.get('exists'): return user_check_var.get('render')
     
     tarefa = ''
-    if Tarefa.objects.filter(id=id).exists():
-        tarefa = Tarefa.objects.get(id=id)
-    if tarefa.coord.id == user_check_var.get('firstProfile').id and tarefa.eliminar == True:
-        if tarefa.colab is not None:
-            views.enviar_notificacao_automatica(request,"tarefaApagada",id)
-        tarefa.delete()    
-        return redirect('coordenadores:consultarTarefa')
+    if Tarefa.objects.filter(id=id,coord=user_check_var.get('firstProfile')).exists():
+        tarefa = Tarefa.objects.get(id=id,coord=user_check_var.get('firstProfile'))
+        if tarefa.eliminar == True:
+            if tarefa.colab is not None:
+                views.enviar_notificacao_automatica(request,"tarefaApagada",id)
+            tarefa.delete()    
+            return redirect('coordenadores:consultarTarefa')
     return redirect('coordenadores:consultarTarefa')
 
 def atribuirColaborador(request,id):

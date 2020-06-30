@@ -13,7 +13,13 @@
 <div style="padding: 3rem 2vw 1rem">
   <form method="POST" action="">
     {% csrf_token %}
-    {{ form.non_field_errors }}
+      <article class="message is-danger">
+      <div class="message-body">
+        <p style="text-align: center;">
+          <strong>{{ form.non_field_errors }}</strong>
+        </p>
+      </div>
+    </article>
     <div class="b-steps">
       <section class="step-content">
         <div class="step-item">

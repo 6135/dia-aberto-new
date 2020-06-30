@@ -87,21 +87,31 @@
             </div>
 
             
-            {% if participante %}
+            {% if participante == "True" %}
                 <div style="text-align: center;position:center">
                 <p>Obrigado por se registar na plataforma do Dia Aberto</p>
                 </div>
-            {% else %}
+            {% elif participante == "False" %}
                 <div style="text-align: center;position:center">
                 <p>Por favor aguarde o email de confirmação</p>
+                </div>
+            {% elif participante == "Admin" %}
+                <div style="text-align: center;position:center">
+                <p>Novo utilizador criado com sucesso!</p>
                 </div>
             {% endif %}    
     </div>
 
     <div style="text-align: center;position:center;margin-top:4%">
+        {% if participante == "Admin" %}
+        <a href="{% url 'utilizadores:consultar-utilizadores' %}">
+            <button  class="button">Continuar</button>
+        </a>
+        {% else %}
         <a href="{% url 'home' %}">
             <button  class="button">Continuar</button>
         </a>
+        {% endif %}
     </div>
 
     {% endblock content %}

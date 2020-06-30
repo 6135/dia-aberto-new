@@ -16,6 +16,7 @@ from django.shortcuts import redirect
 from django.utils.safestring import mark_safe
 from django.urls.base import reverse
 from django.utils.html import escape
+from django.core.exceptions import NON_FIELD_ERRORS
 class Transporte(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
@@ -212,6 +213,8 @@ class Menu(models.Model):
         return str(self.campus.nome) + ' ' + str(self.diaaberto.ano)
     class Meta:
         db_table = 'Menu'
+        unique_together = ['campus','diaaberto','dia']
+
 
 
 
@@ -246,7 +249,7 @@ class Prato(models.Model):
 class Espaco(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255, blank=True, null=False)  # Field name made lowercase.
-    edificio = models.ForeignKey('Edificio', models.DO_NOTHING, db_column='Edificio', blank=True, null=False)  # Field name made lowercase.
+    edificio = models.ForeignKey('Edificio', models.CASCADE, db_column='Edificio', blank=True, null=False)  # Field name made lowercase.
     andar = models.CharField(db_column='Andar', max_length=255, blank=True, null=False)  # Field name made lowercase.
     descricao = models.CharField(db_column='Descricao', max_length=255, blank=True, null = True)  # Field name made lowercase.
 
@@ -262,7 +265,7 @@ class Espaco(models.Model):
 class Edificio(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=64)  # Field name made lowercase.
-    campus = models.ForeignKey('Campus', models.DO_NOTHING, db_column='Campus', null=False)  # Field name made lowercase.
+    campus = models.ForeignKey('Campus', models.CASCADE, db_column='Campus', null=False)  # Field name made lowercase.
     image = models.ImageField(upload_to='images/edifi',db_column='image', blank=True, null=True)
 
     def espacos_(self):
@@ -297,13 +300,11 @@ class Departamento(models.Model):
     # Field name made lowercase.
     id = models.AutoField(db_column='ID', primary_key=True)
     # Field name made lowercase.
-    sigla = models.CharField(
-        db_column='Sigla', max_length=32, blank=True, null=True)
-
-    # Field name made lowercase.
     nome = models.CharField(
         db_column='Nome', max_length=255, blank=True, null=True)
-
+    # Field name made lowercase.
+    sigla = models.CharField(
+        db_column='Sigla', max_length=32, blank=True, null=True)
     # Field name made lowercase.
     unidadeorganicaid = models.ForeignKey(
         'Unidadeorganica', models.CASCADE, db_column='UnidadeOrganicaID')
@@ -359,10 +360,9 @@ class Horario(models.Model):
         
 class Unidadeorganica(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True)  # Field name made lowercase.
-   
-    sigla = models.CharField(db_column='Sigla', max_length=255)  # Field name made lowercase.
     nome = models.CharField(db_column='Nome', max_length=255)  # Field name made lowercase.
-    campusid = models.ForeignKey(Campus, models.DO_NOTHING, db_column='CampusID')  # Field name made lowercase.
+    sigla = models.CharField(db_column='Sigla', max_length=255)  # Field name made lowercase.
+    campusid = models.ForeignKey(Campus, models.CASCADE, db_column='CampusID')  # Field name made lowercase.
 
     class Meta:
         db_table = 'UnidadeOrganica'
@@ -375,17 +375,15 @@ class Unidadeorganica(models.Model):
 
     def coord_(self):
         return Coordenador.objects.filter(faculdade_id=self.id).first()
-
 class Curso(models.Model):
 
     id = models.AutoField(db_column='ID', primary_key=True)
-
-    sigla = models.CharField(
-        db_column='Sigla', max_length=32, blank=True, null=True)
-
     nome = models.CharField(
         db_column='Nome', max_length=255, blank=True, null=True)
 
+    sigla = models.CharField(
+        db_column='Sigla', max_length=32, blank=True, null=True)\
+    
     unidadeorganicaid = models.ForeignKey(
         'Unidadeorganica', models.CASCADE, db_column='Unidadeorganica')
 

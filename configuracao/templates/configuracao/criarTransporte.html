@@ -188,37 +188,5 @@ $('#del-row').click(function(e){
 	}
 })
 
-$( document ).ready(function() {
-	var diaaberto_id = $('#id_diaaberto').val();
-	$.ajax({
-	url: "{% url 'configuracao:getDias' %}",
-	method: 'POST',
-	data: {
-		'diaaberto_id':diaaberto_id,
-		csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-		'default': '{{form_t.instance.id}}',
-		'typeForm': 'transporte',
-	},
-	success: function(data){
-		$('#id_dia').html(data);
-	}
-	});
-});
-
-$('#id_diaaberto').change(function(){
-	var diaaberto_id = $(this).val();
-	$.ajax({
-	url: "{% url 'configuracao:getDias' %}",
-	method: 'POST',
-	data: {
-		'diaaberto_id': diaaberto_id,
-		csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
-		'typeForm': 'transporte',
-	},
-	success: function(data){
-		$('#id_dia').html(data);
-	}
-	});
-})
 </script>
 {% endblock scripts %}

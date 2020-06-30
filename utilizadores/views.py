@@ -186,9 +186,9 @@ def criar_utilizador(request, id):
             if request.user.is_authenticated:    
                 user = get_user(request)
                 if user.groups.filter(name = "Coordenador").exists():
-                    return redirect('utilizadores:mensagem',9)  
+                    return redirect("utilizadores:concluir-registo",2)
                 elif user.groups.filter(name = "Administrador").exists():
-                    return redirect('utilizadores:mensagem',9)  
+                    return redirect("utilizadores:concluir-registo",2)  
             else:   
                 return redirect("utilizadores:concluir-registo",p)
         else:
@@ -815,10 +815,12 @@ def concluir_registo(request,id):
             u=""   
     else:
         u=""
-    if id==1:
-        participante=True
-    else:
-        participante=False
+    if id == 1:
+        participante="True"
+    elif id == 0:
+        participante="False"
+    elif id == 2:
+        participante="Admin"   
     return render(request=request,
                   template_name="utilizadores/concluir_registo.html",
                   context={'participante': participante, 'u': u})

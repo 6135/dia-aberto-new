@@ -40,3 +40,5 @@ class GroupTests(TestCase):
         ''' Testes grupo de coordenadores '''
         g = Group.objects.get(name='ProfessorUniversitario')
         self.assertEqual(str(g), 'ProfessorUniversitario')                
+
+
