@@ -163,7 +163,7 @@ class Colaborador(Utilizador):
         free_colabs=[]
         colabs = Colaborador.objects.filter(faculdade = coord.faculdade,utilizador_ptr_id__valido=True)
         free = True
-        for colab in colabs:      
+        for colab in colabs: 
             tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,horario=horario,dia=dia)
             if tarefas.exists():
                 continue
@@ -180,13 +180,14 @@ class Colaborador(Utilizador):
                 free=True
                 tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia)
                 for t in tarefas:
-                    h = datetime.strptime(horario,'%H:%M')
-                    if datetime.strptime(str(t.horario),'%H:%M:%S') - h >  timedelta(days=-1,hours=23,minutes=45) and h - datetime.strptime(str(t.horario),'%H:%M:%S') <  timedelta(minutes=15):
-                        free=False  
+                    h = datetime.strptime(horario,'%H:%M')     
+                    if datetime.strptime(str(t.horario),'%H:%M:%S') - h <  timedelta(hours=0,minutes=15,seconds=0) and h - datetime.strptime(str(t.horario),'%H:%M:%S') > timedelta(days=-1,hours=23,minutes=45) :
+                        free=False     
                 if coordmodels.TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia)\
                     .filter(sessao__horarioid__inicio__lte=horario,sessao__horarioid__fim__gte=horario).exists(): 
                     continue
                 if free == True:
                     free_colabs.append(colab)
+
         print(free_colabs)
         return free_colabs

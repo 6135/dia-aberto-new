@@ -175,7 +175,7 @@ def colaboradores(request):
                 sessao = None
             dia = request.POST.get('dia')
         coordenador = Coordenador.objects.get(id = request.user.id)
-        if horario !='':
+        if horario != '' and dia != '':
             colabs = Colaborador.get_free_colabs(coord = coordenador,dia = dia, horario=horario, sessao = sessao)
             if len(colabs)==0:
                 default = {
