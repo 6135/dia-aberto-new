@@ -8,6 +8,7 @@ from atividades import models as amodels
 from colaboradores.models import ColaboradorHorario
 from coordenadores import models as coordmodels
 from django.db.models import Q
+from datetime import datetime,timedelta
 class Utilizador(User):
     contacto = PhoneNumberField(max_length=20, blank=False, null=False)
     valido = models.CharField(max_length=255, blank=False, null=False)
@@ -175,7 +176,14 @@ class Colaborador(Utilizador):
                     continue
                 if coordmodels.TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia,sessao__horarioid__inicio__lte=inicio,sessao__horarioid__fim__gte=inicio).exists():
                     continue
-                free_colabs.append(colab)
+                tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia)
+                for t in tarefas:
+                    hinicio = datetime.strptime(str(inicio),'%H:%M:%S') 
+                    hfim =   datetime.strptime(str(fim),'%H:%M:%S')  
+                    if datetime.strptime(str(t.horario),'%H:%M:%S') - hinicio >  timedelta(hours=0,minutes=15,seconds=0) or hfim - datetime.strptime(str(t.horario),'%H:%M:%S') < timedelta(days=-1,hours=23,minutes=45) :
+                        free=False     
+                if free == True:
+                    free_colabs.append(colab)
             elif sessao is None:
                 free=True
                 tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia)

@@ -18,6 +18,11 @@ class Tarefa(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     dia = models.DateField()
     horario = models.TimeField(blank=False, null=False)
+    diaaberto = models.ForeignKey('utilizadores.Diaaberto', models.SET_NULL, db_column='Diaaberto',null=True,blank=True)  # Field name made lowercase.
+
+    def save(self,*args, **kwargs):
+        super(Tarefa, self).save(*args, **kwargs)
+        self.diaaberto = Diaaberto.current()
 
     @property
     def tipo(self):
