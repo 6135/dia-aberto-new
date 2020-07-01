@@ -1,6 +1,7 @@
 import django_tables2 as django_tables
 from coordenadores.models import Tarefa
 from django.utils.html import format_html
+from atividades.models import *
 
 
 class TarefasTable(django_tables.Table):
@@ -43,4 +44,53 @@ class TarefasTable(django_tables.Table):
             cor = "info"
         return format_html(f"""
             <span class="tag is-{cor}" style="width: 10rem;font-size: small;">{estado}</span>
+        """)
+
+
+
+
+
+class ColaboradorAtividadesTable(django_tables.Table):
+    
+    acoes = django_tables.Column('Ações', empty_values=())
+    professoruniversitarioutilizadorid = django_tables.Column('Professor')
+    datasubmissao = django_tables.Column('Data de Submissão')
+    class Meta:
+        model = Atividade
+        sequence = ('nome','professoruniversitarioutilizadorid','tipo','tema', 'acoes')
+    def before_render(self, request):
+        self.columns.hide('id')
+        self.columns.hide('descricao')
+        self.columns.hide('nrcolaboradoresnecessario')
+        self.columns.hide('publicoalvo')
+        self.columns.hide('dataalteracao')
+        self.columns.hide('duracaoesperada')
+        self.columns.hide('participantesmaximo')
+        self.columns.hide('espacoid')
+        self.columns.hide('diaabertoid')
+        self.columns.hide('estado')
+        self.columns.hide('datasubmissao')
+
+
+    def render_professoruniversitarioutilizadorid(self,record):
+        return str(record.professoruniversitarioutilizadorid.full_name)
+
+    def render_tema(self,record):
+        return str(record.tema.nome)    
+    
+    def render_acoes(self,record):
+        return format_html(f"""
+            <div>
+                    <a id='edit' href="{reverse('#', kwargs={'id':record.pk})}">
+                        <span class="icon is-small">
+                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                        </span>
+                    </a>
+                &nbsp;               
+                    <a onclick="alert.render('Tem a certeza que pretende eliminar esta Atividade?','{reverse('#', kwargs={'id':record.pk})}')">
+                        <span class="icon is-small">
+                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
+                        </span>
+                    </a> 
+            </div> 
         """)
