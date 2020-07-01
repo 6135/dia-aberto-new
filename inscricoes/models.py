@@ -5,7 +5,7 @@ from datetime import datetime, time, timedelta
 from configuracao.models import Horario
 from django.db.models import Max, Min
 from collections import OrderedDict
-
+from coordenadores.models import TarefaAcompanhar
 
 class Escola(models.Model):
     nome = models.CharField(max_length=200)
@@ -101,29 +101,43 @@ class Inscricao(models.Model):
                                'value': local.sessao.atividadeid.espacoid.nome})
         return origem
 
-    def get_destino(self, dia, horario):
+    def get_destino(self, dia, horario,origem):
         inscricao_sessoes = Inscricaosessao.objects.filter(
             inscricao=self, sessao__dia=dia).order_by('sessao__horarioid__inicio')
         destino = []
 
         if horario == time.strftime(inscricao_sessoes.first().sessao.horarioid.inicio, "%H:%M:%S"):
             for local in inscricao_sessoes:
-                if time.strftime(local.sessao.horarioid.inicio, "%H:%M:%S") == horario:
-                    print('asdasd')
+                if time.strftime(local.sessao.horarioid.inicio, "%H:%M:%S") == horario and (origem == 'Check in' or origem.id != local.sessao.atividadeid.espacoid.id):
                     destino.append({'key': local.sessao.atividadeid.espacoid.id,
                                     'value': local.sessao.atividadeid.espacoid.nome})
         else:
             inscricao_sessoes = Inscricaosessao.objects.filter(inscricao=self,
                                                                sessao__dia=dia, sessao__horarioid__inicio__gte=horario).order_by('sessao__horarioid__inicio')
             for local in inscricao_sessoes:
-                destino.append({'key': local.sessao.atividadeid.espacoid.id,
+                if  origem != 'Check in' and origem.id != local.sessao.atividadeid.espacoid.id:
+                    destino.append({'key': local.sessao.atividadeid.espacoid.id,
                                 'value': local.sessao.atividadeid.espacoid.nome})
         if len(destino) == 0:
-            destino.append({'key': inscricao_sessoes.last().sessao.atividadeid.espacoid.id,
+            if  origem != 'Check in' and origem.id != local.sessao.atividadeid.espacoid.id:
+                destino.append({'key': inscricao_sessoes.last().sessao.atividadeid.espacoid.id,
                             'value': inscricao_sessoes.last().sessao.atividadeid.espacoid.nome})
 
         return destino
 
+    @staticmethod
+    def get_tarefa_grupos(facul):
+        grupos = []
+        inscricao=Inscricao.objects.filter(individual=False)
+        for i in inscricao:
+            tarefa_acompanhar = TarefaAcompanhar.objects.filter(inscricao__id=i.id)
+            inscricao_sessao = Inscricaosessao.objects.filter(sessao__atividadeid__professoruniversitarioutilizadorid__faculdade__id=facul,inscricao__id=i.id)
+            if not inscricao_sessao.exists():
+                continue
+            if tarefa_acompanhar.count() == inscricao_sessao.count():
+                continue   
+            grupos.append(i)
+        return grupos
 
 class Responsavel(models.Model):
     inscricao = models.ForeignKey(Inscricao, models.CASCADE)

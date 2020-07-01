@@ -31,7 +31,7 @@ def adicionartarefa(request,id=None):
         if request.POST['tipo']=='tarefaAuxiliar':
             form = TarefaAuxiliarForm(data=request.POST,facul=user_check_var.get('firstProfile').faculdade.id)
         elif request.POST['tipo']=='tarefaAcompanhar':
-            form = TarefaAcompanharForm(request.POST)
+            form = TarefaAcompanharForm(data=request.POST,facul=user_check_var.get('firstProfile').faculdade.id)
         elif request.POST['tipo']=='tarefaOutra':
             form = TarefaOutraForm(request.POST)
         if form.is_valid():
@@ -70,9 +70,9 @@ def tipoTarefa(request):
             template = 'coordenadores/tarefaAcompanhar.html'
             if request.POST.get('id'):
                 tarefa = TarefaAcompanhar.objects.get(tarefaid=int(request.POST['id']))
-                form = TarefaAcompanharForm(initial={'grupo':tarefa.inscricao.id,'dia':tarefa.tarefaid.dia})
+                form = TarefaAcompanharForm(initial={'grupo':tarefa.inscricao.id,'dia':tarefa.tarefaid.dia},facul=user_check_var.get('firstProfile').faculdade.id)
             else:
-                 form = TarefaAcompanharForm()           
+                 form = TarefaAcompanharForm(facul=user_check_var.get('firstProfile').faculdade.id)           
         elif tipo == 'tarefaOutra':
             template = 'coordenadores/tarefaOutra.html'
             if request.POST.get('id'):
@@ -175,16 +175,23 @@ def colaboradores(request):
                 sessao = None
             dia = request.POST.get('dia')
         coordenador = Coordenador.objects.get(id = request.user.id)
-        if horario !='':
+        if horario != '' and dia != '':
             colabs = Colaborador.get_free_colabs(coord = coordenador,dia = dia, horario=horario, sessao = sessao)
-            options = [{
-                        'key': '',
-                        'value': 'Não atribuir'
-                    }]+[{
-                        'key':	str(colab.utilizador_ptr_id),
-                        'value':	str(colab.full_name)
-                    } for colab in colabs
-                ]
+            if len(colabs)==0:
+                default = {
+                    'key': '',
+                    'value': 'Não existem colaboradores disponíveis'
+                }
+            else:
+                options = [{
+                            'key': '',
+                            'value': 'Não atribuir'
+                        }]+[{
+                            'key':	str(colab.utilizador_ptr_id),
+                            'value':	str(colab.full_name)
+                        } for colab in colabs
+                    ]
+            
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':options, 'default': default}
@@ -296,6 +303,7 @@ def locaisOrigem(request):
 def locaisDestino(request):
     grupo = request.POST.get('grupo_id')
     dia = request.POST['dia']
+    
     horario = request.POST.get('horario')
     default = {
         'key': '',
@@ -309,14 +317,19 @@ def locaisDestino(request):
                 grupo = tarefa.inscricao.id
                 horario = tarefa.tarefaid.horario
                 dia = str(tarefa.tarefaid.dia)
+                origem = Espaco.objects.get(id=int(tarefa.origem))
                 local = Espaco.objects.get(id=int(tarefa.destino))
                 default={
                     'key': tarefa.destino,
                     'value': local.nome
                 }         
         if horario !='' and horario is not None and dia!='' and dia is not None: 
+            if request.POST['origem'] == 'Check in':
+                origem = request.POST['origem']
+            else:
+                origem = Espaco.objects.get(id=int(request.POST['origem']))
             inscricao = Inscricao.objects.get(id=grupo)
-            destinos =  inscricao.get_destino(dia,horario)
+            destinos =  inscricao.get_destino(dia,horario,origem)
 
     return render(request=request,template_name='configuracao/dropdown.html',context={'options':destinos, 'default': default})  
 
