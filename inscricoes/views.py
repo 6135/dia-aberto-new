@@ -346,7 +346,7 @@ def estatisticas(request, diaabertoid=None):
             diaabertoid = Diaaberto.objects.filter(
                 ano__lte=datetime.now().year).order_by('-ano').first().id
         except:
-            return redirect('utilizadores:mensagem', 17)
+            return redirect('utilizadores:mensagem', 18)
     diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
     numdays = int((diaaberto.datadiaabertofim -
                    diaaberto.datadiaabertoinicio).days)+1
