@@ -116,7 +116,7 @@
                         <span class="select is-fullwidth is-empty">
                             <select name="colab">
                                 {% if  row.record.tipo == "tarefaAuxiliar" %}
-                                    {% free_colabs row.record.coord row.record.dia row.record.horario row.record.tarefaauxliar.sessao.id %}
+                                    {% free_colabs row.record.coord row.record.dia row.record.horario row.record.tarefaauxiliar.sessao.id %}
                                 {% else %}
                                     {% free_colabs row.record.coord row.record.dia row.record.horario  %}
                                 {% endif %}
