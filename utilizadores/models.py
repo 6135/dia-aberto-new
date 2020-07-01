@@ -5,9 +5,9 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from atividades import models as amodels
+from colaboradores.models import ColaboradorHorario
 from coordenadores import models as coordmodels
 from django.db.models import Q
-from datetime import datetime, timedelta
 class Utilizador(User):
     contacto = PhoneNumberField(max_length=20, blank=False, null=False)
     valido = models.CharField(max_length=255, blank=False, null=False)
@@ -191,3 +191,30 @@ class Colaborador(Utilizador):
 
         print(free_colabs)
         return free_colabs
+
+
+
+    def get_horarios_disponiveis(self):
+        return ColaboradorHorario.objects.filter(colab=self.id)
+
+    def get_preferencia_atividade(self):
+        horarios = self.get_horarios_disponiveis()
+        atividades = []
+        for horario in horarios:
+            atividades.append(amodels.Atividade.objects.filter(inicio__gte=horario.inicio,fim__lte=horario.fim,estado="Aceite",professoruniversitarioutilizadorid__faculdade=self.faculdade))
+        atividades = list(dict.fromkeys(atividades))
+        return list_to_queryset(amodels.Atividade,atividades)
+
+
+def list_to_queryset(model, data):
+    from django.db.models.base import ModelBase
+    if not isinstance(model, ModelBase):
+        raise ValueError(
+            "%s must be Model" % model
+        )
+    if not isinstance(data, list):
+        raise ValueError(
+            "%s must be List Object" % data
+        )
+    pk_list = [obj.pk for obj in data]
+    return model.objects.filter(pk__in=pk_list)

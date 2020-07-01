@@ -62,6 +62,15 @@ class PreferenciaTarefasForm(forms.Form):
         widget=forms.CheckboxSelectMultiple,
         choices=TAREFAS_CHOICES,
     )
+    def clean(self):
+        tarefa_auxiliar = self.cleaned_data.get('tarefaAuxiliar')
+        tarefa_acompanhar = self.cleaned_data.get('tarefaAcompanhar')
+        tarefa_outra = self.cleaned_data.get('tarefaOutra')
+        
+        if tarefa_auxiliar == "" and tarefa_acompanhar=="" and tarefa_outra=="":
+            raise forms.ValidationError(f'Selecione pelo menos um tipo de tarefa pelo qual tenha preferência ou todas se não tiver nenhuma preferência')
+        
+
 
 
 class CustomTimeWidget(TimeInput):
@@ -79,6 +88,9 @@ class CustomTimeWidget(TimeInput):
             self.format = format
         else: 
             self.format = '%H:%M'
+    
+
+
 
 def get_atividades_choices(fac):
     return [("",'Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.tarefas_get_atividades(fac)]    
