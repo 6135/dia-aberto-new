@@ -22,6 +22,7 @@ from atividades.models import Sessao
 def adicionartarefa(request,id=None):
     user_check_var = user_check(request=request, user_profile=[Coordenador])
     if not user_check_var.get('exists'): return user_check_var.get('render')
+    if Diaaberto.current() is None: return redirect('coordenadores:consultarTarefa')
     if id:
         tarefa = Tarefa.objects.get(id=id)
     else:
@@ -354,6 +355,7 @@ class ConsultarTarefas(SingleTableMixin, FilterView):
         context = super().get_context_data(**kwargs)
         table = self.get_table(**self.get_table_kwargs())
         context["colabs"] = list(map(lambda x: (x.id, x.full_name), Colaborador.objects.filter(faculdade = self.user.faculdade,utilizador_ptr_id__valido=True)))
+        context["is_open"] = True if Diaaberto.current() is not None else False
         table.colabs = list(map(lambda x: (x.id, x.full_name), Colaborador.objects.filter(faculdade = self.user.faculdade,utilizador_ptr_id__valido=True)))
         context[self.get_context_table_name(table)] = table
         return context

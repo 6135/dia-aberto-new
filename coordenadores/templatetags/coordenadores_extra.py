@@ -28,6 +28,7 @@ def free_colabs(coord,dia,horario,sessao=None):
         html = ''
         colabs = Colaborador.objects.filter(faculdade = coord.faculdade,utilizador_ptr_id__valido=True)
         free = True
+        print(sessao)
         for colab in colabs:      
             tarefas = Tarefa.objects.filter(colab = colab.id,horario=horario,dia=dia)
             if tarefas.exists():
@@ -40,19 +41,29 @@ def free_colabs(coord,dia,horario,sessao=None):
                     continue
                 if TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia,sessao__horarioid__inicio__lte=inicio,sessao__horarioid__fim__gte=inicio).exists():
                     continue
-                free_colabs.append(colab)
-            elif sessao is None:
-                free=True
                 tarefas = Tarefa.objects.filter(colab = colab.id,dia=dia)
                 for t in tarefas:
-                    h = datetime.strptime(str(horario),'%H:%M:%S')
-                    if datetime.strptime(str(t.horario),'%H:%M:%S') - h >  timedelta(days=-1,hours=23,minutes=45) and h - datetime.strptime(str(t.horario),'%H:%M:%S') <  timedelta(minutes=15):
-                        free=False  
+                    hinicio = datetime.strptime(str(inicio),'%H:%M:%S') 
+                    hfim =   datetime.strptime(str(fim),'%H:%M:%S')   
+                    if datetime.strptime(str(t.horario),'%H:%M:%S') - hinicio >  timedelta(hours=0,minutes=15,seconds=0) or hfim - datetime.strptime(str(t.horario),'%H:%M:%S') < timedelta(days=-1,hours=23,minutes=45):
+                        free=False     
+                if free == True:
+                    free_colabs.append(colab)
+
+                free_colabs.append(colab)
+            elif sessao is None:
+                
+                tarefas = Tarefa.objects.filter(colab = colab.id,dia=dia)
+                for t in tarefas:
+                    h = datetime.strptime(str(horario),'%H:%M:%S')     
+                    if datetime.strptime(str(t.horario),'%H:%M:%S') - h <  timedelta(hours=0,minutes=15,seconds=0) and h - datetime.strptime(str(t.horario),'%H:%M:%S') > timedelta(days=-1,hours=23,minutes=45) :
+                        free=False     
                 if TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia)\
                     .filter(sessao__horarioid__inicio__lte=horario,sessao__horarioid__fim__gte=horario).exists(): 
                     continue
                 if free == True:
                     free_colabs.append(colab)
+
         if len(free_colabs) == 0:
             html = "<option disabled value="" hidden selected>Não existe colaboradores disponíveis</option>"
         else:

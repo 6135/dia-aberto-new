@@ -137,17 +137,18 @@
                         <div class="columns">
                             <div class="column">
                                 <div class="field">
-                                    <h3><b>Duração Esperada:&nbsp;&nbsp;</b>{{atividade.duracaoesperada}}</h3>
-                                </div>
-                            </div>
-                            <div class="column">
-                                <div class="field">
                                     <h3><b>Colaboradores Necessarios:&nbsp;&nbsp;</b>{{atividade.nrcolaboradoresnecessario}}</h3>
                                 </div>
                             </div>
                             <div class="column">
                                 <div class="field">
                                     <h3><b>Maximo de Participantes:&nbsp;&nbsp;</b>{{atividade.participantesmaximo}}</h3>
+                                </div>
+                            </div>
+                            
+                            <div class="column">
+                                <div class="field">
+                                    <h3><b>Materiais Extra Necessarios:&nbsp;&nbsp;</b>{% if material.nomematerial is not None %}{{material.nomematerial}}{% else %}Nenhum{% endif %}</h3>
                                 </div>
                             </div>
                         </div>
@@ -182,7 +183,7 @@
                                         {% for sessao in sessions_activity %} 
                                         <tr id="sessao.id" draggable="false">
                                             <td data-label="Dia">{{sessao.dia}}</td>
-                                            <td data-label="Nome">{{sessao.horarioid.inicio}}</td>
+                                            <td data-label="Nome">{{sessao.horarioid.inicio}} - {{sessao.horarioid.fim}}</td>
                                         </tr>
                                         {% endfor %} 
                                     </tbody>

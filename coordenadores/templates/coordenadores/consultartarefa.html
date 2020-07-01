@@ -87,7 +87,11 @@
               <li class="is-active"><a href="#" aria-current="page">Tarefas</a></li>
             </ul>
           </nav>
+          {% if is_open == True %}
            <a href="{% url 'coordenadores:adicionarTarefa' %}" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem">
+           {% else %}
+            <a onclick="alert.warning('Não pode adicionar tarefas pois não existe nenhum Dia Aberto atual.');" class="button is-success is-outlined" type="button" style="margin-bottom:0.5rem" >
+          {% endif %}
             <span class="icon is-small">
                 <i class="mdi mdi-plus"></i>
             </span>
