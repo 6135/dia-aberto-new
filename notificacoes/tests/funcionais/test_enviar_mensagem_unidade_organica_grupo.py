@@ -10,8 +10,7 @@ from notificacoes.tests.test_models import create_MensagemRecebida_0
 from selenium.webdriver.support.wait import WebDriverWait
 from django.core.management import call_command
 from django.contrib.auth.models import Group
-
-# Firefox, Edge, Safari, Chrome
+from dia_aberto.utils import get_driver
 
 
 class EnviarMensagemUnidadeOrganicaGrupo(StaticLiveServerTestCase):
@@ -20,10 +19,7 @@ class EnviarMensagemUnidadeOrganicaGrupo(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        driver_path = 'webdrivers/geckodriver'
-        if os.name == 'nt':
-            driver_path += '.exe'
-        cls.driver = webdriver.Firefox(executable_path=driver_path)
+        cls.driver = get_driver()
         cls.driver.maximize_window()
         cls.driver.implicitly_wait(10)
 
@@ -46,15 +42,16 @@ class EnviarMensagemUnidadeOrganicaGrupo(StaticLiveServerTestCase):
         self.driver.get('%s%s' % (self.live_server_url, reverse('home')))
         self.driver.find_element(By.CSS_SELECTOR, ".icon").click()
         self.driver.find_element(By.ID, "id_username").click()
-        self.driver.find_element(By.ID, "id_username").send_keys(self.colaborador.username)
+        self.driver.find_element(By.ID, "id_username").send_keys(
+            self.colaborador.username)
         self.driver.find_element(By.ID, "id_password").click()
         self.driver.find_element(By.ID, "id_password").send_keys("andre123456")
         self.driver.find_element(By.CSS_SELECTOR, ".is-success > span").click()
         self.driver.find_element(By.CSS_SELECTOR, ".mdi-message").click()
         self.driver.find_element(By.LINK_TEXT, "Nova mensagem").click()
-        self.driver.find_element(By.CSS_SELECTOR, "a:nth-child(2) > .button").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, "a:nth-child(2) > .button").click()
         self.driver.find_element(By.ID, "id_titulo").click()
         self.driver.find_element(By.ID, "id_titulo").send_keys("Oi")
         self.driver.find_element(By.NAME, "mensagem").click()
         self.driver.find_element(By.NAME, "mensagem").send_keys("Oi")
-

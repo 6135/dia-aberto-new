@@ -16,6 +16,7 @@ from inscricoes.tests.samples import create_Diaaberto_0, create_Espaco_0, create
 from notificacoes.tests.test_models import create_MensagemRecebida_0
 from selenium.webdriver.support.wait import WebDriverWait
 from seleniumlogin import force_login
+from dia_aberto.utils import get_driver
 
 
 def create_Inscricao_1():
@@ -117,17 +118,14 @@ def create_Atividade_0():
     )[0]
 
 
-class ConsultarInscricaoChromeTest(StaticLiveServerTestCase):
-    """ Testes funcionais do consultar inscrição no Chrome """
+class ConsultarInscricaoTest(StaticLiveServerTestCase):
+    """ Testes funcionais do consultar inscrição """
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         call_command("create_groups")
-        driver_path = 'webdrivers/chromedriver'
-        if os.name == 'nt':
-            driver_path += '.exe'
-        cls.driver = webdriver.Chrome(executable_path=driver_path)
+        cls.driver = get_driver()
         cls.driver.maximize_window()
         cls.driver.implicitly_wait(10)
 

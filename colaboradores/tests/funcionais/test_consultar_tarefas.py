@@ -10,11 +10,7 @@ from notificacoes.tests.test_models import create_MensagemRecebida_0
 from selenium.webdriver.support.wait import WebDriverWait
 from django.core.management import call_command
 from django.contrib.auth.models import Group
-
-
-# Firefox, Edge, Safari, Chrome
-
-
+from dia_aberto.utils import get_driver
 
 
 class TestConsultarTarefas(StaticLiveServerTestCase):
@@ -23,10 +19,7 @@ class TestConsultarTarefas(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        driver_path = 'webdrivers/geckodriver'
-        if os.name == 'nt':
-            driver_path += '.exe'
-        cls.driver = webdriver.Firefox(executable_path=driver_path)
+        cls.driver = get_driver()
         cls.driver.maximize_window()
         cls.driver.implicitly_wait(10)
 
@@ -56,6 +49,7 @@ class TestConsultarTarefas(StaticLiveServerTestCase):
         self.driver.find_element(By.ID, "id_password").send_keys(Keys.ENTER)
         assert self.driver.find_element(
             By.CSS_SELECTOR, ".message-body strong").text == f"Bem vindo(a) {self.colaborador.first_name}"
-        self.driver.find_element(By.CSS_SELECTOR, "a:nth-child(1) > .button").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, "a:nth-child(1) > .button").click()
         self.driver.find_element(By.LINK_TEXT, "Minhas Tarefas").click()
         self.driver.find_element(By.CSS_SELECTOR, ".menu-label").click()

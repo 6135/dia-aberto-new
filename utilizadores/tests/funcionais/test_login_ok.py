@@ -8,8 +8,7 @@ from utilizadores.models import Participante
 from utilizadores.tests.test_models import create_Participante_0
 from notificacoes.tests.test_models import create_MensagemRecebida_0
 from selenium.webdriver.support.wait import WebDriverWait
-
-# Firefox, Edge, Safari, Chrome
+from dia_aberto.utils import get_driver
 
 
 class LoginTestOk(StaticLiveServerTestCase):
@@ -18,10 +17,7 @@ class LoginTestOk(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        driver_path = 'webdrivers/geckodriver'
-        if os.name == 'nt':
-            driver_path += '.exe'
-        cls.driver = webdriver.Firefox(executable_path=driver_path)
+        cls.driver = get_driver()
         cls.driver.maximize_window()
         cls.driver.implicitly_wait(10)
 
@@ -51,5 +47,3 @@ class LoginTestOk(StaticLiveServerTestCase):
             By.CSS_SELECTOR, "a:nth-child(1) > .button").click()
         self.driver.find_element(
             By.CSS_SELECTOR, ".button > span:nth-child(2)").click()
-
-

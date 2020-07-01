@@ -18,6 +18,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from seleniumlogin import force_login
 import time
 from selenium.webdriver.support.ui import Select
+from dia_aberto.utils import get_driver
 
 
 def create_Inscricao_0():
@@ -155,16 +156,13 @@ def create_Sessao_1():
 
 
 class CriarInscricaoTest(StaticLiveServerTestCase):
-    """ Testes funcionais do criar inscrição no Chrome """
+    """ Testes funcionais do criar inscrição """
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         call_command("create_groups")
-        driver_path = 'webdrivers/chromedriver'
-        if os.name == 'nt':
-            driver_path += '.exe'
-        cls.driver = webdriver.Chrome(executable_path=driver_path)
+        cls.driver = get_driver()
         cls.driver.maximize_window()
         cls.driver.implicitly_wait(10)
 
