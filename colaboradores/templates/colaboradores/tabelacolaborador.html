@@ -50,26 +50,5 @@
         </tr>
     </tbody>
 </table>
-<p>
-    <strong>Dados das sessões:</strong>
-</p>
-<br>
-<table class="table has-mobile-cards is-fullwidth">
-        <thead>
-            <tr>
-                <th><div class="th-wrap">Dia</div></th>
-                <th><div class="th-wrap" style="width:150px">Hora</div></th>
 
-            </tr>
-        </thead>
-        {% for  sessao in  row.record.sessao_set.all%}
-            <tbody>
-                <tr >
-                    <td data-label="Dia">{{sessao.dia}}</td>
-                    <td data-label="Hora">{{sessao.horarioid.inicio}} até {{sessao.horarioid.fim}}</td>
-                    
-                    </tr>
-                </tbody>
-        {% endfor %}
-    </table>
 {% endblock details_content %}

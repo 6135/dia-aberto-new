@@ -14,6 +14,8 @@ urlpatterns = [
          name='ver-departamentos'),
     path('preferenciaatividade', views.AtividadesColaborador.as_view(),
          name="preferencia-atividade"),
+    path('selecionaratividade/<int:id>', views.selecionar_atividade,
+         name="selecionar-atividade"),
     path('concluirdisponibilidade', views.concluir_disponibilidade,
          name='concluir-disponibilidade'),
     path('concluirtarefa/<int:id>', views.concluir_tarefa, name='concluir-tarefa'),

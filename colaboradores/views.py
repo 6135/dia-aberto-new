@@ -75,7 +75,6 @@ class AtividadesColaborador(SingleTableMixin, FilterView):
 def ver_departamentos(request):
 	user_check_var = user_check(request=request, user_profile=[Colaborador])
 	if not user_check_var.get('exists'): return user_check_var.get('render')
-	self.user_check_var = user_check_var
 
 	value_uo = request.POST.get("value_uo")
 	value_dep = request.POST.get('value_dep')
@@ -85,7 +84,7 @@ def ver_departamentos(request):
 		uo= Unidadeorganica.objects.filter(id=value_uo).first()
 		departamentos= Departamento.objects.filter(unidadeorganicaid=  uo)
 	else:
-		departamentos= Departamento.objects.filter(unidadeorganicaid=self.user_check_var.get('firstProfile').faculdade)
+		departamentos= Departamento.objects.filter(unidadeorganicaid=user_check_var.get('firstProfile').faculdade)
 
 	deps= []
 	for dep in departamentos:    
@@ -130,7 +129,7 @@ def minha_disponibilidade(request):
 			instances = horario_form_set.save(commit=False)
 
 			for instance in instances:
-				instance.colab = u.id
+				instance.colab = u
 				instance.save()
 			for instance in horario_form_set.deleted_objects:
 				instance.delete()
@@ -142,7 +141,7 @@ def minha_disponibilidade(request):
 			if values == "tarefaOutra":
 				Preferencia(colab = u.id, tipoTarefa = "tarefaOutra") 
 
-			return redirect('colaboradores:concluir-disponibilidade')
+			return redirect('colaboradores:preferencia-atividade')
 		else:
 			msg = True
 			
@@ -176,6 +175,21 @@ def newHorarioRow(request):
 
 def concluir_disponibilidade(request):
 	''' Página que é mostrada ao colaborador quando altera a sua disponibilidade na plataforma '''
+	if request.user.is_authenticated:    
+		user = get_user(request)
+		if user.groups.filter(name = "Colaborador").exists():
+			u = "Colaborador"       
+		else:
+			return redirect('utilizadores:mensagem',5) 
+	else:
+		return redirect('utilizadores:mensagem',5)
+
+	return render(request=request,
+				  template_name="colaboradores/concluir_disponibilidade.html")
+
+
+def selecionar_atividade(request,id):
+	''' Selecionar uma atividade '''
 	if request.user.is_authenticated:    
 		user = get_user(request)
 		if user.groups.filter(name = "Colaborador").exists():

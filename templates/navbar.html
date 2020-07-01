@@ -87,10 +87,19 @@
 
     </a>
     {% endif %}
-    </div>
-    <div class="navbar-end">
-      <div class="navbar-item">
-        {% if user.is_authenticated %}
+  </div>
+  <div class="navbar-end">
+    <div class="navbar-item">
+      {% if user.is_authenticated %}
+      {% if request.user|has_group:'Administrador' %}
+      <a role="button" href="{% url 'inscricoes:estatisticas' %}" class="button is-text"
+        style="margin-right: 0.9rem">
+        <span class="icon">
+          <i class="fa fa-chart-pie" style="font-size: 20px;"></i>
+        </span>
+      </a>
+      {% endif %}
+
         <div class="dropdown is-bottom-left is-mobile-modal">
 
           <div onclick="notificacoes()">

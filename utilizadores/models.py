@@ -209,7 +209,10 @@ class Colaborador(Utilizador):
         horarios = self.get_horarios_disponiveis()
         atividades = []
         for horario in horarios:
-            atividades.append(amodels.Atividade.objects.filter(inicio__gte=horario.inicio,fim__lte=horario.fim,estado="Aceite",professoruniversitarioutilizadorid__faculdade=self.faculdade))
+            sessoes= amodels.Sessao.objects.filter(horarioid__fim__gte=horario.inicio,horarioid__fim__lte=horario.fim,atividadeid__estado="Aceite",atividadeid__professoruniversitarioutilizadorid__faculdade=self.faculdade, dia=horario.dia)
+        
+        for sessao in sessoes:
+            atividades.append(sessao.atividadeid)
         atividades = list(dict.fromkeys(atividades))
         return list_to_queryset(amodels.Atividade,atividades)
 

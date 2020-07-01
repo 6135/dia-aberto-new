@@ -76,21 +76,19 @@ class ColaboradorAtividadesTable(django_tables.Table):
         return str(record.professoruniversitarioutilizadorid.full_name)
 
     def render_tema(self,record):
-        return str(record.tema.nome)    
+        return str(record.tema.tema)    
     
     def render_acoes(self,record):
         return format_html(f"""
             <div>
-                    <a id='edit' href="{reverse('#', kwargs={'id':record.pk})}">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-circle-edit-outline mdi-24px"></i>
+                <a id='edit' href="{reverse('colaboradores:selecionar-atividade', kwargs={'id':record.pk})}">
+                    
+                        <span class="icon is-small" style="margin-left:18%">
+                        <div data-tooltip="Escolher Atividade">
+                            <i class="mdi mdi-calendar-check mdi-24px"></i>
+                            </div> 
                         </span>
-                    </a>
-                &nbsp;               
-                    <a onclick="alert.render('Tem a certeza que pretende eliminar esta Atividade?','{reverse('#', kwargs={'id':record.pk})}')">
-                        <span class="icon is-small">
-                            <i class="mdi mdi-trash-can-outline mdi-24px" style="color: #ff0000"></i>
-                        </span>
-                    </a> 
+                       
+                </a>
             </div> 
         """)
