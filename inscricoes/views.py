@@ -24,6 +24,7 @@ from configuracao.models import Departamento, Diaaberto
 from datetime import datetime
 import pytz
 from configuracao.tests.test_models import create_open_day
+from _datetime import timedelta
 
 
 def InscricaoPDF(request, pk):
@@ -333,3 +334,36 @@ def ApagarInscricao(request, pk):
         add_vagas_sessao(sessaoid, nparticipantes)
     inscricao.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def estatisticas(request, diaabertoid=None):
+    """ View que mostra as estatísticas do Dia Aberto """
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    if diaabertoid is None:
+        try:
+            diaabertoid = Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id
+        except:
+            return redirect('utilizadores:mensagem', 17)
+    diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+    numdays = int((diaaberto.datadiaabertofim -
+                   diaaberto.datadiaabertoinicio).days)+1
+    dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
+             ).strftime("%d/%m/%Y") for x in range(numdays)]
+    return render(request, 'inscricoes/estatisticas.html', {
+        'diaaberto': diaaberto,
+        'diasabertos': Diaaberto.objects.all(),
+        'departamentos': Departamento.objects.filter(
+            Exists(
+                Atividade.objects.filter(
+                    professoruniversitarioutilizadorid__departamento__id=OuterRef(
+                        'id'),
+                    diaabertoid__id=diaabertoid,
+                )
+            )
+        ),
+        'dias': dias,
+        'meios': Inscricao.MEIO_TRANSPORTE_CHOICES,
+    })

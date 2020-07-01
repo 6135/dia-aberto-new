@@ -28,4 +28,8 @@ urlpatterns = [
          'alterar-inscricao'),
     path('apagar/<int:pk>', views.ApagarInscricao,
          name='apagar-inscricao'),
+    path('estatisticas', views.estatisticas,
+         name='estatisticas'),
+    path('estatisticas/<int:diaabertoid>', views.estatisticas,
+         name='estatisticas'),
 ]
