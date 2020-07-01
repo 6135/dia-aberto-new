@@ -8,6 +8,7 @@ from atividades import models as amodels
 from colaboradores.models import ColaboradorHorario
 from coordenadores import models as coordmodels
 from django.db.models import Q
+
 class Utilizador(User):
     contacto = PhoneNumberField(max_length=20, blank=False, null=False)
     valido = models.CharField(max_length=255, blank=False, null=False)
@@ -201,7 +202,10 @@ class Colaborador(Utilizador):
         horarios = self.get_horarios_disponiveis()
         atividades = []
         for horario in horarios:
-            atividades.append(amodels.Atividade.objects.filter(inicio__gte=horario.inicio,fim__lte=horario.fim,estado="Aceite",professoruniversitarioutilizadorid__faculdade=self.faculdade))
+            sessoes= amodels.Sessao.objects.filter(horarioid__fim__gte=horario.inicio,horarioid__fim__lte=horario.fim,atividadeid__estado="Aceite",atividadeid__professoruniversitarioutilizadorid__faculdade=self.faculdade, dia=horario.dia)
+        
+        for sessao in sessoes:
+            atividades.append(sessao.atividadeid)
         atividades = list(dict.fromkeys(atividades))
         return list_to_queryset(amodels.Atividade,atividades)
 
