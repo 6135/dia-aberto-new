@@ -82,18 +82,11 @@
                   </thead>
                   <tbody id='tableBody-01'>
                   {% for form in formset %}
-                  {{form.non_field_errors}}
   
                     <tr>
                       {{form.id}}
                       {% for field in form.visible_fields  %}
                         {% if field.name != "DELETE" %}
-                          {% for error in field.errors %}
-                            <div class="alert alert-danger">
-                              <strong>{{field.name|escape}} - {{ error|escape }}</strong>
-                            </div>
-                          {% endfor %}
-                          
                             <td data-label="{{field.label}}">
                               {% if field.label == "Tipo"%}
                                 <span class="select is-fullwidth is-empty" required>
@@ -102,6 +95,14 @@
                               {% else %}
                                 {{field|force_required|safe}}
                               {% endif %}
+                            {% for error in field.errors %}
+                              <div class="is-danger">
+                                <p style="text-align: center;">
+                                  <strong>{{ error|escape }}</strong>
+                                </p>
+                              </div>
+                            {% endfor %}
+
                             </td>
                           
                         {% endif %}
