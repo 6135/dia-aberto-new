@@ -14,7 +14,17 @@
 	<form method="POST" action="">
 		<div id="id_removed_rows" style="display:none;"></div>
 		{% csrf_token %}
-		{{ form.non_field_errors }}
+    {% if form.non_field_errors %}
+      <article class="message is-danger">
+        <div class="message-body">
+          <p style="text-align: center;">
+          {% for error in form.non_field_errors %}
+            <strong>{{ error|escape }}</strong>
+          {% endfor %}
+          </p>
+        </div>
+      </article>
+    {% endif %}
 		<div class="b-steps">
 			<section class="step-content">
 				<div class="step-item">

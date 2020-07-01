@@ -13,7 +13,17 @@
 	<form method="post" enctype="multipart/form-data">
 		<div id="id_removed_rows" style="display:none;"></div>
 		{% csrf_token %}
-		{{ form.non_field_errors }}
+    {% if form.non_field_errors %}
+      <article class="message is-danger">
+        <div class="message-body">
+          <p style="text-align: center;">
+          {% for error in form.non_field_errors %}
+            <strong>{{ error|escape }}</strong>
+          {% endfor %}
+          </p>
+        </div>
+      </article>
+    {% endif %}
 		<div class="b-steps">
 			<section class="step-content">
 				<div class="step-item">
@@ -175,13 +185,14 @@ $('#del-row').click(function(e){
 		value = Number(value) - Number('1');
 		document.getElementById("id_form-TOTAL_FORMS").value = value;
 	} else if(rowCount > 1){
-		var form_delete = 'form-'+Number(value-1)+'-DELETE';
+		var id = Number($('#table01 tr:last input').attr('id').split('-')[1])
+		var form_delete = 'form-'+id+'-DELETE';
 		var delete_ = "<input type='hidden' name='"+form_delete+"' id='id_"+form_delete+"' value='on'>";
 		$('#table01 tr:last').append(delete_);
 		$('#table01 tr:last').hide();
 		$('#table01 tr:last').appendTo("#id_removed_rows");
 	} else {
-		alert.warning("Não pode eliminar todas as rotas");
+		alert.warning("Não pode eliminar todas as salas");
 	}
 })
   const fileInput = document.querySelector('#file-js-example input[type=file]');
