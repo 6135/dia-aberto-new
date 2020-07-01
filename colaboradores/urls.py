@@ -6,8 +6,11 @@ app_name = 'colaboradores'
 
 
 urlpatterns = [
-    path('consultartarefas', views.consultar_tarefas.as_view(), name='consultar-tarefas'),
-    path('disponibilidade', views.minha_disponibilidade, name='minha-disponibilidade'),
+    path('consultartarefas', views.consultar_tarefas.as_view(),
+         name='consultar-tarefas'),
+    path('disponibilidade', views.minha_disponibilidade,
+         name='minha-disponibilidade'),
+    path('concluirdisponibilidade', views.concluir_disponibilidade, name='concluir-disponibilidade'),
     path('concluirtarefa/<int:id>', views.concluir_tarefa, name='concluir-tarefa'),
     path('iniciartarefa/<int:id>', views.iniciar_tarefa, name='iniciar-tarefa'),
     path('cancelartarefa/<int:id>', views.cancelar_tarefa, name='cancelar-tarefa'),
@@ -15,4 +18,6 @@ urlpatterns = [
          views.rejeitar_cancelamento_tarefa, name='rejeitar-cancelamento-tarefa'),
     path('validarcancelamentotarefa/<int:id_notificacao>',
          views.validar_cancelamento_tarefa, name='validar-cancelamento-tarefa'),
+
+    path('ajax/addHorarioRow', views.newHorarioRow, name='ajaxAddHorarioRow'),
 ]
