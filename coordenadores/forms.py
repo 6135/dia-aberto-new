@@ -69,16 +69,20 @@ class TarefaAuxiliarForm(Form):
         
 
 
-def get_inscricao_choices():
-    return [('','Escolha um grupo')]+[(grupo.id,'Grupo '+str(grupo.id)) for grupo in Inscricao.objects.filter(individual=False)]
+def get_inscricao_choices(facul):
+    return [('','Escolha um grupo')]+[(grupo.id,'Grupo '+str(grupo.id)) for grupo in Inscricao.get_tarefa_grupos(facul)]
 
 class TarefaAcompanharForm(Form):
-    grupo = ChoiceField(widget=Select(attrs={'onchange':'diasGrupo();grupoInfo();grupoHorario();grupoOrigem();grupoDestino();'}),choices=get_inscricao_choices)
+    grupo = ChoiceField(widget=Select(attrs={'onchange':'diasGrupo();grupoInfo();grupoHorario();grupoOrigem();grupoDestino();'}))
     dia = DateField(widget=Select(attrs={'onchange':'grupoHorario()'}))
     horario = TimeField(widget=Select(attrs={'onchange':'grupoOrigem()'}))
     origem = CharField(widget=Select(attrs={'onchange':'grupoDestino()'}))
     destino = CharField(widget=Select(attrs={'onchange':'colaboradoresSelect()'}))
     colab = CharField(widget=Select(),required=False)
+
+    def __init__(self,facul,*args, **kwargs):
+        super(TarefaAcompanharForm,self).__init__(*args, **kwargs)
+        self.fields['grupo'] =  ChoiceField(widget=Select(attrs={'onchange':'diasGrupo();grupoInfo();grupoHorario();grupoOrigem();grupoDestino();'}),choices = get_inscricao_choices(facul))
     
     def save(self,user,id):
         data = self.cleaned_data
@@ -109,6 +113,8 @@ class TarefaAcompanharForm(Form):
             Tarefa.objects.filter(id=id).update(nome= nome,estado= estado,coord=user,colab=colab,dia=data.get('dia'),horario=data.get('horario'))
             TarefaAcompanhar.objects.filter(tarefaid=id).update(origem=origem,destino=str(destino.id),inscricao=grupo)
             return id
+    
+    
 
 
 class TarefaOutraForm(Form):

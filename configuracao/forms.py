@@ -108,7 +108,7 @@ class menuForm(ModelForm):
         }
         error_messages = {
             NON_FIELD_ERRORS: {
-                'unique_together': "O conjunto Campus, dia aberto e dia não são unicos",
+                'unique_together': "O conjunto Campus, dia aberto e dia não é unico",
             }
         }
 

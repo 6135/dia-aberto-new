@@ -258,7 +258,9 @@
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
-          $("#id_dia").html(data);           
+          $("#id_dia").html(data);  
+          $("#id_origem").html('<option value="">Escolha o local de encontro</option>');   
+          $("#id_destino").html('<option value="">Escolha o local de destino</option>');            
         }
       });
     }
@@ -298,7 +300,8 @@
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   
-          $("#id_origem").html(data);           
+          $("#id_origem").html(data); 
+          $("#id_destino").html('<option value="">Escolha o local de destino</option>');          
         }
       });
     }
@@ -307,6 +310,7 @@
       var dia = document.getElementById("id_dia").value;
       var grupo_id = document.getElementById("id_grupo").value; 
       var horario = document.getElementById("id_horario").value;
+      var origem = document.getElementById("id_origem").value;
       var tarefa = "{{tarefa.id}}";
       $.ajax({                       
         url: "{% url 'coordenadores:locaisDestino' %}", 
@@ -316,6 +320,7 @@
             'grupo_id' : grupo_id,
             'horario' : horario,
             'tarefa':tarefa,
+            'origem':origem,
             csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
         },
         success: function (data) {   

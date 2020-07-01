@@ -1,5 +1,6 @@
 {% extends 'app.html' %}
 {% load django_tables2 %}
+{% load inscricoes_extras %}
 {% load static %}
 
 {% block title %}- Consultar Inscrições
@@ -62,10 +63,33 @@
             </div>
             <div class="menu-list content">
                 <form method="get">
+                    <div class="field">
+                        <div class="control has-icons-left">
+                            <div class="select is-fullwidth">
+                                <select name="{{ filter.form.diaaberto.name }}" value="{{filter.form.diaaberto.value}}">
+                                    {% for value, diaaberto in filter.form.fields.diaaberto.choices %}
+                                    {% if value != "" %}
+                                    <option value="{{ value }}"
+                                        {% if value|stringformat:'s' == filter.form.diaaberto.value %} selected
+                                        {% endif %}>
+                                        {{ diaaberto }}
+                                    </option>
+                                    {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                    </div>
                     <b-field>
                         <b-datepicker v-model="dia" :date-formatter="(d) => moment(d).format('DD/MM/YYYY')"
                             :date-parser="(date) => moment(date, 'DD/MM/YYYY').toDate()" editable
-                            placeholder="Dia da visita" name="{{filter.form.dia.name}}" icon="calendar-today">
+                            placeholder="Dia da visita" name="{{filter.form.dia.name}}" icon="calendar-today"
+                            :focused-date="moment('{{filter.form.diaaberto.value|min_date}}', 'DD/MM/YYYY').toDate()"
+                            :min-date="moment('{{filter.form.diaaberto.value|min_date}}', 'DD/MM/YYYY').toDate()"
+                            :max-date="moment('{{filter.form.diaaberto.value|max_date}}', 'DD/MM/YYYY').toDate()">
                         </b-datepicker>
                     </b-field>
                     <div class="field">
@@ -116,6 +140,25 @@
                                     {% endfor %}
                                 </select>
                             </div>
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control has-icons-left">
+                            <input class="input" name="{{ filter.form.ano.name }}"
+                                value="{{ filter.form.ano.value|default_if_none:'' }}" type="number" placeholder="Ano">
+                            <span class="icon is-left">
+                                <i class="mdi mdi-magnify mdi-24px"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control has-icons-left">
+                            <input class="input" name="{{ filter.form.turma.name }}"
+                                value="{{ filter.form.turma.value|default_if_none:'' }}" type="text"
+                                placeholder="Turma">
                             <span class="icon is-left">
                                 <i class="mdi mdi-magnify mdi-24px"></i>
                             </span>

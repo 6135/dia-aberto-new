@@ -11,11 +11,13 @@ from django.core.management import call_command
 from inscricoes.models import Inscricao, Escola, Responsavel
 import datetime
 from utilizadores.tests.test_models import create_Participante_0
-from atividades.models import Atividade, Tema
+from atividades.models import Atividade, Tema, Sessao, date
 from inscricoes.tests.samples import create_Diaaberto_0, create_Espaco_0, create_Sessao_0, create_Sessao_1, create_Sessao_2, create_Transporte_0, create_Transportehorario_0, create_Horario_0, create_Horario_1, create_Horario_2
 from notificacoes.tests.test_models import create_MensagemRecebida_0
 from selenium.webdriver.support.wait import WebDriverWait
 from seleniumlogin import force_login
+import time
+from selenium.webdriver.support.ui import Select
 
 
 def create_Inscricao_0():
@@ -27,12 +29,12 @@ def create_Inscricao_0():
         turma="A",
         areacientifica="Ciências e Tecnologia",
         participante=create_Participante_Rafael(),
-        dia=datetime.date(2020, 8, 21),
+        dia=datetime.date(2020, 8, 28),
         diaaberto=create_Diaaberto_0(),
         meio_transporte='comboio',
         hora_chegada=datetime.time(10, 30, 00),
         local_chegada="Estação de Comboios de Faro",
-        entrecampi=True,
+        entrecampi=False,
     )[0]
 
 
@@ -142,7 +144,17 @@ def create_Atividade_0():
     )[0]
 
 
-class CriarInscricaoChromeTest(StaticLiveServerTestCase):
+def create_Sessao_1():
+    return Sessao.objects.get_or_create(
+        ninscritos=0,
+        vagas=25,
+        atividadeid=create_Atividade_0(),
+        dia=date(1970, 1, 2),
+        horarioid=create_Horario_1(),
+    )[0]
+
+
+class CriarInscricaoTest(StaticLiveServerTestCase):
     """ Testes funcionais do criar inscrição no Chrome """
 
     @classmethod
@@ -157,15 +169,13 @@ class CriarInscricaoChromeTest(StaticLiveServerTestCase):
         cls.driver.implicitly_wait(10)
 
     def setUp(self):
-        self.inscricao = create_Inscricao_0()
-        self.inscricao.save()
-        self.atividade = create_Atividade_0()
-        self.atividade.save()
-        self.responsavel = create_Responsavel_0()
-        self.responsavel.save()
+        self.diaAberto = create_Diaaberto_0()
+        self.sessao = create_Sessao_1()
+        self.sessao.save()
+        self.participante = create_Participante_Rafael()
         group = Group.objects.get(name='Participante')
-        group.user_set.add(self.inscricao.participante)
-        force_login(self.inscricao.participante,
+        group.user_set.add(self.participante)
+        force_login(self.participante,
                     self.driver, self.live_server_url)
 
     @classmethod
@@ -173,9 +183,8 @@ class CriarInscricaoChromeTest(StaticLiveServerTestCase):
         cls.driver.quit()
         super().tearDownClass()
 
-    def test_criar_inscricao_Responsavel(self):
+    def test_criar_inscricao_1(self):
         self.driver.get('%s%s' % (self.live_server_url, reverse('home')))
-        self.driver.set_window_size(1918, 1027)
         self.driver.find_element(By.LINK_TEXT, "Criar Inscrição").click()
         assert self.driver.find_element(
             By.CSS_SELECTOR, ".button:nth-child(2) > span:nth-child(2)").text == "Escola (Turma)"
@@ -186,6 +195,101 @@ class CriarInscricaoChromeTest(StaticLiveServerTestCase):
         assert self.driver.find_element(
             By.CSS_SELECTOR, ".column:nth-child(2) .label").text == "E-mail"
         element = self.driver.find_element(By.ID, "id_responsaveis-nome")
+        assert element.is_enabled() is True
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".is-success > span:nth-child(1)").click()
+        # escola
+        button = self.driver.find_element(By.NAME, "escola-dia")
+        self.driver.execute_script("arguments[0].click();", button)
+        time.sleep(1)
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".is-selectable:nth-child(6) > span").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".b-numberinput .input").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".b-numberinput .input").send_keys("2")
+        self.driver.find_element(By.ID, "id_escola-nome_escola").click()
+        self.driver.find_element(
+            By.ID, "id_escola-nome_escola").send_keys("Judice Fialho")
+        self.driver.find_element(By.ID, "id_escola-local").click()
+        self.driver.find_element(
+            By.ID, "id_escola-local").send_keys("Portimao")
+        self.driver.find_element(By.ID, "id_escola-ano").click()
+        self.driver.find_element(By.ID, "id_escola-ano").send_keys("12")
+        self.driver.find_element(By.ID, "id_escola-turma").click()
+        self.driver.find_element(By.ID, "id_escola-turma").send_keys("A")
+        self.driver.find_element(By.ID, "id_escola-areacientifica").click()
+        self.driver.find_element(
+            By.ID, "id_escola-areacientifica").send_keys("Ciências e Tecnologia")
+        element = self.driver.find_element(
+            By.CSS_SELECTOR, ".b-numberinput .input")
+        assert element.is_enabled() is True
+        element = self.driver.find_element(By.NAME, "escola-dia")
+        assert element.is_enabled() is True
+        value = self.driver.find_element(
+            By.ID, "id_escola-nome_escola").get_attribute("value")
+        assert value == "Judice Fialho"
+        value = self.driver.find_element(
+            By.ID, "id_escola-areacientifica").get_attribute("value")
+        assert value == "Ciências e Tecnologia"
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".is-success > span:nth-child(1)").click()
+        # transporte
+        time.sleep(1)
+        self.driver.find_element(By.NAME, "transporte-meio").click()
+        dropdown = Select(self.driver.find_element(By.NAME, "transporte-meio"))
+        dropdown.select_by_visible_text("Comboio")
+        #self.driver.find_element(By.NAME, "transporte-meio").click()
+        self.driver.find_element(By.NAME, "transporte-hora_chegada").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".control:nth-child(1) select").click()
+        dropdown = Select(self.driver.find_element(
+            By.CSS_SELECTOR, ".control:nth-child(1) select"))
+        dropdown.select_by_visible_text("10")
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".control:nth-child(1) select").click()
+        self.driver.find_element(By.CSS_SELECTOR, ".is-empty > select").click()
+        dropdown = Select(self.driver.find_element(
+            By.CSS_SELECTOR, ".is-empty > select"))
+        dropdown.select_by_visible_text("30")
+        assert self.driver.find_element(
+            By.CSS_SELECTOR, ".is-4 .label").text == "Meio de transporte"
+        value = self.driver.find_element(
+            By.NAME, "transporte-local_chegada").get_attribute("value")
+        assert value == "Estação de Comboios de Faro"
+        element = self.driver.find_element(By.NAME, "transporte-hora_chegada")
+        assert element.is_enabled() is True
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".is-success > span:nth-child(1)").click()
+        # almoço
+        self.driver.find_element(By.ID, "id_almoco-campus").click()
+        dropdown = Select(self.driver.find_element(By.ID, "id_almoco-campus"))
+        dropdown.select_by_visible_text("Gambelas")
+        time.sleep(1)
+        self.driver.find_element(By.ID, "id_almoco-campus").click()
+        self.driver.find_element(By.NAME, "almoco-npratosalunos").click()
+        self.driver.find_element(
+            By.NAME, "almoco-npratosalunos").send_keys("1")
+        # self.driver.find_element(By.NAME, "almoco-npratosdocentes").click()
+        # self.driver.find_element(
+        #     By.NAME, "almoco-npratosdocentes").send_keys("1")
+        assert self.driver.find_element(
+            By.CSS_SELECTOR, ".is-5 .label").text == "Campus"
+        element = self.driver.find_element(By.NAME, "almoco-npratosalunos")
+        assert element.is_enabled() is True
+        element = self.driver.find_element(By.NAME, "almoco-npratosdocentes")
+        assert element.is_enabled() is True
+        self.driver.find_element(
+            By.CSS_SELECTOR, ".is-success > span:nth-child(1)").click()
+        # sessoes
+        time.sleep(1)
+        self.driver.find_element(By.CSS_SELECTOR, "td:nth-child(2)").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, "tr:nth-child(1) .input").click()
+        self.driver.find_element(
+            By.CSS_SELECTOR, "tr:nth-child(1) > td:nth-child(3) .input").send_keys("1")
+        element = self.driver.find_element(
+            By.CSS_SELECTOR, "tr:nth-child(1) .input")
         assert element.is_enabled() is True
         self.driver.find_element(
             By.CSS_SELECTOR, ".is-success > span:nth-child(1)").click()

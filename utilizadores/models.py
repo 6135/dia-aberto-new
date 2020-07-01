@@ -8,7 +8,6 @@ from atividades import models as amodels
 from colaboradores.models import ColaboradorHorario
 from coordenadores import models as coordmodels
 from django.db.models import Q
-
 class Utilizador(User):
     contacto = PhoneNumberField(max_length=20, blank=False, null=False)
     valido = models.CharField(max_length=255, blank=False, null=False)
@@ -162,15 +161,13 @@ class Colaborador(Utilizador):
     @staticmethod
     def get_free_colabs(coord,dia,horario,sessao=None):
         free_colabs=[]
-        print(horario)
         colabs = Colaborador.objects.filter(faculdade = coord.faculdade,utilizador_ptr_id__valido=True)
         free = True
-        for colab in colabs:      
+        for colab in colabs: 
             tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,horario=horario,dia=dia)
             if tarefas.exists():
                 continue
             elif sessao is not None:
-                print(sessao)
                 s = amodels.Sessao.objects.get(id=int(sessao))
                 inicio = s.horarioid.inicio
                 fim = s.horarioid.fim
@@ -180,10 +177,17 @@ class Colaborador(Utilizador):
                     continue
                 free_colabs.append(colab)
             elif sessao is None:
+                free=True
+                tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia)
+                for t in tarefas:
+                    h = datetime.strptime(horario,'%H:%M')     
+                    if datetime.strptime(str(t.horario),'%H:%M:%S') - h <  timedelta(hours=0,minutes=15,seconds=0) and h - datetime.strptime(str(t.horario),'%H:%M:%S') > timedelta(days=-1,hours=23,minutes=45) :
+                        free=False     
                 if coordmodels.TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia)\
                     .filter(sessao__horarioid__inicio__lte=horario,sessao__horarioid__fim__gte=horario).exists(): 
                     continue
-                free_colabs.append(colab)
+                if free == True:
+                    free_colabs.append(colab)
 
         print(free_colabs)
         return free_colabs

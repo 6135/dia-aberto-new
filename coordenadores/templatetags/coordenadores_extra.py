@@ -6,7 +6,7 @@ from utilizadores.models import Colaborador
 from coordenadores.models import *
 from django.utils.html import format_html
 from atividades.models import Sessao
-
+from datetime import datetime,timedelta
 @register.filter
 def colab_none(colab):
     if colab is None or str(colab) == 'None':
@@ -26,7 +26,6 @@ def local(id):
 def free_colabs(coord,dia,horario,sessao=None):
         free_colabs=[]
         html = ''
-        print('sessao: '+str(sessao))
         colabs = Colaborador.objects.filter(faculdade = coord.faculdade,utilizador_ptr_id__valido=True)
         free = True
         for colab in colabs:      
@@ -43,10 +42,17 @@ def free_colabs(coord,dia,horario,sessao=None):
                     continue
                 free_colabs.append(colab)
             elif sessao is None:
+                free=True
+                tarefas = Tarefa.objects.filter(colab = colab.id,dia=dia)
+                for t in tarefas:
+                    h = datetime.strptime(str(horario),'%H:%M:%S')
+                    if datetime.strptime(str(t.horario),'%H:%M:%S') - h >  timedelta(days=-1,hours=23,minutes=45) and h - datetime.strptime(str(t.horario),'%H:%M:%S') <  timedelta(minutes=15):
+                        free=False  
                 if TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia)\
                     .filter(sessao__horarioid__inicio__lte=horario,sessao__horarioid__fim__gte=horario).exists(): 
                     continue
-                free_colabs.append(colab)
+                if free == True:
+                    free_colabs.append(colab)
         if len(free_colabs) == 0:
             html = "<option disabled value="" hidden selected>Não existe colaboradores disponíveis</option>"
         else:
