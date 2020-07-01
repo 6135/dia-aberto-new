@@ -5,6 +5,7 @@ from configuracao.models import *
 from atividades.models import Atividade
 from configuracao import views
 import json
+from django.utils.html import format_html
 
 register = template.Library()
 
@@ -67,3 +68,12 @@ def vagas_cap(value):
 @register.filter
 def pretty_json(value):
     return json.dumps(value, indent=4)
+
+@register.simple_tag
+def current_email():
+    return format_html(Diaaberto.current().emaildiaaberto)
+
+@register.simple_tag
+def current_ano():
+    return Diaaberto.current().ano
+

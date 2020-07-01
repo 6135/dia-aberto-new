@@ -4,7 +4,7 @@
 {% block title %}- Página Inicial{% endblock title %}
 
 {% block content %}
-
+{% load configuracao_tags %}
 {% load static %}
 <div>
   <div class="section">
@@ -28,10 +28,10 @@
     <div class="hero-body">
       <div class="columns">
         <div class="column is-8">
-          <p>Dia Aberto 2021</p>
+          <p>Dia Aberto {% current_ano %}</p>
           <small>
             Contacto de suporte:
-            <a href="">diaaberto2021@ualg.pt</a>
+            <a href="">{% current_email %}</a>
           </small>
         </div>
         <div class="column">
