@@ -177,14 +177,21 @@ def colaboradores(request):
         coordenador = Coordenador.objects.get(id = request.user.id)
         if horario !='':
             colabs = Colaborador.get_free_colabs(coord = coordenador,dia = dia, horario=horario, sessao = sessao)
-            options = [{
-                        'key': '',
-                        'value': 'Não atribuir'
-                    }]+[{
-                        'key':	str(colab.utilizador_ptr_id),
-                        'value':	str(colab.full_name)
-                    } for colab in colabs
-                ]
+            if len(colabs)==0:
+                default = {
+                    'key': '',
+                    'value': 'Não existem colaboradores disponíveis'
+                }
+            else:
+                options = [{
+                            'key': '',
+                            'value': 'Não atribuir'
+                        }]+[{
+                            'key':	str(colab.utilizador_ptr_id),
+                            'value':	str(colab.full_name)
+                        } for colab in colabs
+                    ]
+            
     return render(request=request,
                 template_name='configuracao/dropdown.html',
                 context={'options':options, 'default': default}

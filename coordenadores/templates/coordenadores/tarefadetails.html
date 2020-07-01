@@ -115,10 +115,11 @@
                     <div class="control is-expanded">
                         <span class="select is-fullwidth is-empty">
                             <select name="colab">
-                                <option disabled="disabled" value="" hidden selected>Colaborador a atribuir...</option>
-                                {% for value,colab in  table.colabs%}
-                                <option value="{{ value }}">{{colab}}</option>
-                                {% endfor %} 
+                                {% if  row.record.tipo == "tarefaAuxiliar" %}
+                                    {% free_colabs row.record.coord row.record.dia row.record.horario row.record.tarefaauxliar.sessao.id %}
+                                {% else %}
+                                    {% free_colabs row.record.coord row.record.dia row.record.horario  %}
+                                {% endif %}
                             </select>
                         </span> 
                     </div>
@@ -137,3 +138,5 @@
 {% endif %}
 
 {% endblock details_content %}
+
+

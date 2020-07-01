@@ -124,7 +124,6 @@ class Inscricao(models.Model):
 
         return destino
 
-
 class Responsavel(models.Model):
     inscricao = models.ForeignKey(Inscricao, models.CASCADE)
     nome = models.CharField(max_length=128)
