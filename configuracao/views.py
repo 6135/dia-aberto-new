@@ -219,14 +219,14 @@ def delMenu(request, id = None):
 	menu.delete()
 	return redirect('configuracao:verMenus')
 
-def menuPratoFormset(extra = 0, minVal = 1):
+def menuPratoFormset(extra = 0, minVal = 1, max = 1000):
 	formSets = modelformset_factory(model=Prato, exclude = ['id','menuid'],widgets={
 			'tipo': Select(attrs={'class': 'input'}),
 			'prato': TextInput(attrs={'class': 'input'}),
 			'nrpratosdisponiveis': NumberInput(attrs={'class': 'input', 'min':'1','style':'width: 30%'}),
 		},labels={
 			'nrpratosdisponiveis': '# Pratos'
-		}, extra = extra, min_num = minVal, can_delete=True)
+		}, extra = extra, min_num = minVal, max_num = max, can_delete=True)
 	return formSets
 
 def delPrato(request, id):
@@ -302,7 +302,15 @@ def criarTransporte(request, id = None):
 
 	user_check_var = user_check(request=request, user_profile=[Administrador])
 	if user_check_var.get('exists') == False: return user_check_var.get('render')
-
+	if Diaaberto.current() is None:
+		return {'exists': False, 
+            'render': render(request=request,
+                template_name='mensagem.html',
+                context={
+                    'tipo':'error',
+                    'm':'Crie um dia aberto primeiro!'
+                })
+            }
 	#vars
 	transport_by_default = Transporte()
 	transport_universitario_default = Transporteuniversitario(transporte=transport_by_default)
@@ -334,6 +342,7 @@ def criarTransporte(request, id = None):
 			for instance in instances:
 				instance.transporte = transport
 				instance.save()
+
 			for instance in horario_form_set.deleted_objects:
 				instance.delete()
 

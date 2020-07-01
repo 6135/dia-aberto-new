@@ -33,6 +33,9 @@
       <a href="{% url 'colaboradores:consultar-tarefas' %}" class="navbar-item">
         Minhas Tarefas
       </a>
+      <a href="{% url 'colaboradores:minha-disponibilidade' %}" class="navbar-item">
+        Minha Disponibilidade
+      </a>
       {% elif request.user|has_group:'ProfessorUniversitario'%}
       <a href="{% url 'atividades:minhasAtividades' %}" class="navbar-item">
         Minhas Atividades
