@@ -36,7 +36,6 @@
         computed: {
             dia: () => {
                 let result = moment("{{ form.dia.value|default_if_none:'null' }}", "DD/MM/YYYY").toDate()
-                console.log("{{ form.dia.value|default_if_none:'null' }}")
                 if (isNaN(result)) return null;
                 return result;
             },

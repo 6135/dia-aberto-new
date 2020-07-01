@@ -24,6 +24,7 @@ from configuracao.models import Departamento, Diaaberto
 from datetime import datetime
 import pytz
 from configuracao.tests.test_models import create_open_day
+from _datetime import timedelta
 
 
 def InscricaoPDF(request, pk):
@@ -115,8 +116,23 @@ class CriarInscricao(SessionWizardView):
         # Envia a informação extra necessária para o formulário atual, após preenchê-lo.
         # Necessário para algumas validações especiais de backend, como verificar o número de alunos
         # inscritos para verificar inscritos nos almoços e nas sessões.
-        update_post(request.POST.get(
-            'criar_inscricao-current_step', self.steps.current), request.POST, self)
+        current_step = request.POST.get(
+            'criar_inscricao-current_step', self.steps.current)
+        update_post(current_step, request.POST, self)
+        go_to_step = self.request.POST.get(
+            'wizard_goto_step', None)  # get the step name
+        if go_to_step is not None:
+            form = self.get_form(data=self.request.POST,
+                                 files=self.request.FILES)
+
+            if self.get_cleaned_data_for_step(current_step):
+                if form.is_valid():
+                    self.storage.set_step_data(self.steps.current,
+                                               self.process_step(form))
+                    self.storage.set_step_files(self.steps.current,
+                                                self.process_step_files(form))
+                else:
+                    return self.render(form)
         return super(CriarInscricao, self).post(*args, **kwargs)
 
     def done(self, form_list, form_dict, **kwargs):
@@ -199,7 +215,7 @@ class ConsultarInscricao(View):
                     add_vagas_sessao(inscricao_sessao.sessao.id,
                                      inscricao_sessao.nparticipantes)
             if form.is_valid():
-                save_form(self.step_names[step], form, inscricao)
+                save_form(request, self.step_names[step], form, inscricao)
                 return HttpResponseRedirect(reverse('inscricoes:consultar-inscricao', kwargs={'pk': pk, 'step': step}))
             if self.step_names[step] == 'sessoes':
                 for inscricao_sessao in inscricoessessao:
@@ -230,9 +246,19 @@ class ConsultarInscricoes(SingleTableMixin, FilterView):
         table = self.get_table(**self.get_table_kwargs())
         table.fixed = True
         context[self.get_context_table_name(table)] = table
-        context["departamentos"] = list(
-            map(lambda x: (x.id, x.nome), Departamento.objects.all()))
         return context
+
+    def get_filterset_kwargs(self, filterset_class):
+        kwargs = super(ConsultarInscricoes, self).get_filterset_kwargs(
+            filterset_class)
+        if kwargs["data"] is None:
+            kwargs["data"] = {"diaaberto": Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id}
+        elif "diaaberto" not in kwargs["data"]:
+            kwargs["data"] = kwargs["data"].copy()
+            kwargs["data"]["diaaberto"] = Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id
+        return kwargs
 
 
 class MinhasInscricoes(ConsultarInscricoes):
@@ -250,8 +276,8 @@ class MinhasInscricoes(ConsultarInscricoes):
         return Inscricao.objects.filter(participante__user_ptr=self.request.user)
 
 
-class InscricoesDepartamento(ConsultarInscricoes):
-    """ View que gera uma tabela com as inscrições com pelo menos uma sessão do departamento 
+class InscricoesUO(ConsultarInscricoes):
+    """ View que gera uma tabela com as inscrições com pelo menos uma sessão do departamento
     do coordenador """
     template_name = 'inscricoes/consultar_inscricoes_coordenador.html'
 
@@ -260,14 +286,21 @@ class InscricoesDepartamento(ConsultarInscricoes):
             Coordenador])
         if not user_check_var.get('exists'):
             return user_check_var.get('render')
-        coordenador = Coordenador.objects.get(user_ptr=self.request.user)
+        coordenador = Coordenador.objects.get(user_ptr=request.user)
         self.queryset = Inscricao.objects.filter(
             Exists(Inscricaosessao.objects.filter(
                 inscricao=OuterRef('pk'),
-                sessao__atividadeid__professoruniversitarioutilizadorid__departamento=coordenador.departamento
+                sessao__atividadeid__professoruniversitarioutilizadorid__faculdade=coordenador.faculdade
             ))
         )
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        coordenador = Coordenador.objects.get(user_ptr=self.request.user)
+        context["departamentos"] = list(
+            map(lambda x: (x.id, x.nome), Departamento.objects.filter(unidadeorganicaid=coordenador.faculdade)))
+        return context
 
 
 class InscricoesAdmin(ConsultarInscricoes):
@@ -280,6 +313,12 @@ class InscricoesAdmin(ConsultarInscricoes):
         if not user_check_var.get('exists'):
             return user_check_var.get('render')
         return super().dispatch(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["departamentos"] = list(
+            map(lambda x: (x.id, x.nome), Departamento.objects.all()))
+        return context
 
 
 def ApagarInscricao(request, pk):
@@ -295,3 +334,36 @@ def ApagarInscricao(request, pk):
         add_vagas_sessao(sessaoid, nparticipantes)
     inscricao.delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+
+def estatisticas(request, diaabertoid=None):
+    """ View que mostra as estatísticas do Dia Aberto """
+    user_check_var = user_check(request=request, user_profile=[Administrador])
+    if not user_check_var.get('exists'):
+        return user_check_var.get('render')
+    if diaabertoid is None:
+        try:
+            diaabertoid = Diaaberto.objects.filter(
+                ano__lte=datetime.now().year).order_by('-ano').first().id
+        except:
+            return redirect('utilizadores:mensagem', 18)
+    diaaberto = get_object_or_404(Diaaberto, id=diaabertoid)
+    numdays = int((diaaberto.datadiaabertofim -
+                   diaaberto.datadiaabertoinicio).days)+1
+    dias = [(diaaberto.datadiaabertoinicio + timedelta(days=x)
+             ).strftime("%d/%m/%Y") for x in range(numdays)]
+    return render(request, 'inscricoes/estatisticas.html', {
+        'diaaberto': diaaberto,
+        'diasabertos': Diaaberto.objects.all(),
+        'departamentos': Departamento.objects.filter(
+            Exists(
+                Atividade.objects.filter(
+                    professoruniversitarioutilizadorid__departamento__id=OuterRef(
+                        'id'),
+                    diaabertoid__id=diaabertoid,
+                )
+            )
+        ),
+        'dias': dias,
+        'meios': Inscricao.MEIO_TRANSPORTE_CHOICES,
+    })

@@ -243,13 +243,14 @@ def update_context(context, step, wizard=None, inscricao=None):
     elif step == 'almoco':
         diaaberto = Diaaberto.current()
         campi = Campus.objects.all()
+        dia = wizard.get_cleaned_data_for_step('escola')['dia'] if wizard else inscricao.dia
         pratos_info = {}
         for tipoid, tipo in Prato.tipos:
             pratos_info[tipo] = {}
             for campus in campi:
                 pratos_info[tipo][campus] = []
                 menu_filter = Menu.objects.filter(
-                    diaaberto=diaaberto, campus=campus)
+                    diaaberto=diaaberto, campus=campus, dia=dia)
                 if menu_filter.exists():
                     menu = menu_filter.first()
                     for prato in menu.prato_set.filter(tipo=tipoid):
@@ -290,6 +291,8 @@ def update_post(step, POST, wizard=None, inscricao=None):
     prefix = f"{step}-" if wizard else ''
     if step == 'escola':
         try:
+            if not wizard:
+                POST['dia'] = inscricao.dia.strftime("%d/%m/%Y")
             dia = pytz.utc.localize(datetime.strptime(
                 POST[f'{prefix}dia'], "%d/%m/%Y"))
             diaaberto = Diaaberto.objects.filter(
@@ -314,10 +317,10 @@ def update_post(step, POST, wizard=None, inscricao=None):
     POST._mutable = mutable
 
 
-def save_form(step, form, inscricao):
+def save_form(request, step, form, inscricao):
     """
     Função chamada pelas views com passos de formulário (wizard forms)
-    para guardar os conteúdos dos formulários na base de dados
+    para guardar os conteúdos dos formulários na base de dados e enviar email
     """
     if step == 'almoco':
         almoco = form.save(commit=False)
@@ -347,3 +350,4 @@ def save_form(step, form, inscricao):
                 inscricao_sessao.save()
     else:
         form.save()
+    enviar_mail_confirmacao_inscricao(request, inscricao.pk)

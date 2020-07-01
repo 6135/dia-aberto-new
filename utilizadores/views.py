@@ -905,10 +905,13 @@ def mensagem(request, id, *args, **kwargs):
         tipo = "info"  
     elif id == 16:
         m = "Para puder apagar a sua conta deverá concluir primeiro as tarefas que estão iniciadas"
-        tipo = "info"     
+        tipo = "info"                 
     elif id == 17:
         m = "A sua disponibilidade foi alterada com sucesso"
-        tipo = "success"                   
+        tipo = "success"
+    elif id == 18:
+        m = "Antes de poder ver dados e estatísticas é preciso configurar um Dia Aberto."
+        tipo = "error"
     else:
         m = "Esta pagina não existe"
         tipo = "error"                                     

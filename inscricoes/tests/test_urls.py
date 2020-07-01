@@ -5,7 +5,7 @@ from configuracao.models import Diaaberto
 from django.utils.datetime_safe import datetime
 import pytz
 from django.urls import reverse
-from inscricoes.views import InscricaoPDF, CriarInscricao, MinhasInscricoes, InscricoesDepartamento, InscricoesAdmin, ConsultarInscricao, ApagarInscricao
+from inscricoes.views import InscricaoPDF, CriarInscricao, MinhasInscricoes, InscricoesUO, InscricoesAdmin, ConsultarInscricao, ApagarInscricao
 from utilizadores.tests.test_models import create_Participante_0
 from inscricoes.tests.test_models import create_Inscricao_0
 
@@ -67,7 +67,7 @@ class TestInscricoesUrls(TestCase):
         response = self.client.get(
             reverse('inscricoes:consultar-inscricoes-coordenador'))
         self.assertEqual(response.resolver_match.func.__name__,
-                         InscricoesDepartamento.as_view().__name__)
+                         InscricoesUO.as_view().__name__)
 
     def test_url_inscricoes_admin(self):
         """ Testes do url "inscricoesadmin" """
