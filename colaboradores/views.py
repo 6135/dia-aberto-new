@@ -48,7 +48,7 @@ class consultar_tarefas(SingleTableMixin, FilterView):
 class AtividadesColaborador(SingleTableMixin, FilterView):
 	''' Página onde o colaborador escolhe quais são as atividades pelo qual está interessado'''
 	table_class = ColaboradorAtividadesTable
-	template_name = 'colaboradores/preferencia_atividade.html'
+	template_name = 'colaboradores/escolher_atividades.html'
 	filterset_class = ColaboradorAtividadeFilter
 	table_pagination = {
 		'per_page': 10
@@ -70,6 +70,31 @@ class AtividadesColaborador(SingleTableMixin, FilterView):
 		context[self.get_context_table_name(table)] = table
 		return context
 
+
+class AtividadesColaboradorSelecionadas(SingleTableMixin, FilterView):
+	''' Página onde o colaborador escolhe quais vê as atividades que selecionou '''
+	table_class = ColaboradorAtividadesTable
+	template_name = 'colaboradores/minhas_atividades.html'
+	filterset_class = ColaboradorAtividadeFilter
+	table_pagination = {
+		'per_page': 10
+	}
+	
+	def dispatch(self, request, *args, **kwargs):
+		user_check_var = user_check(request=request, user_profile=[Colaborador])
+		if not user_check_var.get('exists'): return user_check_var.get('render')
+		self.user_check_var = user_check_var
+		return super().dispatch(request, *args, **kwargs)
+
+	def get_queryset(self):
+		return self.user_check_var.get('firstProfile').get_atividades_escolhidas()
+	
+	def get_context_data(self, **kwargs):
+		context = super().get_context_data(**kwargs)
+		table = self.get_table(**self.get_table_kwargs())
+		context["deps"] = list(map(lambda x: (x.id, x.nome), Departamento.objects.filter(unidadeorganicaid=self.user_check_var.get('firstProfile').faculdade)))
+		context[self.get_context_table_name(table)] = table
+		return context
 
 
 def ver_departamentos(request):
@@ -190,6 +215,8 @@ def minha_disponibilidade(request):
 
 			return redirect('colaboradores:preferencia-atividade')
 		else:
+			if not "Deverá escolher pelo menos uma preferência de tarefa" in erros:
+				erros.append("Preencha corretamente todos os campos")
 			msg = True
 			
 	return render(request = request,
@@ -250,7 +277,19 @@ def selecionar_atividade(request,id):
 	return render(request=request,
 				  template_name="colaboradores/concluir_disponibilidade.html")
 
+def preferencia_atividade(request):
+	''' Página que permite ao colaborador obtar por escolher as atividades que pretende, ver atividades escolhidas, ou concluir a sua atualização de disponibilidade '''
+	if request.user.is_authenticated:    
+		user = get_user(request)
+		if user.groups.filter(name = "Colaborador").exists():
+			u = "Colaborador"       
+		else:
+			return redirect('utilizadores:mensagem',5) 
+	else:
+		return redirect('utilizadores:mensagem',5)
 
+	return render(request=request,
+				  template_name="colaboradores/preferencia_atividade.html")
 
 def concluir_tarefa(request, id): 
 	''' Funcionalidade de conclusão de uma tarefa do colaborador '''
