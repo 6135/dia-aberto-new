@@ -889,7 +889,7 @@ def mensagem(request, id, *args, **kwargs):
         m = "Não existem notificações"
         tipo = "info"
     elif id == 11:
-        m = "Esta tarefa foi apagada"
+        m = "Esta tarefa deixou de estar atribuída"
         tipo = "error"
     elif id == 12:
         m = "Ainda não é permitido criar inscrições"
