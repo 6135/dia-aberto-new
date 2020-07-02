@@ -14,6 +14,9 @@ class ColaboradorHorario(models.Model):
     class Meta:
         db_table = 'ColaboradorHorario'
 
+    def check_horario(self, dia, inicio, fim):
+        return self.colab.get_tarefas(dia, inicio, fim)
+        
 
 class Preferencia(models.Model):
     id = models.AutoField(db_column='ID', primary_key=True) 

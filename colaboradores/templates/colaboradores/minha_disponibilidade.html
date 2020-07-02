@@ -132,9 +132,9 @@
                 <table class="table has-mobile-cards is-hoverable is-fullwidth" id='table01'>
                     <thead>
                         <tr>
-                            <th style="cursor: pointer">Dia</th>
-                            <th style="cursor: pointer">Hora de Início</th>
-                            <th style="cursor: pointer">Hora de Fim</th>
+                            <th style="cursor: pointer; width: 40%">Dia</th>
+                            <th style="cursor: pointer; width: 30%">Hora de Início</th>
+                            <th style="cursor: pointer; width: 30%">Hora de Fim</th>
                         </tr>
                     </thead>
                     <tbody id='tableBody-01'>
@@ -144,7 +144,7 @@
                             {{form.id}}
                             {% for field in form.visible_fields  %}
                             {% if field.name != "DELETE" %}
-
+    
                              <td data-label="{{field.label}}">
                                 {% if field.label == "Dia" %}
                                 <span class="select is-fullwidth is-empty" required>
@@ -168,15 +168,26 @@
                                 </span>
 
                                 {% else %}
-                                <span class="select is-fullwidth is-empty" required>
                                 {{field|force_required|safe}}
-                                </span>
-                                {% endif %} 
+                                {% endif %}
+                                {% if field.label == 'Inicio' %}
+                                    {% for error in form.non_field_errors %}
+                                        <div class="is-danger is-small">
+                                            <strong>{{ error|escape }}</strong>
+                                        </div>
+                                    {% endfor %}  
+                                {% endif %}                              
+							    {% for error in field.errors %}
+							    	<div class="is-danger">
+							    		<smal><strong>{{field.label|escape}} {{ error|escape }}</strong></smal>
+							    	</div>
+							    {% endfor %}
                             </td>  
 
                             {% endif %}
                             {% endfor %}
                         </tr>
+
                         {% endfor %}
                     </tbody>
                 </table>

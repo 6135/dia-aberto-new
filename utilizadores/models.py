@@ -227,6 +227,14 @@ class Colaborador(Utilizador):
         atividades = list(dict.fromkeys(atividades))
         return list_to_queryset(amodels.Atividade,atividades)
 
+    def get_tarefas(self, dia, inicio, fim):
+        if len(coordmodels.Tarefa.objects.filter(colab=self, horario__gte = inicio, horario__lte = fim, dia = dia))>0:
+            return True
+        elif len(coordmodels.TarefaAuxiliar.objects.filter(tarefaid__colab=self, sessao__horarioid__gte = inicio, sessao__horarioid__lte = fim, sessao__dia = dia))>0:     
+            return True
+        else:
+            return False    
+
 def list_to_queryset(model, data):
     from django.db.models.base import ModelBase
     if not isinstance(model, ModelBase):

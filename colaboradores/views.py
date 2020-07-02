@@ -182,7 +182,7 @@ def minha_disponibilidade(request):
 		tarefas = request.POST.getlist('tipo_tarefa')
 		if tarefas == []: 
 			erros.append("Deverá escolher pelo menos uma preferência de tarefa")
-
+		print(horario_form_set.errors)
 		if values.is_valid() and horario_form_set.is_valid():
 
 			instances = horario_form_set.save(commit=False)
@@ -228,11 +228,7 @@ def minha_disponibilidade(request):
 
 
 def preferenciaHorarioFormset(extra = 0, minVal = 1):
-	formSets = modelformset_factory(model=ColaboradorHorario, exclude = ['colab','id'],widgets={
-			'dia': Select(attrs={'class': 'input'}),
-			'inicio': CustomTimeWidget(attrs={'class': 'input'}),
-			'fim': CustomTimeWidget(attrs={'class': 'input'}),
-		}, extra = extra, min_num = minVal, can_delete=True)
+	formSets = modelformset_factory(model=ColaboradorHorario, exclude = ['colab','id'],form=colaboradorHorarioForm, extra = extra, min_num = minVal, can_delete=True, )
 	return formSets
 
 def newHorarioRow(request):
