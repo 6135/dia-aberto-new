@@ -95,18 +95,27 @@
                         
                         <div class="control" id="id_tipo_tarefa" style="position:center">
 
-
-    <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_1"><input type="checkbox" name="tipo_tarefa" value="tarefaAuxiliar" id="id_tipo_tarefa_1">
+    {% if tarefa_auxiliar %}
+    <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_1"><input type="checkbox" name="tipo_tarefa" value="tarefaAuxiliar" id="id_tipo_tarefa_1" checked>
  Ajudar em atividades</label>
-
-
-    <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_2"><input type="checkbox" name="tipo_tarefa" value="tarefaAcompanhar" id="id_tipo_tarefa_2">
+ {% else %}
+    <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_1"><input type="checkbox" name="tipo_tarefa" value="tarefaAuxiliar" id="id_tipo_tarefa_1" >
+ Ajudar em atividades</label>
+{% endif %}
+ {% if tarefa_acompanhar %}
+    <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_2"><input type="checkbox" name="tipo_tarefa" value="tarefaAcompanhar" id="id_tipo_tarefa_2" checked>
  Acompanhar participantes</label>
-
-
-    <label class = "checkbox" for="id_tipo_tarefa_3"><input type="checkbox" name="tipo_tarefa" value="tarefaOutra" id="id_tipo_tarefa_3">
+ {% else %}
+     <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_2"><input type="checkbox" name="tipo_tarefa" value="tarefaAcompanhar" id="id_tipo_tarefa_2" >
+ Acompanhar participantes</label>
+{% endif %}
+ {% if tarefa_outra %}
+    <label class = "checkbox" for="id_tipo_tarefa_3"><input type="checkbox" name="tipo_tarefa" value="tarefaOutra" id="id_tipo_tarefa_3" checked>
  Outras tarefas</label>
-
+ {% else %}
+    <label class = "checkbox" for="id_tipo_tarefa_3"><input type="checkbox" name="tipo_tarefa" value="tarefaOutra" id="id_tipo_tarefa_3" >
+ Outras tarefas</label>
+{% endif %}
 
 </div>
 
@@ -229,7 +238,7 @@
                     {% endfor %}
                     {% endfor %} 
                         {%endif%} {% endcomment %}
-                    {% for x in erro %}
+                    {% for x in erros %}
                       <p style="color: #ff0000;">{{x}}</p>
                     {% endfor %}
                         </p>

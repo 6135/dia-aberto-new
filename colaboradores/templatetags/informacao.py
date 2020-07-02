@@ -115,5 +115,3 @@ def get_tarefa_outra_descricao(tarefa,id):
     else:
         pass    
 
-
-        

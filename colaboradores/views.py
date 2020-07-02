@@ -105,6 +105,7 @@ def ver_departamentos(request):
 	return render(request=request,template_name='configuracao/dropdown.html',context={'options':deps, 'default': default})   
 
 
+
 def minha_disponibilidade(request): 
 	''' Página onde o colaborador seleciona a disponibilidade para desempenhar tarefas escolhendo desta forma o(s) horário(s) que lhe dá mais jeito '''
 	if request.user.is_authenticated:    
@@ -115,15 +116,45 @@ def minha_disponibilidade(request):
 			return redirect('utilizadores:mensagem',5) 
 	else:
 		return redirect('utilizadores:mensagem',5)
-
+	erros = []
 	HorarioFormSet = preferenciaHorarioFormset()
 	horario_form_set = HorarioFormSet(queryset=ColaboradorHorario.objects.none())
 	form_preferencia_tarefas = PreferenciaTarefasForm()	
 	msg = False
+	colab_horario_queryset = ColaboradorHorario.objects.filter(colab=u)
+	if len(colab_horario_queryset) > 0:
+		horario_form_set = HorarioFormSet(queryset=colab_horario_queryset)
+	
+	
+	
+	preferencia_auxiliar = Preferencia.objects.filter(colab = u, tipoTarefa = "tarefaAuxiliar")
+	if 	len(preferencia_auxiliar)>0:
+		tarefa_auxiliar = True
+	else:
+		tarefa_auxiliar = False
 
+	preferencia_acompanhar = Preferencia.objects.filter(colab = u, tipoTarefa = "tarefaAcompanhar")
+	if 	len(preferencia_acompanhar)>0:
+		tarefa_acompanhar = True
+	else:
+		tarefa_acompanhar = False
+	preferencia_outra = Preferencia.objects.filter(colab = u, tipoTarefa = "tarefaOutra")
+	if 	len(preferencia_outra)>0:
+		tarefa_outra = True
+	else:
+		tarefa_outra = False
+	
+	
+	
+	
 	if request.method == "POST":
 		horario_form_set = HorarioFormSet(request.POST)
 		values = PreferenciaTarefasForm(request.POST)	
+
+		tarefas = request.POST.getlist('tipo_tarefa')
+		if tarefas == []: 
+			erros.append("Deverá escolher pelo menos uma preferência de tarefa")
+
 		if values.is_valid() and horario_form_set.is_valid():
 
 			instances = horario_form_set.save(commit=False)
@@ -134,12 +165,28 @@ def minha_disponibilidade(request):
 			for instance in horario_form_set.deleted_objects:
 				instance.delete()
 			
-			if values == "tarefaAcompanhar":
-				Preferencia(colab = u.id, tipoTarefa = "tarefaAcompanhar")
-			if values == "tarefaAuxiliar":
-				Preferencia(colab = u.id, tipoTarefa = "tarefaAuxiliar")
-			if values == "tarefaOutra":
-				Preferencia(colab = u.id, tipoTarefa = "tarefaOutra") 
+			if  "tarefaAcompanhar" in tarefas:
+				preferencia = Preferencia(colab = u, tipoTarefa = "tarefaAcompanhar")
+				preferencia.save()
+			else:
+				preferencia_acompanhar = Preferencia.objects.filter(colab = u, tipoTarefa = "tarefaAcompanhar")
+				if 	len(preferencia_acompanhar)>0:
+					preferencia_acompanhar.delete()
+			
+			if "tarefaAuxiliar" in tarefas:
+				preferencia = Preferencia(colab = u, tipoTarefa = "tarefaAuxiliar")
+				preferencia.save()
+			else:
+				preferencia_auxiliar = Preferencia.objects.filter(colab = u, tipoTarefa = "tarefaAuxiliar")
+				if 	len(preferencia_auxiliar)>0:	
+					preferencia_auxiliar.delete()
+			if "tarefaOutra" in tarefas:
+				preferencia = Preferencia(colab = u, tipoTarefa = "tarefaOutra")
+				preferencia.save()
+			else:
+				preferencia_outra = Preferencia.objects.filter(colab = u, tipoTarefa = "tarefaOutra")
+				if 	len(preferencia_outra)>0:
+					preferencia_outra.delete()
 
 			return redirect('colaboradores:preferencia-atividade')
 		else:
@@ -148,7 +195,8 @@ def minha_disponibilidade(request):
 	return render(request = request,
 				template_name='colaboradores/minha_disponibilidade.html',
 				context={'form_preferencia_tarefas': form_preferencia_tarefas,
-				'horario_form_set': horario_form_set,'dias' : Diaaberto.current().days_as_array() , 'msg' : msg,})
+				'horario_form_set': horario_form_set,'dias' : Diaaberto.current().days_as_array() ,
+				'msg' : msg,'erros':erros,'tarefa_auxiliar':tarefa_auxiliar,'tarefa_acompanhar':tarefa_acompanhar,'tarefa_outra':tarefa_outra})
 
 
 def preferenciaHorarioFormset(extra = 0, minVal = 1):
