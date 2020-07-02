@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from atividades import models as amodels
-from colaboradores.models import ColaboradorHorario
+from colaboradores.models import ColaboradorHorario,PreferenciaAtividade
 from coordenadores import models as coordmodels
 from django.db.models import Q
 from datetime import datetime,timedelta
@@ -215,6 +215,9 @@ class Colaborador(Utilizador):
             atividades.append(sessao.atividadeid)
         atividades = list(dict.fromkeys(atividades))
         return list_to_queryset(amodels.Atividade,atividades)
+
+    def get_atividades_escolhidas(self):
+        return PreferenciaAtividade.objects.filter(preferencia__colab=self)    
 
 
 def list_to_queryset(model, data):

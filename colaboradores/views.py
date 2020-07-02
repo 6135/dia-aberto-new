@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from .models import *
 from utilizadores.models import *
 from configuracao.models import *
+from atividades.models import Atividade
 from coordenadores.models import *
 from colaboradores.models import *
 from notificacoes.models import *
@@ -268,14 +269,17 @@ def selecionar_atividade(request,id):
 	if request.user.is_authenticated:    
 		user = get_user(request)
 		if user.groups.filter(name = "Colaborador").exists():
-			u = "Colaborador"       
+			u = Colaborador.objects.get(id=user.id)        
 		else:
 			return redirect('utilizadores:mensagem',5) 
 	else:
 		return redirect('utilizadores:mensagem',5)
-
-	return render(request=request,
-				  template_name="colaboradores/concluir_disponibilidade.html")
+	msg = True
+	preferencia_auxiliar = Preferencia.objects.get_or_create(colab = u, tipoTarefa = "tarefaAuxiliar")[0]
+	atividade = Atividade.objects.get(id=id)	
+	preferencia_atividade = PreferenciaAtividade(preferencia = preferencia_auxiliar,atividade = atividade)
+	preferencia_atividade.save()	
+	return redirect('colaboradores:escolher-atividades')
 
 def preferencia_atividade(request):
 	''' Página que permite ao colaborador obtar por escolher as atividades que pretende, ver atividades escolhidas, ou concluir a sua atualização de disponibilidade '''
@@ -287,7 +291,6 @@ def preferencia_atividade(request):
 			return redirect('utilizadores:mensagem',5) 
 	else:
 		return redirect('utilizadores:mensagem',5)
-
 	return render(request=request,
 				  template_name="colaboradores/preferencia_atividade.html")
 
