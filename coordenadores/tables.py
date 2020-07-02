@@ -18,6 +18,7 @@ class TarefaTable(tables.Table):
         self.columns.hide('id')
         self.columns.hide('coord')
         self.columns.hide('created_at')
+        self.columns.hide('diaaberto')
 
     def render_acoes(self,record):
         if record.estado == "Concluida":

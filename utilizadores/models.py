@@ -172,15 +172,16 @@ class Colaborador(Utilizador):
                 s = amodels.Sessao.objects.get(id=int(sessao))
                 inicio = s.horarioid.inicio
                 fim = s.horarioid.fim
-                if coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia,horario__gte=inicio).filter(horario__lte=fim).exists(): 
+                if coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia,horario__gt=inicio).filter(horario__lt=fim).exists(): 
                     continue
-                if coordmodels.TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia,sessao__horarioid__inicio__lte=inicio,sessao__horarioid__fim__gte=inicio).exists():
+                if coordmodels.TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia,sessao__horarioid__inicio__lt=inicio,sessao__horarioid__fim__gt=inicio).exists():
                     continue
                 tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia)
+
                 for t in tarefas:
                     hinicio = datetime.strptime(str(inicio),'%H:%M:%S') 
                     hfim =   datetime.strptime(str(fim),'%H:%M:%S')  
-                    if datetime.strptime(str(t.horario),'%H:%M:%S') - hinicio >  timedelta(hours=0,minutes=15,seconds=0) or hfim - datetime.strptime(str(t.horario),'%H:%M:%S') < timedelta(days=-1,hours=23,minutes=45) :
+                    if t.tipo != 'tarefaAuxiliar' and (datetime.strptime(str(t.horario),'%H:%M:%S') - hinicio >  timedelta(hours=0,minutes=15,seconds=0) or hfim - datetime.strptime(str(t.horario),'%H:%M:%S') < timedelta(days=-1,hours=23,minutes=45)) :
                         free=False     
                 if free == True:
                     free_colabs.append(colab)
@@ -188,7 +189,7 @@ class Colaborador(Utilizador):
                 free=True
                 tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia)
                 for t in tarefas:
-                    h = datetime.strptime(horario,'%H:%M')     
+                    h = datetime.strptime(horario,'%H:%M:%S')     
                     if datetime.strptime(str(t.horario),'%H:%M:%S') - h <  timedelta(hours=0,minutes=15,seconds=0) and h - datetime.strptime(str(t.horario),'%H:%M:%S') > timedelta(days=-1,hours=23,minutes=45) :
                         free=False     
                 if coordmodels.TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia)\
