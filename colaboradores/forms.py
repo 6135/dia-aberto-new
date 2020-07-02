@@ -4,6 +4,7 @@ from utilizadores.models import *
 from coordenadores.models import *
 from django.forms import *
 from django import forms
+import time
 
 
 TIPO = (
@@ -90,7 +91,31 @@ class CustomTimeWidget(TimeInput):
             self.format = '%H:%M'
     
 
+class colaboradorHorarioForm(models.ModelForm):
 
+    class Meta:
+        model = ColaboradorHorario
+        exclude = ['id']
+        widgets = {
+            # 'colab':HiddenInput(),
+			'dia': Select(attrs={'class': 'input'}),
+			'inicio': CustomTimeWidget(attrs={'class': 'input'}),
+			'fim': CustomTimeWidget(attrs={'class': 'input'}),
+        }
+    def clean(self):
+
+        cleaned_data = super().clean()
+        print(cleaned_data)
+        print("\n\n\n\n\n\n\n\n\n\n")
+        inicio = cleaned_data['inicio']
+        fim = cleaned_data['fim']
+
+        # colab = cleaned_data['colab']
+        # if colab.check_horario():
+        #     raise forms.ValidationError('Já existem tarefas atribuídas neste intervalo de tempo')
+        if inicio > fim:
+            raise forms.ValidationError('O horário de inicio deve ser menor que o horário de fim')
+        
 
 def get_atividades_choices(fac):
     return [("",'Escolha a Atividade')]+[(atividade.id,atividade.nome) for atividade in Atividade.tarefas_get_atividades(fac)]    
