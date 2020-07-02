@@ -139,17 +139,7 @@
                     </thead>
                     <tbody id='tableBody-01'>
                         {% for form in horario_form_set %}
-                        {% comment %} {% if form.non_field_errors %}
-                        <article class="message is-danger">
-                            <div class="message-body">
-                                <p style="text-align: center;">
-                                    {% for error in form.non_field_errors %}
-                                    <strong>{{ error|escape }}</strong>
-                                    {% endfor %}
-                                </p>
-                            </div>
-                        </article>
-                        {% endif %} {% endcomment %}
+
                         <tr>
                             {{form.id}}
                             {% for field in form.visible_fields  %}
@@ -226,18 +216,7 @@
                     <article class="message is-danger">
                         <div class="message-body">
                         <p style="text-align: center;">
-                            {% comment %} {% if form.non_field_errors %}
-                            {% for error in form.non_field_errors %}
-                                <p style="color: #ff0000; text-align:center">{{error}}</p>
-                            {% endfor %}
-                            {% else %} 
 
-                      {% for field in form %}
-                    {% for error in field.errors %}
-                      <p style="color: #ff0000;">{{ error }}</p>
-                    {% endfor %}
-                    {% endfor %} 
-                        {%endif%} {% endcomment %}
                     {% for x in erros %}
                       <p style="color: #ff0000;">{{x}}</p>
                     {% endfor %}
