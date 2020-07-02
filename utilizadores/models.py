@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from atividades import models as amodels
-from colaboradores.models import ColaboradorHorario,PreferenciaAtividade
+from colaboradores.models import ColaboradorHorario,PreferenciaAtividade,Preferencia
 from coordenadores import models as coordmodels
 from django.db.models import Q
 from datetime import datetime,timedelta
@@ -160,22 +160,35 @@ class Colaborador(Utilizador):
         db_table = 'Colaborador'
 
     @staticmethod
-    def get_free_colabs(coord,dia,horario,sessao=None):
+    def get_free_colabs(coord,dia,horario,tipo,sessao=None):
         free_colabs=[]
         colabs = Colaborador.objects.filter(faculdade = coord.faculdade,utilizador_ptr_id__valido=True)
         free = True
         for colab in colabs: 
             tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,horario=horario,dia=dia)
+
             if tarefas.exists():
                 continue
-            elif sessao is not None:
+
+            if not ColaboradorHorario.objects.filter(colab=colab.id).exists():
+                continue
+
+            elif sessao is not None and (Preferencia.objects.filter(colab = colab.id, tipoTarefa='tarefaAuxiliar').exists() or not Preferencia.objects.filter(colab = colab.id).exists()):
                 s = amodels.Sessao.objects.get(id=int(sessao))
                 inicio = s.horarioid.inicio
                 fim = s.horarioid.fim
+                
+                if not ColaboradorHorario.objects.filter(colab = colab.id,dia=dia)\
+                    .filter(inicio__lte=horario,fim__gte=horario).exists(): 
+                    continue
+
                 if coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia,horario__gt=inicio).filter(horario__lt=fim).exists(): 
                     continue
                 if coordmodels.TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia,sessao__horarioid__inicio__lt=inicio,sessao__horarioid__fim__gt=inicio).exists():
                     continue
+                if PreferenciaAtividade.objects.filter(preferencia__colab=colab.id).exists() and not PreferenciaAtividade.objects.filter(preferencia__colab=colab.id,atividade = s.atividadeid.id).exists():
+                    continue
+
                 tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia)
 
                 for t in tarefas:
@@ -186,19 +199,28 @@ class Colaborador(Utilizador):
                 if free == True:
                     free_colabs.append(colab)
             elif sessao is None:
+                
+                if not Preferencia.objects.filter(colab = colab.id, tipoTarefa=tipo).exists():
+                    continue
+                
                 free=True
                 tarefas = coordmodels.Tarefa.objects.filter(colab = colab.id,dia=dia)
+
                 for t in tarefas:
-                    h = datetime.strptime(horario,'%H:%M:%S')     
-                    if datetime.strptime(str(t.horario),'%H:%M:%S') - h <  timedelta(hours=0,minutes=15,seconds=0) and h - datetime.strptime(str(t.horario),'%H:%M:%S') > timedelta(days=-1,hours=23,minutes=45) :
+                    if len(horario) == 5:
+                        h = datetime.strptime(horario,'%H:%M')
+                    if len(horario)==8:
+                        h = datetime.strptime(horario,'%H:%M:%S')
+                    if datetime.strptime(str(t.horario),'%H:%M:%S') - h >  timedelta(days=-1,hours=23,minutes=45) and h - datetime.strptime(str(t.horario),'%H:%M:%S') <  timedelta(minutes=15):
                         free=False     
                 if coordmodels.TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia)\
                     .filter(sessao__horarioid__inicio__lte=horario,sessao__horarioid__fim__gte=horario).exists(): 
                     continue
+                if not ColaboradorHorario.objects.filter(colab = colab.id,dia=dia)\
+                    .filter(inicio__lte=horario,fim__gte=horario).exists(): 
+                    continue
                 if free == True:
                     free_colabs.append(colab)
-
-        print(free_colabs)
         return free_colabs
 
 

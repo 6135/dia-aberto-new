@@ -7,6 +7,8 @@ from coordenadores.models import *
 from django.utils.html import format_html
 from atividades.models import Sessao
 from datetime import datetime,timedelta
+from colaboradores.models import ColaboradorHorario,PreferenciaAtividade,Preferencia
+
 @register.filter
 def colab_none(colab):
     if colab is None or str(colab) == 'None':
@@ -23,22 +25,34 @@ def local(id):
         return 'Check in'
 
 @register.simple_tag
-def free_colabs(coord,dia,horario,sessao=None):
+def free_colabs(coord,dia,horario,tipo,sessao=None):
         html = ''
         free_colabs=[]
         colabs = Colaborador.objects.filter(faculdade = coord.faculdade,utilizador_ptr_id__valido=True)
         free = True
         for colab in colabs: 
             tarefas = Tarefa.objects.filter(colab = colab.id,horario=horario,dia=dia)
+
+            if not ColaboradorHorario.objects.filter(colab=colab.id).exists():
+                continue
+
             if tarefas.exists():
                 continue
-            elif sessao is not None:
-                s = amodels.Sessao.objects.get(id=int(sessao))
+
+            elif sessao is not None and (Preferencia.objects.filter(colab = colab.id, tipoTarefa='tarefaAuxiliar').exists() or not Preferencia.objects.filter(colab = colab.id).exists()):
+                s = Sessao.objects.get(id=int(sessao))
                 inicio = s.horarioid.inicio
                 fim = s.horarioid.fim
+
+                if not ColaboradorHorario.objects.filter(colab = colab.id,dia=dia)\
+                    .filter(inicio__lte=horario,fim__gte=horario).exists(): 
+                    continue
+
                 if Tarefa.objects.filter(colab = colab.id,dia=dia,horario__gte=inicio).filter(horario__lte=fim).exists(): 
                     continue
                 if TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia,sessao__horarioid__inicio__lte=inicio,sessao__horarioid__fim__gte=inicio).exists():
+                    continue
+                if PreferenciaAtividade.objects.filter(preferencia__colab=colab.id).exists() and not PreferenciaAtividade.objects.filter(preferencia__colab=colab.id,atividade = s.atividadeid.id).exists():
                     continue
                 tarefas = Tarefa.objects.filter(colab = colab.id,dia=dia)
                 for t in tarefas:
@@ -48,7 +62,9 @@ def free_colabs(coord,dia,horario,sessao=None):
                         free=False     
                 if free == True:
                     free_colabs.append(colab)
-            elif sessao is None:
+            elif sessao is None :
+                if not Preferencia.objects.filter(colab = colab.id, tipoTarefa=tipo).exists():
+                    continue
                 free=True
                 tarefas = Tarefa.objects.filter(colab = colab.id,dia=dia)
                 for t in tarefas:
@@ -58,11 +74,11 @@ def free_colabs(coord,dia,horario,sessao=None):
                 if TarefaAuxiliar.objects.filter(tarefaid__colab = colab.id,tarefaid__dia=dia)\
                     .filter(sessao__horarioid__inicio__lte=horario,sessao__horarioid__fim__gte=horario).exists(): 
                     continue
+                if not ColaboradorHorario.objects.filter(colab = colab.id,dia=dia)\
+                    .filter(inicio__lte=horario,fim__gte=horario).exists(): 
+                    continue
                 if free == True:
                     free_colabs.append(colab)
-
-        print(free_colabs)
-
         if len(free_colabs) == 0:
             html = "<option disabled value="" hidden selected>Não existe colaboradores disponíveis</option>"
         else:
