@@ -8,7 +8,7 @@ from dia_aberto.utils import init_driver
 
 
 class Command(BaseCommand):
-    help = 'Corre testes funcionais. Exemplo: manage.py test_funcionais firefox [--test inscricoes] [--custom]'
+    help = 'Corre testes funcionais. Exemplo: manage.py test_funcionais tests_path firefox [--custom]'
 
     def add_arguments(self, parser):
         parser.add_argument('tests_path', type=str,
@@ -37,7 +37,7 @@ class Command(BaseCommand):
         if keepdb:
             _args.append('--keepdb')
 
-        if not tests_path.contains('.'):
+        if not '.' in tests_path:
             tests_path = f'{tests_path}.tests.funcionais'
 
         call_command(

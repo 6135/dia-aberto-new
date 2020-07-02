@@ -95,18 +95,27 @@
                         
                         <div class="control" id="id_tipo_tarefa" style="position:center">
 
-
-    <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_1"><input type="checkbox" name="tipo_tarefa" value="tarefaAuxiliar" id="id_tipo_tarefa_1">
+    {% if tarefa_auxiliar %}
+    <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_1"><input type="checkbox" name="tipo_tarefa" value="tarefaAuxiliar" id="id_tipo_tarefa_1" checked>
  Ajudar em atividades</label>
-
-
-    <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_2"><input type="checkbox" name="tipo_tarefa" value="tarefaAcompanhar" id="id_tipo_tarefa_2">
+ {% else %}
+    <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_1"><input type="checkbox" name="tipo_tarefa" value="tarefaAuxiliar" id="id_tipo_tarefa_1" >
+ Ajudar em atividades</label>
+{% endif %}
+ {% if tarefa_acompanhar %}
+    <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_2"><input type="checkbox" name="tipo_tarefa" value="tarefaAcompanhar" id="id_tipo_tarefa_2" checked>
  Acompanhar participantes</label>
-
-
-    <label class = "checkbox" for="id_tipo_tarefa_3"><input type="checkbox" name="tipo_tarefa" value="tarefaOutra" id="id_tipo_tarefa_3">
+ {% else %}
+     <label class = "checkbox" style="margin-right:3%" for="id_tipo_tarefa_2"><input type="checkbox" name="tipo_tarefa" value="tarefaAcompanhar" id="id_tipo_tarefa_2" >
+ Acompanhar participantes</label>
+{% endif %}
+ {% if tarefa_outra %}
+    <label class = "checkbox" for="id_tipo_tarefa_3"><input type="checkbox" name="tipo_tarefa" value="tarefaOutra" id="id_tipo_tarefa_3" checked>
  Outras tarefas</label>
-
+ {% else %}
+    <label class = "checkbox" for="id_tipo_tarefa_3"><input type="checkbox" name="tipo_tarefa" value="tarefaOutra" id="id_tipo_tarefa_3" >
+ Outras tarefas</label>
+{% endif %}
 
 </div>
 
@@ -130,17 +139,7 @@
                     </thead>
                     <tbody id='tableBody-01'>
                         {% for form in horario_form_set %}
-                        {% comment %} {% if form.non_field_errors %}
-                        <article class="message is-danger">
-                            <div class="message-body">
-                                <p style="text-align: center;">
-                                    {% for error in form.non_field_errors %}
-                                    <strong>{{ error|escape }}</strong>
-                                    {% endfor %}
-                                </p>
-                            </div>
-                        </article>
-                        {% endif %} {% endcomment %}
+
                         <tr>
                             {{form.id}}
                             {% for field in form.visible_fields  %}
@@ -149,16 +148,17 @@
                              <td data-label="{{field.label}}">
                                 {% if field.label == "Dia" %}
                                 <span class="select is-fullwidth is-empty" required>
-                               
+                                
                                 <select type="text" name="{{field.html_name}}" class="input" maxlength="32" id="id_{{field.html_name}}">
                                     
-                                    <option value="" {% if field.value == 'None' %} selected {% endif %}>Escolha o dia</option>
+                                    <option value="" {% if field.value == 'None' %} selected="" {% endif %}>Escolha o dia</option>
                                     
                                     {% for dia in dias %}
-                                    {% if dia|date:'Y-m-d' != field.value %}
+                                    
+                                    {% if dia|date:'Y-m-d' != field.value|date:'Y-m-d' and dia|date:'Y-m-d' != field.value %}
                                     <option value="{{ dia|date:'Y-m-d'}}">{{dia}}</option>
                                     {% else %}
-                                     <option selected value="{{ dia|date:'Y-m-d'}}">{{ dia}}</option>
+                                     <option value="{{ dia|date:'Y-m-d'}}" selected="">{{ dia}}</option>
                                      {% endif %}
                                     {% endfor %}  
 
@@ -216,20 +216,10 @@
                     <article class="message is-danger">
                         <div class="message-body">
                         <p style="text-align: center;">
-                            {% if form.non_field_errors %}
-                            {% for error in form.non_field_errors %}
-                                <p style="color: #ff0000; text-align:center">{{error}}</p>
-                            {% endfor %}
-                            {% else %} 
 
-                      {% for field in form %}
-                    {% for error in field.errors %}
-                      <p style="color: #ff0000;">{{ error }}</p>
+                    {% for x in erros %}
+                      <p style="color: #ff0000;">{{x}}</p>
                     {% endfor %}
-                    {% endfor %} 
-                        {%endif%}
-
-
                         </p>
                         </div>
                     </article>  

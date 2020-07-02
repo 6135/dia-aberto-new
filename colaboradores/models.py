@@ -1,7 +1,6 @@
 
 from django.db import models
-from datetime import datetime, date,timezone,time
-
+#from .views import get_dia_choices
 
 
 class ColaboradorHorario(models.Model):
@@ -10,6 +9,7 @@ class ColaboradorHorario(models.Model):
     dia = models.DateField()
     inicio = models.TimeField(db_column='Inicio') 
     fim = models.TimeField(db_column='Fim') 
+
 
     class Meta:
         db_table = 'ColaboradorHorario'

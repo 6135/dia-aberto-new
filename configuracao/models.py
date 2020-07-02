@@ -232,7 +232,7 @@ class Prato(models.Model):
         ('Sobremesa', 'Sobremesa'),
     ]
     tipo = models.CharField(
-        choices=tipos,db_column='Tipo', max_length=255, blank=True, null=False)
+        choices=tipos,db_column='Tipo', max_length=255, blank=False, null=False)
     # Field name made lowercase.
     nrpratosdisponiveis = models.IntegerField(db_column='NrPratosDisponiveis',blank=False, null=False)
 

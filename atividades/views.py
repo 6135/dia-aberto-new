@@ -622,6 +622,7 @@ def verresumo(request,id):
 
     if atividade.exists():  
         atividade= Atividade.objects.get(id=id)
+        material= Materiais.objects.filter(atividadeid = atividade).first()
         nsub= 0
         if atividade.estado == "nsub":
             nsub= 1
@@ -631,7 +632,7 @@ def verresumo(request,id):
                 return redirect('atividades:inserirSessao', id)
         sessions_activity= Sessao.objects.filter(atividadeid=atividade)
         return render(request=request, 
-                    template_name="atividades/resumo.html",  context={"atividade": atividade, "sessions_activity": sessions_activity, "nsub": nsub} )
+                    template_name="atividades/resumo.html",  context={"atividade": atividade, "sessions_activity": sessions_activity, "nsub": nsub , "material": material} )
     else:
         return    render(request=request,
                             template_name='mensagem.html',

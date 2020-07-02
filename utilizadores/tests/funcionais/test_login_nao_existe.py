@@ -8,8 +8,7 @@ from utilizadores.models import Participante
 from utilizadores.tests.test_models import create_Participante_0
 from notificacoes.tests.test_models import create_MensagemRecebida_0
 from selenium.webdriver.support.wait import WebDriverWait
-
-# Firefox, Edge, Safari, Chrome
+from dia_aberto.utils import get_driver
 
 
 class LoginTestNaoExiste(StaticLiveServerTestCase):
@@ -18,10 +17,7 @@ class LoginTestNaoExiste(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        driver_path = 'webdrivers/geckodriver'
-        if os.name == 'nt':
-            driver_path += '.exe'
-        cls.driver = webdriver.Firefox(executable_path=driver_path)
+        cls.driver = get_driver()
         cls.driver.maximize_window()
         cls.driver.implicitly_wait(10)
 
@@ -34,7 +30,6 @@ class LoginTestNaoExiste(StaticLiveServerTestCase):
     def tearDownClass(cls):
         cls.driver.quit()
         super().tearDownClass()
-
 
     def test_login_naoExiste(self):
         """ Teste funcional de login utilizador não existe """
@@ -49,5 +44,3 @@ class LoginTestNaoExiste(StaticLiveServerTestCase):
             By.ID, "id_password").send_keys(Keys.ENTER)
         assert self.driver.find_element(
             By.CSS_SELECTOR, ".message-body > p").text == "O nome de utilizador ou a palavra-passe inválidos!"
-
-
