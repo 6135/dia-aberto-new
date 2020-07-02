@@ -39,6 +39,12 @@
        {% endif %}
        {% if row.record.tipo == "tarefaAcompanhar" %}
             <tr>
+                <th class="th-wrap">Grupo:</th>
+                <td style="font-weight: normal;">
+                    <span>{{row.record.tarefaacompanhar.inscricao.id}}</span>
+                </td>
+            </tr>
+            <tr>
                 <th class="th-wrap">Dia:</th>
                 <td style="font-weight: normal;">
                     <span>{{row.record.dia}}</span>
@@ -48,12 +54,6 @@
                 <th class="th-wrap">Horário:</th>
                 <td style="font-weight: normal;">
                     <span>{{row.record.horario}}</span>
-                </td>
-            </tr>
-            <tr>
-                <th class="th-wrap">Grupo:</th>
-                <td style="font-weight: normal;">
-                    <span>Grupo {{row.record.tarefaacompanhar.inscricao.id}}</span>
                 </td>
             </tr>
             <tr>
