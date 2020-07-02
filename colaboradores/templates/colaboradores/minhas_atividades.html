@@ -82,11 +82,16 @@
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
               <li><a href="#">Início</a></li>
-              <li class="is-active"><a href="#" aria-current="page">Atividades</a></li>
+              <li class="is-active"><a href="#" aria-current="page">Atividades Escolhidas</a></li>
             </ul>
           </nav>
           
-
+        <a href="{% url 'colaboradores:escolher-atividades' %}">
+            <button type="button" class="button is-success is-outlined" style="margin-bottom: 1rem;">
+            {% comment %} <span class="icon is-small"><i class="mdi mdi-plus"></i></span>  {% endcomment %}
+            <span>Adicionar preferência de atividade</span>
+            </button>
+        </a>
         {% render_table table 'colaboradores/tabelacolaborador.html' %}
     </div>
     

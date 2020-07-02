@@ -242,6 +242,12 @@ class Colaborador(Utilizador):
     def get_atividades_escolhidas(self):
         return PreferenciaAtividade.objects.filter(preferencia__colab=self)    
 
+    def get_atividades_escolhidas_tabela(self):
+        atividades = []
+        for escolha in self.get_atividades_escolhidas():
+            atividades.append(escolha.atividade)
+        atividades = list(dict.fromkeys(atividades))
+        return list_to_queryset(amodels.Atividade,atividades)
 
 def list_to_queryset(model, data):
     from django.db.models.base import ModelBase

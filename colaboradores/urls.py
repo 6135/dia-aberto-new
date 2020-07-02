@@ -24,6 +24,10 @@ urlpatterns = [
 
     path('selecionaratividade/<int:id>', views.selecionar_atividade,
          name="selecionar-atividade"),
+
+     path('retiraratividade/<int:id>', views.retirar_atividade,
+         name="retirar-atividade"),
+
     path('concluirdisponibilidade', views.concluir_disponibilidade,
          name='concluir-disponibilidade'),
     path('concluirtarefa/<int:id>', views.concluir_tarefa, name='concluir-tarefa'),
