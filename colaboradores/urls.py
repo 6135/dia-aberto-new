@@ -12,8 +12,16 @@ urlpatterns = [
          name='minha-disponibilidade'),
     path('departamentos', views.ver_departamentos,
          name='ver-departamentos'),
-    path('preferenciaatividade', views.AtividadesColaborador.as_view(),
+    path('preferenciaatividade', views.preferencia_atividade,
          name="preferencia-atividade"),
+
+    path('escolheratividades', views.AtividadesColaborador.as_view(),
+         name="escolher-atividades"),
+         
+    path('atividadesescolhidas', views.AtividadesColaboradorSelecionadas.as_view(),
+         name="atividades-escolhidas"),
+
+
     path('selecionaratividade/<int:id>', views.selecionar_atividade,
          name="selecionar-atividade"),
     path('concluirdisponibilidade', views.concluir_disponibilidade,
