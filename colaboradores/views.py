@@ -149,6 +149,10 @@ def minha_disponibilidade(request):
 	horario_form_set = HorarioFormSet(queryset=ColaboradorHorario.objects.none())
 	form_preferencia_tarefas = PreferenciaTarefasForm()	
 	msg = False
+	# horarios = []
+	# for horario in ColaboradorHorario.objects.filter(colab=u)
+	# 	if horari
+	# 	horarios.append(horario)
 	colab_horario_queryset = ColaboradorHorario.objects.filter(colab=u)
 	if len(colab_horario_queryset) > 0:
 		horario_form_set = HorarioFormSet(queryset=colab_horario_queryset)
