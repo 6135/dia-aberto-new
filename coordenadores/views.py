@@ -151,10 +151,11 @@ def colaboradores(request):
         'key': '',
         'value': 'Não atribuir'
     }
+    
     if request.method == 'POST':
         if 'tarefa' in request.POST and request.POST['tarefa']!='':
             tarefa = Tarefa.objects.get(id=int(request.POST['tarefa']))
-    
+            tipo = tarefa.tipo
             if tarefa.tipo == 'tarefaAuxiliar':
                 sessao=tarefa.tarefaauxiliar.sessao.id
 
@@ -175,9 +176,10 @@ def colaboradores(request):
                 horario = request.POST.get('horario')
                 sessao = None
             dia = request.POST.get('dia')
+            tipo = request.POST.get('tipo')
         coordenador = Coordenador.objects.get(id = request.user.id)
         if horario != '' and dia != '':
-            colabs = Colaborador.get_free_colabs(coord = coordenador,dia = dia, horario=horario, sessao = sessao)
+            colabs = Colaborador.get_free_colabs(coord = coordenador,dia = dia, horario=horario,tipo = tipo, sessao = sessao)
             if len(colabs)==0:
                 default = {
                     'key': '',
