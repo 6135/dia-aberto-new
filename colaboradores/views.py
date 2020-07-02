@@ -68,13 +68,14 @@ class AtividadesColaborador(SingleTableMixin, FilterView):
 		context = super().get_context_data(**kwargs)
 		table = self.get_table(**self.get_table_kwargs())
 		context["deps"] = list(map(lambda x: (x.id, x.nome), Departamento.objects.filter(unidadeorganicaid=self.user_check_var.get('firstProfile').faculdade)))
+
 		context[self.get_context_table_name(table)] = table
 		return context
 
 
 class AtividadesColaboradorSelecionadas(SingleTableMixin, FilterView):
 	''' Página onde o colaborador escolhe quais vê as atividades que selecionou '''
-	table_class = ColaboradorAtividadesTable
+	table_class = ColaboradorAtividadesSelecionadasTable
 	template_name = 'colaboradores/minhas_atividades.html'
 	filterset_class = ColaboradorAtividadeFilter
 	table_pagination = {
@@ -88,11 +89,12 @@ class AtividadesColaboradorSelecionadas(SingleTableMixin, FilterView):
 		return super().dispatch(request, *args, **kwargs)
 
 	def get_queryset(self):
-		return self.user_check_var.get('firstProfile').get_atividades_escolhidas()
+		return self.user_check_var.get('firstProfile').get_atividades_escolhidas_tabela()
 	
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
 		table = self.get_table(**self.get_table_kwargs())
+		table.request = self.request
 		context["deps"] = list(map(lambda x: (x.id, x.nome), Departamento.objects.filter(unidadeorganicaid=self.user_check_var.get('firstProfile').faculdade)))
 		context[self.get_context_table_name(table)] = table
 		return context
@@ -192,23 +194,21 @@ def minha_disponibilidade(request):
 				instance.delete()
 			
 			if  "tarefaAcompanhar" in tarefas:
-				preferencia = Preferencia(colab = u, tipoTarefa = "tarefaAcompanhar")
-				preferencia.save()
+				preferencia = Preferencia.objects.get_or_create(colab = u, tipoTarefa = "tarefaAcompanhar")[0]
 			else:
 				preferencia_acompanhar = Preferencia.objects.filter(colab = u, tipoTarefa = "tarefaAcompanhar")
 				if 	len(preferencia_acompanhar)>0:
 					preferencia_acompanhar.delete()
 			
 			if "tarefaAuxiliar" in tarefas:
-				preferencia = Preferencia(colab = u, tipoTarefa = "tarefaAuxiliar")
-				preferencia.save()
+				preferencia = Preferencia.objects.get_or_create(colab = u, tipoTarefa = "tarefaAuxiliar")[0]
 			else:
 				preferencia_auxiliar = Preferencia.objects.filter(colab = u, tipoTarefa = "tarefaAuxiliar")
 				if 	len(preferencia_auxiliar)>0:	
 					preferencia_auxiliar.delete()
+
 			if "tarefaOutra" in tarefas:
-				preferencia = Preferencia(colab = u, tipoTarefa = "tarefaOutra")
-				preferencia.save()
+				preferencia = Preferencia.objects.get_or_create(colab = u, tipoTarefa = "tarefaOutra")[0]
 			else:
 				preferencia_outra = Preferencia.objects.filter(colab = u, tipoTarefa = "tarefaOutra")
 				if 	len(preferencia_outra)>0:
@@ -265,7 +265,7 @@ def concluir_disponibilidade(request):
 
 
 def selecionar_atividade(request,id):
-	''' Selecionar uma atividade '''
+	''' Selecionar uma atividade como preferencia '''
 	if request.user.is_authenticated:    
 		user = get_user(request)
 		if user.groups.filter(name = "Colaborador").exists():
@@ -280,6 +280,27 @@ def selecionar_atividade(request,id):
 	preferencia_atividade = PreferenciaAtividade(preferencia = preferencia_auxiliar,atividade = atividade)
 	preferencia_atividade.save()	
 	return redirect('colaboradores:escolher-atividades')
+
+
+
+
+def retirar_atividade(request,id):
+	''' Remover uma atividade das preferencias '''
+	if request.user.is_authenticated:    
+		user = get_user(request)
+		if user.groups.filter(name = "Colaborador").exists():
+			u = Colaborador.objects.get(id=user.id)        
+		else:
+			return redirect('utilizadores:mensagem',5) 
+	else:
+		return redirect('utilizadores:mensagem',5)
+	msg = True
+	preferencia_auxiliar = Preferencia.objects.get_or_create(colab = u, tipoTarefa = "tarefaAuxiliar")[0]
+	atividade = Atividade.objects.get(id=id)	
+	preferencia_atividade = PreferenciaAtividade.objects.get_or_create(preferencia = preferencia_auxiliar,atividade = atividade)[0]
+	preferencia_atividade.delete()
+	return redirect('colaboradores:atividades-escolhidas')
+
 
 def preferencia_atividade(request):
 	''' Página que permite ao colaborador obtar por escolher as atividades que pretende, ver atividades escolhidas, ou concluir a sua atualização de disponibilidade '''
