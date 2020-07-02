@@ -7,6 +7,8 @@ from atividades.tests.test_models import create_sessao, create_atividade, create
 from inscricoes.tests.test_models import create_Inscricao_2
 from utilizadores.tests.test_models import create_Colaborador_0, create_Coordenador_0, create_ProfessorUniversitario_0
 from configuracao.tests.test_models import create_open_day, create_campus, create_sala, create_edificio
+from coordenadores.forms import *
+
 
 def create_tarefa_0(coord,colab):
     return Tarefa.objects.create(
