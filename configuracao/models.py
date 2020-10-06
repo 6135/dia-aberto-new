@@ -374,7 +374,10 @@ class Unidadeorganica(models.Model):
         return Departamento.objects.filter(unidadeorganicaid=self)
 
     def coord_(self):
-        return Coordenador.objects.filter(faculdade_id=self.id).first()
+        if Coordenador.objects.filter(faculdade_id=self.id).exists():
+            return Coordenador.objects.filter(faculdade_id=self.id).first()
+        else return None
+
 class Curso(models.Model):
 
     id = models.AutoField(db_column='ID', primary_key=True)
