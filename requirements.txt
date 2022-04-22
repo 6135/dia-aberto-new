@@ -19,7 +19,7 @@ mysqlclient==1.4.6
 phonenumbers==8.11.5
 Pillow==7.1.2
 pycodestyle==2.5.0
-PyPDF2==1.26.0
+PyPDF2==1.27.5
 pyquery==1.4.1
 pytz==2019.3
 reportlab==3.5.42
